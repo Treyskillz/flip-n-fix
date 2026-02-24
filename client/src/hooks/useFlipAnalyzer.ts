@@ -180,13 +180,16 @@ export function useFlipAnalyzer() {
     );
   }, [holdingParams, finParams.holdingMonths]);
 
+  // ─── Target ROI ────────────────────────────────────────────
+  const [targetROI, setTargetROI] = useState(20);
+
   // ─── Profitability ─────────────────────────────────────────
   const profit = useMemo<ProfitAnalysis>(() => {
     return calculateProfitability(
       property.purchasePrice, rehabTotals.totalCost,
-      effectiveArv, financing, closing, holding
+      effectiveArv, financing, closing, holding, targetROI
     );
-  }, [property.purchasePrice, rehabTotals.totalCost, effectiveArv, financing, closing, holding]);
+  }, [property.purchasePrice, rehabTotals.totalCost, effectiveArv, financing, closing, holding, targetROI]);
 
   return {
     // Property
@@ -215,5 +218,6 @@ export function useFlipAnalyzer() {
     holdingParams, setHoldingParams, holding,
     // Profit
     profit,
+    targetROI, setTargetROI,
   };
 }

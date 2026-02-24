@@ -15,7 +15,7 @@ const FEATURES = [
     title: 'Deal Analyzer',
     desc: 'Real-time profitability calculations with deal scoring, ROI, and 70% rule analysis.',
     link: '/analyzer',
-    color: 'oklch(0.45 0.12 155)',
+    color: 'oklch(0.50 0.18 25)',
   },
   {
     icon: Wrench,
@@ -64,7 +64,7 @@ const FEATURES = [
     title: 'Investor Course',
     desc: 'Complete education on fix & flip, wholesaling, BRRRR, subject-to, and short-term rentals.',
     link: '/course',
-    color: 'oklch(0.45 0.12 155)',
+    color: 'oklch(0.50 0.18 25)',
   },
   {
     icon: Newspaper,
@@ -89,7 +89,7 @@ export default function Home() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
           <img src={HERO_IMG} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[oklch(0.15_0.02_155/0.92)] via-[oklch(0.15_0.02_155/0.8)] to-[oklch(0.15_0.02_155/0.5)]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[oklch(0.15_0.02_25/0.92)] via-[oklch(0.15_0.02_25/0.8)] to-[oklch(0.15_0.02_25/0.5)]" />
         </div>
         <div className="container relative py-20 lg:py-28">
           <div className="max-w-2xl">
@@ -99,7 +99,7 @@ export default function Home() {
             </div>
             <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-white tracking-tight leading-[1.1] mb-5">
               Analyze Deals.<br />
-              <span className="text-[oklch(0.85_0.12_155)]">Maximize Profit.</span>
+              <span className="text-[oklch(0.85_0.15_25)]">Maximize Profit.</span>
             </h1>
             <p className="text-lg text-white/75 leading-relaxed mb-8 max-w-xl">
               The complete fix & flip toolkit — from deal analysis and rehab estimation to marketing, contracts, 
@@ -107,7 +107,7 @@ export default function Home() {
             </p>
             <div className="flex flex-wrap gap-3">
               <Link href="/analyzer">
-                <Button size="lg" className="gap-2 bg-[oklch(0.45_0.12_155)] hover:bg-[oklch(0.4_0.12_155)] text-white font-semibold px-6">
+                <Button size="lg" className="gap-2 bg-[oklch(0.50_0.18_25)] hover:bg-[oklch(0.45_0.18_25)] text-white font-semibold px-6">
                   <Calculator className="w-4.5 h-4.5" /> Launch Analyzer
                   <ArrowRight className="w-4 h-4" />
                 </Button>
@@ -123,15 +123,15 @@ export default function Home() {
       </section>
 
       {/* Stats Bar */}
-      <section className="bg-[oklch(0.97_0.005_155)] border-b border-border/50">
+      <section className="bg-[oklch(0.97_0.005_25)] border-b border-border/50">
         <div className="container py-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {STATS.map((stat, i) => {
               const Icon = stat.icon;
               return (
                 <div key={i} className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-[oklch(0.45_0.12_155)]/10">
-                    <Icon className="w-5 h-5 text-[oklch(0.45_0.12_155)]" />
+                  <div className="p-2 rounded-lg bg-[oklch(0.50_0.18_25)]/10">
+                    <Icon className="w-5 h-5 text-[oklch(0.50_0.18_25)]" />
                   </div>
                   <div>
                     <p className="text-2xl font-bold tracking-tight">{stat.value}</p>
@@ -174,7 +174,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-[oklch(0.45_0.12_155)] text-white">
+      <section className="bg-[oklch(0.50_0.18_25)] text-white">
         <div className="container py-14 text-center">
           <DollarSign className="w-10 h-10 mx-auto mb-4 opacity-80" />
           <h2 className="text-2xl lg:text-3xl font-bold mb-3">Ready to Analyze Your Next Deal?</h2>
@@ -183,7 +183,7 @@ export default function Home() {
             No signup required.
           </p>
           <Link href="/analyzer">
-            <Button size="lg" className="gap-2 bg-white text-[oklch(0.3_0.1_155)] hover:bg-white/90 font-semibold px-8">
+            <Button size="lg" className="gap-2 bg-white text-[oklch(0.3_0.15_25)] hover:bg-white/90 font-semibold px-8">
               <Calculator className="w-4.5 h-4.5" /> Open the Analyzer
               <ArrowRight className="w-4 h-4" />
             </Button>

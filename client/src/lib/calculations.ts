@@ -148,7 +148,8 @@ function getDealVerdict(
   roi: number,
   maxAllowableOffer: number,
   recommendedMaxPrice: number,
-  rehabCost: number
+  rehabCost: number,
+  targetROI: number = 20
 ): { verdict: 'excellent' | 'good' | 'marginal' | 'not_recommended'; reasons: string[] } {
   if (arv <= 0) {
     return { verdict: 'not_recommended', reasons: ['No ARV data — add comparable sales to evaluate this deal.'] };
@@ -157,15 +158,16 @@ function getDealVerdict(
   const reasons: string[] = [];
   let verdict: 'excellent' | 'good' | 'marginal' | 'not_recommended';
 
-  // Check profitability
+  // Check profitability against user's target
+  const halfTarget = targetROI / 2;
   if (netProfit <= 0) {
     reasons.push(`This deal loses money. Net loss of ${formatCurrency(Math.abs(netProfit))}.`);
-  } else if (roi >= 20) {
-    reasons.push(`Strong ROI of ${formatPercent(roi)} exceeds the 20% target.`);
-  } else if (roi >= 10) {
-    reasons.push(`Moderate ROI of ${formatPercent(roi)} — below the 20% target but still profitable.`);
+  } else if (roi >= targetROI) {
+    reasons.push(`Strong ROI of ${formatPercent(roi)} meets or exceeds your ${formatPercent(targetROI)} target.`);
+  } else if (roi >= halfTarget) {
+    reasons.push(`Moderate ROI of ${formatPercent(roi)} — below your ${formatPercent(targetROI)} target but still profitable.`);
   } else {
-    reasons.push(`Low ROI of ${formatPercent(roi)} — thin margin leaves little room for error.`);
+    reasons.push(`Low ROI of ${formatPercent(roi)} — well below your ${formatPercent(targetROI)} target.`);
   }
 
   // Check 70% rule
@@ -185,15 +187,16 @@ function getDealVerdict(
 
   // Recommend max price
   if (purchasePrice > recommendedMaxPrice && recommendedMaxPrice > 0) {
-    reasons.push(`To achieve 20% ROI, offer no more than ${formatCurrency(recommendedMaxPrice)} (${formatCurrency(purchasePrice - recommendedMaxPrice)} reduction needed).`);
+    reasons.push(`To achieve ${formatPercent(targetROI)} ROI, offer no more than ${formatCurrency(recommendedMaxPrice)} (${formatCurrency(purchasePrice - recommendedMaxPrice)} reduction needed).`);
   }
 
-  // Determine verdict
-  if (roi >= 20 && purchasePrice <= maxAllowableOffer) {
+  // Determine verdict based on user's target ROI
+  const goodThreshold = targetROI * 0.75;
+  if (roi >= targetROI && purchasePrice <= maxAllowableOffer) {
     verdict = 'excellent';
-  } else if (roi >= 20 || (roi >= 15 && purchasePrice <= maxAllowableOffer)) {
+  } else if (roi >= targetROI || (roi >= goodThreshold && purchasePrice <= maxAllowableOffer)) {
     verdict = 'good';
-  } else if (roi >= 5 && netProfit > 0) {
+  } else if (roi >= halfTarget && netProfit > 0) {
     verdict = 'marginal';
   } else {
     verdict = 'not_recommended';
@@ -208,7 +211,8 @@ export function calculateProfitability(
   arv: number,
   financing: FinancingDetails,
   closing: ClosingCosts,
-  holding: HoldingCosts
+  holding: HoldingCosts,
+  targetROI: number = 20
 ): ProfitAnalysis {
   const financingCosts = financing.useHardMoney
     ? financing.totalInterest + financing.totalPoints
@@ -244,8 +248,7 @@ export function calculateProfitability(
     dealScore = Math.round(Math.min(roiScore + maoScore + profitScore, 100));
   }
 
-  // ─── Recommended Max Purchase Price for 20% ROI ──────────
-  const targetROI = 20;
+  // ─── Recommended Max Purchase Price for target ROI ──────────
   const recommendedMaxPrice = arv > 0
     ? calculateMaxPurchasePrice(
         arv, rehabCost, holding.totalHoldingCosts,
@@ -256,9 +259,11 @@ export function calculateProfitability(
       )
     : 0;
 
+  // ─── Adjust verdict thresholds based on user's target ROI ──
+
   // ─── Deal Verdict ──────────────────────────────────────────
   const { verdict: dealVerdict, reasons: verdictReasons } = getDealVerdict(
-    arv, purchasePrice, netProfit, roi, maxAllowableOffer, recommendedMaxPrice, rehabCost
+    arv, purchasePrice, netProfit, roi, maxAllowableOffer, recommendedMaxPrice, rehabCost, targetROI
   );
 
   return {

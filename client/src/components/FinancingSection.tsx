@@ -30,10 +30,10 @@ export function FinancingSection({
   return (
     <div className="space-y-4">
       {/* Financing Card */}
-      <Card className="border-l-4 border-l-[oklch(0.55_0.17_155)]">
+      <Card className="border-l-4 border-l-[oklch(0.55_0.20_25)]">
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Landmark className="w-5 h-5 text-[oklch(0.55_0.17_155)]" />
+            <Landmark className="w-5 h-5 text-[oklch(0.55_0.20_25)]" />
             Financing
           </CardTitle>
         </CardHeader>

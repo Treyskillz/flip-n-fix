@@ -30,7 +30,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         <div className="container flex items-center h-14 gap-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0 no-underline">
-            <div className="w-8 h-8 rounded-lg bg-[oklch(0.45_0.12_155)] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-[oklch(0.50_0.18_25)] flex items-center justify-center">
               <Calculator className="w-4.5 h-4.5 text-white" />
             </div>
             <span className="font-bold text-base tracking-tight hidden sm:inline">FlipAnalyzer</span>
@@ -105,7 +105,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <footer className="border-t border-border/50 bg-secondary/30">
         <div className="container py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded bg-[oklch(0.45_0.12_155)] flex items-center justify-center">
+            <div className="w-5 h-5 rounded bg-[oklch(0.50_0.18_25)] flex items-center justify-center">
               <Calculator className="w-3 h-3 text-white" />
             </div>
             <span>FlipAnalyzer &mdash; Real Estate Investment Platform</span>

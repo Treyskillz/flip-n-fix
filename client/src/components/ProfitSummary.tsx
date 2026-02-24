@@ -25,26 +25,28 @@ interface Props {
   profit: ProfitAnalysis;
   rehabCost: number;
   rehabDays: number;
+  targetROI: number;
+  setTargetROI: (val: number) => void;
 }
 
 const VERDICT_CONFIG = {
   excellent: {
     label: 'Excellent Deal',
     icon: ShieldCheck,
-    bg: 'bg-[oklch(0.92_0.06_155)]',
-    border: 'border-[oklch(0.55_0.17_155)]',
-    text: 'text-[oklch(0.40_0.17_155)]',
-    iconColor: 'text-[oklch(0.50_0.17_155)]',
-    badge: 'bg-[oklch(0.50_0.17_155)] text-white',
+    bg: 'bg-[oklch(0.92_0.06_145)]',
+    border: 'border-[oklch(0.55_0.17_145)]',
+    text: 'text-[oklch(0.40_0.17_145)]',
+    iconColor: 'text-[oklch(0.50_0.17_145)]',
+    badge: 'bg-[oklch(0.50_0.17_145)] text-white',
   },
   good: {
     label: 'Good Deal',
     icon: ShieldCheck,
-    bg: 'bg-[oklch(0.94_0.04_155)]',
-    border: 'border-[oklch(0.60_0.12_155)]',
-    text: 'text-[oklch(0.45_0.14_155)]',
-    iconColor: 'text-[oklch(0.55_0.14_155)]',
-    badge: 'bg-[oklch(0.55_0.14_155)] text-white',
+    bg: 'bg-[oklch(0.94_0.04_145)]',
+    border: 'border-[oklch(0.60_0.12_145)]',
+    text: 'text-[oklch(0.45_0.14_145)]',
+    iconColor: 'text-[oklch(0.55_0.14_145)]',
+    badge: 'bg-[oklch(0.55_0.14_145)] text-white',
   },
   marginal: {
     label: 'Marginal Deal',
@@ -66,17 +68,17 @@ const VERDICT_CONFIG = {
   },
 };
 
-export function ProfitSummary({ profit, rehabCost, rehabDays }: Props) {
+export function ProfitSummary({ profit, rehabCost, rehabDays, targetROI, setTargetROI }: Props) {
   const scoreColor =
     profit.dealScore >= 70
-      ? 'text-[oklch(0.55_0.17_155)]'
+      ? 'text-[oklch(0.55_0.17_145)]'
       : profit.dealScore >= 40
         ? 'text-[oklch(0.6_0.15_80)]'
         : 'text-destructive';
 
   const scoreBg =
     profit.dealScore >= 70
-      ? 'bg-[oklch(0.92_0.06_155)]'
+      ? 'bg-[oklch(0.92_0.06_145)]'
       : profit.dealScore >= 40
         ? 'bg-[oklch(0.92_0.06_80)]'
         : 'bg-[oklch(0.92_0.06_25)]';
@@ -104,13 +106,51 @@ export function ProfitSummary({ profit, rehabCost, rehabDays }: Props) {
                 {reason.includes('loses money') || reason.includes('over the 70%') || reason.includes('high rehab') || reason.includes('reduction needed') ? (
                   <XCircle className="w-3.5 h-3.5 text-destructive shrink-0 mt-0.5" />
                 ) : reason.includes('Strong ROI') || reason.includes('below the 70%') ? (
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[oklch(0.50_0.17_155)] shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[oklch(0.50_0.17_145)] shrink-0 mt-0.5" />
                 ) : (
                   <Info className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
                 )}
                 <span className={`${vc.text} leading-snug`}>{reason}</span>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* ── Profit Target Slider ───────────────────────── */}
+        <div className="p-3 rounded-lg border bg-card">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Target className="w-4 h-4 text-primary shrink-0" />
+              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Your Profit Target
+              </span>
+            </div>
+            <div className="flex items-center gap-1">
+              <input
+                type="number"
+                min={1}
+                max={100}
+                value={targetROI}
+                onChange={(e) => setTargetROI(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
+                className="w-14 h-7 text-center text-sm font-bold border rounded-md bg-background tabular-nums"
+              />
+              <span className="text-sm font-bold">%</span>
+            </div>
+          </div>
+          <input
+            type="range"
+            min={5}
+            max={50}
+            step={1}
+            value={targetROI}
+            onChange={(e) => setTargetROI(Number(e.target.value))}
+            className="w-full h-2 rounded-full appearance-none cursor-pointer accent-primary"
+          />
+          <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
+            <span>5%</span>
+            <span>Conservative</span>
+            <span>Aggressive</span>
+            <span>50%</span>
           </div>
         </div>
 
@@ -135,7 +175,7 @@ export function ProfitSummary({ profit, rehabCost, rehabDays }: Props) {
               </div>
             )}
             {profit.purchasePrice > 0 && profit.purchasePrice <= profit.recommendedMaxPrice && (
-              <div className="flex items-center gap-1.5 mt-2 text-xs text-[oklch(0.50_0.17_155)] font-semibold">
+              <div className="flex items-center gap-1.5 mt-2 text-xs text-[oklch(0.50_0.17_145)] font-semibold">
                 <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
                 <span>
                   Your offer is {formatCurrency(profit.recommendedMaxPrice - profit.purchasePrice)} below max — good entry
@@ -158,11 +198,11 @@ export function ProfitSummary({ profit, rehabCost, rehabDays }: Props) {
 
         {/* ── Net Profit ─────────────────────────────────────── */}
         <div
-          className={`p-3 rounded-lg ${profit.isProfitable ? 'bg-[oklch(0.92_0.06_155)]' : 'bg-[oklch(0.92_0.06_25)]'}`}
+          className={`p-3 rounded-lg ${profit.isProfitable ? 'bg-[oklch(0.92_0.06_145)]' : 'bg-[oklch(0.92_0.06_25)]'}`}
         >
           <div className="flex items-center gap-2 mb-1">
             {profit.isProfitable ? (
-              <TrendingUp className="w-4 h-4 text-[oklch(0.55_0.17_155)]" />
+              <TrendingUp className="w-4 h-4 text-[oklch(0.55_0.17_145)]" />
             ) : (
               <TrendingDown className="w-4 h-4 text-destructive" />
             )}
@@ -171,7 +211,7 @@ export function ProfitSummary({ profit, rehabCost, rehabDays }: Props) {
             </span>
           </div>
           <p
-            className={`text-2xl font-bold tabular-nums ${profit.isProfitable ? 'text-[oklch(0.45_0.17_155)]' : 'text-destructive'}`}
+            className={`text-2xl font-bold tabular-nums ${profit.isProfitable ? 'text-[oklch(0.45_0.17_145)]' : 'text-destructive'}`}
           >
             {formatCurrency(profit.netProfit)}
           </p>
@@ -206,7 +246,7 @@ export function ProfitSummary({ profit, rehabCost, rehabDays }: Props) {
           </div>
           <div className="text-right">
             {profit.purchasePrice <= profit.maxAllowableOffer ? (
-              <span className="text-xs font-semibold text-[oklch(0.55_0.17_155)]">Below MAO</span>
+              <span className="text-xs font-semibold text-[oklch(0.55_0.17_145)]">Below MAO</span>
             ) : (
               <span className="text-xs font-semibold text-destructive">
                 {formatCurrency(profit.purchasePrice - profit.maxAllowableOffer)} over

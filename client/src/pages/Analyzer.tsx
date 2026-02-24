@@ -15,7 +15,7 @@ export default function Analyzer() {
         {/* Page Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 rounded-lg bg-[oklch(0.45_0.12_155)] text-white">
+            <div className="p-2 rounded-lg bg-[oklch(0.50_0.18_25)] text-white">
               <Calculator className="w-6 h-6" />
             </div>
             <div>
@@ -85,6 +85,8 @@ export default function Analyzer() {
               profit={analyzer.profit}
               rehabCost={analyzer.rehabTotals.totalCost}
               rehabDays={analyzer.rehabTotals.totalDurationDays}
+              targetROI={analyzer.targetROI}
+              setTargetROI={analyzer.setTargetROI}
             />
           </div>
         </div>
