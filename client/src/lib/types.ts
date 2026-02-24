@@ -106,4 +106,8 @@ export interface ProfitAnalysis {
   maxAllowableOffer: number; // 70% rule
   dealScore: number; // 0-100
   isProfitable: boolean;
+  recommendedMaxPrice: number; // max purchase price for target ROI
+  targetROI: number; // target ROI percentage (e.g. 20)
+  dealVerdict: 'excellent' | 'good' | 'marginal' | 'not_recommended';
+  verdictReasons: string[];
 }
