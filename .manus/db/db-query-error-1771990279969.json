@@ -1,0 +1,8 @@
+{
+  "query": "ALTER TABLE users ADD COLUMN stripeCustomerId varchar(255) DEFAULT NULL; ALTER TABLE users ADD COLUMN subscriptionPlan enum('free','pro','elite','team') NOT NULL DEFAULT 'free';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2uidbCGemgnrPoH.root --database c3pk6dbyVkhix88pdfEyoY --execute ALTER TABLE users ADD COLUMN stripeCustomerId varchar(255) DEFAULT NULL; ALTER TABLE users ADD COLUMN subscriptionPlan enum('free','pro','elite','team') NOT NULL DEFAULT 'free';",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1060 (42S21) at line 1: Duplicate column name 'stripeCustomerId'"
+  ]
+}

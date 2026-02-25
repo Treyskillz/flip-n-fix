@@ -1,0 +1,7 @@
+- [x] Replace Freedom One logo (1-through-O version) with house-image logo throughout the site
+- [x] Create full logo package (transparent, print, shirt, social media versions)
+- [x] Fix TypeScript error in stripe/webhook.ts
+- [x] Complete Stripe integration (checkout, subscription management)
+- [x] Build Pricing page with 4-tier subscription model
+- [x] Add subscription tRPC routes and feature gating
+- [x] Push database schema changes (stripeCustomerId, subscriptionPlan)

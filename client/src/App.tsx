@@ -13,14 +13,15 @@ import Contracts from "./pages/Contracts";
 import Course from "./pages/Course";
 import Blog from "./pages/Blog";
 import Manual from "./pages/Manual";
-import Listings from "./pages/Listings";
+import Listings from './pages/Listings';
+import Pricing from './pages/Pricing';
 import { lazy, Suspense } from "react";
 
 const ScopeOfWork = lazy(() => import("./pages/ScopeOfWork"));
 const SavedDeals = lazy(() => import("./pages/SavedDeals"));
 const Disclaimers = lazy(() => import("./pages/Disclaimers"));
-
 function Router() {
+  // make sure to consider if you need authentication for certain routes
   return (
     <SiteLayout>
       <Suspense fallback={<div className="container py-20 text-center text-muted-foreground">Loading...</div>}>
@@ -35,7 +36,8 @@ function Router() {
           <Route path={"/course"} component={Course} />
           <Route path={"/blog"} component={Blog} />
           <Route path={"/manual"} component={Manual} />
-          <Route path={"/listings"} component={Listings} />
+          <Route path={'/listings'} component={Listings} />
+          <Route path={'/pricing'} component={Pricing} />
           <Route path={"/disclaimers"} component={Disclaimers} />
           <Route path={"/404"} component={NotFound} />
           <Route component={NotFound} />

@@ -1,3 +1,4 @@
+import { useAuth } from "@/_core/hooks/useAuth";
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -8,7 +9,7 @@ import {
 } from 'lucide-react';
 
 const HERO_IMG = 'https://private-us-east-1.manuscdn.com/sessionFile/X2mbdSBH7FFfDzhrqRzFf2/sandbox/zKWPwM8kWvCMfUkxG9CWgB-img-1_1771972190000_na1fn_aGVyby1yZW5vdmF0aW9u.jpg?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvWDJtYmRTQkg3RkZmRHpocnFSekZmMi9zYW5kYm94L3pLV1B3TThrV3ZDTWZVa3hHOUNXZ0ItaW1nLTFfMTc3MTk3MjE5MDAwMF9uYTFmbl9hR1Z5YnkxeVpXNXZkbUYwYVc5dS5qcGc~eC1vc3MtcHJvY2Vzcz1pbWFnZS9yZXNpemUsd18xOTIwLGhfMTkyMC9mb3JtYXQsd2VicC9xdWFsaXR5LHFfODAiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3OTg3NjE2MDB9fX1dfQ__&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=KEIlWuGpETZNjtFQcGyQSbFkrMJ5~EWaW35l-VRByShs7StAk09cnnK-BLqv5oTDzyJ0LKRy7Zd3DLEXV4wqLlypP9HKmWDyq8uY9gGxpi7XDP17AtAIXV~h1g83-1zM30kDBoxW0CTpAdrdOad2d97ZUPKl5uDyJ1Z-ToGGBzU7mugkVlTkLt9pgi1Ht7eROx22Dktb5IN4BKUuJpG8V~XZccGbl7xJ3ZxK64zNDL0twxfv7fWCbw3LU3uEPXSpV8eC7GsvekkTYeqi-BzZ1FtmV0SauDZ7SOfuebFfwT3r0i7AWc7G8iB0GflTEBfreFJeYCTUPdTKYJI1T21gZg__';
-const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/MgvhsGurcOgbPgCR.png";
+const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/RUvFlwFYmtbQizbR.png";
 
 const FEATURES = [
   {
@@ -75,6 +76,10 @@ const STATS = [
 ];
 
 export default function Home() {
+  // The userAuth hooks provides authentication state
+  // To implement login/logout functionality, simply call logout() or redirect to getLoginUrl()
+  let { user, loading, error, isAuthenticated, logout } = useAuth();
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section - Freedom One branded */}

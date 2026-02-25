@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'wouter';
 import {
   Calculator, Landmark, Megaphone, FileText, GraduationCap,
-  Newspaper, BookOpen, Menu, X, Home, Building2, ClipboardList, Save, Shield
+  Newspaper, BookOpen, Menu, X, Home, Building2, ClipboardList, Save, Shield, CreditCard
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useCallback } from 'react';
@@ -20,6 +20,7 @@ const NAV_ITEMS = [
   { path: '/manual', label: 'Manual', icon: BookOpen },
   { path: '/listings', label: 'Listings', icon: Building2 },
   { path: '/saved-deals', label: 'Saved Deals', icon: Save },
+  { path: '/pricing', label: 'Pricing', icon: CreditCard },
 ] as const;
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
