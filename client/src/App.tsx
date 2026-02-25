@@ -20,6 +20,12 @@ import { lazy, Suspense } from "react";
 const ScopeOfWork = lazy(() => import("./pages/ScopeOfWork"));
 const SavedDeals = lazy(() => import("./pages/SavedDeals"));
 const Disclaimers = lazy(() => import("./pages/Disclaimers"));
+const Support = lazy(() => import("./pages/Support"));
+const Checklists = lazy(() => import("./pages/Checklists"));
+const CredibilityPackets = lazy(() => import("./pages/CredibilityPackets"));
+const StateGuide = lazy(() => import("./pages/StateGuide"));
+const Contractors = lazy(() => import("./pages/Contractors"));
+
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -38,6 +44,11 @@ function Router() {
           <Route path={"/manual"} component={Manual} />
           <Route path={'/listings'} component={Listings} />
           <Route path={'/pricing'} component={Pricing} />
+          <Route path={"/checklists"} component={Checklists} />
+          <Route path={"/credibility-packets"} component={CredibilityPackets} />
+          <Route path={"/state-guide"} component={StateGuide} />
+          <Route path={"/contractors"} component={Contractors} />
+          <Route path={"/support"} component={Support} />
           <Route path={"/disclaimers"} component={Disclaimers} />
           <Route path={"/404"} component={NotFound} />
           <Route component={NotFound} />

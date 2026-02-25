@@ -9,3 +9,13 @@
 - [x] Replace logo everywhere else (footer, hero, any other references)
 - [x] Lighten hero background overlay so the house photo and logo are clearly visible
 - [x] Lighten footer background so logo is clearly visible
+- [ ] Add success/cancel handling on Pricing page after Stripe checkout redirect
+- [ ] Add favicon with Freedom One logo
+- [ ] Update page title and meta tags
+- [ ] Create comprehensive setup and hosting guide document
+- [x] Add Support/Contact page with email, hours, FAQ
+- [x] Add Investor Checklists page with downloadable checklists for acquisitions, rehabs, rentals, sales
+- [x] Add Business Credibility Packets page with editable templates for agents, buyers, sellers, contractors
+- [x] Add State Reference Guide page with fees, taxes, procedures by state
+- [x] Add Contractor Lead System page with contractor search/management tools
+- [x] Register all new routes in App.tsx and update navigation
