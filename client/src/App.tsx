@@ -13,6 +13,7 @@ import Contracts from "./pages/Contracts";
 import Course from "./pages/Course";
 import Blog from "./pages/Blog";
 import Manual from "./pages/Manual";
+import Listings from "./pages/Listings";
 
 function Router() {
   return (
@@ -26,6 +27,7 @@ function Router() {
         <Route path={"/course"} component={Course} />
         <Route path={"/blog"} component={Blog} />
         <Route path={"/manual"} component={Manual} />
+        <Route path={"/listings"} component={Listings} />
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
       </Switch>

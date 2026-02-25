@@ -2,14 +2,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { GanttChart } from './GanttChart';
 import { formatCurrency } from '@/lib/calculations';
 import type { RehabPhase } from '@/lib/types';
-import type { MaterialTier, RoomScope } from '@/lib/scopeOfWork';
+import type { MaterialTier, RoomScope, RoomCondition, HomeDepotProduct } from '@/lib/scopeOfWork';
 import type { RehabMode } from '@/hooks/useFlipAnalyzer';
-import { Hammer, ChevronDown, ChevronRight, Package, Wrench } from 'lucide-react';
+import { Hammer, ChevronDown, ChevronRight, Package, Wrench, ExternalLink, FileText } from 'lucide-react';
 import { useState } from 'react';
 
 interface Props {
@@ -21,7 +21,8 @@ interface Props {
   setMaterialTier: (t: MaterialTier) => void;
   roomScopes: RoomScope[];
   toggleRoom: (id: string) => void;
-  scopeTotals: { totalMaterials: number; totalLabor: number; totalCost: number; roomBreakdowns: Array<{ roomId: string; roomName: string; materials: number; labor: number; total: number; items: Array<{ item: string; material: string; materialCost: number; laborCost: number; qty: number }> }> };
+  setRoomCondition: (id: string, condition: RoomCondition) => void;
+  scopeTotals: { totalMaterials: number; totalLabor: number; totalCost: number; roomBreakdowns: Array<{ roomId: string; roomName: string; materials: number; labor: number; total: number; items: Array<{ item: string; material: string; materialCost: number; laborCost: number; qty: number; product?: HomeDepotProduct }> }> };
   activePhases: RehabPhase[];
   rehabTotals: { totalMaterials: number; totalLabor: number; totalCost: number; totalDurationDays: number };
   regionalLabel: string;
@@ -33,11 +34,18 @@ const tierLabels: Record<MaterialTier, { label: string; desc: string; color: str
   luxury: { label: 'Luxury', desc: 'High-end premium finishes', color: 'bg-purple-100 text-purple-800 border-purple-300' },
 };
 
+const conditionLabels: Record<RoomCondition, { label: string; desc: string; color: string }> = {
+  none: { label: 'No Work', desc: 'Skip this area', color: 'text-muted-foreground' },
+  cosmetic: { label: 'Cosmetic', desc: 'Paint, fixtures, hardware', color: 'text-blue-600' },
+  moderate: { label: 'Moderate', desc: 'Cabinets, counters, flooring', color: 'text-amber-600' },
+  full: { label: 'Full Gut', desc: 'Complete tear-out & rebuild', color: 'text-red-600' },
+};
+
 export function RehabEstimator({
   rehabMode, setRehabMode,
   rehabLevel, setRehabLevel,
   materialTier, setMaterialTier,
-  roomScopes, toggleRoom,
+  roomScopes, toggleRoom, setRoomCondition,
   scopeTotals, activePhases, rehabTotals,
   regionalLabel,
 }: Props) {
@@ -128,10 +136,10 @@ export function RehabEstimator({
         {rehabMode === 'scope' && (
           <div className="space-y-2">
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Room-by-Room Scope of Work
+              Room-by-Room Condition Assessment & Scope of Work
             </Label>
             <p className="text-xs text-muted-foreground">
-              Costs adjusted for <span className="font-semibold">{regionalLabel}</span> market. Toggle rooms on/off and expand for material details.
+              Costs adjusted for <span className="font-semibold">{regionalLabel}</span> market. Set the condition for each area to determine what work is needed.
             </p>
 
             {roomScopes.map(room => {
@@ -139,25 +147,47 @@ export function RehabEstimator({
               const isExpanded = expandedRooms.has(room.id);
 
               return (
-                <Collapsible key={room.id} open={isExpanded && room.enabled}>
-                  <div className={`rounded-lg border transition-all ${room.enabled ? 'bg-card' : 'bg-muted/30 opacity-60'}`}>
+                <Collapsible key={room.id} open={isExpanded && room.condition !== 'none'}>
+                  <div className={`rounded-lg border transition-all ${room.condition !== 'none' ? 'bg-card' : 'bg-muted/30 opacity-60'}`}>
                     <div className="flex items-center gap-3 p-3">
-                      <Switch
-                        checked={room.enabled}
-                        onCheckedChange={() => toggleRoom(room.id)}
-                      />
+                      {/* Condition Selector */}
+                      <Select
+                        value={room.condition}
+                        onValueChange={(val: string) => setRoomCondition(room.id, val as RoomCondition)}
+                      >
+                        <SelectTrigger className="w-[130px] h-8 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {(Object.keys(conditionLabels) as RoomCondition[]).map(cond => (
+                            <SelectItem key={cond} value={cond}>
+                              <span className={`font-medium ${conditionLabels[cond].color}`}>
+                                {conditionLabels[cond].label}
+                              </span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
                       <CollapsibleTrigger
-                        onClick={() => room.enabled && toggleExpand(room.id)}
+                        onClick={() => room.condition !== 'none' && toggleExpand(room.id)}
                         className="flex items-center gap-2 flex-1 text-left"
-                        disabled={!room.enabled}
+                        disabled={room.condition === 'none'}
                       >
                         <span className="text-lg">{room.icon}</span>
-                        <span className="font-medium text-sm">{room.name}</span>
-                        {room.enabled && (
+                        <div className="flex-1">
+                          <span className="font-medium text-sm">{room.name}</span>
+                          {room.condition !== 'none' && (
+                            <span className={`ml-2 text-[10px] ${conditionLabels[room.condition].color}`}>
+                              ({conditionLabels[room.condition].desc})
+                            </span>
+                          )}
+                        </div>
+                        {room.condition !== 'none' && (
                           isExpanded ? <ChevronDown className="w-4 h-4 text-muted-foreground" /> : <ChevronRight className="w-4 h-4 text-muted-foreground" />
                         )}
                       </CollapsibleTrigger>
-                      {room.enabled && bd && (
+                      {room.condition !== 'none' && bd && (
                         <div className="flex items-center gap-3 text-xs tabular-nums">
                           <span className="flex items-center gap-1 text-muted-foreground">
                             <Package className="w-3 h-3" /> {formatCurrency(bd.materials)}
@@ -172,7 +202,14 @@ export function RehabEstimator({
 
                     <CollapsibleContent>
                       {bd && (
-                        <div className="px-3 pb-3">
+                        <div className="px-3 pb-3 space-y-3">
+                          {/* Work Description */}
+                          <div className="flex items-start gap-2 p-2 rounded bg-secondary/40 text-xs text-muted-foreground">
+                            <FileText className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                            <p>{room.workDescription}</p>
+                          </div>
+
+                          {/* Material Breakdown Table */}
                           <table className="w-full text-xs">
                             <thead>
                               <tr className="border-b border-border/50">
@@ -188,7 +225,20 @@ export function RehabEstimator({
                               {bd.items.map((item, i) => (
                                 <tr key={i} className="border-b border-border/20 hover:bg-secondary/30">
                                   <td className="py-1.5 font-medium">{item.item}</td>
-                                  <td className="py-1.5 text-muted-foreground max-w-[200px] truncate" title={item.material}>{item.material}</td>
+                                  <td className="py-1.5 max-w-[220px]">
+                                    <div className="truncate text-muted-foreground" title={item.material}>{item.material}</div>
+                                    {item.product && (
+                                      <a
+                                        href={item.product.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline mt-0.5"
+                                      >
+                                        <ExternalLink className="w-2.5 h-2.5" />
+                                        HD #{item.product.sku} — {item.product.price}
+                                      </a>
+                                    )}
+                                  </td>
                                   <td className="py-1.5 text-right tabular-nums">{item.qty}</td>
                                   <td className="py-1.5 text-right tabular-nums">{formatCurrency(item.materialCost)}</td>
                                   <td className="py-1.5 text-right tabular-nums">{formatCurrency(item.laborCost)}</td>

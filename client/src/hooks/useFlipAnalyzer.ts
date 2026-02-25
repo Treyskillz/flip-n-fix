@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
 import type { SubjectProperty, CompProperty, RehabPhase, FinancingDetails, ClosingCosts, HoldingCosts, ProfitAnalysis } from '@/lib/types';
-import type { MaterialTier, RoomScope } from '@/lib/scopeOfWork';
+import type { MaterialTier, RoomScope, RoomCondition, HomeDepotProduct } from '@/lib/scopeOfWork';
 import { getDefaultRoomScopes, calculateRoomCost } from '@/lib/scopeOfWork';
 import { getRegionalCostFactor, type RegionalCostFactor } from '@/lib/regionalCosts';
 import { buildRehabPhases, schedulePhases, getPresetForLevel, DEFAULT_FINANCING, DEFAULT_CLOSING, DEFAULT_HOLDING } from '@/lib/defaults';
@@ -75,13 +75,17 @@ export function useFlipAnalyzer() {
   const [roomScopes, setRoomScopes] = useState<RoomScope[]>(getDefaultRoomScopes);
 
   const toggleRoom = useCallback((roomId: string) => {
-    setRoomScopes(prev => prev.map(r => r.id === roomId ? { ...r, enabled: !r.enabled } : r));
+    setRoomScopes(prev => prev.map(r => r.id === roomId ? { ...r, enabled: !r.enabled, condition: !r.enabled ? 'moderate' : 'none' } : r));
+  }, []);
+
+  const setRoomCondition = useCallback((roomId: string, condition: RoomCondition) => {
+    setRoomScopes(prev => prev.map(r => r.id === roomId ? { ...r, condition, enabled: condition !== 'none' } : r));
   }, []);
 
   const scopeTotals = useMemo(() => {
     let totalMaterials = 0;
     let totalLabor = 0;
-    const roomBreakdowns: Array<{ roomId: string; roomName: string; materials: number; labor: number; total: number; items: Array<{ item: string; material: string; materialCost: number; laborCost: number; qty: number }> }> = [];
+    const roomBreakdowns: Array<{ roomId: string; roomName: string; materials: number; labor: number; total: number; items: Array<{ item: string; material: string; materialCost: number; laborCost: number; qty: number; product?: HomeDepotProduct }> }> = [];
 
     for (const room of roomScopes) {
       if (!room.enabled) continue;
@@ -205,7 +209,7 @@ export function useFlipAnalyzer() {
     rehabMode, setRehabMode,
     rehabLevel, setRehabLevel,
     presetPhases,
-    roomScopes, setRoomScopes, toggleRoom,
+    roomScopes, setRoomScopes, toggleRoom, setRoomCondition,
     scopeTotals, scopeGanttPhases,
     activePhases, rehabTotals,
     // Financing

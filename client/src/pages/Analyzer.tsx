@@ -3,6 +3,7 @@ import { CompManager } from '@/components/CompManager';
 import { RehabEstimator } from '@/components/RehabEstimator';
 import { FinancingSection } from '@/components/FinancingSection';
 import { ProfitSummary } from '@/components/ProfitSummary';
+import { InvestorReport } from '@/components/InvestorReport';
 import { useFlipAnalyzer } from '@/hooks/useFlipAnalyzer';
 import { Calculator } from 'lucide-react';
 
@@ -57,13 +58,27 @@ export default function Analyzer() {
               setMaterialTier={analyzer.setMaterialTier}
               roomScopes={analyzer.roomScopes}
               toggleRoom={analyzer.toggleRoom}
+              setRoomCondition={analyzer.setRoomCondition}
               scopeTotals={analyzer.scopeTotals}
               activePhases={analyzer.activePhases}
               rehabTotals={analyzer.rehabTotals}
               regionalLabel={analyzer.regionalFactor.label}
             />
 
-            {/* 4. Financing & Costs */}
+            {/* 4. Investor Presentation Report */}
+            <InvestorReport
+              property={analyzer.property}
+              profit={analyzer.profit}
+              financing={analyzer.financing}
+              closing={analyzer.closing}
+              holding={analyzer.holding}
+              effectiveArv={analyzer.effectiveArv}
+              rehabTotals={analyzer.rehabTotals}
+              materialTier={analyzer.materialTier}
+              targetROI={analyzer.targetROI}
+            />
+
+            {/* 5. Financing & Costs */}
             <FinancingSection
               useHardMoney={analyzer.useHardMoney}
               setUseHardMoney={analyzer.setUseHardMoney}
