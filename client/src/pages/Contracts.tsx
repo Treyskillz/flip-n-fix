@@ -45,8 +45,10 @@ export default function Contracts() {
             <p className="text-sm text-[oklch(0.35_0.05_80)]">
               These contract templates are provided for educational and informational purposes only. They are NOT legal advice. 
               Real estate laws vary by state and locality. You MUST have a licensed real estate attorney in your state review 
-              and customize any contract before use. Using these templates without legal review is at your own risk.
+              and customize any contract before use. Using these templates without legal review is at your own risk. 
+              Freedom One System of Real Estate Investing assumes no liability for any consequences arising from the use of these templates.
             </p>
+            <a href="/disclaimers" className="text-xs text-[oklch(0.48_0.20_18)] hover:underline font-medium mt-1 inline-block">Read full Legal Disclaimers →</a>
           </div>
         </div>
 

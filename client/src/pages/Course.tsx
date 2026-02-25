@@ -220,6 +220,29 @@ export default function Course() {
             )}
           </div>
         </div>
+
+        {/* Course Disclaimer */}
+        <div className="mt-8 p-4 bg-secondary/40 border border-border/50 rounded-lg">
+          <div className="flex items-start gap-3">
+            <BookOpen className="w-5 h-5 text-[oklch(0.48_0.20_18)] shrink-0 mt-0.5" />
+            <div className="text-xs text-muted-foreground leading-relaxed space-y-2">
+              <p>
+                <strong>Educational Disclaimer:</strong> This course is provided for educational and informational purposes only. 
+                The strategies, techniques, and information presented are based on general real estate investing principles and 
+                do not constitute professional financial, legal, or investment advice.
+              </p>
+              <p>
+                We do not guarantee any specific results, outcomes, or returns on investment. Your results will depend entirely 
+                on your own efforts, skills, market conditions, and many other factors beyond our control. We have no way of 
+                knowing whether you have implemented any strategies correctly.
+              </p>
+              <p>
+                Always consult with licensed professionals (attorney, CPA, financial advisor) before making investment decisions. 
+                <a href="/disclaimers" className="text-[oklch(0.48_0.20_18)] hover:underline font-medium">Read full Legal Disclaimers \u2192</a>
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

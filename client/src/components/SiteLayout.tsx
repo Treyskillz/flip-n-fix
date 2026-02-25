@@ -1,14 +1,17 @@
 import { Link, useLocation } from 'wouter';
 import {
   Calculator, Landmark, Megaphone, FileText, GraduationCap,
-  Newspaper, BookOpen, Menu, X, Home, Building2
+  Newspaper, BookOpen, Menu, X, Home, Building2, ClipboardList, Save, Shield
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useCallback } from 'react';
 
+const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/EpvHITEgiCtmIhPX.png";
+
 const NAV_ITEMS = [
   { path: '/', label: 'Home', icon: Home },
   { path: '/analyzer', label: 'Analyzer', icon: Calculator },
+  { path: '/scope-of-work', label: 'SOW Templates', icon: ClipboardList },
   { path: '/lenders', label: 'Lenders', icon: Landmark },
   { path: '/marketing', label: 'Marketing', icon: Megaphone },
   { path: '/contracts', label: 'Contracts', icon: FileText },
@@ -16,6 +19,7 @@ const NAV_ITEMS = [
   { path: '/blog', label: 'Blog', icon: Newspaper },
   { path: '/manual', label: 'Manual', icon: BookOpen },
   { path: '/listings', label: 'Listings', icon: Building2 },
+  { path: '/saved-deals', label: 'Saved Deals', icon: Save },
 ] as const;
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -26,15 +30,16 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Top Nav */}
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border/50">
+      {/* Top Nav - Freedom One branded */}
+      <header className="sticky top-0 z-50 bg-[oklch(0.15_0_0)]/98 backdrop-blur supports-[backdrop-filter]:bg-[oklch(0.15_0_0)]/95 border-b border-[oklch(0.3_0_0)]">
         <div className="container flex items-center h-14 gap-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 shrink-0 no-underline">
-            <div className="w-8 h-8 rounded-lg bg-[oklch(0.50_0.18_25)] flex items-center justify-center">
-              <Calculator className="w-4.5 h-4.5 text-white" />
+          <Link href="/" className="flex items-center gap-2.5 shrink-0 no-underline">
+            <img src={LOGO_URL} alt="Freedom One" className="w-8 h-8 object-contain" />
+            <div className="hidden sm:flex flex-col leading-none">
+              <span className="font-bold text-sm tracking-tight text-white">FREEDOM ONE</span>
+              <span className="text-[9px] tracking-widest text-[oklch(0.65_0_0)] uppercase">Real Estate Investing</span>
             </div>
-            <span className="font-bold text-base tracking-tight hidden sm:inline">FlipAnalyzer</span>
           </Link>
 
           {/* Desktop Nav */}
@@ -45,10 +50,10 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
               return (
                 <Link key={item.path} href={item.path}>
                   <button
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition-colors ${
+                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs transition-colors ${
                       isActive
-                        ? 'bg-primary/10 text-primary font-medium'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60'
+                        ? 'bg-[oklch(0.48_0.20_18)]/20 text-[oklch(0.65_0.18_18)] font-medium'
+                        : 'text-[oklch(0.6_0_0)] hover:text-white hover:bg-white/10'
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5" />
@@ -63,7 +68,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
           <Button
             variant="ghost"
             size="sm"
-            className="lg:hidden ml-auto"
+            className="lg:hidden ml-auto text-white hover:bg-white/10"
             onClick={() => setMobileOpen(!mobileOpen)}
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -72,7 +77,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
 
         {/* Mobile Nav */}
         {mobileOpen && (
-          <div className="lg:hidden border-t border-border/50 bg-background">
+          <div className="lg:hidden border-t border-[oklch(0.3_0_0)] bg-[oklch(0.15_0_0)]">
             <nav className="container py-2 space-y-0.5">
               {NAV_ITEMS.map(item => {
                 const Icon = item.icon;
@@ -82,8 +87,8 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
                     <button
                       className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition-colors ${
                         isActive
-                          ? 'bg-primary/10 text-primary font-medium'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60'
+                          ? 'bg-[oklch(0.48_0.20_18)]/20 text-[oklch(0.65_0.18_18)] font-medium'
+                          : 'text-[oklch(0.6_0_0)] hover:text-white hover:bg-white/10'
                       }`}
                     >
                       <Icon className="w-4 h-4" />
@@ -102,16 +107,19 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         {children}
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border/50 bg-secondary/30">
-        <div className="container py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded bg-[oklch(0.50_0.18_25)] flex items-center justify-center">
-              <Calculator className="w-3 h-3 text-white" />
-            </div>
-            <span>FlipAnalyzer &mdash; Real Estate Investment Platform</span>
+      {/* Footer - Freedom One branded */}
+      <footer className="border-t border-[oklch(0.3_0_0)] bg-[oklch(0.12_0_0)]">
+        <div className="container py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+          <div className="flex items-center gap-3">
+            <img src={LOGO_URL} alt="Freedom One" className="w-6 h-6 object-contain" />
+            <span className="text-[oklch(0.6_0_0)]">Freedom One System of Real Estate Investing</span>
           </div>
-          <p className="text-xs">For educational purposes. Not financial or legal advice. Consult professionals before investing.</p>
+          <div className="flex items-center gap-4">
+            <Link href="/disclaimers" className="text-xs text-[oklch(0.45_0_0)] hover:text-[oklch(0.65_0.18_18)] transition-colors flex items-center gap-1">
+              <Shield className="w-3 h-3" /> Legal Disclaimers
+            </Link>
+            <p className="text-xs text-[oklch(0.45_0_0)]">For educational purposes only. Not financial or legal advice. Consult professionals before investing.</p>
+          </div>
         </div>
       </footer>
     </div>
