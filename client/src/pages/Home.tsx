@@ -86,7 +86,7 @@ export default function Home() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
           <img src={HERO_IMG} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[oklch(0.08_0_0/0.95)] via-[oklch(0.08_0_0/0.85)] to-[oklch(0.08_0_0/0.55)]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[oklch(0.08_0_0/0.65)] via-[oklch(0.08_0_0/0.45)] to-[oklch(0.08_0_0/0.20)]" />
         </div>
         <div className="container relative py-20 lg:py-28">
           <div className="max-w-2xl">

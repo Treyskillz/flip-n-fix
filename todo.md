@@ -7,3 +7,5 @@
 - [x] Push database schema changes (stripeCustomerId, subscriptionPlan)
 - [x] Replace F1 shield icon in navbar with main Freedom One logo, make it readable and prominent
 - [x] Replace logo everywhere else (footer, hero, any other references)
+- [x] Lighten hero background overlay so the house photo and logo are clearly visible
+- [x] Lighten footer background so logo is clearly visible

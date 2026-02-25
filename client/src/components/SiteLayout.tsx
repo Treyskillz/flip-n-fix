@@ -110,16 +110,16 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       </main>
 
       {/* Footer - Freedom One branded */}
-      <footer className="border-t border-[oklch(0.3_0_0)] bg-[oklch(0.12_0_0)]">
+      <footer className="border-t border-[oklch(0.4_0_0)] bg-[oklch(0.25_0_0)]">
         <div className="container py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
           <div className="flex items-center gap-3">
             <img src={MAIN_LOGO_URL} alt="Freedom One" className="h-12 w-auto object-contain" />
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/disclaimers" className="text-xs text-[oklch(0.45_0_0)] hover:text-[oklch(0.65_0.18_18)] transition-colors flex items-center gap-1">
+            <Link href="/disclaimers" className="text-xs text-[oklch(0.65_0_0)] hover:text-[oklch(0.65_0.18_18)] transition-colors flex items-center gap-1">
               <Shield className="w-3 h-3" /> Legal Disclaimers
             </Link>
-            <p className="text-xs text-[oklch(0.45_0_0)]">For educational purposes only. Not financial or legal advice. Consult professionals before investing.</p>
+            <p className="text-xs text-[oklch(0.65_0_0)]">For educational purposes only. Not financial or legal advice. Consult professionals before investing.</p>
           </div>
         </div>
       </footer>
