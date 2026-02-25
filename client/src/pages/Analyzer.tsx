@@ -72,7 +72,7 @@ export default function Analyzer() {
                 <Calculator className="w-6 h-6" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold tracking-tight">Fix & Flip Analyzer</h1>
+                <h1 className="text-3xl font-bold tracking-tight">Freedom One Deal Analyzer</h1>
                 <p className="text-sm text-muted-foreground">Analyze any property for profitability in real-time</p>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,9 +9,29 @@ import {
   type RoomCondition,
 } from '@/lib/scopeOfWork';
 import {
+  SOW_TEMPLATES, SOW_ROOM_TYPES,
+  getTemplatesByRoom, getCostLevelLabel, formatCurrency,
+  type SOWTemplate,
+} from '@/lib/sowTemplates';
+import {
   ClipboardList, Download, ExternalLink, ChevronDown, ChevronUp,
-  Printer, DollarSign, Wrench, ShoppingCart
+  Printer, DollarSign, Wrench, ShoppingCart, X, Home as HomeIcon,
+  BedDouble, Bath, Ruler, ArrowLeft, Grid3X3, List, Search, Filter
 } from 'lucide-react';
+
+// ─── EXISTING LINE-ITEM ESTIMATOR COMPONENTS ───────────────────
+
+const ROOM_PHOTOS: Record<string, string> = {
+  kitchen: 'https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/XjptCWlDNzqbLcAP.jpg',
+  master_bath: 'https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/znMMrZzfhlGUiJip.jpg',
+  full_bath: 'https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/qchUwTpQIGFVloON.jpg',
+  half_bath: 'https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/QaBEfplLodnsScxp.jpg',
+  living_room: 'https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/HGwUrMfbxwBDiCPf.jpg',
+  bedroom: 'https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/SzvmqQjopyJPODmH.jpg',
+  landscaping: 'https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/TTVHZLiSqaVusTbA.jpg',
+  roof_gutter: 'https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/sHtCFAWYgjXHCgMN.webp',
+  garage: 'https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/jqqHWEsKXKxMEzCu.jpg',
+};
 
 const TIER_LABELS: Record<MaterialTier, string> = {
   rental: 'Rental Grade',
@@ -32,6 +52,13 @@ const CONDITION_LABELS: Record<RoomCondition, string> = {
   full: 'Full Gut',
 };
 
+const COST_LEVEL_COLORS: Record<number, string> = {
+  1: 'bg-emerald-100 text-emerald-700',
+  2: 'bg-blue-100 text-blue-700',
+  3: 'bg-amber-100 text-amber-700',
+  4: 'bg-purple-100 text-purple-700',
+};
+
 function shouldIncludeItem(itemLevel: 'cosmetic' | 'moderate' | 'full', roomCondition: RoomCondition): boolean {
   if (roomCondition === 'none') return false;
   if (roomCondition === 'full') return true;
@@ -41,6 +68,7 @@ function shouldIncludeItem(itemLevel: 'cosmetic' | 'moderate' | 'full', roomCond
 }
 
 function RoomTemplate({ room, tier }: { room: RoomScope; tier: MaterialTier }) {
+  const photoUrl = ROOM_PHOTOS[room.id];
   const [expanded, setExpanded] = useState(false);
   const [condition, setCondition] = useState<RoomCondition>('moderate');
 
@@ -104,7 +132,11 @@ function RoomTemplate({ room, tier }: { room: RoomScope; tier: MaterialTier }) {
         onClick={() => setExpanded(!expanded)}
       >
         <div className="flex items-center gap-3">
-          <span className="text-2xl">{room.icon}</span>
+          {photoUrl ? (
+            <img src={photoUrl} alt={room.name} className="w-16 h-12 rounded-md object-cover" />
+          ) : (
+            <span className="text-2xl">{room.icon}</span>
+          )}
           <div>
             <h3 className="font-bold text-base">{room.name}</h3>
             <p className="text-xs text-muted-foreground">{room.items.length} line items</p>
@@ -121,13 +153,11 @@ function RoomTemplate({ room, tier }: { room: RoomScope; tier: MaterialTier }) {
 
       {expanded && (
         <CardContent className="p-4 pt-0 border-t border-border/50">
-          {/* Work Description */}
           <div className="bg-secondary/40 rounded-lg p-3 mb-4">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Work Description</p>
             <p className="text-sm leading-relaxed">{room.workDescription}</p>
           </div>
 
-          {/* Controls */}
           <div className="flex flex-wrap items-center gap-3 mb-4">
             <div className="flex items-center gap-1.5">
               <span className="text-xs font-medium text-muted-foreground">Condition:</span>
@@ -152,7 +182,6 @@ function RoomTemplate({ room, tier }: { room: RoomScope; tier: MaterialTier }) {
             </div>
           </div>
 
-          {/* Cost Summary */}
           <div className="grid grid-cols-3 gap-3 mb-4">
             <div className="bg-[oklch(0.48_0.20_18)]/5 rounded-lg p-3 text-center">
               <ShoppingCart className="w-4 h-4 mx-auto mb-1 text-[oklch(0.48_0.20_18)]" />
@@ -171,7 +200,6 @@ function RoomTemplate({ room, tier }: { room: RoomScope; tier: MaterialTier }) {
             </div>
           </div>
 
-          {/* Line Items Table */}
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -231,7 +259,6 @@ function RoomTemplate({ room, tier }: { room: RoomScope; tier: MaterialTier }) {
             </table>
           </div>
 
-          {/* Disclaimer */}
           <p className="text-[10px] text-muted-foreground mt-3 italic">
             Costs are estimates based on national averages. Actual costs vary by market, contractor, and property condition. 
             Home Depot prices are subject to change. Always get multiple contractor bids before starting work.
@@ -242,9 +269,263 @@ function RoomTemplate({ room, tier }: { room: RoomScope; tier: MaterialTier }) {
   );
 }
 
+// ─── TEMPLATE DETAIL MODAL ────────────────────────────────────
+
+function TemplateDetailModal({ template, onClose }: { template: SOWTemplate; onClose: () => void }) {
+  const handlePrint = () => {
+    const printContent = `
+      <html><head><title>SOW - ${template.name}</title>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 40px; color: #1a1a1a; max-width: 800px; margin: 0 auto; }
+        h1 { font-size: 22px; border-bottom: 3px solid #C41E3A; padding-bottom: 8px; margin-bottom: 4px; }
+        .subtitle { color: #666; font-size: 13px; margin-bottom: 20px; }
+        .info-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0; }
+        .info-box { background: #f5f5f5; padding: 10px; border-radius: 4px; text-align: center; }
+        .info-box .label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+        .info-box .value { font-size: 16px; font-weight: bold; margin-top: 2px; }
+        .cost-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+        .cost-box { padding: 12px; border-radius: 4px; text-align: center; border: 1px solid #ddd; }
+        .cost-box.materials { background: #fef2f2; border-color: #fecaca; }
+        .cost-box.labor { background: #f0f9ff; border-color: #bae6fd; }
+        .cost-box.total { background: #f0fdf4; border-color: #bbf7d0; }
+        .cost-box .label { font-size: 10px; color: #666; text-transform: uppercase; }
+        .cost-box .value { font-size: 20px; font-weight: bold; }
+        h2 { font-size: 15px; color: #333; margin-top: 24px; border-bottom: 1px solid #eee; padding-bottom: 6px; }
+        .desc { color: #444; font-size: 13px; line-height: 1.7; margin: 10px 0; }
+        .materials-list { list-style: none; padding: 0; margin: 10px 0; }
+        .materials-list li { padding: 6px 0; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
+        .materials-list li:before { content: "✓ "; color: #C41E3A; font-weight: bold; }
+        .footer { margin-top: 30px; font-size: 11px; color: #888; border-top: 1px solid #ddd; padding-top: 10px; }
+      </style></head><body>
+      <h1>${template.name}</h1>
+      <p class="subtitle">${getCostLevelLabel(template.costLevel)} Level | ${template.layoutType} Layout | ${SOW_ROOM_TYPES.find(r => r.id === template.roomType)?.name || template.roomType}</p>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Property</div><div class="value">${template.propertyType}</div></div>
+        <div class="info-box"><div class="label">Beds</div><div class="value">${template.beds}</div></div>
+        <div class="info-box"><div class="label">Baths</div><div class="value">${template.baths}</div></div>
+        <div class="info-box"><div class="label">Sq Ft</div><div class="value">${template.sqft.toLocaleString()}</div></div>
+      </div>
+      <div class="cost-grid">
+        <div class="cost-box materials"><div class="label">Materials</div><div class="value">${formatCurrency(template.materialCost)}</div></div>
+        <div class="cost-box labor"><div class="label">Labor</div><div class="value">${formatCurrency(template.laborCost)}</div></div>
+        <div class="cost-box total"><div class="label">Total Cost</div><div class="value">${formatCurrency(template.totalCost)}</div></div>
+      </div>
+      <h2>Scope of Work</h2>
+      <p class="desc">${template.workDescription}</p>
+      <h2>Key Materials</h2>
+      <ul class="materials-list">
+        ${template.keyMaterials.map(m => `<li>${m}</li>`).join('')}
+      </ul>
+      <div class="footer">
+        <p><strong>Freedom One System of Real Estate Investing</strong></p>
+        <p>This scope of work is for estimation purposes only. Actual costs may vary based on market conditions, property condition, and contractor pricing. Always obtain multiple bids from licensed contractors.</p>
+      </div>
+      </body></html>
+    `;
+    const w = window.open('', '_blank');
+    if (w) {
+      w.document.write(printContent);
+      w.document.close();
+      w.print();
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div
+        className="relative bg-background rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header Image */}
+        <div className="relative h-56 sm:h-64">
+          <img src={template.photo} alt={template.name} className="w-full h-full object-cover rounded-t-xl" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent rounded-t-xl" />
+          <button
+            onClick={onClose}
+            className="absolute top-3 right-3 p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+          <div className="absolute bottom-4 left-5 right-5">
+            <div className="flex items-center gap-2 mb-2">
+              <Badge className={`text-xs ${COST_LEVEL_COLORS[template.costLevel]}`}>
+                {getCostLevelLabel(template.costLevel)}
+              </Badge>
+              <Badge variant="outline" className="text-xs bg-white/20 text-white border-white/30">
+                {template.layoutType}
+              </Badge>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold text-white">{template.name}</h2>
+          </div>
+        </div>
+
+        <div className="p-5 sm:p-6">
+          {/* Property Info */}
+          <div className="grid grid-cols-4 gap-3 mb-5">
+            <div className="bg-secondary/50 rounded-lg p-3 text-center">
+              <HomeIcon className="w-4 h-4 mx-auto mb-1 text-muted-foreground" />
+              <p className="text-xs font-bold">{template.propertyType}</p>
+              <p className="text-[10px] text-muted-foreground">Type</p>
+            </div>
+            <div className="bg-secondary/50 rounded-lg p-3 text-center">
+              <BedDouble className="w-4 h-4 mx-auto mb-1 text-muted-foreground" />
+              <p className="text-xs font-bold">{template.beds}</p>
+              <p className="text-[10px] text-muted-foreground">Beds</p>
+            </div>
+            <div className="bg-secondary/50 rounded-lg p-3 text-center">
+              <Bath className="w-4 h-4 mx-auto mb-1 text-muted-foreground" />
+              <p className="text-xs font-bold">{template.baths}</p>
+              <p className="text-[10px] text-muted-foreground">Baths</p>
+            </div>
+            <div className="bg-secondary/50 rounded-lg p-3 text-center">
+              <Ruler className="w-4 h-4 mx-auto mb-1 text-muted-foreground" />
+              <p className="text-xs font-bold">{template.sqft.toLocaleString()}</p>
+              <p className="text-[10px] text-muted-foreground">Sq Ft</p>
+            </div>
+          </div>
+
+          {/* Cost Breakdown */}
+          <div className="grid grid-cols-3 gap-3 mb-5">
+            <div className="bg-[oklch(0.48_0.20_18)]/8 rounded-lg p-3 text-center">
+              <ShoppingCart className="w-4 h-4 mx-auto mb-1 text-[oklch(0.48_0.20_18)]" />
+              <p className="text-lg font-bold">{formatCurrency(template.materialCost)}</p>
+              <p className="text-[10px] text-muted-foreground uppercase">Materials</p>
+            </div>
+            <div className="bg-blue-50 rounded-lg p-3 text-center">
+              <Wrench className="w-4 h-4 mx-auto mb-1 text-blue-600" />
+              <p className="text-lg font-bold">{formatCurrency(template.laborCost)}</p>
+              <p className="text-[10px] text-muted-foreground uppercase">Labor</p>
+            </div>
+            <div className="bg-emerald-50 rounded-lg p-3 text-center">
+              <DollarSign className="w-4 h-4 mx-auto mb-1 text-emerald-600" />
+              <p className="text-lg font-bold">{formatCurrency(template.totalCost)}</p>
+              <p className="text-[10px] text-muted-foreground uppercase">Total</p>
+            </div>
+          </div>
+
+          {/* Work Description */}
+          <div className="mb-5">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2">Scope of Work</h3>
+            <p className="text-sm leading-relaxed">{template.workDescription}</p>
+          </div>
+
+          {/* Key Materials */}
+          <div className="mb-5">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2">Key Materials</h3>
+            <div className="grid sm:grid-cols-2 gap-1.5">
+              {template.keyMaterials.map((mat, i) => (
+                <div key={i} className="flex items-center gap-2 text-sm">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[oklch(0.48_0.20_18)] shrink-0" />
+                  {mat}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-3 pt-3 border-t border-border/50">
+            <Button className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white" onClick={handlePrint}>
+              <Download className="w-4 h-4" /> Download SOW
+            </Button>
+            <Button variant="outline" className="gap-2" onClick={handlePrint}>
+              <Printer className="w-4 h-4" /> Print
+            </Button>
+          </div>
+        </div>
+
+        <div className="px-5 pb-4">
+          <p className="text-[10px] text-muted-foreground italic">
+            Costs are estimates based on national averages. Actual costs vary by market, contractor, and property condition. 
+            Always get multiple contractor bids before starting work.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── TEMPLATE CARD ────────────────────────────────────────────
+
+function TemplateCard({ template, onClick }: { template: SOWTemplate; onClick: () => void }) {
+  return (
+    <Card
+      className="border-border/60 overflow-hidden cursor-pointer hover:shadow-lg transition-all group hover:border-[oklch(0.48_0.20_18)]/30"
+      onClick={onClick}
+    >
+      <div className="relative h-40">
+        <img
+          src={template.photo}
+          alt={template.name}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <div className="absolute top-2 right-2">
+          <Badge className={`text-[10px] ${COST_LEVEL_COLORS[template.costLevel]}`}>
+            {getCostLevelLabel(template.costLevel)}
+          </Badge>
+        </div>
+        <div className="absolute bottom-2 left-3 right-3">
+          <p className="text-white font-bold text-sm leading-tight line-clamp-2">{template.name}</p>
+        </div>
+      </div>
+      <CardContent className="p-3">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1"><BedDouble className="w-3 h-3" /> {template.beds}</span>
+            <span className="flex items-center gap-1"><Bath className="w-3 h-3" /> {template.baths}</span>
+            <span className="flex items-center gap-1"><Ruler className="w-3 h-3" /> {template.sqft.toLocaleString()}</span>
+          </div>
+        </div>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs text-muted-foreground">{template.layoutType}</p>
+          </div>
+          <p className="text-base font-bold text-[oklch(0.48_0.20_18)]">{formatCurrency(template.totalCost)}</p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ─── MAIN PAGE COMPONENT ──────────────────────────────────────
+
 export default function ScopeOfWork() {
   const rooms = getDefaultRoomScopes();
   const [tier, setTier] = useState<MaterialTier>('standard');
+  const [activeTab, setActiveTab] = useState<'library' | 'estimator'>('library');
+  const [selectedRoom, setSelectedRoom] = useState<string>('all');
+  const [selectedCostLevel, setSelectedCostLevel] = useState<number>(0); // 0 = all
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTemplate, setSelectedTemplate] = useState<SOWTemplate | null>(null);
+
+  const filteredTemplates = useMemo(() => {
+    let filtered = SOW_TEMPLATES;
+    if (selectedRoom !== 'all') {
+      filtered = filtered.filter(t => t.roomType === selectedRoom);
+    }
+    if (selectedCostLevel > 0) {
+      filtered = filtered.filter(t => t.costLevel === selectedCostLevel);
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(t =>
+        t.name.toLowerCase().includes(q) ||
+        t.workDescription.toLowerCase().includes(q) ||
+        t.layoutType.toLowerCase().includes(q) ||
+        t.keyMaterials.some(m => m.toLowerCase().includes(q))
+      );
+    }
+    return filtered;
+  }, [selectedRoom, selectedCostLevel, searchQuery]);
+
+  const roomCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: SOW_TEMPLATES.length };
+    SOW_ROOM_TYPES.forEach(room => {
+      counts[room.id] = getTemplatesByRoom(room.id).length;
+    });
+    return counts;
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -257,50 +538,235 @@ export default function ScopeOfWork() {
             </div>
             <div>
               <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Scope of Work Templates</h1>
-              <p className="text-sm text-[oklch(0.55_0_0)]">Professional SOW templates for every room — 14 categories, 3 material tiers</p>
+              <p className="text-sm text-[oklch(0.55_0_0)]">
+                {SOW_TEMPLATES.length}+ professional templates across {SOW_ROOM_TYPES.length} room categories
+              </p>
             </div>
           </div>
           <p className="text-[oklch(0.6_0_0)] text-sm max-w-2xl mt-3 leading-relaxed">
-            Each template includes a detailed work description, line-by-line material and labor breakdowns, 
-            Home Depot product links with SKU numbers, and printable SOW documents. Select a material tier 
-            and condition level to customize costs for your project.
+            Browse our comprehensive library of renovation scope of work templates with photos, property details, 
+            cost breakdowns, and downloadable SOW documents. Each template includes material costs, labor estimates, 
+            and detailed work descriptions. Use the Line-Item Estimator for room-by-room calculations with Home Depot SKU links.
           </p>
+
+          {/* Stats */}
+          <div className="flex flex-wrap gap-6 mt-5">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-[oklch(0.48_0.20_18)]/20 flex items-center justify-center">
+                <ClipboardList className="w-4 h-4 text-[oklch(0.65_0.18_18)]" />
+              </div>
+              <div>
+                <p className="text-lg font-bold">{SOW_TEMPLATES.length}</p>
+                <p className="text-[10px] text-[oklch(0.5_0_0)]">Templates</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-[oklch(0.48_0.20_18)]/20 flex items-center justify-center">
+                <Grid3X3 className="w-4 h-4 text-[oklch(0.65_0.18_18)]" />
+              </div>
+              <div>
+                <p className="text-lg font-bold">{SOW_ROOM_TYPES.length}</p>
+                <p className="text-[10px] text-[oklch(0.5_0_0)]">Room Types</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-[oklch(0.48_0.20_18)]/20 flex items-center justify-center">
+                <DollarSign className="w-4 h-4 text-[oklch(0.65_0.18_18)]" />
+              </div>
+              <div>
+                <p className="text-lg font-bold">4</p>
+                <p className="text-[10px] text-[oklch(0.5_0_0)]">Cost Levels</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-[oklch(0.48_0.20_18)]/20 flex items-center justify-center">
+                <Download className="w-4 h-4 text-[oklch(0.65_0.18_18)]" />
+              </div>
+              <div>
+                <p className="text-lg font-bold">Free</p>
+                <p className="text-[10px] text-[oklch(0.5_0_0)]">Downloads</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Tier Selector */}
-      <section className="border-b border-border/50 bg-secondary/20">
-        <div className="container py-4 flex flex-wrap items-center gap-3">
-          <span className="text-sm font-medium">Material Tier:</span>
-          {(['rental', 'standard', 'luxury'] as MaterialTier[]).map(t => (
-            <button
-              key={t}
-              onClick={() => setTier(t)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                tier === t
-                  ? 'bg-[oklch(0.48_0.20_18)] text-white shadow-sm'
-                  : 'bg-background border border-border text-muted-foreground hover:border-[oklch(0.48_0.20_18)]/30'
-              }`}
-            >
-              {TIER_LABELS[t]}
-            </button>
-          ))}
-          <Badge variant="outline" className={`ml-2 ${TIER_COLORS[tier]}`}>
-            {tier === 'rental' ? 'Builder-grade materials for investment properties' :
-             tier === 'standard' ? 'Mid-range popular materials for owner-occupied homes' :
-             'High-end finishes for luxury flips and premium markets'}
-          </Badge>
+      {/* Tab Selector */}
+      <section className="border-b border-border/50 bg-secondary/20 sticky top-0 z-30">
+        <div className="container py-0 flex items-center">
+          <button
+            onClick={() => setActiveTab('library')}
+            className={`px-5 py-3.5 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === 'library'
+                ? 'border-[oklch(0.48_0.20_18)] text-[oklch(0.48_0.20_18)]'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <Grid3X3 className="w-4 h-4 inline-block mr-1.5 -mt-0.5" />
+            Template Library ({SOW_TEMPLATES.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('estimator')}
+            className={`px-5 py-3.5 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === 'estimator'
+                ? 'border-[oklch(0.48_0.20_18)] text-[oklch(0.48_0.20_18)]'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <List className="w-4 h-4 inline-block mr-1.5 -mt-0.5" />
+            Line-Item Estimator (14 Rooms)
+          </button>
         </div>
       </section>
 
-      {/* Room Templates */}
-      <section className="container py-8">
-        <div className="space-y-3">
-          {rooms.map(room => (
-            <RoomTemplate key={room.id} room={room} tier={tier} />
-          ))}
-        </div>
-      </section>
+      {/* ─── TEMPLATE LIBRARY TAB ──────────────────────────────── */}
+      {activeTab === 'library' && (
+        <>
+          {/* Filters */}
+          <section className="border-b border-border/30 bg-background">
+            <div className="container py-4">
+              {/* Search */}
+              <div className="relative mb-4">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Search templates by name, layout, materials..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[oklch(0.48_0.20_18)]/30 focus:border-[oklch(0.48_0.20_18)]"
+                />
+                {searchQuery && (
+                  <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <X className="w-4 h-4 text-muted-foreground hover:text-foreground" />
+                  </button>
+                )}
+              </div>
+
+              {/* Room Type Filter */}
+              <div className="flex flex-wrap gap-2 mb-3">
+                <button
+                  onClick={() => setSelectedRoom('all')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    selectedRoom === 'all'
+                      ? 'bg-[oklch(0.48_0.20_18)] text-white'
+                      : 'bg-secondary text-muted-foreground hover:bg-secondary/80'
+                  }`}
+                >
+                  All Rooms ({roomCounts.all})
+                </button>
+                {SOW_ROOM_TYPES.map(room => (
+                  <button
+                    key={room.id}
+                    onClick={() => setSelectedRoom(room.id)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      selectedRoom === room.id
+                        ? 'bg-[oklch(0.48_0.20_18)] text-white'
+                        : 'bg-secondary text-muted-foreground hover:bg-secondary/80'
+                    }`}
+                  >
+                    {room.icon} {room.name} ({roomCounts[room.id]})
+                  </button>
+                ))}
+              </div>
+
+              {/* Cost Level Filter */}
+              <div className="flex flex-wrap items-center gap-2">
+                <Filter className="w-3.5 h-3.5 text-muted-foreground" />
+                <span className="text-xs text-muted-foreground mr-1">Cost Level:</span>
+                <button
+                  onClick={() => setSelectedCostLevel(0)}
+                  className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
+                    selectedCostLevel === 0
+                      ? 'bg-[oklch(0.15_0_0)] text-white'
+                      : 'bg-secondary text-muted-foreground hover:bg-secondary/80'
+                  }`}
+                >
+                  All
+                </button>
+                {[1, 2, 3, 4].map(level => (
+                  <button
+                    key={level}
+                    onClick={() => setSelectedCostLevel(level)}
+                    className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
+                      selectedCostLevel === level
+                        ? COST_LEVEL_COLORS[level]
+                        : 'bg-secondary text-muted-foreground hover:bg-secondary/80'
+                    }`}
+                  >
+                    {getCostLevelLabel(level)}
+                  </button>
+                ))}
+                <span className="text-xs text-muted-foreground ml-2">
+                  Showing {filteredTemplates.length} of {SOW_TEMPLATES.length} templates
+                </span>
+              </div>
+            </div>
+          </section>
+
+          {/* Template Grid */}
+          <section className="container py-6">
+            {filteredTemplates.length === 0 ? (
+              <div className="text-center py-16">
+                <ClipboardList className="w-12 h-12 mx-auto text-muted-foreground/40 mb-3" />
+                <p className="text-lg font-medium text-muted-foreground">No templates match your filters</p>
+                <p className="text-sm text-muted-foreground/70 mt-1">Try adjusting your search or filter criteria</p>
+                <Button variant="outline" className="mt-4" onClick={() => { setSelectedRoom('all'); setSelectedCostLevel(0); setSearchQuery(''); }}>
+                  Clear Filters
+                </Button>
+              </div>
+            ) : (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {filteredTemplates.map(template => (
+                  <TemplateCard
+                    key={template.id}
+                    template={template}
+                    onClick={() => setSelectedTemplate(template)}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+        </>
+      )}
+
+      {/* ─── LINE-ITEM ESTIMATOR TAB ───────────────────────────── */}
+      {activeTab === 'estimator' && (
+        <>
+          {/* Tier Selector */}
+          <section className="border-b border-border/50 bg-secondary/20">
+            <div className="container py-4 flex flex-wrap items-center gap-3">
+              <span className="text-sm font-medium">Material Tier:</span>
+              {(['rental', 'standard', 'luxury'] as MaterialTier[]).map(t => (
+                <button
+                  key={t}
+                  onClick={() => setTier(t)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    tier === t
+                      ? 'bg-[oklch(0.48_0.20_18)] text-white shadow-sm'
+                      : 'bg-background border border-border text-muted-foreground hover:border-[oklch(0.48_0.20_18)]/30'
+                  }`}
+                >
+                  {TIER_LABELS[t]}
+                </button>
+              ))}
+              <Badge variant="outline" className={`ml-2 ${TIER_COLORS[tier]}`}>
+                {tier === 'rental' ? 'Builder-grade materials for investment properties' :
+                 tier === 'standard' ? 'Mid-range popular materials for owner-occupied homes' :
+                 'High-end finishes for luxury flips and premium markets'}
+              </Badge>
+            </div>
+          </section>
+
+          {/* Room Templates */}
+          <section className="container py-8">
+            <div className="space-y-3">
+              {rooms.map(room => (
+                <RoomTemplate key={room.id} room={room} tier={tier} />
+              ))}
+            </div>
+          </section>
+        </>
+      )}
 
       {/* Disclaimer */}
       <section className="bg-secondary/30 border-t border-border/50">
@@ -316,6 +782,14 @@ export default function ScopeOfWork() {
           </p>
         </div>
       </section>
+
+      {/* Template Detail Modal */}
+      {selectedTemplate && (
+        <TemplateDetailModal
+          template={selectedTemplate}
+          onClose={() => setSelectedTemplate(null)}
+        />
+      )}
     </div>
   );
 }

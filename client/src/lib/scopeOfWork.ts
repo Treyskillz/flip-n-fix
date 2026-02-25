@@ -45,7 +45,7 @@ export interface RoomScope {
   enabled: boolean;
   condition: RoomCondition;
   items: MaterialLineItem[];
-  workDescription: string; // FortuneBuilders-style narrative description
+  workDescription: string; // narrative description of work to be performed
 }
 
 // Condition multipliers: what % of items to include

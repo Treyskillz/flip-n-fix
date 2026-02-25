@@ -9,13 +9,24 @@
 - [x] Replace logo everywhere else (footer, hero, any other references)
 - [x] Lighten hero background overlay so the house photo and logo are clearly visible
 - [x] Lighten footer background so logo is clearly visible
-- [ ] Add success/cancel handling on Pricing page after Stripe checkout redirect
+- [x] Add success/cancel handling on Pricing page after Stripe checkout redirect (already built in)
 - [ ] Add favicon with Freedom One logo
 - [ ] Update page title and meta tags
-- [ ] Create comprehensive setup and hosting guide document
+- [x] Create comprehensive setup and hosting guide document
 - [x] Add Support/Contact page with email, hours, FAQ
 - [x] Add Investor Checklists page with downloadable checklists for acquisitions, rehabs, rentals, sales
 - [x] Add Business Credibility Packets page with editable templates for agents, buyers, sellers, contractors
 - [x] Add State Reference Guide page with fees, taxes, procedures by state
 - [x] Add Contractor Lead System page with contractor search/management tools
 - [x] Register all new routes in App.tsx and update navigation
+- [x] Add room/area photos to SOW templates like FortuneBuilders
+- [x] Add room photos to SOW templates like FortuneBuilders
+- [ ] Fill in all missing SKU numbers in SOW
+- [x] Make marketing letters full complete copy-paste documents (already full)
+- [x] Make contracts full complete copy-paste documents (11 total contracts now)
+- [x] Add 6 contractor hiring documents (W-9, COI, Lien Waiver, Agreement, Change Order, SOW Agreement)
+- [x] Expand SOW templates to 104 templates across 10 room categories with photos, cost breakdowns, and downloadable SOWs
+- [x] Add Template Library gallery view with filtering by room type, cost level, and search
+- [x] Add template detail modal with property info, cost breakdown, scope of work, and key materials
+- [x] Add Download SOW and Print functionality for each template
+- [x] Maintain Line-Item Estimator with Home Depot SKU links as separate tab
