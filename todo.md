@@ -5,3 +5,5 @@
 - [x] Build Pricing page with 4-tier subscription model
 - [x] Add subscription tRPC routes and feature gating
 - [x] Push database schema changes (stripeCustomerId, subscriptionPlan)
+- [x] Replace F1 shield icon in navbar with main Freedom One logo, make it readable and prominent
+- [x] Replace logo everywhere else (footer, hero, any other references)

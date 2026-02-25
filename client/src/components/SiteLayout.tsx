@@ -6,7 +6,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { useState, useCallback } from 'react';
 
-const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/EpvHITEgiCtmIhPX.png";
+// Main Freedom One logo (shield + red text, transparent background)
+const MAIN_LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/RUvFlwFYmtbQizbR.png";
 
 const NAV_ITEMS = [
   { path: '/', label: 'Home', icon: Home },
@@ -33,14 +34,14 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
     <div className="min-h-screen bg-background flex flex-col">
       {/* Top Nav - Freedom One branded */}
       <header className="sticky top-0 z-50 bg-[oklch(0.15_0_0)]/98 backdrop-blur supports-[backdrop-filter]:bg-[oklch(0.15_0_0)]/95 border-b border-[oklch(0.3_0_0)]">
-        <div className="container flex items-center h-14 gap-4">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 shrink-0 no-underline">
-            <img src={LOGO_URL} alt="Freedom One" className="w-8 h-8 object-contain" />
-            <div className="hidden sm:flex flex-col leading-none">
-              <span className="font-bold text-sm tracking-tight text-white">FREEDOM ONE</span>
-              <span className="text-[9px] tracking-widest text-[oklch(0.65_0_0)] uppercase">Real Estate Investing</span>
-            </div>
+        <div className="container flex items-center h-20 gap-4">
+          {/* Main Logo */}
+          <Link href="/" className="shrink-0 no-underline">
+            <img
+              src={MAIN_LOGO_URL}
+              alt="Freedom One - System of Real Estate Investing"
+              className="h-16 w-auto object-contain"
+            />
           </Link>
 
           {/* Desktop Nav */}
@@ -112,8 +113,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <footer className="border-t border-[oklch(0.3_0_0)] bg-[oklch(0.12_0_0)]">
         <div className="container py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
           <div className="flex items-center gap-3">
-            <img src={LOGO_URL} alt="Freedom One" className="w-6 h-6 object-contain" />
-            <span className="text-[oklch(0.6_0_0)]">Freedom One System of Real Estate Investing</span>
+            <img src={MAIN_LOGO_URL} alt="Freedom One" className="h-12 w-auto object-contain" />
           </div>
           <div className="flex items-center gap-4">
             <Link href="/disclaimers" className="text-xs text-[oklch(0.45_0_0)] hover:text-[oklch(0.65_0.18_18)] transition-colors flex items-center gap-1">

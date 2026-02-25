@@ -94,7 +94,7 @@ export default function Home() {
               <TrendingUp className="w-3.5 h-3.5" />
               <span>Real Estate Investment System</span>
             </div>
-            <img src={LOGO_URL} alt="Freedom One" className="h-14 lg:h-18 object-contain mb-6" />
+            <img src={LOGO_URL} alt="Freedom One" className="h-20 lg:h-28 object-contain mb-6" />
             <h1 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-white tracking-tight leading-[1.1] mb-5">
               Analyze Deals. Estimate Rehabs.<br />
               <span className="text-[oklch(0.70_0.18_18)]">Maximize Profit.</span>
