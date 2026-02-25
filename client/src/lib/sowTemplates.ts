@@ -949,3 +949,22 @@ export function getCostLevelLabel(level: number): string {
 export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
 }
+
+/**
+ * Apply regional cost adjustment to a SOW template.
+ * Returns a new template with adjusted costs.
+ */
+export function applyRegionalToTemplate(
+  template: SOWTemplate,
+  materialsFactor: number,
+  laborFactor: number
+): SOWTemplate {
+  const adjustedMaterial = Math.round(template.materialCost * materialsFactor);
+  const adjustedLabor = Math.round(template.laborCost * laborFactor);
+  return {
+    ...template,
+    materialCost: adjustedMaterial,
+    laborCost: adjustedLabor,
+    totalCost: adjustedMaterial + adjustedLabor,
+  };
+}

@@ -30,3 +30,8 @@
 - [x] Add template detail modal with property info, cost breakdown, scope of work, and key materials
 - [x] Add Download SOW and Print functionality for each template
 - [x] Maintain Line-Item Estimator with Home Depot SKU links as separate tab
+- [x] Build regional pricing data module with 50+ metro market cost multipliers
+- [x] Add metro market selector to SOW Templates page (both Library and Estimator tabs)
+- [x] Apply regional cost adjustments to template material and labor costs
+- [x] Persist user's selected market in localStorage for convenience
+- [x] Show regional adjustment indicator on template cards and detail modal

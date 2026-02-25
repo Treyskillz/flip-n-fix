@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,13 +11,182 @@ import {
 import {
   SOW_TEMPLATES, SOW_ROOM_TYPES,
   getTemplatesByRoom, getCostLevelLabel, formatCurrency,
+  applyRegionalToTemplate,
   type SOWTemplate,
 } from '@/lib/sowTemplates';
 import {
+  METRO_COST_INDEX, STATE_COST_INDEX,
+  type RegionalCostFactor,
+} from '@/lib/regionalCosts';
+import {
   ClipboardList, Download, ExternalLink, ChevronDown, ChevronUp,
   Printer, DollarSign, Wrench, ShoppingCart, X, Home as HomeIcon,
-  BedDouble, Bath, Ruler, ArrowLeft, Grid3X3, List, Search, Filter
+  BedDouble, Bath, Ruler, Grid3X3, List, Search, Filter,
+  MapPin, TrendingUp, TrendingDown, Minus, Globe
 } from 'lucide-react';
+
+// ─── REGIONAL MARKET SELECTOR ─────────────────────────────────
+
+const STORAGE_KEY = 'sow-selected-market';
+
+interface MarketSelection {
+  key: string;
+  label: string;
+  materialsFactor: number;
+  laborFactor: number;
+}
+
+// Build sorted list of all available markets for the dropdown
+const ALL_MARKETS: MarketSelection[] = (() => {
+  const markets: MarketSelection[] = [
+    { key: 'national', label: 'National Average', materialsFactor: 1.0, laborFactor: 1.0 },
+  ];
+  // Add metro markets
+  Object.entries(METRO_COST_INDEX).forEach(([key, val]) => {
+    markets.push({ key: `metro:${key}`, label: val.label, materialsFactor: val.materialsFactor, laborFactor: val.laborFactor });
+  });
+  // Add state-level markets (for states without a metro entry)
+  Object.entries(STATE_COST_INDEX).forEach(([stateCode, val]) => {
+    markets.push({ key: `state:${stateCode}`, label: `${val.label} (State Avg)`, materialsFactor: val.materialsFactor, laborFactor: val.laborFactor });
+  });
+  // Sort alphabetically (national first, then metros, then states)
+  return [markets[0], ...markets.slice(1).sort((a, b) => a.label.localeCompare(b.label))];
+})();
+
+function loadSavedMarket(): MarketSelection {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      const found = ALL_MARKETS.find(m => m.key === parsed.key);
+      if (found) return found;
+    }
+  } catch { /* ignore */ }
+  return ALL_MARKETS[0]; // National Average
+}
+
+function getAdjustmentPercent(factor: number): number {
+  return Math.round((factor - 1) * 100);
+}
+
+function AdjustmentBadge({ factor, label }: { factor: number; label: string }) {
+  const pct = getAdjustmentPercent(factor);
+  if (pct === 0) return (
+    <span className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground">
+      <Minus className="w-3 h-3" /> {label} avg
+    </span>
+  );
+  const isUp = pct > 0;
+  return (
+    <span className={`inline-flex items-center gap-0.5 text-[10px] font-medium ${isUp ? 'text-amber-600' : 'text-emerald-600'}`}>
+      {isUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+      {isUp ? '+' : ''}{pct}% {label}
+    </span>
+  );
+}
+
+function MarketSelector({ market, onSelect }: { market: MarketSelection; onSelect: (m: MarketSelection) => void }) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
+
+  const filtered = useMemo(() => {
+    if (!search.trim()) return ALL_MARKETS;
+    const q = search.toLowerCase();
+    return ALL_MARKETS.filter(m => m.label.toLowerCase().includes(q));
+  }, [search]);
+
+  const handleSelect = useCallback((m: MarketSelection) => {
+    onSelect(m);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ key: m.key }));
+    setOpen(false);
+    setSearch('');
+  }, [onSelect]);
+
+  const isNational = market.key === 'national';
+  const combinedFactor = ((market.materialsFactor + market.laborFactor) / 2);
+  const combinedPct = getAdjustmentPercent(combinedFactor);
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-background hover:border-[oklch(0.48_0.20_18)]/40 transition-colors text-sm"
+      >
+        <MapPin className="w-4 h-4 text-[oklch(0.48_0.20_18)]" />
+        <span className="font-medium">{market.label}</span>
+        {!isNational && (
+          <Badge variant="outline" className={`text-[10px] ml-1 ${combinedPct > 0 ? 'text-amber-600 border-amber-300' : combinedPct < 0 ? 'text-emerald-600 border-emerald-300' : 'text-muted-foreground'}`}>
+            {combinedPct > 0 ? '+' : ''}{combinedPct}%
+          </Badge>
+        )}
+        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => { setOpen(false); setSearch(''); }} />
+          <div className="absolute top-full left-0 mt-1 w-80 max-h-80 bg-background border border-border rounded-lg shadow-xl z-50 overflow-hidden">
+            <div className="p-2 border-b border-border/50">
+              <div className="relative">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Search markets..."
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  className="w-full pl-8 pr-3 py-2 text-sm rounded-md border border-border bg-secondary/30 focus:outline-none focus:ring-1 focus:ring-[oklch(0.48_0.20_18)]/30"
+                  autoFocus
+                />
+              </div>
+            </div>
+            <div className="overflow-y-auto max-h-60">
+              {filtered.map(m => {
+                const isSelected = m.key === market.key;
+                const mPct = getAdjustmentPercent((m.materialsFactor + m.laborFactor) / 2);
+                return (
+                  <button
+                    key={m.key}
+                    onClick={() => handleSelect(m)}
+                    className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between hover:bg-secondary/50 transition-colors ${isSelected ? 'bg-[oklch(0.48_0.20_18)]/5 font-medium' : ''}`}
+                  >
+                    <span className="flex items-center gap-2">
+                      {m.key === 'national' ? <Globe className="w-3.5 h-3.5 text-muted-foreground" /> : <MapPin className="w-3.5 h-3.5 text-muted-foreground" />}
+                      {m.label}
+                    </span>
+                    {m.key !== 'national' && (
+                      <span className={`text-[10px] font-medium ${mPct > 0 ? 'text-amber-600' : mPct < 0 ? 'text-emerald-600' : 'text-muted-foreground'}`}>
+                        {mPct > 0 ? '+' : ''}{mPct}%
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+              {filtered.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-4">No markets found</p>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ─── REGIONAL INDICATOR BAR ───────────────────────────────────
+
+function RegionalIndicatorBar({ market }: { market: MarketSelection }) {
+  if (market.key === 'national') return null;
+  return (
+    <div className="flex flex-wrap items-center gap-3 px-3 py-2 rounded-lg bg-[oklch(0.48_0.20_18)]/5 border border-[oklch(0.48_0.20_18)]/15">
+      <MapPin className="w-3.5 h-3.5 text-[oklch(0.48_0.20_18)]" />
+      <span className="text-xs font-medium">{market.label}</span>
+      <span className="text-[10px] text-muted-foreground">|</span>
+      <AdjustmentBadge factor={market.materialsFactor} label="materials" />
+      <span className="text-[10px] text-muted-foreground">|</span>
+      <AdjustmentBadge factor={market.laborFactor} label="labor" />
+    </div>
+  );
+}
 
 // ─── EXISTING LINE-ITEM ESTIMATOR COMPONENTS ───────────────────
 
@@ -67,7 +236,7 @@ function shouldIncludeItem(itemLevel: 'cosmetic' | 'moderate' | 'full', roomCond
   return false;
 }
 
-function RoomTemplate({ room, tier }: { room: RoomScope; tier: MaterialTier }) {
+function RoomTemplate({ room, tier, market }: { room: RoomScope; tier: MaterialTier; market: MarketSelection }) {
   const photoUrl = ROOM_PHOTOS[room.id];
   const [expanded, setExpanded] = useState(false);
   const [condition, setCondition] = useState<RoomCondition>('moderate');
@@ -76,12 +245,15 @@ function RoomTemplate({ room, tier }: { room: RoomScope; tier: MaterialTier }) {
 
   const totalMaterial = activeItems.reduce((sum, item) => {
     const cost = tier === 'rental' ? item.rentalCost : tier === 'standard' ? item.standardCost : item.luxuryCost;
-    return sum + cost * item.quantity;
+    return sum + Math.round(cost * item.quantity * market.materialsFactor);
   }, 0);
 
-  const totalLabor = activeItems.reduce((sum, item) => sum + item.laborPerUnit * item.quantity, 0);
+  const totalLabor = activeItems.reduce((sum, item) => {
+    return sum + Math.round(item.laborPerUnit * item.quantity * market.laborFactor);
+  }, 0);
 
   const handlePrint = () => {
+    const regionNote = market.key !== 'national' ? `<p><strong>Market:</strong> ${market.label} (Materials ${getAdjustmentPercent(market.materialsFactor) >= 0 ? '+' : ''}${getAdjustmentPercent(market.materialsFactor)}%, Labor ${getAdjustmentPercent(market.laborFactor) >= 0 ? '+' : ''}${getAdjustmentPercent(market.laborFactor)}%)</p>` : '';
     const printContent = `
       <html><head><title>SOW - ${room.name}</title>
       <style>
@@ -97,6 +269,7 @@ function RoomTemplate({ room, tier }: { room: RoomScope; tier: MaterialTier }) {
       </style></head><body>
       <h1>Scope of Work: ${room.name}</h1>
       <p><strong>Tier:</strong> ${TIER_LABELS[tier]} | <strong>Condition:</strong> ${CONDITION_LABELS[condition]}</p>
+      ${regionNote}
       <h2>Work Description</h2>
       <p class="desc">${room.workDescription}</p>
       <h2>Material & Labor Breakdown</h2>
@@ -105,8 +278,8 @@ function RoomTemplate({ room, tier }: { room: RoomScope; tier: MaterialTier }) {
         ${activeItems.map(item => {
           const cost = tier === 'rental' ? item.rentalCost : tier === 'standard' ? item.standardCost : item.luxuryCost;
           const mat = tier === 'rental' ? item.rentalMaterial : tier === 'standard' ? item.standardMaterial : item.luxuryMaterial;
-          const matTotal = cost * item.quantity;
-          const labTotal = item.laborPerUnit * item.quantity;
+          const matTotal = Math.round(cost * item.quantity * market.materialsFactor);
+          const labTotal = Math.round(item.laborPerUnit * item.quantity * market.laborFactor);
           return `<tr><td>${item.item}</td><td>${mat}</td><td>${item.quantity}</td><td>$${matTotal.toLocaleString()}</td><td>$${labTotal.toLocaleString()}</td><td>$${(matTotal + labTotal).toLocaleString()}</td></tr>`;
         }).join('')}
         <tr class="total"><td colspan="3">TOTALS</td><td>$${totalMaterial.toLocaleString()}</td><td>$${totalLabor.toLocaleString()}</td><td>$${(totalMaterial + totalLabor).toLocaleString()}</td></tr>
@@ -182,6 +355,13 @@ function RoomTemplate({ room, tier }: { room: RoomScope; tier: MaterialTier }) {
             </div>
           </div>
 
+          {/* Regional indicator inside expanded room */}
+          {market.key !== 'national' && (
+            <div className="mb-4">
+              <RegionalIndicatorBar market={market} />
+            </div>
+          )}
+
           <div className="grid grid-cols-3 gap-3 mb-4">
             <div className="bg-[oklch(0.48_0.20_18)]/5 rounded-lg p-3 text-center">
               <ShoppingCart className="w-4 h-4 mx-auto mb-1 text-[oklch(0.48_0.20_18)]" />
@@ -217,9 +397,9 @@ function RoomTemplate({ room, tier }: { room: RoomScope; tier: MaterialTier }) {
                 {activeItems.map((item, i) => {
                   const cost = tier === 'rental' ? item.rentalCost : tier === 'standard' ? item.standardCost : item.luxuryCost;
                   const material = tier === 'rental' ? item.rentalMaterial : tier === 'standard' ? item.standardMaterial : item.luxuryMaterial;
-                  const product = tier === 'rental' ? item.rentalProduct : tier === 'standard' ? item.standardProduct : item.luxuryProduct;
-                  const matTotal = cost * item.quantity;
-                  const labTotal = item.laborPerUnit * item.quantity;
+                  const product = tier === 'rental' ? item.rentalProduct : tier === 'standard' ? item.standardProduct : tier === 'luxury' ? item.luxuryProduct : null;
+                  const matTotal = Math.round(cost * item.quantity * market.materialsFactor);
+                  const labTotal = Math.round(item.laborPerUnit * item.quantity * market.laborFactor);
                   return (
                     <tr key={i} className="border-b border-border/30 hover:bg-secondary/20">
                       <td className="p-2">
@@ -260,7 +440,7 @@ function RoomTemplate({ room, tier }: { room: RoomScope; tier: MaterialTier }) {
           </div>
 
           <p className="text-[10px] text-muted-foreground mt-3 italic">
-            Costs are estimates based on national averages. Actual costs vary by market, contractor, and property condition. 
+            Costs are estimates{market.key !== 'national' ? ` adjusted for ${market.label}` : ' based on national averages'}. Actual costs vary by contractor and property condition. 
             Home Depot prices are subject to change. Always get multiple contractor bids before starting work.
           </p>
         </CardContent>
@@ -271,10 +451,15 @@ function RoomTemplate({ room, tier }: { room: RoomScope; tier: MaterialTier }) {
 
 // ─── TEMPLATE DETAIL MODAL ────────────────────────────────────
 
-function TemplateDetailModal({ template, onClose }: { template: SOWTemplate; onClose: () => void }) {
+function TemplateDetailModal({ template, market, onClose }: { template: SOWTemplate; market: MarketSelection; onClose: () => void }) {
+  // Apply regional adjustment
+  const adjusted = useMemo(() => applyRegionalToTemplate(template, market.materialsFactor, market.laborFactor), [template, market]);
+  const isAdjusted = market.key !== 'national';
+
   const handlePrint = () => {
+    const regionNote = isAdjusted ? `<p style="color: #C41E3A; font-size: 12px; margin-top: 4px;">📍 Adjusted for ${market.label} (Materials ${getAdjustmentPercent(market.materialsFactor) >= 0 ? '+' : ''}${getAdjustmentPercent(market.materialsFactor)}%, Labor ${getAdjustmentPercent(market.laborFactor) >= 0 ? '+' : ''}${getAdjustmentPercent(market.laborFactor)}%)</p>` : '';
     const printContent = `
-      <html><head><title>SOW - ${template.name}</title>
+      <html><head><title>SOW - ${adjusted.name}</title>
       <style>
         body { font-family: Arial, sans-serif; padding: 40px; color: #1a1a1a; max-width: 800px; margin: 0 auto; }
         h1 { font-size: 22px; border-bottom: 3px solid #C41E3A; padding-bottom: 8px; margin-bottom: 4px; }
@@ -297,24 +482,25 @@ function TemplateDetailModal({ template, onClose }: { template: SOWTemplate; onC
         .materials-list li:before { content: "✓ "; color: #C41E3A; font-weight: bold; }
         .footer { margin-top: 30px; font-size: 11px; color: #888; border-top: 1px solid #ddd; padding-top: 10px; }
       </style></head><body>
-      <h1>${template.name}</h1>
-      <p class="subtitle">${getCostLevelLabel(template.costLevel)} Level | ${template.layoutType} Layout | ${SOW_ROOM_TYPES.find(r => r.id === template.roomType)?.name || template.roomType}</p>
+      <h1>${adjusted.name}</h1>
+      <p class="subtitle">${getCostLevelLabel(adjusted.costLevel)} Level | ${adjusted.layoutType} Layout | ${SOW_ROOM_TYPES.find(r => r.id === adjusted.roomType)?.name || adjusted.roomType}</p>
+      ${regionNote}
       <div class="info-grid">
-        <div class="info-box"><div class="label">Property</div><div class="value">${template.propertyType}</div></div>
-        <div class="info-box"><div class="label">Beds</div><div class="value">${template.beds}</div></div>
-        <div class="info-box"><div class="label">Baths</div><div class="value">${template.baths}</div></div>
-        <div class="info-box"><div class="label">Sq Ft</div><div class="value">${template.sqft.toLocaleString()}</div></div>
+        <div class="info-box"><div class="label">Property</div><div class="value">${adjusted.propertyType}</div></div>
+        <div class="info-box"><div class="label">Beds</div><div class="value">${adjusted.beds}</div></div>
+        <div class="info-box"><div class="label">Baths</div><div class="value">${adjusted.baths}</div></div>
+        <div class="info-box"><div class="label">Sq Ft</div><div class="value">${adjusted.sqft.toLocaleString()}</div></div>
       </div>
       <div class="cost-grid">
-        <div class="cost-box materials"><div class="label">Materials</div><div class="value">${formatCurrency(template.materialCost)}</div></div>
-        <div class="cost-box labor"><div class="label">Labor</div><div class="value">${formatCurrency(template.laborCost)}</div></div>
-        <div class="cost-box total"><div class="label">Total Cost</div><div class="value">${formatCurrency(template.totalCost)}</div></div>
+        <div class="cost-box materials"><div class="label">Materials</div><div class="value">${formatCurrency(adjusted.materialCost)}</div></div>
+        <div class="cost-box labor"><div class="label">Labor</div><div class="value">${formatCurrency(adjusted.laborCost)}</div></div>
+        <div class="cost-box total"><div class="label">Total Cost</div><div class="value">${formatCurrency(adjusted.totalCost)}</div></div>
       </div>
       <h2>Scope of Work</h2>
-      <p class="desc">${template.workDescription}</p>
+      <p class="desc">${adjusted.workDescription}</p>
       <h2>Key Materials</h2>
       <ul class="materials-list">
-        ${template.keyMaterials.map(m => `<li>${m}</li>`).join('')}
+        ${adjusted.keyMaterials.map(m => `<li>${m}</li>`).join('')}
       </ul>
       <div class="footer">
         <p><strong>Freedom One System of Real Estate Investing</strong></p>
@@ -339,7 +525,7 @@ function TemplateDetailModal({ template, onClose }: { template: SOWTemplate; onC
       >
         {/* Header Image */}
         <div className="relative h-56 sm:h-64">
-          <img src={template.photo} alt={template.name} className="w-full h-full object-cover rounded-t-xl" />
+          <img src={adjusted.photo} alt={adjusted.name} className="w-full h-full object-cover rounded-t-xl" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent rounded-t-xl" />
           <button
             onClick={onClose}
@@ -349,38 +535,50 @@ function TemplateDetailModal({ template, onClose }: { template: SOWTemplate; onC
           </button>
           <div className="absolute bottom-4 left-5 right-5">
             <div className="flex items-center gap-2 mb-2">
-              <Badge className={`text-xs ${COST_LEVEL_COLORS[template.costLevel]}`}>
-                {getCostLevelLabel(template.costLevel)}
+              <Badge className={`text-xs ${COST_LEVEL_COLORS[adjusted.costLevel]}`}>
+                {getCostLevelLabel(adjusted.costLevel)}
               </Badge>
               <Badge variant="outline" className="text-xs bg-white/20 text-white border-white/30">
-                {template.layoutType}
+                {adjusted.layoutType}
               </Badge>
+              {isAdjusted && (
+                <Badge variant="outline" className="text-xs bg-white/20 text-white border-white/30">
+                  <MapPin className="w-3 h-3 mr-1" /> {market.label}
+                </Badge>
+              )}
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-white">{template.name}</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-white">{adjusted.name}</h2>
           </div>
         </div>
 
         <div className="p-5 sm:p-6">
+          {/* Regional Indicator */}
+          {isAdjusted && (
+            <div className="mb-4">
+              <RegionalIndicatorBar market={market} />
+            </div>
+          )}
+
           {/* Property Info */}
           <div className="grid grid-cols-4 gap-3 mb-5">
             <div className="bg-secondary/50 rounded-lg p-3 text-center">
               <HomeIcon className="w-4 h-4 mx-auto mb-1 text-muted-foreground" />
-              <p className="text-xs font-bold">{template.propertyType}</p>
+              <p className="text-xs font-bold">{adjusted.propertyType}</p>
               <p className="text-[10px] text-muted-foreground">Type</p>
             </div>
             <div className="bg-secondary/50 rounded-lg p-3 text-center">
               <BedDouble className="w-4 h-4 mx-auto mb-1 text-muted-foreground" />
-              <p className="text-xs font-bold">{template.beds}</p>
+              <p className="text-xs font-bold">{adjusted.beds}</p>
               <p className="text-[10px] text-muted-foreground">Beds</p>
             </div>
             <div className="bg-secondary/50 rounded-lg p-3 text-center">
               <Bath className="w-4 h-4 mx-auto mb-1 text-muted-foreground" />
-              <p className="text-xs font-bold">{template.baths}</p>
+              <p className="text-xs font-bold">{adjusted.baths}</p>
               <p className="text-[10px] text-muted-foreground">Baths</p>
             </div>
             <div className="bg-secondary/50 rounded-lg p-3 text-center">
               <Ruler className="w-4 h-4 mx-auto mb-1 text-muted-foreground" />
-              <p className="text-xs font-bold">{template.sqft.toLocaleString()}</p>
+              <p className="text-xs font-bold">{adjusted.sqft.toLocaleString()}</p>
               <p className="text-[10px] text-muted-foreground">Sq Ft</p>
             </div>
           </div>
@@ -389,17 +587,17 @@ function TemplateDetailModal({ template, onClose }: { template: SOWTemplate; onC
           <div className="grid grid-cols-3 gap-3 mb-5">
             <div className="bg-[oklch(0.48_0.20_18)]/8 rounded-lg p-3 text-center">
               <ShoppingCart className="w-4 h-4 mx-auto mb-1 text-[oklch(0.48_0.20_18)]" />
-              <p className="text-lg font-bold">{formatCurrency(template.materialCost)}</p>
+              <p className="text-lg font-bold">{formatCurrency(adjusted.materialCost)}</p>
               <p className="text-[10px] text-muted-foreground uppercase">Materials</p>
             </div>
             <div className="bg-blue-50 rounded-lg p-3 text-center">
               <Wrench className="w-4 h-4 mx-auto mb-1 text-blue-600" />
-              <p className="text-lg font-bold">{formatCurrency(template.laborCost)}</p>
+              <p className="text-lg font-bold">{formatCurrency(adjusted.laborCost)}</p>
               <p className="text-[10px] text-muted-foreground uppercase">Labor</p>
             </div>
             <div className="bg-emerald-50 rounded-lg p-3 text-center">
               <DollarSign className="w-4 h-4 mx-auto mb-1 text-emerald-600" />
-              <p className="text-lg font-bold">{formatCurrency(template.totalCost)}</p>
+              <p className="text-lg font-bold">{formatCurrency(adjusted.totalCost)}</p>
               <p className="text-[10px] text-muted-foreground uppercase">Total</p>
             </div>
           </div>
@@ -407,14 +605,14 @@ function TemplateDetailModal({ template, onClose }: { template: SOWTemplate; onC
           {/* Work Description */}
           <div className="mb-5">
             <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2">Scope of Work</h3>
-            <p className="text-sm leading-relaxed">{template.workDescription}</p>
+            <p className="text-sm leading-relaxed">{adjusted.workDescription}</p>
           </div>
 
           {/* Key Materials */}
           <div className="mb-5">
             <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2">Key Materials</h3>
             <div className="grid sm:grid-cols-2 gap-1.5">
-              {template.keyMaterials.map((mat, i) => (
+              {adjusted.keyMaterials.map((mat, i) => (
                 <div key={i} className="flex items-center gap-2 text-sm">
                   <div className="w-1.5 h-1.5 rounded-full bg-[oklch(0.48_0.20_18)] shrink-0" />
                   {mat}
@@ -436,7 +634,7 @@ function TemplateDetailModal({ template, onClose }: { template: SOWTemplate; onC
 
         <div className="px-5 pb-4">
           <p className="text-[10px] text-muted-foreground italic">
-            Costs are estimates based on national averages. Actual costs vary by market, contractor, and property condition. 
+            Costs are estimates{isAdjusted ? ` adjusted for ${market.label}` : ' based on national averages'}. Actual costs vary by contractor and property condition. 
             Always get multiple contractor bids before starting work.
           </p>
         </div>
@@ -447,7 +645,10 @@ function TemplateDetailModal({ template, onClose }: { template: SOWTemplate; onC
 
 // ─── TEMPLATE CARD ────────────────────────────────────────────
 
-function TemplateCard({ template, onClick }: { template: SOWTemplate; onClick: () => void }) {
+function TemplateCard({ template, market, onClick }: { template: SOWTemplate; market: MarketSelection; onClick: () => void }) {
+  const adjusted = useMemo(() => applyRegionalToTemplate(template, market.materialsFactor, market.laborFactor), [template, market]);
+  const isAdjusted = market.key !== 'national';
+
   return (
     <Card
       className="border-border/60 overflow-hidden cursor-pointer hover:shadow-lg transition-all group hover:border-[oklch(0.48_0.20_18)]/30"
@@ -455,33 +656,40 @@ function TemplateCard({ template, onClick }: { template: SOWTemplate; onClick: (
     >
       <div className="relative h-40">
         <img
-          src={template.photo}
-          alt={template.name}
+          src={adjusted.photo}
+          alt={adjusted.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        <div className="absolute top-2 right-2">
-          <Badge className={`text-[10px] ${COST_LEVEL_COLORS[template.costLevel]}`}>
-            {getCostLevelLabel(template.costLevel)}
+        <div className="absolute top-2 right-2 flex gap-1">
+          <Badge className={`text-[10px] ${COST_LEVEL_COLORS[adjusted.costLevel]}`}>
+            {getCostLevelLabel(adjusted.costLevel)}
           </Badge>
         </div>
+        {isAdjusted && (
+          <div className="absolute top-2 left-2">
+            <Badge variant="outline" className="text-[10px] bg-black/40 text-white border-white/20">
+              <MapPin className="w-2.5 h-2.5 mr-0.5" /> Adjusted
+            </Badge>
+          </div>
+        )}
         <div className="absolute bottom-2 left-3 right-3">
-          <p className="text-white font-bold text-sm leading-tight line-clamp-2">{template.name}</p>
+          <p className="text-white font-bold text-sm leading-tight line-clamp-2">{adjusted.name}</p>
         </div>
       </div>
       <CardContent className="p-3">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1"><BedDouble className="w-3 h-3" /> {template.beds}</span>
-            <span className="flex items-center gap-1"><Bath className="w-3 h-3" /> {template.baths}</span>
-            <span className="flex items-center gap-1"><Ruler className="w-3 h-3" /> {template.sqft.toLocaleString()}</span>
+            <span className="flex items-center gap-1"><BedDouble className="w-3 h-3" /> {adjusted.beds}</span>
+            <span className="flex items-center gap-1"><Bath className="w-3 h-3" /> {adjusted.baths}</span>
+            <span className="flex items-center gap-1"><Ruler className="w-3 h-3" /> {adjusted.sqft.toLocaleString()}</span>
           </div>
         </div>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs text-muted-foreground">{template.layoutType}</p>
+            <p className="text-xs text-muted-foreground">{adjusted.layoutType}</p>
           </div>
-          <p className="text-base font-bold text-[oklch(0.48_0.20_18)]">{formatCurrency(template.totalCost)}</p>
+          <p className="text-base font-bold text-[oklch(0.48_0.20_18)]">{formatCurrency(adjusted.totalCost)}</p>
         </div>
       </CardContent>
     </Card>
@@ -498,6 +706,7 @@ export default function ScopeOfWork() {
   const [selectedCostLevel, setSelectedCostLevel] = useState<number>(0); // 0 = all
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState<SOWTemplate | null>(null);
+  const [market, setMarket] = useState<MarketSelection>(loadSavedMarket);
 
   const filteredTemplates = useMemo(() => {
     let filtered = SOW_TEMPLATES;
@@ -545,8 +754,8 @@ export default function ScopeOfWork() {
           </div>
           <p className="text-[oklch(0.6_0_0)] text-sm max-w-2xl mt-3 leading-relaxed">
             Browse our comprehensive library of renovation scope of work templates with photos, property details, 
-            cost breakdowns, and downloadable SOW documents. Each template includes material costs, labor estimates, 
-            and detailed work descriptions. Use the Line-Item Estimator for room-by-room calculations with Home Depot SKU links.
+            cost breakdowns, and downloadable SOW documents. Select your metro market below to automatically adjust 
+            all costs for your local area.
           </p>
 
           {/* Stats */}
@@ -571,11 +780,11 @@ export default function ScopeOfWork() {
             </div>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-[oklch(0.48_0.20_18)]/20 flex items-center justify-center">
-                <DollarSign className="w-4 h-4 text-[oklch(0.65_0.18_18)]" />
+                <MapPin className="w-4 h-4 text-[oklch(0.65_0.18_18)]" />
               </div>
               <div>
-                <p className="text-lg font-bold">4</p>
-                <p className="text-[10px] text-[oklch(0.5_0_0)]">Cost Levels</p>
+                <p className="text-lg font-bold">{Object.keys(METRO_COST_INDEX).length}+</p>
+                <p className="text-[10px] text-[oklch(0.5_0_0)]">Metro Markets</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -591,31 +800,62 @@ export default function ScopeOfWork() {
         </div>
       </section>
 
-      {/* Tab Selector */}
+      {/* Market Selector + Tab Selector */}
       <section className="border-b border-border/50 bg-secondary/20 sticky top-0 z-30">
-        <div className="container py-0 flex items-center">
-          <button
-            onClick={() => setActiveTab('library')}
-            className={`px-5 py-3.5 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === 'library'
-                ? 'border-[oklch(0.48_0.20_18)] text-[oklch(0.48_0.20_18)]'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <Grid3X3 className="w-4 h-4 inline-block mr-1.5 -mt-0.5" />
-            Template Library ({SOW_TEMPLATES.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('estimator')}
-            className={`px-5 py-3.5 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === 'estimator'
-                ? 'border-[oklch(0.48_0.20_18)] text-[oklch(0.48_0.20_18)]'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <List className="w-4 h-4 inline-block mr-1.5 -mt-0.5" />
-            Line-Item Estimator (14 Rooms)
-          </button>
+        <div className="container py-0">
+          {/* Market Selector Row */}
+          <div className="flex flex-wrap items-center gap-3 py-3 border-b border-border/30">
+            <span className="text-sm font-medium flex items-center gap-1.5">
+              <MapPin className="w-4 h-4 text-[oklch(0.48_0.20_18)]" />
+              Your Market:
+            </span>
+            <MarketSelector market={market} onSelect={setMarket} />
+            {market.key !== 'national' && (
+              <div className="hidden sm:flex items-center gap-2 ml-2">
+                <AdjustmentBadge factor={market.materialsFactor} label="materials" />
+                <span className="text-muted-foreground text-xs">·</span>
+                <AdjustmentBadge factor={market.laborFactor} label="labor" />
+              </div>
+            )}
+            {market.key !== 'national' && (
+              <button
+                onClick={() => {
+                  const national = ALL_MARKETS[0];
+                  setMarket(national);
+                  localStorage.setItem(STORAGE_KEY, JSON.stringify({ key: national.key }));
+                }}
+                className="text-xs text-muted-foreground hover:text-foreground ml-auto"
+              >
+                Reset to National
+              </button>
+            )}
+          </div>
+
+          {/* Tab Row */}
+          <div className="flex items-center">
+            <button
+              onClick={() => setActiveTab('library')}
+              className={`px-5 py-3.5 text-sm font-medium border-b-2 transition-colors ${
+                activeTab === 'library'
+                  ? 'border-[oklch(0.48_0.20_18)] text-[oklch(0.48_0.20_18)]'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <Grid3X3 className="w-4 h-4 inline-block mr-1.5 -mt-0.5" />
+              Template Library ({SOW_TEMPLATES.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('estimator')}
+              className={`px-5 py-3.5 text-sm font-medium border-b-2 transition-colors ${
+                activeTab === 'estimator'
+                  ? 'border-[oklch(0.48_0.20_18)] text-[oklch(0.48_0.20_18)]'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <List className="w-4 h-4 inline-block mr-1.5 -mt-0.5" />
+              Line-Item Estimator (14 Rooms)
+            </button>
+          </div>
         </div>
       </section>
 
@@ -720,6 +960,7 @@ export default function ScopeOfWork() {
                   <TemplateCard
                     key={template.id}
                     template={template}
+                    market={market}
                     onClick={() => setSelectedTemplate(template)}
                   />
                 ))}
@@ -761,7 +1002,7 @@ export default function ScopeOfWork() {
           <section className="container py-8">
             <div className="space-y-3">
               {rooms.map(room => (
-                <RoomTemplate key={room.id} room={room} tier={tier} />
+                <RoomTemplate key={room.id} room={room} tier={tier} market={market} />
               ))}
             </div>
           </section>
@@ -773,7 +1014,8 @@ export default function ScopeOfWork() {
         <div className="container py-6">
           <p className="text-xs text-muted-foreground leading-relaxed max-w-3xl">
             <strong>Disclaimer:</strong> All costs, materials, and labor estimates provided in these scope of work templates 
-            are for informational and estimation purposes only. Freedom One System of Real Estate Investing does not guarantee 
+            are for informational and estimation purposes only. {market.key !== 'national' && `Costs shown are adjusted for the ${market.label} market using RSMeans Construction Cost Index data. `}
+            Freedom One System of Real Estate Investing does not guarantee 
             the accuracy of pricing, availability of materials, or contractor labor rates. Actual costs will vary based on 
             geographic location, property condition, market conditions, and contractor pricing. Always obtain multiple bids 
             from licensed contractors before beginning any renovation work. Home Depot product links and prices are subject 
@@ -787,6 +1029,7 @@ export default function ScopeOfWork() {
       {selectedTemplate && (
         <TemplateDetailModal
           template={selectedTemplate}
+          market={market}
           onClose={() => setSelectedTemplate(null)}
         />
       )}
