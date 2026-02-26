@@ -42,3 +42,9 @@
 - [x] Verify and enhance comp pulling functionality for each property
 - [x] Create comprehensive manual/instructions page for all app components (19 sections)
 - [x] Populate all remaining Home Depot SKU numbers in line-item estimator for direct product linking (166/169)
+- [x] Build professional PDF export for investor presentations with property data, comp analysis, rehab breakdown, and deal scoring
+- [x] Add PDF generation with branded header, property details, comp table, rehab cost breakdown, financing summary, and deal verdict
+- [x] Build saved deals dashboard page with sortable table showing all saved analyses
+- [x] Add deal score, ROI, status tracking, and portfolio management to saved deals
+- [x] Add ability to edit/delete/archive saved deals from the dashboard
+- [x] Add filtering and sorting by deal score, ROI, date, status in the dashboard

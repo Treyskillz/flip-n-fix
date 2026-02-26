@@ -45,6 +45,11 @@ export default function Analyzer() {
       baths: property.baths,
       yearBuilt: property.yearBuilt,
       market: analyzer.marketSelector.market.label,
+      dealScore: profit.dealScore,
+      cashOnCash: profit.cashOnCash,
+      status: 'active' as const,
+      starred: false,
+      notes: '',
     };
 
     try {
@@ -137,6 +142,12 @@ export default function Analyzer() {
               rehabTotals={analyzer.rehabTotals}
               materialTier={analyzer.materialTier}
               targetROI={analyzer.targetROI}
+              comps={analyzer.comps}
+              roomScopes={analyzer.roomScopes}
+              regionalLabel={analyzer.regionalFactor.label}
+              materialTierKey={analyzer.materialTier as any}
+              materialsFactor={analyzer.regionalFactor.materialsFactor}
+              laborFactor={analyzer.regionalFactor.laborFactor}
             />
 
             {/* 5. Financing & Costs */}
