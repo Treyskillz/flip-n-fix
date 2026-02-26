@@ -21,7 +21,7 @@
 - [x] Register all new routes in App.tsx and update navigation
 - [x] Add room/area photos to SOW templates like FortuneBuilders
 - [x] Add room photos to SOW templates like FortuneBuilders
-- [ ] Fill in all missing SKU numbers in SOW
+- [x] Fill in all missing SKU numbers in SOW (166/169 filled, 98.2% coverage)
 - [x] Make marketing letters full complete copy-paste documents (already full)
 - [x] Make contracts full complete copy-paste documents (11 total contracts now)
 - [x] Add 6 contractor hiring documents (W-9, COI, Lien Waiver, Agreement, Change Order, SOW Agreement)
@@ -39,3 +39,6 @@
 - [x] Apply regional material and labor cost multipliers to Deal Analyzer rehab estimates
 - [x] Show regional adjustment indicator in Deal Analyzer rehab section
 - [x] Ensure market selection persists across both SOW and Analyzer pages via shared localStorage key
+- [x] Verify and enhance comp pulling functionality for each property
+- [x] Create comprehensive manual/instructions page for all app components (19 sections)
+- [x] Populate all remaining Home Depot SKU numbers in line-item estimator for direct product linking (166/169)
