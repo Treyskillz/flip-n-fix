@@ -260,6 +260,19 @@ export const DEFAULT_FINANCING = {
   holdingMonths: 6,
 };
 
+export const DEFAULT_PRIVATE_MONEY = {
+  loanToValue: 75,
+  interestRate: 9,
+  points: 1,
+  holdingMonths: 6,
+};
+
+export const DEFAULT_GAP_FUNDING = {
+  coveragePercent: 100,  // covers 100% of the gap (down payment)
+  interestRate: 15,
+  points: 3,
+};
+
 export const DEFAULT_CLOSING = {
   buyClosingPct: 2,
   sellClosingPct: 6,

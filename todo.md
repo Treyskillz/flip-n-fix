@@ -48,3 +48,35 @@
 - [x] Add deal score, ROI, status tracking, and portfolio management to saved deals
 - [x] Add ability to edit/delete/archive saved deals from the dashboard
 - [x] Add filtering and sorting by deal score, ROI, date, status in the dashboard
+- [ ] Audit and fix Deal Analyzer calculation logic (ARV, profit, deal scoring, all financial formulas)
+- [x] Fix ARV methodology — ARV should not be determined without knowing rehab costs
+- [ ] Verify all profit calculations match industry-standard fix-and-flip formulas
+- [ ] CRITICAL: Full audit of all Deal Analyzer calculations for paid product accuracy
+- [x] Fix ARV methodology — add clear comp guidance, validation, and warnings
+- [ ] Fix all calculation edge cases (division by zero, negative values, missing data)
+- [x] Fix CompManager UI — add comp quality guidance and after-repair comp labels
+- [x] Fix Profit Panel — ensure all numbers are accurate and clearly labeled
+- [x] Add professional disclaimers and safeguards for paid subscription product
+- [ ] Run comprehensive numerical test scenarios to verify all math
+- [ ] Expand financing to support Hard Money Lender, Private Money Lender, and Gap Funder simultaneously
+- [ ] Add gap funder calculations (covers down payment gap, separate interest rate and points)
+- [ ] Add private money lender option (alternative to hard money with different terms)
+- [ ] Calculate blended financing costs across all active lenders
+- [ ] Update total investment and profit calculations to include gap funding costs
+- [x] Build comp quality scoring system (distance, recency, similarity, condition)
+- [x] Add comp validation warnings (missing sqft, stale dates, extreme $/sqft outliers)
+- [x] Add "How to Find Good Comps" guidance panel in CompManager
+- [x] Add after-repair comp labeling and guidance
+- [ ] Fix deal score edge cases (negative MAO, zero ARV)
+- [x] Strengthen disclaimers for paid subscription product
+- [x] CRITICAL: Implement Cost Approach ARV (ARV = Purchase Price + Rehab Budget) as primary method
+- [x] Update calculations.ts to compute Cost Approach ARV from purchase + rehab
+- [x] Update CompManager to serve as validation/comparison tool, not primary ARV source
+- [x] Update ProfitSummary to show Cost Approach ARV methodology
+- [x] Update Analyzer page with ARV methodology explanation
+- [x] Update InvestorReport PDF to reflect Cost Approach
+- [x] Update Manual with Cost Approach ARV documentation
+- [x] Add comp-based ARV as secondary validation against Cost Approach
+- [x] Enforce comps as standard retail sales only — no distressed, foreclosure, short sale, REO, or auction
+- [x] Add comp sale type field and validation warnings for non-retail comps
+- [x] Add guidance text explaining retail-only comp requirement throughout CompManager

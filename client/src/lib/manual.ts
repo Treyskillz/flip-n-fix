@@ -21,7 +21,8 @@ The Fix & Flip Analyzer is a comprehensive real estate investment analysis syste
 ### What You Can Do
 
 - **Analyze any property** — Enter property details and get instant profitability calculations
-- **Pull comparable sales** — Add comps manually to determine accurate ARV
+- **Cost Approach ARV** — ARV automatically calculated as Purchase Price + Rehab Budget
+- **Market validation with comps** — Add standard retail comps to validate your ARV against market data
 - **Estimate rehab costs** — Use preset levels or detailed room-by-room scope of work with real material pricing
 - **Regional cost adjustments** — Costs automatically adjust based on 50+ metro markets
 - **Material tier selection** — Choose Rental, Standard, or Luxury grade materials
@@ -45,11 +46,12 @@ The Fix & Flip Analyzer is a comprehensive real estate investment analysis syste
 
 1. Navigate to the **Deal Analyzer** from the home page
 2. Enter the property address and details in the Subject Property section
-3. Add comparable sales to determine the ARV
-4. Select a rehab level or use the detailed scope of work
-5. Configure financing terms and holding costs
-6. Review the profitability dashboard for your deal score
-7. Save the deal for future reference`,
+3. Select a rehab level or use the detailed scope of work (this sets your rehab budget)
+4. Your ARV is automatically calculated: Purchase Price + Rehab Budget (Cost Approach)
+5. Optionally add standard retail comps to validate your ARV against market data
+6. Configure financing terms and holding costs
+7. Review the profitability dashboard for your deal score
+8. Save the deal for future reference`,
   },
   {
     id: 'property',
@@ -89,44 +91,66 @@ Once a market is selected, the app displays the regional cost adjustment factors
     id: 'comps',
     title: 'Comparable Sales',
     icon: '📊',
-    content: `## Managing Comparable Sales (Comps)
+    content: `## ARV Methodology & Comparable Sales
 
-Comparable sales (comps) are recently sold properties similar to your subject property. They are the foundation for determining your After Repair Value (ARV).
+### How ARV Is Calculated: The Cost Approach
 
-### Adding Comps Manually
+This tool uses the **Cost Approach** as the primary method for determining your After Repair Value (ARV):
+
+> **ARV = Purchase Price + Rehab Budget**
+
+This is the investor's method. It tells you what you have INTO the deal — the minimum the property must be worth after rehab for the deal to make sense. Your ARV automatically updates as you enter your purchase price and build your rehab scope of work.
+
+**Example:** Purchase Price $150,000 + Rehab Budget $75,000 = **ARV $225,000**
+
+The Cost Approach is the default because:
+- It's based on YOUR actual numbers, not estimates from other properties
+- It tells you the break-even point before soft costs (financing, holding, closing)
+- It's the most conservative and reliable method for investor decision-making
+
+### Market Validation with Comps (Secondary)
+
+Comparable sales (comps) serve as a **market validation tool** — they help you confirm whether the market will support your Cost Approach ARV. When you add comps, the system compares the comp-based market value against your cost basis and tells you whether the market supports the deal.
+
+### ⛔ CRITICAL: Retail Sales Only
+
+**Comps must ALWAYS be standard retail (arms-length) sales.** Never use:
+- Foreclosures
+- Short sales
+- REO / Bank-owned properties
+- Auction sales
+- Estate sales under duress
+
+These are **distressed transactions** where the seller is under financial pressure. They sell below true market value and will give you a false, understated ARV. The app will warn you and block you from adding distressed comps.
+
+### Adding Comps
 Click "Add Comp" and enter:
 - **Address** — The comp property address
-- **Sale Price** — What it actually sold for
+- **Sale Price** — What it actually sold for (retail price)
 - **Sale Date** — When it closed
 - **Days on Market** — How long it took to sell
 - **Square Footage** — For price-per-sqft calculation
+- **Condition** — Must be Renovated or Updated for best results
 - **Beds/Baths** — For comparison
 - **Year Built** — For age comparison
-- **Neighborhood** — Optional, for context
-
-### How ARV Is Calculated
-The app calculates ARV by:
-1. Computing the average price per square foot across all comps
-2. Multiplying by your subject property's square footage
-
-**Example:** If your 3 comps average $350/sqft and your property is 1,500 sqft:
-ARV = $350 × 1,500 = **$525,000**
 
 ### ARV Override
-If you have your own ARV estimate (from an appraiser, agent, or your own analysis), you can override the calculated ARV using the Override field. This is useful when comps are limited or when you have insider market knowledge.
+If you have your own ARV estimate (from an appraiser, agent, or your own analysis), you can override the Cost Approach ARV using the Override field. This is useful when you have insider market knowledge or a professional appraisal.
 
 ### Tips for Selecting Good Comps
+- **Sale Type** — Standard retail sale ONLY (arms-length transaction)
+- **Condition** — Renovated or updated, matching your planned rehab level
 - **Location** — Within 0.5 miles, same neighborhood preferred
-- **Recency** — Sold within the last 6 months
+- **Recency** — Sold within the last 6 months (3 months is ideal)
 - **Size** — Within 20% of your property's square footage
-- **Condition** — Should reflect post-rehab condition (not distressed sales)
 - **DOM** — Comps that sold in 90 days or less indicate strong demand
+- **Use 3-6 comps** for the most reliable market validation
 
 ### Comp Analysis Features
-- Each comp shows price per square foot for easy comparison
-- The comp summary displays average $/sqft, median sale price, and average DOM
-- Comps are color-coded by how closely they match your subject property
-- You can delete individual comps to see how it affects the ARV`,
+- Each comp is scored for quality (A-F grade) based on similarity to your subject
+- Market Validation section shows whether comps support your Cost Approach ARV
+- Green = market supports the deal, Red = market may not support the deal
+- Distressed comps are flagged and blocked from being added`,
   },
   {
     id: 'rehab',

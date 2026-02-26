@@ -107,11 +107,16 @@ export default function Analyzer() {
               comps={analyzer.comps}
               addComp={analyzer.addComp}
               removeComp={analyzer.removeComp}
-              arv={analyzer.arv}
+              costApproachArv={analyzer.costApproachArv}
+              compBasedArv={analyzer.compBasedArv}
               arvOverride={analyzer.arvOverride}
               setArvOverride={analyzer.setArvOverride}
               effectiveArv={analyzer.effectiveArv}
               subjectSqft={analyzer.property.sqft}
+              subjectBeds={analyzer.property.beds}
+              subjectBaths={analyzer.property.baths}
+              purchasePrice={analyzer.property.purchasePrice}
+              rehabCost={analyzer.rehabTotals.totalCost}
             />
 
             {/* 3. Rehab Estimator */}
@@ -154,9 +159,15 @@ export default function Analyzer() {
             <FinancingSection
               useHardMoney={analyzer.useHardMoney}
               setUseHardMoney={analyzer.setUseHardMoney}
+              lenderType={analyzer.lenderType}
+              switchLenderType={analyzer.switchLenderType}
               finParams={analyzer.finParams}
               setFinParams={analyzer.setFinParams}
               financing={analyzer.financing}
+              useGapFunding={analyzer.useGapFunding}
+              setUseGapFunding={analyzer.setUseGapFunding}
+              gapParams={analyzer.gapParams}
+              setGapParams={analyzer.setGapParams}
               closingParams={analyzer.closingParams}
               setClosingParams={analyzer.setClosingParams}
               closing={analyzer.closing}

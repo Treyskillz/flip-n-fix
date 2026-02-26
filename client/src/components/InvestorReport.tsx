@@ -62,7 +62,8 @@ function buildPdfHtml(props: Props): string {
 
     compTableHtml = `
       <div class="section">
-        <h2>Comparable Sales Analysis (${comps.length} Comp${comps.length > 1 ? 's' : ''})</h2>
+        <h2>Market Validation — Comparable Retail Sales (${comps.length} Comp${comps.length > 1 ? 's' : ''})</h2>
+        <p style="font-size:12px; color:#666; margin-bottom:8px;">Standard retail (arms-length) sales only — no foreclosures, short sales, REO, or auction properties.</p>
         <table>
           <thead>
             <tr><th>Address</th><th style="text-align:right">Sale Price</th><th style="text-align:right">Sq Ft</th><th style="text-align:right">$/Sq Ft</th><th style="text-align:right">Bd/Ba</th><th style="text-align:right">DOM</th></tr>
@@ -72,7 +73,7 @@ function buildPdfHtml(props: Props): string {
         <div style="margin-top:8px; padding:10px; background:#f0f9ff; border-radius:6px; display:flex; justify-content:space-between; font-size:13px;">
           <span><strong>Avg $/Sq Ft:</strong> $${Math.round(avgPsf).toLocaleString()}</span>
           <span><strong>Subject Sq Ft:</strong> ${property.sqft.toLocaleString()}</span>
-          <span><strong>Estimated ARV:</strong> <span style="color:#c53030; font-weight:700">${formatCurrency(effectiveArv)}</span></span>
+          <span><strong>Market Validation ARV:</strong> <span style="color:#c53030; font-weight:700">${formatCurrency(Math.round(avgPsf * property.sqft))}</span></span>
         </div>
       </div>
     `;
@@ -262,7 +263,7 @@ function buildPdfHtml(props: Props): string {
       <tr><td>Closing Costs (Buy ${closing.buyClosingPct}% + Sell ${closing.sellClosingPct}%)</td><td style="text-align:right">${formatCurrency(closing.totalClosingCosts)}</td></tr>
       <tr><td>Holding Costs (${financing.holdingMonths} months)</td><td style="text-align:right">${formatCurrency(holding.totalHoldingCosts)}</td></tr>
       <tr style="background:#f5f5f5"><td style="font-weight:700; font-size:14px">Total Investment</td><td style="text-align:right; font-weight:700; font-size:14px">${formatCurrency(totalInvestment)}</td></tr>
-      <tr class="highlight-row"><td style="font-weight:700; font-size:14px">After Repair Value (ARV)</td><td style="text-align:right; font-weight:700; font-size:14px; color:#c53030">${formatCurrency(effectiveArv)}</td></tr>
+      <tr class="highlight-row"><td style="font-weight:700; font-size:14px">After Repair Value (ARV) — Cost Approach</td><td style="text-align:right; font-weight:700; font-size:14px; color:#c53030">${formatCurrency(effectiveArv)}</td></tr>
     </table>
   </div>
 
@@ -337,7 +338,7 @@ TYPE: ${property.propertyType} | ${property.beds} BD / ${property.baths} BA | ${
 FINANCIAL SUMMARY:
 • Purchase Price: ${formatCurrency(property.purchasePrice)}
 • Rehab Budget: ${formatCurrency(rehabTotals.totalCost)} (Materials: ${formatCurrency(rehabTotals.totalMaterials)} + Labor: ${formatCurrency(rehabTotals.totalLabor)})
-• After Repair Value (ARV): ${formatCurrency(effectiveArv)}
+• After Repair Value (ARV — Cost Approach): ${formatCurrency(effectiveArv)}
 • Total Investment: ${formatCurrency(totalInvestment)}
 • Projected Net Profit: ${formatCurrency(profit.netProfit)}
 • Return on Investment: ${profit.roi.toFixed(1)}%

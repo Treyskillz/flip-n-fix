@@ -86,9 +86,35 @@ export function ProfitSummary({ profit, rehabCost, rehabDays, targetROI, setTarg
   const vc = VERDICT_CONFIG[profit.dealVerdict];
   const VerdictIcon = vc.icon;
 
+  // Check if ARV is missing (Cost Approach: purchase + rehab = 0 means no data entered)
+  const missingArv = profit.arv === 0 && profit.purchasePrice === 0;
+
   return (
     <Card className={`border-2 ${vc.border} shadow-lg`}>
       <CardContent className="p-4 space-y-4">
+        {/* ── Missing ARV Warning ───────────────────────────── */}
+        {missingArv && (
+          <div className="flex items-start gap-2 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-xs text-yellow-600 dark:text-yellow-400">
+            <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+            <div>
+              <p className="font-semibold">Enter Deal Details</p>
+              <p className="mt-0.5">Enter a purchase price and rehab scope to calculate your Cost Approach ARV (Purchase + Rehab). You can also add retail comps for market validation or enter an ARV override.</p>
+            </div>
+          </div>
+        )}
+
+        {/* ── ARV Method Indicator ───────────────────────────── */}
+        {profit.arv > 0 && (
+          <div className="flex items-center gap-2 p-2 rounded-md bg-primary/5 border border-primary/20 text-xs">
+            <DollarSign className="w-3.5 h-3.5 text-primary shrink-0" />
+            <span className="text-muted-foreground">
+              <strong className="text-primary">ARV: {formatCurrency(profit.arv)}</strong>
+              {' — '}
+              Cost Approach (Purchase + Rehab)
+            </span>
+          </div>
+        )}
+
         {/* ── Deal Verdict Banner ────────────────────────────── */}
         <div className={`${vc.bg} rounded-lg p-4`}>
           <div className="flex items-center gap-3 mb-2">
@@ -103,7 +129,7 @@ export function ProfitSummary({ profit, rehabCost, rehabDays, targetROI, setTarg
           <div className="space-y-1.5 mt-3">
             {profit.verdictReasons.map((reason, i) => (
               <div key={i} className="flex items-start gap-2 text-xs">
-                {reason.includes('loses money') || reason.includes('over the 70%') || reason.includes('high rehab') || reason.includes('reduction needed') ? (
+                {reason.includes('loses money') || reason.includes('over the 70%') || reason.includes('high rehab') || reason.includes('reduction needed') || reason.includes('No ARV') ? (
                   <XCircle className="w-3.5 h-3.5 text-destructive shrink-0 mt-0.5" />
                 ) : reason.includes('Strong ROI') || reason.includes('below the 70%') ? (
                   <CheckCircle2 className="w-3.5 h-3.5 text-[oklch(0.50_0.17_145)] shrink-0 mt-0.5" />
@@ -245,18 +271,23 @@ export function ProfitSummary({ profit, rehabCost, rehabDays, targetROI, setTarg
             <p className="text-sm font-bold tabular-nums">{formatCurrency(profit.maxAllowableOffer)}</p>
           </div>
           <div className="text-right">
-            {profit.purchasePrice <= profit.maxAllowableOffer ? (
-              <span className="text-xs font-semibold text-[oklch(0.55_0.17_145)]">Below MAO</span>
+            {profit.purchasePrice > 0 && profit.maxAllowableOffer > 0 ? (
+              profit.purchasePrice <= profit.maxAllowableOffer ? (
+                <span className="text-xs font-semibold text-[oklch(0.55_0.17_145)]">Below MAO</span>
+              ) : (
+                <span className="text-xs font-semibold text-destructive">
+                  {formatCurrency(profit.purchasePrice - profit.maxAllowableOffer)} over
+                </span>
+              )
             ) : (
-              <span className="text-xs font-semibold text-destructive">
-                {formatCurrency(profit.purchasePrice - profit.maxAllowableOffer)} over
-              </span>
+              <span className="text-xs text-muted-foreground">Enter ARV to calculate</span>
             )}
           </div>
         </div>
 
         {/* ── Cost Breakdown ─────────────────────────────────── */}
         <div className="space-y-1.5 text-xs">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">Cost Breakdown</p>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Purchase Price</span>
             <span className="tabular-nums font-medium">{formatCurrency(profit.purchasePrice)}</span>
@@ -265,10 +296,23 @@ export function ProfitSummary({ profit, rehabCost, rehabDays, targetROI, setTarg
             <span className="text-muted-foreground">Rehab Cost</span>
             <span className="tabular-nums font-medium">{formatCurrency(profit.rehabCost)}</span>
           </div>
+          {/* Financing breakdown: primary + gap */}
           <div className="flex justify-between">
             <span className="text-muted-foreground">Financing Costs</span>
             <span className="tabular-nums font-medium">{formatCurrency(profit.financingCosts)}</span>
           </div>
+          {profit.primaryLenderCosts > 0 && profit.gapFunderCosts > 0 && (
+            <div className="ml-4 space-y-1 text-[11px]">
+              <div className="flex justify-between text-muted-foreground">
+                <span>Primary Lender</span>
+                <span className="tabular-nums">{formatCurrency(profit.primaryLenderCosts)}</span>
+              </div>
+              <div className="flex justify-between text-muted-foreground">
+                <span>Gap Funder</span>
+                <span className="tabular-nums">{formatCurrency(profit.gapFunderCosts)}</span>
+              </div>
+            </div>
+          )}
           <div className="flex justify-between">
             <span className="text-muted-foreground">Holding Costs</span>
             <span className="tabular-nums font-medium">{formatCurrency(profit.holdingCosts)}</span>
@@ -281,7 +325,11 @@ export function ProfitSummary({ profit, rehabCost, rehabDays, targetROI, setTarg
             <span className="text-muted-foreground">Sell Closing</span>
             <span className="tabular-nums font-medium">{formatCurrency(profit.sellClosingCosts)}</span>
           </div>
-          <div className="flex justify-between pt-1.5 border-t border-border font-semibold">
+          <div className="flex justify-between pt-1.5 border-t border-border">
+            <span className="font-semibold">Total Investment</span>
+            <span className="tabular-nums font-semibold">{formatCurrency(profit.totalInvestment)}</span>
+          </div>
+          <div className="flex justify-between font-semibold">
             <span>ARV (Sale Price)</span>
             <span className="tabular-nums">{formatCurrency(profit.arv)}</span>
           </div>
@@ -290,6 +338,30 @@ export function ProfitSummary({ profit, rehabCost, rehabDays, targetROI, setTarg
         {/* ── Rehab Duration ─────────────────────────────────── */}
         <div className="text-xs text-center text-muted-foreground">
           Est. rehab: {rehabDays} days | Rehab cost: {formatCurrency(rehabCost)}
+        </div>
+
+        {/* ── Cost Approach Methodology Note ─────────────────── */}
+        {profit.arv > 0 && profit.purchasePrice > 0 && (
+          <div className="p-3 rounded-lg border bg-card space-y-2">
+            <div className="flex items-center gap-2">
+              <Info className="w-4 h-4 text-primary shrink-0" />
+              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Cost Approach ARV
+              </span>
+            </div>
+            <div className="text-xs text-muted-foreground leading-relaxed">
+              Your ARV is calculated using the <strong>Cost Approach</strong>: Purchase Price ({formatCurrency(profit.purchasePrice)}) + Rehab Budget ({formatCurrency(rehabCost)}) = <strong>{formatCurrency(profit.purchasePrice + rehabCost)}</strong>. This represents what you have into the deal — the property must sell for at least this amount to break even before soft costs. Add standard retail comps in the Comps section to validate this against market data.
+            </div>
+          </div>
+        )}
+
+        {/* ── Disclaimer ────────────────────────────────────── */}
+        <div className="text-[10px] text-muted-foreground/70 leading-relaxed border-t border-border pt-3">
+          <strong>Disclaimer:</strong> All calculations are estimates for educational purposes only. 
+          Actual costs, ARV, and returns may vary based on market conditions, contractor pricing, 
+          property condition, and other factors. Always verify numbers with licensed professionals 
+          (appraiser, contractor, lender, CPA) before making investment decisions. This tool does 
+          not constitute financial, legal, or investment advice.
         </div>
       </CardContent>
     </Card>

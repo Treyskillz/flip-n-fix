@@ -1,11 +1,11 @@
 import { useState, useMemo, useCallback } from 'react';
-import type { SubjectProperty, CompProperty, RehabPhase, FinancingDetails, ClosingCosts, HoldingCosts, ProfitAnalysis } from '@/lib/types';
+import type { SubjectProperty, CompProperty, RehabPhase, FinancingDetails, ClosingCosts, HoldingCosts, ProfitAnalysis, LenderType } from '@/lib/types';
 import type { MaterialTier, RoomScope, RoomCondition, HomeDepotProduct } from '@/lib/scopeOfWork';
 import { getDefaultRoomScopes, calculateRoomCost } from '@/lib/scopeOfWork';
 import { getRegionalCostFactor, type RegionalCostFactor } from '@/lib/regionalCosts';
-import { buildRehabPhases, schedulePhases, getPresetForLevel, DEFAULT_FINANCING, DEFAULT_CLOSING, DEFAULT_HOLDING } from '@/lib/defaults';
-import { calculateFinancing, calculateClosingCosts, calculateHoldingCosts, calculateRehabTotals, calculateProfitability } from '@/lib/calculations';
-import { useMarketSelector, type MarketSelection } from '@/hooks/useMarketSelector';
+import { buildRehabPhases, schedulePhases, getPresetForLevel, DEFAULT_FINANCING, DEFAULT_PRIVATE_MONEY, DEFAULT_GAP_FUNDING, DEFAULT_CLOSING, DEFAULT_HOLDING } from '@/lib/defaults';
+import { calculateFinancing, calculateClosingCosts, calculateHoldingCosts, calculateRehabTotals, calculateProfitability, scoreComp, scoreCompSet } from '@/lib/calculations';
+import { useMarketSelector } from '@/hooks/useMarketSelector';
 import { nanoid } from 'nanoid';
 
 export type RehabMode = 'preset' | 'scope';
@@ -20,24 +20,20 @@ export function useFlipAnalyzer() {
   });
 
   // ─── Shared Market Selector ────────────────────────────────
-  // Uses the same localStorage key as the SOW page for cross-page sync
   const marketSelector = useMarketSelector({
     autoDetectCity: property.city,
     autoDetectState: property.state,
   });
 
   // ─── Regional Cost Factor ──────────────────────────────────
-  // Derive from the shared market selector (which may be manual or auto-detected)
   const regionalFactor = useMemo<RegionalCostFactor & { matchLevel: string }>(() => {
     const m = marketSelector.market;
     if (m.key === 'national') {
-      // If national and we have city/state, try auto-detection for backward compat
       if (property.city && property.state) {
         return getRegionalCostFactor(property.city, property.state);
       }
       return { materialsFactor: 1, laborFactor: 1, label: 'National Average', matchLevel: 'national' };
     }
-    // Use the market selector's factors
     return {
       materialsFactor: m.materialsFactor,
       laborFactor: m.laborFactor,
@@ -46,7 +42,7 @@ export function useFlipAnalyzer() {
     };
   }, [marketSelector.market, property.city, property.state]);
 
-  // ─── Comps ──────────────────────────────────────────────────
+  // ─── Comps (Retail Sales Only — for market validation) ─────
   const [comps, setComps] = useState<CompProperty[]>([]);
 
   const addComp = useCallback((comp: Omit<CompProperty, 'id' | 'pricePerSqft'>) => {
@@ -67,15 +63,14 @@ export function useFlipAnalyzer() {
     }));
   }, []);
 
-  // ARV from comps
-  const arv = useMemo(() => {
-    if (comps.length === 0) return 0;
-    const avgPpsf = comps.reduce((s, c) => s + c.pricePerSqft, 0) / comps.length;
-    return Math.round(avgPpsf * property.sqft);
-  }, [comps, property.sqft]);
+  // Comp quality scoring
+  const compScores = useMemo(() => {
+    return comps.map(c => ({ comp: c, score: scoreComp(c, property) }));
+  }, [comps, property]);
 
-  const [arvOverride, setArvOverride] = useState<number | null>(null);
-  const effectiveArv = arvOverride ?? arv;
+  const compSetQuality = useMemo(() => {
+    return scoreCompSet(comps, property);
+  }, [comps, property]);
 
   // ─── Material Tier ─────────────────────────────────────────
   const [materialTier, setMaterialTier] = useState<MaterialTier>('standard');
@@ -172,18 +167,65 @@ export function useFlipAnalyzer() {
     ? calculateRehabTotals(presetPhases)
     : { totalMaterials: scopeTotals.totalMaterials, totalLabor: scopeTotals.totalLabor, totalCost: scopeTotals.totalCost, totalDurationDays: scopeGanttPhases.reduce((m, p) => Math.max(m, p.startDay + p.durationDays), 0) };
 
+  // ─── ARV Calculation (Cost Approach as Primary) ────────────
+  // Cost Approach ARV = Purchase Price + Rehab Budget
+  // This is the investor's method: what you have INTO the deal
+  // The property must be worth at least what you put into it
+  const costApproachArv = useMemo(() => {
+    const pp = property.purchasePrice || 0;
+    const rehab = rehabTotals.totalCost || 0;
+    return Math.round(pp + rehab);
+  }, [property.purchasePrice, rehabTotals.totalCost]);
+
+  // Comp-based ARV (secondary — market validation only)
+  // Comps MUST be standard retail sales, NOT distressed
+  const compBasedArv = useMemo(() => {
+    if (comps.length === 0) return 0;
+    const validComps = comps.filter(c => c.pricePerSqft > 0);
+    if (validComps.length === 0) return 0;
+    const avgPpsf = validComps.reduce((s, c) => s + c.pricePerSqft, 0) / validComps.length;
+    return Math.round(avgPpsf * property.sqft);
+  }, [comps, property.sqft]);
+
+  // ARV Override (manual user entry)
+  const [arvOverride, setArvOverride] = useState<number | null>(null);
+
+  // Effective ARV priority: Override > Cost Approach
+  // Cost Approach is always the default — comps are for market validation only
+  const effectiveArv = arvOverride ?? costApproachArv;
+
   // ─── Financing ─────────────────────────────────────────────
   const [useHardMoney, setUseHardMoney] = useState(true);
+  const [lenderType, setLenderType] = useState<LenderType>('hard_money');
   const [finParams, setFinParams] = useState(DEFAULT_FINANCING);
+
+  // Gap Funder
+  const [useGapFunding, setUseGapFunding] = useState(false);
+  const [gapParams, setGapParams] = useState(DEFAULT_GAP_FUNDING);
+
+  // Switch lender type and update defaults
+  const switchLenderType = useCallback((type: LenderType) => {
+    setLenderType(type);
+    if (type === 'hard_money') {
+      setFinParams(DEFAULT_FINANCING);
+    } else {
+      setFinParams(DEFAULT_PRIVATE_MONEY);
+    }
+  }, []);
 
   const financing = useMemo<FinancingDetails>(() => {
     const f = calculateFinancing(
       property.purchasePrice, rehabTotals.totalCost,
       finParams.loanToValue, finParams.interestRate,
-      finParams.points, finParams.holdingMonths
+      finParams.points, finParams.holdingMonths,
+      // Gap funder params
+      useGapFunding,
+      gapParams.coveragePercent,
+      gapParams.interestRate,
+      gapParams.points
     );
     return { ...f, useHardMoney };
-  }, [property.purchasePrice, rehabTotals.totalCost, finParams, useHardMoney]);
+  }, [property.purchasePrice, rehabTotals.totalCost, finParams, useHardMoney, useGapFunding, gapParams]);
 
   // ─── Closing Costs ─────────────────────────────────────────
   const [closingParams, setClosingParams] = useState(DEFAULT_CLOSING);
@@ -220,9 +262,12 @@ export function useFlipAnalyzer() {
     // Regional / Market
     regionalFactor,
     marketSelector,
-    // Comps
+    // Comps (retail sales only — for market validation)
     comps, addComp, removeComp, updateComp,
-    arv, arvOverride, setArvOverride, effectiveArv,
+    compScores, compSetQuality,
+    // ARV: Cost Approach is primary, comps are validation
+    costApproachArv, compBasedArv,
+    arvOverride, setArvOverride, effectiveArv,
     // Material tier
     materialTier, setMaterialTier,
     // Rehab
@@ -234,7 +279,10 @@ export function useFlipAnalyzer() {
     activePhases, rehabTotals,
     // Financing
     useHardMoney, setUseHardMoney,
+    lenderType, switchLenderType,
     finParams, setFinParams,
+    useGapFunding, setUseGapFunding,
+    gapParams, setGapParams,
     financing,
     // Closing
     closingParams, setClosingParams, closing,
