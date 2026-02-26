@@ -35,3 +35,7 @@
 - [x] Apply regional cost adjustments to template material and labor costs
 - [x] Persist user's selected market in localStorage for convenience
 - [x] Show regional adjustment indicator on template cards and detail modal
+- [x] Sync metro market selector from SOW page to Deal Analyzer page
+- [x] Apply regional material and labor cost multipliers to Deal Analyzer rehab estimates
+- [x] Show regional adjustment indicator in Deal Analyzer rehab section
+- [x] Ensure market selection persists across both SOW and Analyzer pages via shared localStorage key

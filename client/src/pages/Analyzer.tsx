@@ -44,6 +44,7 @@ export default function Analyzer() {
       beds: property.beds,
       baths: property.baths,
       yearBuilt: property.yearBuilt,
+      market: analyzer.marketSelector.market.label,
     };
 
     try {
@@ -93,6 +94,7 @@ export default function Analyzer() {
               property={analyzer.property}
               onChange={analyzer.setProperty}
               regionalFactor={analyzer.regionalFactor}
+              marketSelector={analyzer.marketSelector}
             />
 
             {/* 2. Comparable Sales */}

@@ -5,6 +5,7 @@ import { getDefaultRoomScopes, calculateRoomCost } from '@/lib/scopeOfWork';
 import { getRegionalCostFactor, type RegionalCostFactor } from '@/lib/regionalCosts';
 import { buildRehabPhases, schedulePhases, getPresetForLevel, DEFAULT_FINANCING, DEFAULT_CLOSING, DEFAULT_HOLDING } from '@/lib/defaults';
 import { calculateFinancing, calculateClosingCosts, calculateHoldingCosts, calculateRehabTotals, calculateProfitability } from '@/lib/calculations';
+import { useMarketSelector, type MarketSelection } from '@/hooks/useMarketSelector';
 import { nanoid } from 'nanoid';
 
 export type RehabMode = 'preset' | 'scope';
@@ -18,13 +19,32 @@ export function useFlipAnalyzer() {
     purchasePrice: 0,
   });
 
+  // ─── Shared Market Selector ────────────────────────────────
+  // Uses the same localStorage key as the SOW page for cross-page sync
+  const marketSelector = useMarketSelector({
+    autoDetectCity: property.city,
+    autoDetectState: property.state,
+  });
+
   // ─── Regional Cost Factor ──────────────────────────────────
+  // Derive from the shared market selector (which may be manual or auto-detected)
   const regionalFactor = useMemo<RegionalCostFactor & { matchLevel: string }>(() => {
-    if (property.city && property.state) {
-      return getRegionalCostFactor(property.city, property.state);
+    const m = marketSelector.market;
+    if (m.key === 'national') {
+      // If national and we have city/state, try auto-detection for backward compat
+      if (property.city && property.state) {
+        return getRegionalCostFactor(property.city, property.state);
+      }
+      return { materialsFactor: 1, laborFactor: 1, label: 'National Average', matchLevel: 'national' };
     }
-    return { materialsFactor: 1, laborFactor: 1, label: 'National Average', matchLevel: 'national' };
-  }, [property.city, property.state]);
+    // Use the market selector's factors
+    return {
+      materialsFactor: m.materialsFactor,
+      laborFactor: m.laborFactor,
+      label: m.label,
+      matchLevel: m.key.startsWith('metro:') ? 'metro' : m.key.startsWith('state:') ? 'state' : 'national',
+    };
+  }, [marketSelector.market, property.city, property.state]);
 
   // ─── Comps ──────────────────────────────────────────────────
   const [comps, setComps] = useState<CompProperty[]>([]);
@@ -115,7 +135,6 @@ export function useFlipAnalyzer() {
       .filter(r => r.enabled)
       .map(r => {
         const bd = scopeTotals.roomBreakdowns.find(b => b.roomId === r.id);
-        // Map room IDs to rehab phase templates for dependencies and colors
         const templateMap: Record<string, { deps: string[]; color: string; duration: number }> = {
           demo: { deps: [], color: '#78716c', duration: 5 },
           structural: { deps: ['demo'], color: '#92400e', duration: 10 },
@@ -198,8 +217,9 @@ export function useFlipAnalyzer() {
   return {
     // Property
     property, setProperty,
-    // Regional
+    // Regional / Market
     regionalFactor,
+    marketSelector,
     // Comps
     comps, addComp, removeComp, updateComp,
     arv, arvOverride, setArvOverride, effectiveArv,

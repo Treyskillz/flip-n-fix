@@ -4,21 +4,34 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CurrencyInput } from './CurrencyInput';
 import { Badge } from '@/components/ui/badge';
+import { MarketSelector, RegionalIndicatorBar, ResetToNationalButton, AdjustmentBadge } from '@/components/MarketSelector';
 import type { SubjectProperty } from '@/lib/types';
 import type { RegionalCostFactor } from '@/lib/regionalCosts';
 import { US_STATES, US_STATE_NAMES } from '@/lib/regionalCosts';
-import { MapPin, Home, DollarSign } from 'lucide-react';
+import type { MarketSelection } from '@/hooks/useMarketSelector';
+import { MapPin, Home, DollarSign, Info } from 'lucide-react';
 
 interface Props {
   property: SubjectProperty;
   onChange: (p: SubjectProperty) => void;
   regionalFactor: RegionalCostFactor & { matchLevel: string };
+  marketSelector: {
+    market: MarketSelection;
+    rawSelectedMarket: MarketSelection;
+    autoDetectedMarket: MarketSelection | null;
+    manualOverride: boolean;
+    selectMarket: (m: MarketSelection) => void;
+    resetToNational: () => void;
+    isNational: boolean;
+  };
 }
 
-export function PropertyInput({ property, onChange, regionalFactor }: Props) {
+export function PropertyInput({ property, onChange, regionalFactor, marketSelector }: Props) {
   const update = (key: keyof SubjectProperty, value: string | number) => {
     onChange({ ...property, [key]: value });
   };
+
+  const { market, autoDetectedMarket, manualOverride, selectMarket, resetToNational, isNational } = marketSelector;
 
   return (
     <Card className="border-l-4 border-l-primary">
@@ -61,22 +74,42 @@ export function PropertyInput({ property, onChange, regionalFactor }: Props) {
           </div>
         </div>
 
-        {/* Regional Cost Indicator */}
-        {property.city && property.state && (
-          <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-secondary/60 text-sm">
-            <span className="font-medium">Market:</span>
-            <Badge variant="outline" className="font-mono text-xs">
-              {regionalFactor.label}
-            </Badge>
-            <span className="text-muted-foreground">|</span>
-            <span className="text-xs text-muted-foreground">
-              Materials: <span className="font-semibold text-foreground">{(regionalFactor.materialsFactor * 100).toFixed(0)}%</span>
-              {' · '}
-              Labor: <span className="font-semibold text-foreground">{(regionalFactor.laborFactor * 100).toFixed(0)}%</span>
-              {' of national avg'}
-            </span>
+        {/* Market Selector Section */}
+        <div className="space-y-2">
+          <Label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <MapPin className="w-3.5 h-3.5" /> Market / Regional Pricing
+          </Label>
+          <div className="flex items-center gap-3 flex-wrap">
+            <MarketSelector market={market} onSelect={selectMarket} />
+            {!isNational && (
+              <ResetToNationalButton onClick={resetToNational} />
+            )}
           </div>
-        )}
+
+          {/* Auto-detection hint */}
+          {property.city && property.state && autoDetectedMarket && !manualOverride && (
+            <div className="flex items-start gap-2 text-xs text-muted-foreground">
+              <Info className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+              <span>
+                Auto-detected <span className="font-medium text-foreground">{autoDetectedMarket.label}</span> from property location. 
+                Select a different market above to override.
+              </span>
+            </div>
+          )}
+
+          {/* Manual override hint */}
+          {manualOverride && autoDetectedMarket && autoDetectedMarket.key !== market.key && (
+            <div className="flex items-start gap-2 text-xs text-muted-foreground">
+              <Info className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+              <span>
+                Using manually selected market. Property location suggests <span className="font-medium text-foreground">{autoDetectedMarket.label}</span>.
+              </span>
+            </div>
+          )}
+
+          {/* Regional Cost Indicator */}
+          <RegionalIndicatorBar market={market} />
+        </div>
 
         {/* Property Details Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

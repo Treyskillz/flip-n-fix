@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -15,9 +15,10 @@ import {
   type SOWTemplate,
 } from '@/lib/sowTemplates';
 import {
-  METRO_COST_INDEX, STATE_COST_INDEX,
-  type RegionalCostFactor,
+  METRO_COST_INDEX,
 } from '@/lib/regionalCosts';
+import { useMarketSelector, getAdjustmentPercent, type MarketSelection, ALL_MARKETS } from '@/hooks/useMarketSelector';
+import { MarketSelector, AdjustmentBadge, RegionalIndicatorBar, ResetToNationalButton } from '@/components/MarketSelector';
 import {
   ClipboardList, Download, ExternalLink, ChevronDown, ChevronUp,
   Printer, DollarSign, Wrench, ShoppingCart, X, Home as HomeIcon,
@@ -26,167 +27,11 @@ import {
 } from 'lucide-react';
 
 // ─── REGIONAL MARKET SELECTOR ─────────────────────────────────
+// Now uses shared hook and components from @/hooks/useMarketSelector and @/components/MarketSelector
 
-const STORAGE_KEY = 'sow-selected-market';
+// AdjustmentBadge is now imported from @/components/MarketSelector
 
-interface MarketSelection {
-  key: string;
-  label: string;
-  materialsFactor: number;
-  laborFactor: number;
-}
-
-// Build sorted list of all available markets for the dropdown
-const ALL_MARKETS: MarketSelection[] = (() => {
-  const markets: MarketSelection[] = [
-    { key: 'national', label: 'National Average', materialsFactor: 1.0, laborFactor: 1.0 },
-  ];
-  // Add metro markets
-  Object.entries(METRO_COST_INDEX).forEach(([key, val]) => {
-    markets.push({ key: `metro:${key}`, label: val.label, materialsFactor: val.materialsFactor, laborFactor: val.laborFactor });
-  });
-  // Add state-level markets (for states without a metro entry)
-  Object.entries(STATE_COST_INDEX).forEach(([stateCode, val]) => {
-    markets.push({ key: `state:${stateCode}`, label: `${val.label} (State Avg)`, materialsFactor: val.materialsFactor, laborFactor: val.laborFactor });
-  });
-  // Sort alphabetically (national first, then metros, then states)
-  return [markets[0], ...markets.slice(1).sort((a, b) => a.label.localeCompare(b.label))];
-})();
-
-function loadSavedMarket(): MarketSelection {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      const found = ALL_MARKETS.find(m => m.key === parsed.key);
-      if (found) return found;
-    }
-  } catch { /* ignore */ }
-  return ALL_MARKETS[0]; // National Average
-}
-
-function getAdjustmentPercent(factor: number): number {
-  return Math.round((factor - 1) * 100);
-}
-
-function AdjustmentBadge({ factor, label }: { factor: number; label: string }) {
-  const pct = getAdjustmentPercent(factor);
-  if (pct === 0) return (
-    <span className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground">
-      <Minus className="w-3 h-3" /> {label} avg
-    </span>
-  );
-  const isUp = pct > 0;
-  return (
-    <span className={`inline-flex items-center gap-0.5 text-[10px] font-medium ${isUp ? 'text-amber-600' : 'text-emerald-600'}`}>
-      {isUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-      {isUp ? '+' : ''}{pct}% {label}
-    </span>
-  );
-}
-
-function MarketSelector({ market, onSelect }: { market: MarketSelection; onSelect: (m: MarketSelection) => void }) {
-  const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState('');
-
-  const filtered = useMemo(() => {
-    if (!search.trim()) return ALL_MARKETS;
-    const q = search.toLowerCase();
-    return ALL_MARKETS.filter(m => m.label.toLowerCase().includes(q));
-  }, [search]);
-
-  const handleSelect = useCallback((m: MarketSelection) => {
-    onSelect(m);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ key: m.key }));
-    setOpen(false);
-    setSearch('');
-  }, [onSelect]);
-
-  const isNational = market.key === 'national';
-  const combinedFactor = ((market.materialsFactor + market.laborFactor) / 2);
-  const combinedPct = getAdjustmentPercent(combinedFactor);
-
-  return (
-    <div className="relative">
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-background hover:border-[oklch(0.48_0.20_18)]/40 transition-colors text-sm"
-      >
-        <MapPin className="w-4 h-4 text-[oklch(0.48_0.20_18)]" />
-        <span className="font-medium">{market.label}</span>
-        {!isNational && (
-          <Badge variant="outline" className={`text-[10px] ml-1 ${combinedPct > 0 ? 'text-amber-600 border-amber-300' : combinedPct < 0 ? 'text-emerald-600 border-emerald-300' : 'text-muted-foreground'}`}>
-            {combinedPct > 0 ? '+' : ''}{combinedPct}%
-          </Badge>
-        )}
-        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${open ? 'rotate-180' : ''}`} />
-      </button>
-
-      {open && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => { setOpen(false); setSearch(''); }} />
-          <div className="absolute top-full left-0 mt-1 w-80 max-h-80 bg-background border border-border rounded-lg shadow-xl z-50 overflow-hidden">
-            <div className="p-2 border-b border-border/50">
-              <div className="relative">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="Search markets..."
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  className="w-full pl-8 pr-3 py-2 text-sm rounded-md border border-border bg-secondary/30 focus:outline-none focus:ring-1 focus:ring-[oklch(0.48_0.20_18)]/30"
-                  autoFocus
-                />
-              </div>
-            </div>
-            <div className="overflow-y-auto max-h-60">
-              {filtered.map(m => {
-                const isSelected = m.key === market.key;
-                const mPct = getAdjustmentPercent((m.materialsFactor + m.laborFactor) / 2);
-                return (
-                  <button
-                    key={m.key}
-                    onClick={() => handleSelect(m)}
-                    className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between hover:bg-secondary/50 transition-colors ${isSelected ? 'bg-[oklch(0.48_0.20_18)]/5 font-medium' : ''}`}
-                  >
-                    <span className="flex items-center gap-2">
-                      {m.key === 'national' ? <Globe className="w-3.5 h-3.5 text-muted-foreground" /> : <MapPin className="w-3.5 h-3.5 text-muted-foreground" />}
-                      {m.label}
-                    </span>
-                    {m.key !== 'national' && (
-                      <span className={`text-[10px] font-medium ${mPct > 0 ? 'text-amber-600' : mPct < 0 ? 'text-emerald-600' : 'text-muted-foreground'}`}>
-                        {mPct > 0 ? '+' : ''}{mPct}%
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-              {filtered.length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-4">No markets found</p>
-              )}
-            </div>
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-// ─── REGIONAL INDICATOR BAR ───────────────────────────────────
-
-function RegionalIndicatorBar({ market }: { market: MarketSelection }) {
-  if (market.key === 'national') return null;
-  return (
-    <div className="flex flex-wrap items-center gap-3 px-3 py-2 rounded-lg bg-[oklch(0.48_0.20_18)]/5 border border-[oklch(0.48_0.20_18)]/15">
-      <MapPin className="w-3.5 h-3.5 text-[oklch(0.48_0.20_18)]" />
-      <span className="text-xs font-medium">{market.label}</span>
-      <span className="text-[10px] text-muted-foreground">|</span>
-      <AdjustmentBadge factor={market.materialsFactor} label="materials" />
-      <span className="text-[10px] text-muted-foreground">|</span>
-      <AdjustmentBadge factor={market.laborFactor} label="labor" />
-    </div>
-  );
-}
+// MarketSelector, AdjustmentBadge, and RegionalIndicatorBar are now imported from @/components/MarketSelector
 
 // ─── EXISTING LINE-ITEM ESTIMATOR COMPONENTS ───────────────────
 
@@ -706,7 +551,7 @@ export default function ScopeOfWork() {
   const [selectedCostLevel, setSelectedCostLevel] = useState<number>(0); // 0 = all
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState<SOWTemplate | null>(null);
-  const [market, setMarket] = useState<MarketSelection>(loadSavedMarket);
+  const { market, selectMarket: setMarket, resetToNational } = useMarketSelector();
 
   const filteredTemplates = useMemo(() => {
     let filtered = SOW_TEMPLATES;
@@ -818,16 +663,7 @@ export default function ScopeOfWork() {
               </div>
             )}
             {market.key !== 'national' && (
-              <button
-                onClick={() => {
-                  const national = ALL_MARKETS[0];
-                  setMarket(national);
-                  localStorage.setItem(STORAGE_KEY, JSON.stringify({ key: national.key }));
-                }}
-                className="text-xs text-muted-foreground hover:text-foreground ml-auto"
-              >
-                Reset to National
-              </button>
+              <ResetToNationalButton onClick={resetToNational} />
             )}
           </div>
 
