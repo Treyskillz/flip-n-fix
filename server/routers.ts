@@ -6,7 +6,7 @@ import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { PLANS, PlanKey } from "./stripe/products";
 import { createCheckoutSession, createPortalSession } from "./stripe/checkout";
 import { getDb } from "./db";
-import { users, sharedDeals, savedDeals, dealPhotos } from "../drizzle/schema";
+import { users, sharedDeals, savedDeals, dealPhotos, courseProgress } from "../drizzle/schema";
 import { eq, sql, desc, and, ne } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
@@ -607,6 +607,105 @@ Provide 3-5 comparable RENOVATED properties that recently sold as standard retai
         const { url } = await storagePut(key, buffer, input.mimeType);
         return { url };
       }),
+  }),
+
+  // ─── Course Progress ──────────────────────────────────────────
+  courseProgress: router({
+    // Get all completed lesson IDs for the current user
+    list: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      const rows = await db
+        .select({
+          lessonId: courseProgress.lessonId,
+          completedAt: courseProgress.completedAt,
+        })
+        .from(courseProgress)
+        .where(eq(courseProgress.userId, ctx.user.id));
+
+      return rows;
+    }),
+
+    // Toggle a lesson complete/incomplete
+    toggle: protectedProcedure
+      .input(z.object({ lessonId: z.string().min(1) }))
+      .mutation(async ({ input, ctx }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        // Check if already completed
+        const existing = await db
+          .select()
+          .from(courseProgress)
+          .where(
+            and(
+              eq(courseProgress.userId, ctx.user.id),
+              eq(courseProgress.lessonId, input.lessonId)
+            )
+          )
+          .limit(1);
+
+        if (existing.length > 0) {
+          // Remove completion
+          await db
+            .delete(courseProgress)
+            .where(
+              and(
+                eq(courseProgress.userId, ctx.user.id),
+                eq(courseProgress.lessonId, input.lessonId)
+              )
+            );
+          return { completed: false, lessonId: input.lessonId };
+        } else {
+          // Mark complete
+          await db.insert(courseProgress).values({
+            userId: ctx.user.id,
+            lessonId: input.lessonId,
+          });
+          return { completed: true, lessonId: input.lessonId };
+        }
+      }),
+
+    // Mark all lessons in a module as complete
+    completeModule: protectedProcedure
+      .input(z.object({ lessonIds: z.array(z.string().min(1)) }))
+      .mutation(async ({ input, ctx }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        // Get already completed lessons
+        const existing = await db
+          .select({ lessonId: courseProgress.lessonId })
+          .from(courseProgress)
+          .where(eq(courseProgress.userId, ctx.user.id));
+
+        const completedSet = new Set(existing.map((e) => e.lessonId));
+        const toInsert = input.lessonIds.filter((id) => !completedSet.has(id));
+
+        if (toInsert.length > 0) {
+          await db.insert(courseProgress).values(
+            toInsert.map((lessonId) => ({
+              userId: ctx.user.id,
+              lessonId,
+            }))
+          );
+        }
+
+        return { completed: input.lessonIds.length, added: toInsert.length };
+      }),
+
+    // Reset all progress
+    reset: protectedProcedure.mutation(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      await db
+        .delete(courseProgress)
+        .where(eq(courseProgress.userId, ctx.user.id));
+
+      return { success: true };
+    }),
   }),
 
   // ─── Subscription & Billing ────────────────────────────────────

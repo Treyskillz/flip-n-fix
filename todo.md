@@ -145,9 +145,18 @@
 - [x] Audit all app features and existing course content
 - [x] Create comprehensive User Manual / Help Center page covering every feature
 - [x] Update Course content with app usage tutorials for every tool
-- [ ] Add contextual help tooltips and onboarding guidance across the app
+- [x] Add contextual help tooltips and onboarding guidance across the app
 - [x] Ensure all documentation reflects current features for paying users
 - [x] Create video scripts for all course lessons (Modules 1-9)
 - [x] Add video script viewer/toggle to Course page UI
 - [x] Update video placeholders for new Module 9 lessons
 - [x] Include presenter cues, screen recording directions, and talking points in scripts
+- [x] Create reusable HelpTooltip component with "?" icon and hover/click explanations
+- [x] Add tooltips to Analyzer fields: Deal Score, 70% Rule, ARV, Cap Rate, Cash-on-Cash Return, ROI
+- [x] Add tooltips to Portfolio Dashboard: Total Invested, Projected Profit, Average ROI
+- [x] Add tooltips to Rehab Estimator: Material Tiers, Regional Adjustments
+- [x] Add database schema for course_progress table (user_id, lesson_id, completed_at)
+- [x] Create tRPC endpoints for marking lessons complete/incomplete and fetching progress
+- [x] Add progress bar to Course page header showing overall completion percentage
+- [x] Add "Mark Complete" checkbox/button to each lesson
+- [x] Persist course progress in database per user

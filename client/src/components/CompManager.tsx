@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import type { CompProperty, CompQualityScore } from '@/lib/types';
 import { formatCurrency, scoreComp } from '@/lib/calculations';
 import { BarChart3, Plus, Trash2, TrendingUp, AlertTriangle, Info, ShieldCheck, ShieldAlert, DollarSign, CheckCircle2, XCircle, Sparkles, Loader2 } from 'lucide-react';
+import { HelpTooltip, HELP_TIPS } from '@/components/HelpTooltip';
 import { useState, useCallback, useMemo } from 'react';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
@@ -273,6 +274,7 @@ export function CompManager({
               <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 After Repair Value (ARV)
               </span>
+              <HelpTooltip {...HELP_TIPS.arv} size={12} />
               {compBasedArv > 0 && <Badge variant="default" className="text-[10px] h-5">FROM COMPS</Badge>}
             </div>
             {compBasedArv > 0 ? (

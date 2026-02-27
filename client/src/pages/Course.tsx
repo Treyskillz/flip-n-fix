@@ -2,16 +2,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Progress } from '@/components/ui/progress';
 import { COURSE_MODULES } from '@/lib/course';
 import type { CourseModule, CourseLesson } from '@/lib/course';
 import { VIDEO_SCRIPTS } from '@/lib/videoScripts';
 import type { VideoScript, VideoSegment } from '@/lib/videoScripts';
+import { trpc } from '@/lib/trpc';
+import { useAuth } from '@/_core/hooks/useAuth';
+import { getLoginUrl } from '@/const';
+import { toast } from 'sonner';
 import {
   GraduationCap, ChevronDown, ChevronRight, BookOpen, Clock,
   PlayCircle, Video, FileText, Camera, Monitor, Presentation,
-  PenLine, Clapperboard, Eye, EyeOff
+  PenLine, Clapperboard, Eye, EyeOff, CheckCircle2, Circle,
+  RotateCcw, Loader2, Lock, Trophy
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Streamdown } from 'streamdown';
 
 // Segment type icons
@@ -59,54 +65,47 @@ function VideoScriptViewer({ script }: { script: VideoScript }) {
           <span className="flex items-center gap-1">
             <Camera className="w-3 h-3" /> {script.equipment}
           </span>
+          <span className="flex items-center gap-1">
+            <FileText className="w-3 h-3" /> {script.segments.length} Segments
+          </span>
         </div>
       </div>
 
       {/* Opening Hook */}
       <div className="p-4 border-b border-border/50">
         <p className="text-xs font-semibold text-[oklch(0.50_0.18_25)] uppercase tracking-wider mb-1">Opening Hook</p>
-        <p className="text-sm italic text-foreground/80">{script.openingHook}</p>
+        <p className="text-sm font-medium">{script.openingHook}</p>
       </div>
 
       {/* Segments */}
       <div className="divide-y divide-border/50">
         {script.segments.map((seg, i) => {
           const isExpanded = expandedSegment === i;
+          const SegIcon = SEGMENT_ICONS[seg.type] || Camera;
           return (
-            <div key={i} className="group">
+            <div key={i}>
               <button
                 onClick={() => setExpandedSegment(isExpanded ? null : i)}
                 className="w-full text-left p-4 hover:bg-secondary/30 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <span className="w-6 h-6 flex items-center justify-center bg-[oklch(0.50_0.18_25)]/15 text-[oklch(0.50_0.18_25)] text-xs font-bold shrink-0">
-                    {i + 1}
+                  <span className="text-xs font-bold text-muted-foreground w-6 shrink-0">#{i + 1}</span>
+                  <SegmentBadge type={seg.type} />
+                  <span className="text-sm font-medium flex-1">{seg.title}</span>
+                  <span className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Clock className="w-3 h-3" /> {seg.duration}
                   </span>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-medium text-sm">{seg.title}</span>
-                      <SegmentBadge type={seg.type} />
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <Clock className="w-3 h-3" /> {seg.duration}
-                      </span>
-                    </div>
-                  </div>
-                  {isExpanded
-                    ? <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
-                    : <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
-                  }
+                  {isExpanded ? <ChevronDown className="w-4 h-4 text-muted-foreground" /> : <ChevronRight className="w-4 h-4 text-muted-foreground" />}
                 </div>
               </button>
               {isExpanded && (
                 <div className="px-4 pb-4 ml-9 space-y-3">
-                  {/* Script Text */}
                   <div>
                     <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Script</p>
                     <div className="text-sm leading-relaxed whitespace-pre-line bg-background/80 p-3 border border-border/50">
                       {seg.script}
                     </div>
                   </div>
-                  {/* Directions */}
                   <div>
                     <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Production Directions</p>
                     <p className="text-sm text-muted-foreground italic bg-background/80 p-3 border border-border/50">
@@ -151,15 +150,12 @@ function VideoPlaceholder({ lessonId, script }: { lessonId: string; script?: Vid
   return (
     <div className="mb-6">
       <div className="relative bg-[oklch(0.15_0.01_25)] overflow-hidden" style={{ aspectRatio: '16/9' }}>
-        {/* Grid pattern background */}
         <div className="absolute inset-0 opacity-10"
           style={{
             backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
             backgroundSize: '40px 40px'
           }}
         />
-        
-        {/* Center play button area */}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
           <div className="w-20 h-20 flex items-center justify-center bg-[oklch(0.50_0.18_25)] transition-transform hover:scale-105">
             <PlayCircle className="w-10 h-10 text-white" />
@@ -178,7 +174,6 @@ function VideoPlaceholder({ lessonId, script }: { lessonId: string; script?: Vid
           </div>
         </div>
 
-        {/* Coming Soon badge */}
         <div className="absolute top-4 right-4">
           <Badge className="bg-[oklch(0.50_0.18_25)] text-white border-none text-xs flex items-center gap-1.5 px-3 py-1">
             <Video className="w-3.5 h-3.5" />
@@ -186,7 +181,6 @@ function VideoPlaceholder({ lessonId, script }: { lessonId: string; script?: Vid
           </Badge>
         </div>
 
-        {/* Bottom bar */}
         <div className="absolute bottom-0 left-0 right-0 h-1 bg-[oklch(0.25_0.01_25)]">
           <div className="h-full w-0 bg-[oklch(0.50_0.18_25)]" />
         </div>
@@ -203,12 +197,99 @@ export default function Course() {
   const [activeLesson, setActiveLesson] = useState<string | null>('l-1-1');
   const [showScript, setShowScript] = useState(false);
 
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
+
+  // Fetch progress from database (only if authenticated)
+  const progressQuery = trpc.courseProgress.list.useQuery(undefined, {
+    enabled: isAuthenticated,
+    retry: false,
+  });
+
+  const toggleMutation = trpc.courseProgress.toggle.useMutation({
+    onSuccess: () => {
+      progressQuery.refetch();
+    },
+    onError: (err) => {
+      toast.error('Failed to update progress');
+    },
+  });
+
+  const completeModuleMutation = trpc.courseProgress.completeModule.useMutation({
+    onSuccess: (data) => {
+      progressQuery.refetch();
+      toast.success(`Module complete! ${data.added} lesson${data.added !== 1 ? 's' : ''} marked.`);
+    },
+    onError: () => {
+      toast.error('Failed to mark module complete');
+    },
+  });
+
+  const resetMutation = trpc.courseProgress.reset.useMutation({
+    onSuccess: () => {
+      progressQuery.refetch();
+      toast.success('Progress reset successfully');
+    },
+    onError: () => {
+      toast.error('Failed to reset progress');
+    },
+  });
+
+  // Build completed set
+  const completedLessons = useMemo(() => {
+    const set = new Set<string>();
+    if (progressQuery.data) {
+      for (const row of progressQuery.data) {
+        set.add(row.lessonId);
+      }
+    }
+    return set;
+  }, [progressQuery.data]);
+
+  // Compute progress stats
+  const allLessonIds = useMemo(() => {
+    return COURSE_MODULES.flatMap(m => m.lessons.map(l => l.id));
+  }, []);
+
+  const totalLessons = allLessonIds.length;
+  const completedCount = completedLessons.size;
+  const progressPercent = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+
+  const totalScripts = Object.keys(VIDEO_SCRIPTS).length;
+
   const currentModule = COURSE_MODULES.find(m => m.id === expandedModule);
   const currentLesson = currentModule?.lessons.find(l => l.id === activeLesson);
   const currentScript = activeLesson ? VIDEO_SCRIPTS[activeLesson] : undefined;
 
-  const totalLessons = COURSE_MODULES.reduce((sum, m) => sum + m.lessons.length, 0);
-  const totalScripts = Object.keys(VIDEO_SCRIPTS).length;
+  // Module-level progress
+  const getModuleProgress = useCallback((mod: CourseModule) => {
+    const modLessonIds = mod.lessons.map(l => l.id);
+    const completed = modLessonIds.filter(id => completedLessons.has(id)).length;
+    return { completed, total: modLessonIds.length, percent: modLessonIds.length > 0 ? Math.round((completed / modLessonIds.length) * 100) : 0 };
+  }, [completedLessons]);
+
+  const handleToggleLesson = useCallback((lessonId: string) => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in to track your progress');
+      return;
+    }
+    toggleMutation.mutate({ lessonId });
+  }, [isAuthenticated, toggleMutation]);
+
+  const handleCompleteModule = useCallback((mod: CourseModule) => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in to track your progress');
+      return;
+    }
+    const lessonIds = mod.lessons.map(l => l.id);
+    completeModuleMutation.mutate({ lessonIds });
+  }, [isAuthenticated, completeModuleMutation]);
+
+  const handleReset = useCallback(() => {
+    if (!isAuthenticated) return;
+    if (confirm('Are you sure you want to reset all course progress? This cannot be undone.')) {
+      resetMutation.mutate();
+    }
+  }, [isAuthenticated, resetMutation]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -230,6 +311,67 @@ export default function Course() {
             A comprehensive course covering every aspect of real estate investing — from finding deals and analyzing properties 
             to all five major exit strategies: Fix & Flip, Wholesaling, BRRRR, Subject-To, and Short-Term Rentals.
           </p>
+
+          {/* Progress Bar */}
+          {isAuthenticated && (
+            <div className="mt-4 p-4 bg-secondary/40 border border-border/50 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  {progressPercent === 100 ? (
+                    <Trophy className="w-5 h-5 text-amber-500" />
+                  ) : (
+                    <BookOpen className="w-4 h-4 text-primary" />
+                  )}
+                  <span className="text-sm font-semibold">
+                    {progressPercent === 100 ? 'Course Complete!' : 'Your Progress'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-bold tabular-nums text-primary">
+                    {completedCount}/{totalLessons} lessons
+                  </span>
+                  <span className="text-sm font-bold tabular-nums">
+                    {progressPercent}%
+                  </span>
+                  {completedCount > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleReset}
+                      disabled={resetMutation.isPending}
+                      className="text-xs text-muted-foreground hover:text-destructive h-7 px-2"
+                    >
+                      {resetMutation.isPending ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <RotateCcw className="w-3 h-3" />
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </div>
+              <Progress value={progressPercent} className="h-2" />
+              {progressPercent === 100 && (
+                <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 font-medium">
+                  Congratulations! You've completed all {totalLessons} lessons. Keep reviewing to reinforce your knowledge.
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Sign in prompt for non-authenticated users */}
+          {!isAuthenticated && !authLoading && (
+            <div className="mt-4 p-4 bg-primary/5 border border-primary/20 rounded-lg flex items-center gap-3">
+              <Lock className="w-5 h-5 text-primary shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm font-medium">Sign in to track your progress</p>
+                <p className="text-xs text-muted-foreground">Your lesson completions will be saved to your account so you can pick up where you left off.</p>
+              </div>
+              <Button size="sm" asChild>
+                <a href={getLoginUrl()}>Sign In</a>
+              </Button>
+            </div>
+          )}
 
           {/* Course Stats Bar */}
           <div className="flex flex-wrap gap-6 mt-4 pt-4 border-t border-border/50">
@@ -257,6 +399,8 @@ export default function Course() {
           <div className="space-y-2">
             {COURSE_MODULES.map((mod: CourseModule) => {
               const isExpanded = expandedModule === mod.id;
+              const modProgress = getModuleProgress(mod);
+              const isModuleComplete = modProgress.completed === modProgress.total;
               return (
                 <Collapsible key={mod.id} open={isExpanded}>
                   <Card className={`transition-all ${isExpanded ? 'border-primary shadow-sm' : ''}`}>
@@ -274,8 +418,22 @@ export default function Course() {
                         <div className="flex items-center gap-2">
                           <span className="text-xl">{mod.icon}</span>
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs text-muted-foreground">Module {mod.number}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="text-xs text-muted-foreground">Module {mod.number}</p>
+                              {isAuthenticated && isModuleComplete && (
+                                <CheckCircle2 className="w-3.5 h-3.5 text-green-500 shrink-0" />
+                              )}
+                            </div>
                             <CardTitle className="text-sm leading-tight">{mod.title}</CardTitle>
+                            {/* Module progress bar */}
+                            {isAuthenticated && modProgress.total > 0 && (
+                              <div className="flex items-center gap-2 mt-1.5">
+                                <Progress value={modProgress.percent} className="h-1 flex-1" />
+                                <span className="text-[10px] text-muted-foreground tabular-nums shrink-0">
+                                  {modProgress.completed}/{modProgress.total}
+                                </span>
+                              </div>
+                            )}
                           </div>
                           {isExpanded ? <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" /> : <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />}
                         </div>
@@ -286,6 +444,7 @@ export default function Course() {
                         <div className="space-y-1 ml-8">
                           {mod.lessons.map((lesson: CourseLesson) => {
                             const hasScript = !!VIDEO_SCRIPTS[lesson.id];
+                            const isCompleted = completedLessons.has(lesson.id);
                             return (
                               <button
                                 key={lesson.id}
@@ -300,8 +459,12 @@ export default function Course() {
                                 }`}
                               >
                                 <div className="flex items-center gap-2">
-                                  <PlayCircle className="w-3.5 h-3.5 shrink-0" />
-                                  <span className="flex-1 truncate">{lesson.title}</span>
+                                  {isAuthenticated && isCompleted ? (
+                                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-green-500" />
+                                  ) : (
+                                    <PlayCircle className="w-3.5 h-3.5 shrink-0" />
+                                  )}
+                                  <span className={`flex-1 truncate ${isCompleted ? 'line-through opacity-70' : ''}`}>{lesson.title}</span>
                                   {hasScript && (
                                     <FileText className="w-3 h-3 shrink-0 text-[oklch(0.50_0.18_25)]" />
                                   )}
@@ -314,6 +477,28 @@ export default function Course() {
                             );
                           })}
                         </div>
+                        {/* Mark Module Complete button */}
+                        {isAuthenticated && !isModuleComplete && (
+                          <div className="ml-8 mt-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleCompleteModule(mod);
+                              }}
+                              disabled={completeModuleMutation.isPending}
+                              className="text-xs w-full gap-1.5"
+                            >
+                              {completeModuleMutation.isPending ? (
+                                <Loader2 className="w-3 h-3 animate-spin" />
+                              ) : (
+                                <CheckCircle2 className="w-3 h-3" />
+                              )}
+                              Mark Module Complete
+                            </Button>
+                          </div>
+                        )}
                       </CardContent>
                     </CollapsibleContent>
                   </Card>
@@ -341,17 +526,38 @@ export default function Course() {
                         </Badge>
                       )}
                     </div>
-                    {currentScript && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setShowScript(!showScript)}
-                        className="text-xs gap-1.5"
-                      >
-                        {showScript ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                        {showScript ? 'Hide Script' : 'View Script'}
-                      </Button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {/* Mark Complete / Undo button */}
+                      {isAuthenticated && (
+                        <Button
+                          variant={completedLessons.has(currentLesson.id) ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => handleToggleLesson(currentLesson.id)}
+                          disabled={toggleMutation.isPending}
+                          className={`text-xs gap-1.5 ${completedLessons.has(currentLesson.id) ? 'bg-green-600 hover:bg-green-700 text-white' : ''}`}
+                        >
+                          {toggleMutation.isPending ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          ) : completedLessons.has(currentLesson.id) ? (
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                          ) : (
+                            <Circle className="w-3.5 h-3.5" />
+                          )}
+                          {completedLessons.has(currentLesson.id) ? 'Completed' : 'Mark Complete'}
+                        </Button>
+                      )}
+                      {currentScript && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowScript(!showScript)}
+                          className="text-xs gap-1.5"
+                        >
+                          {showScript ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                          {showScript ? 'Hide Script' : 'View Script'}
+                        </Button>
+                      )}
+                    </div>
                   </div>
                   <CardTitle className="text-2xl">{currentLesson.title}</CardTitle>
                 </CardHeader>
@@ -368,6 +574,53 @@ export default function Course() {
                   <div className={`prose prose-sm max-w-none [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mt-6 [&_h2]:mb-3 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_p]:mb-3 [&_p]:leading-relaxed [&_ul]:mb-3 [&_ol]:mb-3 [&_li]:mb-1 [&_table]:w-full [&_table]:text-sm [&_th]:text-left [&_th]:p-2 [&_th]:bg-secondary/60 [&_th]:font-semibold [&_td]:p-2 [&_td]:border-b [&_td]:border-border/50 [&_strong]:font-semibold [&_blockquote]:border-l-4 [&_blockquote]:border-primary/30 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground ${showScript ? 'mt-6' : ''}`}>
                     <Streamdown>{currentLesson.content}</Streamdown>
                   </div>
+
+                  {/* Bottom: Mark Complete + Next Lesson */}
+                  {isAuthenticated && (
+                    <div className="mt-8 pt-4 border-t border-border/50 flex items-center justify-between">
+                      <Button
+                        variant={completedLessons.has(currentLesson.id) ? 'default' : 'outline'}
+                        onClick={() => handleToggleLesson(currentLesson.id)}
+                        disabled={toggleMutation.isPending}
+                        className={`gap-2 ${completedLessons.has(currentLesson.id) ? 'bg-green-600 hover:bg-green-700 text-white' : ''}`}
+                      >
+                        {toggleMutation.isPending ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : completedLessons.has(currentLesson.id) ? (
+                          <CheckCircle2 className="w-4 h-4" />
+                        ) : (
+                          <Circle className="w-4 h-4" />
+                        )}
+                        {completedLessons.has(currentLesson.id) ? 'Completed — Click to Undo' : 'Mark as Complete'}
+                      </Button>
+                      {/* Next lesson button */}
+                      {(() => {
+                        const flatLessons = COURSE_MODULES.flatMap(m => m.lessons);
+                        const currentIdx = flatLessons.findIndex(l => l.id === currentLesson.id);
+                        const nextLesson = currentIdx >= 0 && currentIdx < flatLessons.length - 1 ? flatLessons[currentIdx + 1] : null;
+                        const nextModule = nextLesson ? COURSE_MODULES.find(m => m.lessons.some(l => l.id === nextLesson.id)) : null;
+                        if (!nextLesson) return null;
+                        return (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setActiveLesson(nextLesson.id);
+                              if (nextModule && nextModule.id !== expandedModule) {
+                                setExpandedModule(nextModule.id);
+                              }
+                              setShowScript(false);
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                            className="text-xs gap-1.5"
+                          >
+                            Next: {nextLesson.title}
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </Button>
+                        );
+                      })()}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ) : (

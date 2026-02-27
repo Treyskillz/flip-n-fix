@@ -10,6 +10,7 @@ import type { RehabPhase } from '@/lib/types';
 import type { MaterialTier, RoomScope, RoomCondition, HomeDepotProduct } from '@/lib/scopeOfWork';
 import type { RehabMode } from '@/hooks/useFlipAnalyzer';
 import { Hammer, ChevronDown, ChevronRight, Package, Wrench, ExternalLink, FileText } from 'lucide-react';
+import { HelpTooltip, HELP_TIPS } from '@/components/HelpTooltip';
 import { useState } from 'react';
 
 interface Props {
@@ -88,8 +89,8 @@ export function RehabEstimator({
 
         {/* Material Tier Selector */}
         <div className="space-y-2">
-          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Neighborhood / Material Tier
+          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground inline-flex items-center gap-1">
+            Neighborhood / Material Tier <HelpTooltip {...HELP_TIPS.materialTier} size={12} />
           </Label>
           <div className="grid grid-cols-3 gap-2">
             {(['rental', 'standard', 'luxury'] as MaterialTier[]).map(tier => (
@@ -139,7 +140,7 @@ export function RehabEstimator({
               Room-by-Room Condition Assessment & Scope of Work
             </Label>
             <p className="text-xs text-muted-foreground">
-              Costs adjusted for <span className="font-semibold">{regionalLabel}</span> market. Set the condition for each area to determine what work is needed.
+              Costs adjusted for <span className="font-semibold">{regionalLabel}</span> market <HelpTooltip {...HELP_TIPS.regionalAdjustment} size={12} className="inline-flex" />. Set the condition for each area to determine what work is needed.
             </p>
 
             {roomScopes.map(room => {

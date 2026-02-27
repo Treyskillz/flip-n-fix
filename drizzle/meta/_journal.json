@@ -22,6 +22,13 @@
       "when": 1772161683293,
       "tag": "0002_thankful_callisto",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1772167078294,
+      "tag": "0003_dusty_mercury",
+      "breakpoints": true
     }
   ]
 }

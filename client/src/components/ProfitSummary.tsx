@@ -20,6 +20,7 @@ import {
   XCircle,
   Info,
 } from 'lucide-react';
+import { HelpTooltip, HELP_TIPS } from '@/components/HelpTooltip';
 
 interface Props {
   profit: ProfitAnalysis;
@@ -216,6 +217,7 @@ export function ProfitSummary({ profit, rehabCost, rehabDays, targetROI, setTarg
           <div className="flex items-center gap-2">
             <Award className={`w-5 h-5 ${scoreColor}`} />
             <span className="text-sm font-semibold">Deal Score</span>
+            <HelpTooltip {...HELP_TIPS.dealScore} size={13} />
           </div>
           <div className={`px-3 py-1 rounded-full ${scoreBg} ${scoreColor} font-bold text-lg tabular-nums`}>
             {profit.dealScore}/100
@@ -235,6 +237,7 @@ export function ProfitSummary({ profit, rehabCost, rehabDays, targetROI, setTarg
             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Net Profit
             </span>
+            <HelpTooltip {...HELP_TIPS.netProfit} size={12} />
           </div>
           <p
             className={`text-2xl font-bold tabular-nums ${profit.isProfitable ? 'text-[oklch(0.45_0.17_145)]' : 'text-destructive'}`}
@@ -246,11 +249,17 @@ export function ProfitSummary({ profit, rehabCost, rehabDays, targetROI, setTarg
         {/* ── Key Metrics Grid ───────────────────────────────── */}
         <div className="grid grid-cols-2 gap-3">
           <div className="p-2 rounded-md bg-secondary/60">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">ROI</p>
+            <div className="flex items-center gap-1">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">ROI</p>
+              <HelpTooltip {...HELP_TIPS.roi} size={11} />
+            </div>
             <p className="text-sm font-bold tabular-nums">{formatPercent(profit.roi)}</p>
           </div>
           <div className="p-2 rounded-md bg-secondary/60">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Cash-on-Cash</p>
+            <div className="flex items-center gap-1">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Cash-on-Cash</p>
+              <HelpTooltip {...HELP_TIPS.cashOnCash} size={11} />
+            </div>
             <p className="text-sm font-bold tabular-nums">{formatPercent(profit.cashOnCash)}</p>
           </div>
           <div className="p-2 rounded-md bg-secondary/60">
@@ -267,7 +276,10 @@ export function ProfitSummary({ profit, rehabCost, rehabDays, targetROI, setTarg
         <div className="flex items-center gap-2 p-3 rounded-lg border bg-card">
           <Target className="w-4 h-4 text-primary shrink-0" />
           <div className="flex-1">
-            <p className="text-xs font-semibold">70% Rule MAO</p>
+            <div className="flex items-center gap-1">
+              <p className="text-xs font-semibold">70% Rule MAO</p>
+              <HelpTooltip {...HELP_TIPS.seventyPercentRule} size={12} />
+            </div>
             <p className="text-sm font-bold tabular-nums">{formatCurrency(profit.maxAllowableOffer)}</p>
           </div>
           <div className="text-right">
@@ -314,11 +326,11 @@ export function ProfitSummary({ profit, rehabCost, rehabDays, targetROI, setTarg
             </div>
           )}
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Holding Costs</span>
+            <span className="text-muted-foreground flex items-center gap-1">Holding Costs <HelpTooltip {...HELP_TIPS.holdingCosts} size={11} /></span>
             <span className="tabular-nums font-medium">{formatCurrency(profit.holdingCosts)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Buy Closing</span>
+            <span className="text-muted-foreground flex items-center gap-1">Buy Closing <HelpTooltip {...HELP_TIPS.closingCosts} size={11} /></span>
             <span className="tabular-nums font-medium">{formatCurrency(profit.buyClosingCosts)}</span>
           </div>
           <div className="flex justify-between">

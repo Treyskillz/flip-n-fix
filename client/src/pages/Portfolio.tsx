@@ -16,6 +16,7 @@ import {
   Clock, XCircle, FileText, Archive, Star, Loader2, Download,
   CalendarDays
 } from 'lucide-react';
+import { HelpTooltip, HELP_TIPS } from '@/components/HelpTooltip';
 
 type DateRange = 'all' | '7d' | '30d' | '90d' | 'quarter' | 'year' | 'custom';
 
@@ -393,14 +394,14 @@ export default function Portfolio() {
         <Card>
           <CardContent className="pt-4 pb-4 text-center">
             <DollarSign className="w-5 h-5 mx-auto text-[oklch(0.50_0.18_25)] mb-1" />
-            <p className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Total Invested</p>
+            <p className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider inline-flex items-center gap-1">Total Invested <HelpTooltip {...HELP_TIPS.totalInvested} size={11} /></p>
             <p className="text-2xl font-bold tabular-nums">{fmt(fm.totalInvested)}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4 pb-4 text-center">
             <TrendingUp className="w-5 h-5 mx-auto text-green-500 mb-1" />
-            <p className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Projected Profit</p>
+            <p className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider inline-flex items-center gap-1">Projected Profit <HelpTooltip {...HELP_TIPS.projectedProfit} size={11} /></p>
             <p className={`text-2xl font-bold tabular-nums ${fm.totalProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {fmt(fm.totalProfit)}
             </p>
@@ -409,7 +410,7 @@ export default function Portfolio() {
         <Card>
           <CardContent className="pt-4 pb-4 text-center">
             <Target className="w-5 h-5 mx-auto text-purple-500 mb-1" />
-            <p className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Average ROI</p>
+            <p className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider inline-flex items-center gap-1">Average ROI <HelpTooltip {...HELP_TIPS.avgRoi} size={11} /></p>
             <p className={`text-2xl font-bold tabular-nums ${fm.avgRoi >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {fm.avgRoi.toFixed(1)}%
             </p>

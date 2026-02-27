@@ -95,3 +95,14 @@ export const dealPhotos = mysqlTable("deal_photos", {
 
 export type DealPhoto = typeof dealPhotos.$inferSelect;
 export type InsertDealPhoto = typeof dealPhotos.$inferInsert;
+
+// ─── Course Progress ──────────────────────────────────────────
+export const courseProgress = mysqlTable("course_progress", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  lessonId: varchar("lessonId", { length: 64 }).notNull(), // matches lesson id from course.ts
+  completedAt: timestamp("completedAt").defaultNow().notNull(),
+});
+
+export type CourseProgressRow = typeof courseProgress.$inferSelect;
+export type InsertCourseProgress = typeof courseProgress.$inferInsert;
