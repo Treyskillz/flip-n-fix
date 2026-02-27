@@ -216,3 +216,8 @@
 - [x] Build pipeline dashboard metrics (deals by stage, avg days per stage, win rate, pipeline value)
 - [x] Add Pipeline/CRM route to App.tsx and navigation
 - [x] Write vitest tests for pipeline, contacts, activities, and document delivery endpoints (16 tests, all passing)
+- [x] Build server-side CSV parsing and bulk deal insert tRPC endpoint
+- [x] Build CSV import UI with file upload, column mapping, data preview, and validation
+- [x] Add sample CSV download template for users
+- [x] Add import button to Pipeline page that opens the import flow
+- [x] Write vitest tests for CSV bulk import endpoint (7 tests, all passing)

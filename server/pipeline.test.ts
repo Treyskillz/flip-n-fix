@@ -272,4 +272,88 @@ describe("Pipeline CRM Router", () => {
       expect(typeof result.winRate).toBe("number");
     });
   });
+
+  describe("pipeline.bulkImport", () => {
+    it("should import multiple deals from CSV data", async () => {
+      const { ctx } = createAuthContext();
+      const result = await caller(ctx).pipeline.bulkImport({
+        deals: [
+          { propertyAddress: "123 Main St", city: "Dallas", state: "TX", zip: "75201", stage: "lead" },
+          { propertyAddress: "456 Oak Ave", city: "Houston", state: "TX", purchasePrice: 180000, arv: 280000 },
+          { propertyAddress: "789 Elm Dr", stage: "analyzing", tags: '["flip"]', notes: "Owner motivated" },
+        ],
+      });
+      expect(result).toBeDefined();
+      expect(result.imported).toBe(3);
+      expect(result.skipped).toBe(0);
+      expect(result.total).toBe(3);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should import a single deal with minimal fields", async () => {
+      const { ctx } = createAuthContext();
+      const result = await caller(ctx).pipeline.bulkImport({
+        deals: [
+          { propertyAddress: "100 Simple St" },
+        ],
+      });
+      expect(result.imported).toBe(1);
+      expect(result.total).toBe(1);
+    });
+
+    it("should reject empty deals array", async () => {
+      const { ctx } = createAuthContext();
+      await expect(
+        caller(ctx).pipeline.bulkImport({ deals: [] })
+      ).rejects.toThrow();
+    });
+
+    it("should reject deals without property address", async () => {
+      const { ctx } = createAuthContext();
+      await expect(
+        caller(ctx).pipeline.bulkImport({
+          deals: [{ propertyAddress: "" }],
+        })
+      ).rejects.toThrow();
+    });
+
+    it("should reject invalid stage values", async () => {
+      const { ctx } = createAuthContext();
+      await expect(
+        caller(ctx).pipeline.bulkImport({
+          deals: [{ propertyAddress: "123 Main St", stage: "invalid_stage" as any }],
+        })
+      ).rejects.toThrow();
+    });
+
+    it("should throw for unauthenticated users", async () => {
+      const { ctx } = createUnauthContext();
+      await expect(
+        caller(ctx).pipeline.bulkImport({
+          deals: [{ propertyAddress: "123 Main St" }],
+        })
+      ).rejects.toThrow();
+    });
+
+    it("should handle deals with all optional fields", async () => {
+      const { ctx } = createAuthContext();
+      const result = await caller(ctx).pipeline.bulkImport({
+        deals: [{
+          propertyAddress: "999 Full St",
+          city: "Austin",
+          state: "TX",
+          zip: "78701",
+          stage: "under_contract",
+          purchasePrice: 200000,
+          arv: 310000,
+          rehabCost: 60000,
+          estimatedProfit: 40000,
+          tags: '["BRRRR","flip"]',
+          notes: "Great neighborhood, motivated seller",
+        }],
+      });
+      expect(result.imported).toBe(1);
+      expect(result.skipped).toBe(0);
+    });
+  });
 });

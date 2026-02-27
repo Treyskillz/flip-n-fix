@@ -1450,6 +1450,68 @@ Provide 3-5 comparable RENOVATED properties that meet ALL of these criteria:
         });
         return { success: true, id: dealId };
       }),
+
+    // Bulk import deals from CSV data
+    bulkImport: protectedProcedure
+      .input(z.object({
+        deals: z.array(z.object({
+          propertyAddress: z.string().min(1),
+          city: z.string().optional(),
+          state: z.string().optional(),
+          zip: z.string().optional(),
+          stage: z.enum(["lead", "analyzing", "offer_submitted", "under_contract", "closing", "rehab", "listed", "sold", "dead"]).default("lead"),
+          purchasePrice: z.number().nullable().optional(),
+          arv: z.number().nullable().optional(),
+          rehabCost: z.number().nullable().optional(),
+          estimatedProfit: z.number().nullable().optional(),
+          tags: z.string().optional(),
+          notes: z.string().optional(),
+        })).min(1).max(500),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        let imported = 0;
+        let skipped = 0;
+        const errors: { row: number; address: string; error: string }[] = [];
+
+        for (let i = 0; i < input.deals.length; i++) {
+          const deal = input.deals[i];
+          try {
+            const result = await db.insert(pipelineDeals).values({
+              userId: ctx.user.id,
+              propertyAddress: deal.propertyAddress,
+              city: deal.city || null,
+              state: deal.state || null,
+              zip: deal.zip || null,
+              stage: deal.stage,
+              purchasePrice: deal.purchasePrice || null,
+              arv: deal.arv || null,
+              rehabCost: deal.rehabCost || null,
+              estimatedProfit: deal.estimatedProfit || null,
+              tags: deal.tags || null,
+              notes: deal.notes || null,
+            });
+            const dealId = Number(result[0].insertId);
+            await db.insert(pipelineActivities).values({
+              userId: ctx.user.id,
+              dealId,
+              type: "note",
+              title: "Imported from CSV",
+              description: `Bulk imported: ${deal.propertyAddress}`,
+            });
+            imported++;
+          } catch (err: any) {
+            skipped++;
+            errors.push({
+              row: i + 1,
+              address: deal.propertyAddress,
+              error: err?.message || "Unknown error",
+            });
+          }
+        }
+
+        return { imported, skipped, total: input.deals.length, errors };
+      }),
   }),
 
   // ─── Subscription & Billing ────────────────────────────────

@@ -28,8 +28,9 @@ import {
   Clock, ArrowRight, Trash2, Edit, Eye, ChevronDown,
   ChevronUp, BarChart3, Users, FileText, Target,
   Building2, AlertCircle, CheckCircle2, XCircle,
-  Layers, Import, Search
+  Layers, Import, Search, Upload
 } from 'lucide-react';
+import CsvImportDialog from '@/components/CsvImport';
 
 // ─── Stage Configuration ──────────────────────────────────
 const STAGES = [
@@ -415,6 +416,7 @@ export default function Pipeline() {
   const { user, loading: authLoading, isAuthenticated } = useAuth();
   const [addOpen, setAddOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
+  const [csvImportOpen, setCsvImportOpen] = useState(false);
   const [viewDeal, setViewDeal] = useState<any>(null);
   const [collapsedStages, setCollapsedStages] = useState<Set<string>>(new Set());
   const [draggedDealId, setDraggedDealId] = useState<number | null>(null);
@@ -523,6 +525,9 @@ export default function Pipeline() {
               </p>
             </div>
             <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={() => setCsvImportOpen(true)} className="border-[oklch(0.3_0_0)] text-[oklch(0.7_0_0)] hover:bg-white/5 text-xs">
+                <Upload className="w-3.5 h-3.5 mr-1" /> CSV Import
+              </Button>
               <Button variant="outline" size="sm" onClick={() => setImportOpen(true)} className="border-[oklch(0.3_0_0)] text-[oklch(0.7_0_0)] hover:bg-white/5 text-xs">
                 <Import className="w-3.5 h-3.5 mr-1" /> Import Deal
               </Button>
@@ -561,6 +566,9 @@ export default function Pipeline() {
 
       {/* Import Dialog */}
       <ImportDialog open={importOpen} onClose={() => setImportOpen(false)} onImported={handleRefresh} />
+
+      {/* CSV Import Dialog */}
+      <CsvImportDialog open={csvImportOpen} onClose={() => setCsvImportOpen(false)} onImported={handleRefresh} />
 
       {/* Quick View Dialog */}
       {viewDeal && (
