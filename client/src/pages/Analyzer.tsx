@@ -107,7 +107,7 @@ export default function Analyzer() {
               comps={analyzer.comps}
               addComp={analyzer.addComp}
               removeComp={analyzer.removeComp}
-              costApproachArv={analyzer.costApproachArv}
+              costBasis={analyzer.costBasis}
               compBasedArv={analyzer.compBasedArv}
               arvOverride={analyzer.arvOverride}
               setArvOverride={analyzer.setArvOverride}

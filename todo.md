@@ -80,3 +80,15 @@
 - [x] Enforce comps as standard retail sales only — no distressed, foreclosure, short sale, REO, or auction
 - [x] Add comp sale type field and validation warnings for non-retail comps
 - [x] Add guidance text explaining retail-only comp requirement throughout CompManager
+- [x] FIX: ARV is After Repair Value (market sale price after rehab), NOT purchase + rehab
+- [x] Revert useFlipAnalyzer — comps are the primary ARV source, not Cost Approach
+- [x] Update CompManager — comps determine ARV, retail-only sales enforced
+- [x] Update ProfitSummary — ARV is sale price from comps, rehab is a cost input
+- [x] Update InvestorReport and Manual with correct ARV definition
+- [x] Ensure ARV Override still works as manual entry for the expected sale price
+- [x] Update ARV methodology: ARV = avg PPSF of renovated comps × subject sqft
+- [x] Fix ProfitSummary to remove Cost Approach language, use correct ARV definition
+- [x] Fix InvestorReport to use correct ARV methodology
+- [x] Fix Manual to document correct ARV calculation steps
+- [x] Ensure 70% Rule uses comp-based ARV: (ARV × 0.70) - Repairs = Max Purchase Price
+- [x] Update ProfitSummary right sidebar ARV display

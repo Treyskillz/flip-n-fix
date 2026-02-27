@@ -263,7 +263,7 @@ function buildPdfHtml(props: Props): string {
       <tr><td>Closing Costs (Buy ${closing.buyClosingPct}% + Sell ${closing.sellClosingPct}%)</td><td style="text-align:right">${formatCurrency(closing.totalClosingCosts)}</td></tr>
       <tr><td>Holding Costs (${financing.holdingMonths} months)</td><td style="text-align:right">${formatCurrency(holding.totalHoldingCosts)}</td></tr>
       <tr style="background:#f5f5f5"><td style="font-weight:700; font-size:14px">Total Investment</td><td style="text-align:right; font-weight:700; font-size:14px">${formatCurrency(totalInvestment)}</td></tr>
-      <tr class="highlight-row"><td style="font-weight:700; font-size:14px">After Repair Value (ARV) — Cost Approach</td><td style="text-align:right; font-weight:700; font-size:14px; color:#c53030">${formatCurrency(effectiveArv)}</td></tr>
+      <tr class="highlight-row"><td style="font-weight:700; font-size:14px">After Repair Value (ARV)</td><td style="text-align:right; font-weight:700; font-size:14px; color:#c53030">${formatCurrency(effectiveArv)}</td></tr>
     </table>
   </div>
 
@@ -338,7 +338,7 @@ TYPE: ${property.propertyType} | ${property.beds} BD / ${property.baths} BA | ${
 FINANCIAL SUMMARY:
 • Purchase Price: ${formatCurrency(property.purchasePrice)}
 • Rehab Budget: ${formatCurrency(rehabTotals.totalCost)} (Materials: ${formatCurrency(rehabTotals.totalMaterials)} + Labor: ${formatCurrency(rehabTotals.totalLabor)})
-• After Repair Value (ARV — Cost Approach): ${formatCurrency(effectiveArv)}
+• After Repair Value (ARV): ${formatCurrency(effectiveArv)}
 • Total Investment: ${formatCurrency(totalInvestment)}
 • Projected Net Profit: ${formatCurrency(profit.netProfit)}
 • Return on Investment: ${profit.roi.toFixed(1)}%

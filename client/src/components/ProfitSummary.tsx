@@ -86,8 +86,8 @@ export function ProfitSummary({ profit, rehabCost, rehabDays, targetROI, setTarg
   const vc = VERDICT_CONFIG[profit.dealVerdict];
   const VerdictIcon = vc.icon;
 
-  // Check if ARV is missing (Cost Approach: purchase + rehab = 0 means no data entered)
-  const missingArv = profit.arv === 0 && profit.purchasePrice === 0;
+  // Check if ARV is missing (no comps and no override entered)
+  const missingArv = profit.arv === 0;
 
   return (
     <Card className={`border-2 ${vc.border} shadow-lg`}>
@@ -98,7 +98,7 @@ export function ProfitSummary({ profit, rehabCost, rehabDays, targetROI, setTarg
             <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
             <div>
               <p className="font-semibold">Enter Deal Details</p>
-              <p className="mt-0.5">Enter a purchase price and rehab scope to calculate your Cost Approach ARV (Purchase + Rehab). You can also add retail comps for market validation or enter an ARV override.</p>
+              <p className="mt-0.5">Add 3–5 comparable retail sales of recently renovated properties to determine your ARV (After Repair Value). You can also enter an ARV manually using the override field in the Comps section.</p>
             </div>
           </div>
         )}
@@ -110,7 +110,7 @@ export function ProfitSummary({ profit, rehabCost, rehabDays, targetROI, setTarg
             <span className="text-muted-foreground">
               <strong className="text-primary">ARV: {formatCurrency(profit.arv)}</strong>
               {' — '}
-              Cost Approach (Purchase + Rehab)
+              {profit.arv === profit.purchasePrice + rehabCost ? 'From Comps' : 'After Repair Value (from comps or override)'}
             </span>
           </div>
         )}
@@ -340,17 +340,17 @@ export function ProfitSummary({ profit, rehabCost, rehabDays, targetROI, setTarg
           Est. rehab: {rehabDays} days | Rehab cost: {formatCurrency(rehabCost)}
         </div>
 
-        {/* ── Cost Approach Methodology Note ─────────────────── */}
-        {profit.arv > 0 && profit.purchasePrice > 0 && (
+        {/* ── ARV Methodology Note ─────────────────── */}
+        {profit.arv > 0 && (
           <div className="p-3 rounded-lg border bg-card space-y-2">
             <div className="flex items-center gap-2">
               <Info className="w-4 h-4 text-primary shrink-0" />
               <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Cost Approach ARV
+                How ARV Is Calculated
               </span>
             </div>
             <div className="text-xs text-muted-foreground leading-relaxed">
-              Your ARV is calculated using the <strong>Cost Approach</strong>: Purchase Price ({formatCurrency(profit.purchasePrice)}) + Rehab Budget ({formatCurrency(rehabCost)}) = <strong>{formatCurrency(profit.purchasePrice + rehabCost)}</strong>. This represents what you have into the deal — the property must sell for at least this amount to break even before soft costs. Add standard retail comps in the Comps section to validate this against market data.
+              <strong>ARV (After Repair Value)</strong> is what the property will sell for after all renovations are complete. It is determined by finding 3–5 comparable <strong>standard retail sales</strong> of recently renovated properties, calculating the average <strong>price per square foot ($/sqft)</strong>, and multiplying by your subject property's sqft. The <strong>70% Rule</strong>: (ARV × 0.70) − Estimated Repairs = Maximum Purchase Price. Always use actual sold prices, never listing prices.
             </div>
           </div>
         )}

@@ -167,17 +167,12 @@ export function useFlipAnalyzer() {
     ? calculateRehabTotals(presetPhases)
     : { totalMaterials: scopeTotals.totalMaterials, totalLabor: scopeTotals.totalLabor, totalCost: scopeTotals.totalCost, totalDurationDays: scopeGanttPhases.reduce((m, p) => Math.max(m, p.startDay + p.durationDays), 0) };
 
-  // ─── ARV Calculation (Cost Approach as Primary) ────────────
-  // Cost Approach ARV = Purchase Price + Rehab Budget
-  // This is the investor's method: what you have INTO the deal
-  // The property must be worth at least what you put into it
-  const costApproachArv = useMemo(() => {
-    const pp = property.purchasePrice || 0;
-    const rehab = rehabTotals.totalCost || 0;
-    return Math.round(pp + rehab);
-  }, [property.purchasePrice, rehabTotals.totalCost]);
+  // ─── ARV Calculation ────────────────────────────────────────
+  // ARV = After Repair Value = what the property will SELL for after rehab
+  // Determined by comparable RETAIL sales of similar renovated properties
+  // Rehab budget is a COST input, NOT part of the ARV
 
-  // Comp-based ARV (secondary — market validation only)
+  // Comp-based ARV (PRIMARY — from standard retail sales)
   // Comps MUST be standard retail sales, NOT distressed
   const compBasedArv = useMemo(() => {
     if (comps.length === 0) return 0;
@@ -187,12 +182,17 @@ export function useFlipAnalyzer() {
     return Math.round(avgPpsf * property.sqft);
   }, [comps, property.sqft]);
 
-  // ARV Override (manual user entry)
+  // ARV Override (manual user entry — e.g. from appraiser or agent)
   const [arvOverride, setArvOverride] = useState<number | null>(null);
 
-  // Effective ARV priority: Override > Cost Approach
-  // Cost Approach is always the default — comps are for market validation only
-  const effectiveArv = arvOverride ?? costApproachArv;
+  // Effective ARV priority: Override > Comp-based
+  // If no comps and no override, ARV is 0 (user must provide data)
+  const effectiveArv = arvOverride ?? compBasedArv;
+
+  // Cost Basis (what you have INTO the deal — for analysis, NOT the ARV)
+  const costBasis = useMemo(() => {
+    return (property.purchasePrice || 0) + (rehabTotals.totalCost || 0);
+  }, [property.purchasePrice, rehabTotals.totalCost]);
 
   // ─── Financing ─────────────────────────────────────────────
   const [useHardMoney, setUseHardMoney] = useState(true);
@@ -265,8 +265,8 @@ export function useFlipAnalyzer() {
     // Comps (retail sales only — for market validation)
     comps, addComp, removeComp, updateComp,
     compScores, compSetQuality,
-    // ARV: Cost Approach is primary, comps are validation
-    costApproachArv, compBasedArv,
+    // ARV: Comps are primary, override is manual entry
+    compBasedArv, costBasis,
     arvOverride, setArvOverride, effectiveArv,
     // Material tier
     materialTier, setMaterialTier,

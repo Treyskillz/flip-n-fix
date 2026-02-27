@@ -13,7 +13,7 @@ interface Props {
   comps: CompProperty[];
   addComp: (comp: Omit<CompProperty, 'id' | 'pricePerSqft'>) => void;
   removeComp: (id: string) => void;
-  costApproachArv: number;
+  costBasis: number;
   compBasedArv: number;
   arvOverride: number | null;
   setArvOverride: (v: number | null) => void;
@@ -49,7 +49,7 @@ function CompQualityBadge({ score }: { score: CompQualityScore }) {
 }
 
 export function CompManager({
-  comps, addComp, removeComp, costApproachArv, compBasedArv,
+  comps, addComp, removeComp, costBasis, compBasedArv,
   arvOverride, setArvOverride, effectiveArv,
   subjectSqft, subjectBeds, subjectBaths, purchasePrice, rehabCost,
 }: Props) {
@@ -85,14 +85,12 @@ export function CompManager({
     return Math.round(compScores.reduce((s, c) => s + c.total, 0) / compScores.length);
   }, [compScores]);
 
-  // Comp vs Cost Approach comparison
-  const arvDifference = compBasedArv > 0 ? compBasedArv - costApproachArv : 0;
-  const arvDiffPct = costApproachArv > 0 && compBasedArv > 0 ? ((arvDifference / costApproachArv) * 100) : 0;
+  // Equity spread: ARV minus cost basis
+  const equitySpread = effectiveArv > 0 && costBasis > 0 ? effectiveArv - costBasis : 0;
 
   // Collect all warnings
   const allWarnings = useMemo(() => {
     const warnings: string[] = [];
-    // Check for non-retail comps
     const distressedComps = comps.filter(c => c.condition === 'distressed');
     if (distressedComps.length > 0) {
       warnings.push(`⛔ ${distressedComps.length} comp${distressedComps.length > 1 ? 's are' : ' is'} marked "Distressed." REMOVE these — comps must be standard retail sales only. Distressed sales (foreclosures, short sales, REO, auction) do NOT reflect market value and will give you a false ARV.`);
@@ -102,9 +100,8 @@ export function CompManager({
       warnings.push(`⚠️ ${avgConditionComps.length} comp${avgConditionComps.length > 1 ? 's are' : ' is'} "Average Condition." For best results, use renovated or updated comps that match your planned rehab level. Average-condition comps may understate what the market will pay for a renovated property.`);
     }
     if (comps.length > 0 && subjectSqft === 0) {
-      warnings.push('Subject property square footage is 0 — comp-based validation will be inaccurate. Enter the subject sqft above.');
+      warnings.push('Subject property square footage is 0 — comp-based ARV will be inaccurate. Enter the subject sqft above.');
     }
-    // Check for wide price spread
     if (comps.length >= 2) {
       const prices = comps.map(c => c.pricePerSqft).filter(p => p > 0);
       if (prices.length >= 2) {
@@ -124,7 +121,7 @@ export function CompManager({
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-lg">
             <BarChart3 className="w-5 h-5 text-[oklch(0.5_0.12_250)]" />
-            Comparable Sales (Comps)
+            Comparable Sales &amp; ARV
           </CardTitle>
           <div className="flex items-center gap-2">
             <Button size="sm" variant="ghost" onClick={() => setShowGuidance(!showGuidance)} className="text-xs">
@@ -143,6 +140,10 @@ export function CompManager({
             <h4 className="font-semibold text-blue-600 dark:text-blue-400 flex items-center gap-2">
               <ShieldCheck className="w-4 h-4" /> How to Find Reliable Comps
             </h4>
+            <p className="text-xs text-muted-foreground">
+              <strong>ARV (After Repair Value)</strong> is what the property will <strong>sell for on the open market after all repairs are completed</strong>. 
+              It is determined by comparable retail sales of similar renovated properties — NOT by what you paid or spent on rehab.
+            </p>
             <div className="p-2.5 rounded-md bg-red-500/10 border border-red-500/20 text-xs text-red-600 dark:text-red-400 font-semibold">
               ⛔ RETAIL SALES ONLY — Never use foreclosures, short sales, REO, bank-owned, or auction sales as comps. These are distressed transactions that do NOT reflect true market value.
             </div>
@@ -168,7 +169,7 @@ export function CompManager({
                   <li><strong>PropStream</strong> — Investor-focused comp tool</li>
                   <li><strong>County records</strong> — Official sale prices</li>
                 </ul>
-                <p className="mt-2 font-semibold text-foreground">Tip: Use 3-6 retail comps to validate your Cost Approach ARV. Remove outliers that skew the average.</p>
+                <p className="mt-2 font-semibold text-foreground">Tip: Use 3–6 retail comps of recently renovated properties. The average $/sqft × your subject sqft = your ARV.</p>
               </div>
             </div>
           </div>
@@ -186,40 +187,20 @@ export function CompManager({
           </div>
         )}
 
-        {/* ── ARV Summary — Cost Approach is Primary ──────────── */}
+        {/* ── ARV Summary — Comps are Primary ──────────── */}
         <div className="p-3 rounded-lg bg-secondary/60 space-y-3">
-          {/* Cost Approach ARV (Primary) */}
+          {/* Comp-Based ARV (Primary) */}
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-primary" />
+              <TrendingUp className="w-4 h-4 text-[oklch(0.5_0.12_250)]" />
               <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Cost Approach ARV (Primary)
+                After Repair Value (ARV)
               </span>
-              <Badge variant="default" className="text-[10px] h-5">DEFAULT</Badge>
+              {compBasedArv > 0 && <Badge variant="default" className="text-[10px] h-5">FROM COMPS</Badge>}
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-xl font-bold tabular-nums">{formatCurrency(costApproachArv)}</span>
-              <span className="text-xs text-muted-foreground">
-                = Purchase ({formatCurrency(purchasePrice)}) + Rehab ({formatCurrency(rehabCost)})
-              </span>
-            </div>
-            <p className="text-[11px] text-muted-foreground leading-relaxed">
-              The Cost Approach determines ARV based on what you have into the deal. The property must be worth at least your total investment (purchase + rehab) for the deal to make sense. This is the investor's method.
-            </p>
-          </div>
-
-          {/* Comp-Based Market Validation */}
-          {compBasedArv > 0 && (
-            <div className="pt-2 border-t border-border/50 space-y-1.5">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-[oklch(0.5_0.12_250)]" />
-                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Market Validation (Comps)
-                </span>
-                <Badge variant="outline" className="text-[10px] h-5">SECONDARY</Badge>
-              </div>
+            {compBasedArv > 0 ? (
               <div className="flex items-center gap-3">
-                <span className="text-lg font-bold tabular-nums">{formatCurrency(compBasedArv)}</span>
+                <span className="text-xl font-bold tabular-nums">{formatCurrency(compBasedArv)}</span>
                 <span className="text-xs text-muted-foreground">
                   Avg $/sqft: <span className="font-semibold">${avgPpsf}</span> × {subjectSqft.toLocaleString()} sqft
                 </span>
@@ -229,31 +210,61 @@ export function CompManager({
                   </span>
                 )}
               </div>
-              {/* Comp vs Cost Approach comparison */}
-              {costApproachArv > 0 && (
-                <div className={`flex items-start gap-2 text-xs p-2 rounded-md ${
-                  arvDifference >= 0
-                    ? 'bg-green-500/10 text-green-600 dark:text-green-400'
-                    : 'bg-red-500/10 text-red-600 dark:text-red-400'
-                }`}>
-                  {arvDifference >= 0 ? (
-                    <CheckCircle2 className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-                  ) : (
-                    <XCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-                  )}
-                  <span>
-                    {arvDifference >= 0 ? (
-                      <>
-                        <strong>Market supports your deal:</strong> Retail comps show the market value ({formatCurrency(compBasedArv)}) is {formatCurrency(arvDifference)} ({arvDiffPct.toFixed(1)}%) ABOVE your cost basis. This means the market will pay more than what you have into the deal.
-                      </>
-                    ) : (
-                      <>
-                        <strong>Market may not support this deal:</strong> Retail comps show the market value ({formatCurrency(compBasedArv)}) is {formatCurrency(Math.abs(arvDifference))} ({Math.abs(arvDiffPct).toFixed(1)}%) BELOW your cost basis. You may be overpaying or over-rehabbing. Verify your comps are renovated properties and reconsider the deal.
-                      </>
-                    )}
+            ) : (
+              <div className="text-sm text-muted-foreground">
+                {arvOverride && arvOverride > 0 ? (
+                  <span>Using manual ARV override: <strong>{formatCurrency(arvOverride)}</strong></span>
+                ) : (
+                  <span className="text-yellow-600 dark:text-yellow-400 font-medium">
+                    No comps entered — add comparable retail sales or enter an ARV override below
                   </span>
-                </div>
-              )}
+                )}
+              </div>
+            )}
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              ARV is the <strong>After Repair Value</strong> — what the property will sell for on the open market after all renovations are complete. 
+              It is determined by comparable retail sales of similar renovated properties in the area.
+            </p>
+          </div>
+
+          {/* Cost Basis Analysis (what you have INTO the deal) */}
+          {costBasis > 0 && effectiveArv > 0 && (
+            <div className="pt-2 border-t border-border/50 space-y-1.5">
+              <div className="flex items-center gap-2">
+                <DollarSign className="w-4 h-4 text-primary" />
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Cost Basis (What You Have Into the Deal)
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-lg font-bold tabular-nums">{formatCurrency(costBasis)}</span>
+                <span className="text-xs text-muted-foreground">
+                  = Purchase ({formatCurrency(purchasePrice)}) + Rehab ({formatCurrency(rehabCost)})
+                </span>
+              </div>
+              {/* Equity Spread */}
+              <div className={`flex items-start gap-2 text-xs p-2 rounded-md ${
+                equitySpread >= 0
+                  ? 'bg-green-500/10 text-green-600 dark:text-green-400'
+                  : 'bg-red-500/10 text-red-600 dark:text-red-400'
+              }`}>
+                {equitySpread >= 0 ? (
+                  <CheckCircle2 className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                ) : (
+                  <XCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                )}
+                <span>
+                  {equitySpread >= 0 ? (
+                    <>
+                      <strong>Equity spread: {formatCurrency(equitySpread)}</strong> — The ARV ({formatCurrency(effectiveArv)}) exceeds your cost basis by {formatCurrency(equitySpread)}. This is your gross equity before closing, holding, and financing costs.
+                    </>
+                  ) : (
+                    <>
+                      <strong>Negative equity: {formatCurrency(Math.abs(equitySpread))}</strong> — The ARV ({formatCurrency(effectiveArv)}) is BELOW your cost basis. You would lose money on this deal before even accounting for closing, holding, and financing costs. Reconsider the purchase price or rehab scope.
+                    </>
+                  )}
+                </span>
+              </div>
             </div>
           )}
 
@@ -264,7 +275,7 @@ export function CompManager({
               <CurrencyInput
                 value={arvOverride ?? 0}
                 onChange={(v) => setArvOverride(v > 0 ? v : null)}
-                placeholder="Leave blank to use Cost Approach ARV"
+                placeholder="Enter ARV manually if you know it"
                 className="w-48 h-8 text-sm"
               />
               {arvOverride && arvOverride > 0 && (
@@ -275,7 +286,7 @@ export function CompManager({
               <span className="text-xs text-muted-foreground ml-auto">
                 {arvOverride && arvOverride > 0
                   ? 'Using your manual ARV override'
-                  : 'Enter a value to override the Cost Approach ARV'}
+                  : comps.length > 0 ? 'Enter a value to override the comp-based ARV' : 'Enter the expected sale price after rehab'}
               </span>
             </div>
           </div>
@@ -286,7 +297,7 @@ export function CompManager({
               <span className="text-xs font-bold uppercase tracking-wider text-primary">Active ARV:</span>
               <span className="text-lg font-bold tabular-nums text-primary">{formatCurrency(effectiveArv)}</span>
               <Badge variant="outline" className="text-[10px]">
-                {arvOverride && arvOverride > 0 ? 'Manual Override' : 'Cost Approach'}
+                {arvOverride && arvOverride > 0 ? 'Manual Override' : comps.length > 0 ? 'From Comps' : 'Enter Comps or Override'}
               </Badge>
             </div>
           </div>
@@ -326,7 +337,6 @@ export function CompManager({
                         <span className="tabular-nums">${comp.pricePerSqft}/sqft</span>
                         {comp.saleDate && <span>Sold: {comp.saleDate}</span>}
                       </div>
-                      {/* Quality Warnings */}
                       {score && score.warnings.length > 0 && (
                         <div className="mt-1.5 flex flex-wrap gap-1">
                           {score.warnings.map((w, wi) => (
@@ -351,8 +361,8 @@ export function CompManager({
           <div className="text-center py-6 space-y-2">
             <p className="text-sm text-muted-foreground">No comps added yet.</p>
             <p className="text-xs text-muted-foreground">
-              Your ARV is currently calculated using the <strong>Cost Approach</strong> (Purchase Price + Rehab Budget = {formatCurrency(costApproachArv)}).
-              Add <strong>standard retail sale</strong> comps to validate this against market data.
+              Add <strong>standard retail sale</strong> comps of recently renovated properties to determine your ARV (After Repair Value).
+              You can also enter an ARV manually using the override field above.
             </p>
           </div>
         )}
@@ -443,7 +453,7 @@ export function CompManager({
               <div className="text-xs text-muted-foreground p-2 rounded bg-secondary/40">
                 Preview: <strong>${Math.round(newComp.salePrice / newComp.sqft)}/sqft</strong>
                 {subjectSqft > 0 && (
-                  <> — Market validation value: ~<strong>{formatCurrency(Math.round(newComp.salePrice / newComp.sqft) * subjectSqft)}</strong> for your {subjectSqft.toLocaleString()} sqft subject</>
+                  <> — Implied ARV for your {subjectSqft.toLocaleString()} sqft subject: ~<strong>{formatCurrency(Math.round(newComp.salePrice / newComp.sqft) * subjectSqft)}</strong></>
                 )}
               </div>
             )}

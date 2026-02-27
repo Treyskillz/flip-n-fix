@@ -21,8 +21,8 @@ The Fix & Flip Analyzer is a comprehensive real estate investment analysis syste
 ### What You Can Do
 
 - **Analyze any property** — Enter property details and get instant profitability calculations
-- **Cost Approach ARV** — ARV automatically calculated as Purchase Price + Rehab Budget
-- **Market validation with comps** — Add standard retail comps to validate your ARV against market data
+- **Determine ARV from comps** — Add 3–5 comparable retail sales of renovated properties to calculate your After Repair Value
+- **Cost basis analysis** — See your total investment (purchase + rehab) vs. ARV to evaluate deal profitability
 - **Estimate rehab costs** — Use preset levels or detailed room-by-room scope of work with real material pricing
 - **Regional cost adjustments** — Costs automatically adjust based on 50+ metro markets
 - **Material tier selection** — Choose Rental, Standard, or Luxury grade materials
@@ -47,8 +47,8 @@ The Fix & Flip Analyzer is a comprehensive real estate investment analysis syste
 1. Navigate to the **Deal Analyzer** from the home page
 2. Enter the property address and details in the Subject Property section
 3. Select a rehab level or use the detailed scope of work (this sets your rehab budget)
-4. Your ARV is automatically calculated: Purchase Price + Rehab Budget (Cost Approach)
-5. Optionally add standard retail comps to validate your ARV against market data
+4. Add 3–5 comparable retail sales of recently renovated properties to determine your ARV
+5. Or enter your ARV manually using the override field if you already know it
 6. Configure financing terms and holding costs
 7. Review the profitability dashboard for your deal score
 8. Save the deal for future reference`,
@@ -93,24 +93,32 @@ Once a market is selected, the app displays the regional cost adjustment factors
     icon: '📊',
     content: `## ARV Methodology & Comparable Sales
 
-### How ARV Is Calculated: The Cost Approach
+### What Is ARV?
 
-This tool uses the **Cost Approach** as the primary method for determining your After Repair Value (ARV):
+**ARV (After Repair Value)** is what the property will **sell for on the open market after all renovations are complete**. It is NOT what you paid or what you spent on rehab — it is the expected **sale price** of the finished product.
 
-> **ARV = Purchase Price + Rehab Budget**
+### How to Calculate ARV
 
-This is the investor's method. It tells you what you have INTO the deal — the minimum the property must be worth after rehab for the deal to make sense. Your ARV automatically updates as you enter your purchase price and build your rehab scope of work.
+1. **Find 3–5 comparable properties ("comps")** — recently sold, fully renovated homes in the same neighborhood that are similar in size, age, and style
+2. **Calculate the average price per square foot ($/sqft)** of those sold, renovated comps
+3. **Multiply the average $/sqft by your subject property's square footage** to get your ARV baseline
+4. **Adjust for differences** — more bedrooms, better finishes, superior location, etc.
 
-**Example:** Purchase Price $150,000 + Rehab Budget $75,000 = **ARV $225,000**
+> **ARV = Average $/sqft of Renovated Comps × Subject Property Sqft**
 
-The Cost Approach is the default because:
-- It's based on YOUR actual numbers, not estimates from other properties
-- It tells you the break-even point before soft costs (financing, holding, closing)
-- It's the most conservative and reliable method for investor decision-making
+**Example:** 4 renovated comps average $175/sqft. Your subject is 1,500 sqft. ARV = $175 × 1,500 = **$262,500**
 
-### Market Validation with Comps (Secondary)
+### The 70% Rule
 
-Comparable sales (comps) serve as a **market validation tool** — they help you confirm whether the market will support your Cost Approach ARV. When you add comps, the system compares the comp-based market value against your cost basis and tells you whether the market supports the deal.
+A common rule of thumb to determine your maximum purchase price:
+
+> **(ARV × 0.70) − Estimated Repairs = Maximum Purchase Price**
+
+**Example:** ARV $262,500 × 0.70 = $183,750 − $50,000 repairs = **$133,750 max purchase price**
+
+### Cost Basis vs. ARV
+
+Your **cost basis** (Purchase Price + Rehab Budget) is what you have INTO the deal. The **ARV** is what you expect to sell it for. The difference between ARV and your total costs (including financing, holding, and closing) is your **profit**. The system shows your cost basis alongside the ARV so you can see the equity spread at a glance.
 
 ### ⛔ CRITICAL: Retail Sales Only
 
@@ -135,7 +143,7 @@ Click "Add Comp" and enter:
 - **Year Built** — For age comparison
 
 ### ARV Override
-If you have your own ARV estimate (from an appraiser, agent, or your own analysis), you can override the Cost Approach ARV using the Override field. This is useful when you have insider market knowledge or a professional appraisal.
+If you have your own ARV estimate (from an appraiser, agent, or your own analysis), you can enter it manually using the Override field. This is useful when you have insider market knowledge, a professional appraisal, or a BPO (Broker Price Opinion).
 
 ### Tips for Selecting Good Comps
 - **Sale Type** — Standard retail sale ONLY (arms-length transaction)
@@ -148,8 +156,8 @@ If you have your own ARV estimate (from an appraiser, agent, or your own analysi
 
 ### Comp Analysis Features
 - Each comp is scored for quality (A-F grade) based on similarity to your subject
-- Market Validation section shows whether comps support your Cost Approach ARV
-- Green = market supports the deal, Red = market may not support the deal
+- Cost basis comparison shows equity spread (ARV minus what you have into the deal)
+- Green = positive equity spread, Red = negative equity (you'd lose money)
 - Distressed comps are flagged and blocked from being added`,
   },
   {
