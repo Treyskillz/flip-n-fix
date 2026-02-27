@@ -1,8 +1,10 @@
-import { Award, Users, Briefcase, HandshakeIcon, Banknote, Home as HomeIcon, UserCheck, FileText, Download } from 'lucide-react';
+import { Award, Users, Briefcase, HandshakeIcon, Banknote, Home as HomeIcon, UserCheck, FileText, Download, Info, User } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { printDocument } from '@/lib/printDocument';
+import { useProfileReplacer } from '@/hooks/useProfileReplacer';
+import { Link } from 'wouter';
 
 interface PacketSection {
   title: string;
@@ -127,7 +129,7 @@ const PACKETS: CredibilityPacket[] = [
     sections: [
       {
         title: 'Partnership Opportunity',
-        content: '[Your Company Name] is an active real estate investment company completing [X] renovation projects per year in [Your Market Area]. We are looking for reliable, skilled contractors to join our team of trusted trade partners.\n\nWe value long-term relationships and provide consistent, well-organized work to our contractor partners.',
+        content: '[Your Company Name] is an active real estate investment company completing [X] years renovation projects per year in [Your Market Area]. We are looking for reliable, skilled contractors to join our team of trusted trade partners.\n\nWe value long-term relationships and provide consistent, well-organized work to our contractor partners.',
       },
       {
         title: 'What We Offer Contractors',
@@ -167,7 +169,7 @@ const PACKETS: CredibilityPacket[] = [
       },
       {
         title: 'Why Agents Choose Us',
-        content: '• We close on time, every time — no financing fall-throughs\n• Professional, easy-to-work-with team\n• We protect the agent-client relationship\n• Quick response times (within 2 hours)\n• Proof of funds available upon request\n• Track record of [X] successful closings in [Year]',
+        content: '• We close on time, every time — no financing fall-throughs\n• Professional, easy-to-work-with team\n• We protect the agent-client relationship\n• Quick response times (within 2 hours)\n• Proof of funds available upon request\n• Track record of successful closings',
       },
       {
         title: 'Get Connected',
@@ -195,11 +197,11 @@ const PACKETS: CredibilityPacket[] = [
       },
       {
         title: 'How Private Lending Works',
-        content: '• You provide a short-term loan (typically 6-12 months) secured by real property\n• Your investment is protected by a recorded mortgage/deed of trust\n• You earn [X]% annual interest, paid monthly or at maturity\n• Loan-to-Value (LTV) ratio never exceeds 70% of After Repair Value\n• Title insurance protects your position\n• All loans are serviced through a licensed title company/attorney',
+        content: '• You provide a short-term loan (typically 6-12 months) secured by real property\n• Your investment is protected by a recorded mortgage/deed of trust\n• You earn competitive annual interest, paid monthly or at maturity\n• Loan-to-Value (LTV) ratio never exceeds 70% of After Repair Value\n• Title insurance protects your position\n• All loans are serviced through a licensed title company/attorney',
       },
       {
         title: 'Our Track Record',
-        content: '• [X] projects completed successfully\n• $[X] in total project value\n• Average project timeline: [X] months\n• Zero defaults on private loans\n• Average return to lenders: [X]% annually\n• All lenders have been repaid on time or early\n\n[Include 2-3 case studies with numbers]',
+        content: '• Successful projects completed in [Your Market Area]\n• Average project timeline: 4-6 months\n• Zero defaults on private loans\n• All lenders have been repaid on time or early\n\n[Include 2-3 case studies with numbers]',
       },
       {
         title: 'Security & Protection',
@@ -233,15 +235,30 @@ function PacketCard({ packet, onSelect }: { packet: CredibilityPacket; onSelect:
   );
 }
 
-function PacketDetail({ packet, onBack }: { packet: CredibilityPacket; onBack: () => void }) {
+function PacketDetail({
+  packet,
+  onBack,
+  replaceInText,
+  hasProfile,
+}: {
+  packet: CredibilityPacket;
+  onBack: () => void;
+  replaceInText: (text: string) => string;
+  hasProfile: boolean;
+}) {
   const Icon = packet.icon;
 
   const handlePrint = () => {
     printDocument({
       title: packet.title,
       subtitle: packet.audience,
-      sections: packet.sections.map((s) => ({ heading: s.title, body: s.content })),
-      footer: `Prepared using the Freedom One Real Estate Investment System. All bracketed fields [like this] should be customized with your actual business information before distributing. This document is a template — not legal, financial, or investment advice.`,
+      sections: packet.sections.map((s) => ({
+        heading: replaceInText(s.title),
+        body: replaceInText(s.content),
+      })),
+      footer: hasProfile
+        ? `Prepared by ${replaceInText('[Your Company Name]')} using the Freedom One Real Estate Investment System. This document is a template — not legal, financial, or investment advice.`
+        : `Prepared using the Freedom One Real Estate Investment System. All bracketed fields [like this] should be customized with your actual business information before distributing. This document is a template — not legal, financial, or investment advice.`,
     });
   };
 
@@ -250,6 +267,32 @@ function PacketDetail({ packet, onBack }: { packet: CredibilityPacket; onBack: (
       <button onClick={onBack} className="text-sm text-muted-foreground hover:text-foreground mb-4 flex items-center gap-1">
         ← Back to all packets
       </button>
+
+      {/* Profile auto-fill banner */}
+      {!hasProfile && (
+        <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg flex items-start gap-2.5">
+          <Info className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+          <div className="text-sm">
+            <p className="font-medium text-amber-700 dark:text-amber-400">Bracketed fields not yet filled</p>
+            <p className="text-muted-foreground text-xs mt-0.5">
+              <Link href="/profile" className="text-[oklch(0.48_0.20_18)] hover:underline font-medium">
+                Set up your Business Profile →
+              </Link>{' '}
+              to auto-fill [Your Name], [Company], [Phone], [Email], and other fields across all documents.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {hasProfile && (
+        <div className="mb-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center gap-2.5">
+          <User className="w-4 h-4 text-green-600 shrink-0" />
+          <p className="text-sm text-green-700 dark:text-green-400">
+            Your business profile is auto-filling bracketed fields below.{' '}
+            <Link href="/profile" className="underline font-medium">Edit profile →</Link>
+          </p>
+        </div>
+      )}
 
       <div className="flex items-start justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
@@ -272,7 +315,7 @@ function PacketDetail({ packet, onBack }: { packet: CredibilityPacket; onBack: (
           <div key={i}>
             <h3 className="font-bold text-lg mb-2 text-[oklch(0.48_0.20_18)]">{section.title}</h3>
             <div className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-              {section.content}
+              {replaceInText(section.content)}
             </div>
           </div>
         ))}
@@ -300,6 +343,7 @@ function PacketDetail({ packet, onBack }: { packet: CredibilityPacket; onBack: (
 export default function CredibilityPackets() {
   const [selected, setSelected] = useState<string | null>(null);
   const selectedPacket = PACKETS.find(p => p.id === selected);
+  const { replaceInText, hasProfile } = useProfileReplacer();
 
   return (
     <div className="min-h-screen bg-background">
@@ -317,13 +361,25 @@ export default function CredibilityPackets() {
 
       <section className="container py-12">
         {selectedPacket ? (
-          <PacketDetail packet={selectedPacket} onBack={() => setSelected(null)} />
+          <PacketDetail
+            packet={selectedPacket}
+            onBack={() => setSelected(null)}
+            replaceInText={replaceInText}
+            hasProfile={hasProfile}
+          />
         ) : (
           <>
             <div className="text-center mb-8">
               <h2 className="text-2xl font-bold tracking-tight mb-2">Choose a Packet</h2>
               <p className="text-muted-foreground text-sm">
                 Each packet is fully customizable. Click to preview, then print as a professional full-page document.
+                {!hasProfile && (
+                  <>
+                    {' '}<Link href="/profile" className="text-[oklch(0.48_0.20_18)] hover:underline font-medium">
+                      Set up your profile
+                    </Link>{' '}to auto-fill your business info.
+                  </>
+                )}
               </p>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">

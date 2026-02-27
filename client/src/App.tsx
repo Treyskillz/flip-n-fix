@@ -29,6 +29,7 @@ const QuickCheck = lazy(() => import("./pages/QuickCheck"));
 const SharedDealView = lazy(() => import("./pages/SharedDealView"));
 const RenovationDesigner = lazy(() => import("./pages/RenovationDesigner"));
 const Portfolio = lazy(() => import("./pages/Portfolio"));
+const Profile = lazy(() => import("./pages/Profile"));
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -65,6 +66,7 @@ function Router() {
           <Route path={'/contractors'} component={Contractors} />
           <Route path={'/renovation-designer'} component={RenovationDesigner} />
           <Route path={'/portfolio'} component={Portfolio} />
+          <Route path={'/profile'} component={Profile} />
           <Route path={"/support"} component={Support} />
           <Route path={"/disclaimers"} component={Disclaimers} />
           <Route path={"/404"} component={NotFound} />

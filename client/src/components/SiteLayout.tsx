@@ -40,6 +40,7 @@ const RESOURCES_NAV: NavItem[] = [
   { path: '/manual', label: 'Manual', icon: BookOpen },
   { path: '/saved-deals', label: 'Saved Deals', icon: Save },
   { path: '/support', label: 'Support', icon: HelpCircle },
+  { path: '/profile', label: 'My Profile', icon: Shield },
 ];
 
 const ALL_NAV = [...PRIMARY_NAV, ...RESOURCES_NAV];

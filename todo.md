@@ -174,3 +174,14 @@
 - [x] Remove copy-paste icons and disjointed layout from print output
 - [x] Add proper print CSS with page breaks, margins, and professional formatting
 - [x] Ensure each document prints as a cohesive multi-page document
+- [x] Create user_profiles database table for storing user business info
+- [x] Build tRPC endpoints for profile CRUD (get, upsert)
+- [x] Build Profile Settings UI page with form fields (name, company, phone, email, address, city, state, zip, website, license#)
+- [x] Add Profile/Settings link to navigation
+- [x] Auto-populate [Your Name], [Phone], [Email], [Company], [Address] placeholders in Credibility Packets
+- [x] Auto-populate bracketed fields in Contracts page
+- [x] Auto-populate bracketed fields in Marketing Templates
+- [ ] Auto-populate bracketed fields in Contractor Documents (deferred — no bracketed fields in contractor docs)
+- [x] Build course completion certificate PDF generator
+- [x] Add certificate download button on Course page when all modules complete and quizzes passed
+- [x] Write vitest tests for profile and certificate features (8 tests, all passing)

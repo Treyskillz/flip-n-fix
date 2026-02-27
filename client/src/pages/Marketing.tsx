@@ -3,43 +3,49 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { MARKETING_TEMPLATES, TEMPLATE_CATEGORIES } from '@/lib/marketing';
-import { Megaphone, ChevronDown, ChevronRight, Copy, Check, Lightbulb, Download } from 'lucide-react';
+import { Megaphone, ChevronDown, ChevronRight, Copy, Check, Lightbulb, Download, Info, User } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import { printDocument } from '@/lib/printDocument';
+import { useProfileReplacer } from '@/hooks/useProfileReplacer';
+import { Link } from 'wouter';
 
 export default function Marketing() {
   const [activeCategory, setActiveCategory] = useState<string>('letter');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const { replaceInText, hasProfile } = useProfileReplacer();
 
   const filtered = activeCategory === 'all'
     ? MARKETING_TEMPLATES
     : MARKETING_TEMPLATES.filter(t => t.category === activeCategory);
 
   const handleCopy = useCallback((id: string, text: string) => {
-    navigator.clipboard.writeText(text).then(() => {
+    const replaced = replaceInText(text);
+    navigator.clipboard.writeText(replaced).then(() => {
       setCopiedId(id);
-      toast.success('Template copied to clipboard!');
+      toast.success('Template copied to clipboard (with your profile info)!');
       setTimeout(() => setCopiedId(null), 2000);
     });
-  }, []);
+  }, [replaceInText]);
 
   const handlePrint = useCallback((template: typeof MARKETING_TEMPLATES[0]) => {
     // Split the body into logical paragraphs as sections
     const paragraphs = template.body.split(/\n\n+/).filter(p => p.trim());
     const sections = paragraphs.map((para, i) => ({
       heading: i === 0 ? template.title : '',
-      body: para.trim(),
+      body: replaceInText(para.trim()),
     }));
 
     printDocument({
       title: template.title,
       subtitle: `${template.category.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())} — Target: ${template.target}`,
       sections,
-      footer: `Marketing template from the Freedom One Real Estate Investment System. Customize all bracketed fields with your business information before use. This is a template — not legal or financial advice.`,
+      footer: hasProfile
+        ? `Marketing template from the Freedom One Real Estate Investment System. This is a template — not legal or financial advice.`
+        : `Marketing template from the Freedom One Real Estate Investment System. Customize all bracketed fields with your business information before use. This is a template — not legal or financial advice.`,
     });
-  }, []);
+  }, [replaceInText, hasProfile]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -57,6 +63,32 @@ export default function Marketing() {
             and start generating motivated seller leads immediately.
           </p>
         </div>
+
+        {/* Profile auto-fill banner */}
+        {!hasProfile && (
+          <div className="mb-6 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg flex items-start gap-2.5">
+            <Info className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+            <div className="text-sm">
+              <p className="font-medium text-amber-700 dark:text-amber-400">Auto-fill your info</p>
+              <p className="text-muted-foreground text-xs mt-0.5">
+                <Link href="/profile" className="text-[oklch(0.48_0.20_18)] hover:underline font-medium">
+                  Set up your Business Profile →
+                </Link>{' '}
+                to auto-fill [Your Name], [Company], [Phone], [Email], and other fields in all templates.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {hasProfile && (
+          <div className="mb-6 p-3 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center gap-2.5">
+            <User className="w-4 h-4 text-green-600 shrink-0" />
+            <p className="text-sm text-green-700 dark:text-green-400">
+              Your business profile is auto-filling bracketed fields.{' '}
+              <Link href="/profile" className="underline font-medium">Edit profile →</Link>
+            </p>
+          </div>
+        )}
 
         {/* Category Tabs */}
         <div className="flex flex-wrap gap-2 mb-6">
@@ -108,7 +140,7 @@ export default function Marketing() {
                       {/* Template Body */}
                       <div className="relative">
                         <pre className="p-4 rounded-lg bg-secondary/60 text-sm whitespace-pre-wrap font-sans leading-relaxed max-h-[500px] overflow-y-auto">
-                          {template.body}
+                          {replaceInText(template.body)}
                         </pre>
                         <div className="absolute top-2 right-2 flex gap-1.5">
                           <Button

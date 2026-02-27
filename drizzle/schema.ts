@@ -119,3 +119,25 @@ export const quizResults = mysqlTable("quiz_results", {
 });
 export type QuizResult = typeof quizResults.$inferSelect;
 export type InsertQuizResult = typeof quizResults.$inferInsert;
+
+// ─── User Profiles (Business Info) ───────────────────────────
+export const userProfiles = mysqlTable("user_profiles", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(), // references users.id
+  fullName: varchar("fullName", { length: 255 }),
+  companyName: varchar("companyName", { length: 255 }),
+  phone: varchar("phone", { length: 64 }),
+  email: varchar("email", { length: 320 }),
+  address: varchar("address", { length: 512 }),
+  city: varchar("city", { length: 128 }),
+  state: varchar("state", { length: 64 }),
+  zip: varchar("zip", { length: 16 }),
+  website: varchar("website", { length: 512 }),
+  licenseNumber: varchar("licenseNumber", { length: 128 }),
+  marketArea: varchar("marketArea", { length: 255 }),
+  yearsExperience: varchar("yearsExperience", { length: 32 }),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserProfile = typeof userProfiles.$inferSelect;
+export type InsertUserProfile = typeof userProfiles.$inferInsert;

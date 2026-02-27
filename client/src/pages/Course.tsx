@@ -18,8 +18,9 @@ import {
   GraduationCap, ChevronDown, ChevronRight, BookOpen, Clock,
   PlayCircle, Video, FileText, Camera, Monitor, Presentation,
   PenLine, Clapperboard, Eye, EyeOff, CheckCircle2, Circle,
-  RotateCcw, Loader2, Lock, Trophy
+  RotateCcw, Loader2, Lock, Trophy, Award, Download
 } from 'lucide-react';
+import { generateCertificate } from '@/lib/generateCertificate';
 import { useState, useMemo, useCallback } from 'react';
 import { Streamdown } from 'streamdown';
 
@@ -195,6 +196,73 @@ function VideoPlaceholder({ lessonId, script }: { lessonId: string; script?: Vid
   );
 }
 
+function CertificateSection({ totalLessons, totalModules }: { totalLessons: number; totalModules: number }) {
+  const certQuery = trpc.certificate.eligibility.useQuery(undefined, { retry: false });
+
+  if (certQuery.isLoading) return null;
+  if (!certQuery.data) return null;
+
+  const { quizzesPassed, userName } = certQuery.data;
+  const allQuizzesPassed = quizzesPassed >= totalModules;
+
+  const handleDownload = () => {
+    const name = userName || 'Course Graduate';
+    generateCertificate({
+      recipientName: name,
+      completionDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      totalLessons,
+      totalModules,
+      quizzesPassed,
+    });
+  };
+
+  return (
+    <div className="mt-4 p-5 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/20 rounded-lg">
+      <div className="flex items-start gap-4">
+        <div className="p-2.5 rounded-lg bg-amber-500/15">
+          <Award className="w-6 h-6 text-amber-500" />
+        </div>
+        <div className="flex-1">
+          <h3 className="font-bold text-base mb-1">Course Completion Certificate</h3>
+          {allQuizzesPassed ? (
+            <>
+              <p className="text-sm text-muted-foreground mb-3">
+                You've completed all lessons and passed all {totalModules} module quizzes.
+                Download your personalized certificate of completion!
+                {!userName && (
+                  <span className="block mt-1 text-xs">
+                    Tip: <a href="/profile" className="text-[oklch(0.48_0.20_18)] hover:underline font-medium">Set up your profile</a> to show your name on the certificate.
+                  </span>
+                )}
+              </p>
+              <Button
+                onClick={handleDownload}
+                className="gap-2 bg-amber-600 hover:bg-amber-700 text-white"
+                size="sm"
+              >
+                <Download className="w-4 h-4" />
+                Download Certificate
+              </Button>
+            </>
+          ) : (
+            <>
+              <p className="text-sm text-muted-foreground">
+                You've completed all lessons! To earn your certificate, pass all {totalModules} module quizzes.
+              </p>
+              <div className="mt-2 flex items-center gap-2">
+                <Progress value={(quizzesPassed / totalModules) * 100} className="h-1.5 flex-1 max-w-[200px]" />
+                <span className="text-xs font-medium text-muted-foreground tabular-nums">
+                  {quizzesPassed}/{totalModules} quizzes passed
+                </span>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Course() {
   const [expandedModule, setExpandedModule] = useState<string | null>('mod-1');
   const [activeLesson, setActiveLesson] = useState<string | null>('l-1-1');
@@ -361,6 +429,11 @@ export default function Course() {
                 </p>
               )}
             </div>
+          )}
+
+          {/* Certificate Section */}
+          {isAuthenticated && progressPercent === 100 && (
+            <CertificateSection totalLessons={totalLessons} totalModules={COURSE_MODULES.length} />
           )}
 
           {/* Sign in prompt for non-authenticated users */}

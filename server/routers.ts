@@ -6,7 +6,7 @@ import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { PLANS, PlanKey } from "./stripe/products";
 import { createCheckoutSession, createPortalSession } from "./stripe/checkout";
 import { getDb } from "./db";
-import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults } from "../drizzle/schema";
+import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles } from "../drizzle/schema";
 import { eq, sql, desc, and, ne, inArray } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
@@ -15,6 +15,60 @@ import crypto from "crypto";
 
 export const appRouter = router({
   system: systemRouter,
+
+  // ─── User Profile ──────────────────────────────────────────
+  profile: router({
+    /** Get the current user's profile */
+    get: protectedProcedure.query(async ({ ctx }) => {
+      const db = (await getDb())!;
+      const rows = await db.select().from(userProfiles).where(eq(userProfiles.userId, ctx.user.id)).limit(1);
+      return rows[0] || null;
+    }),
+
+    /** Create or update the current user's profile */
+    upsert: protectedProcedure
+      .input(z.object({
+        fullName: z.string().optional(),
+        companyName: z.string().optional(),
+        phone: z.string().optional(),
+        email: z.string().optional(),
+        address: z.string().optional(),
+        city: z.string().optional(),
+        state: z.string().optional(),
+        zip: z.string().optional(),
+        website: z.string().optional(),
+        licenseNumber: z.string().optional(),
+        marketArea: z.string().optional(),
+        yearsExperience: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        const existing = await db.select().from(userProfiles).where(eq(userProfiles.userId, ctx.user.id)).limit(1);
+
+        const data = {
+          fullName: input.fullName || null,
+          companyName: input.companyName || null,
+          phone: input.phone || null,
+          email: input.email || null,
+          address: input.address || null,
+          city: input.city || null,
+          state: input.state || null,
+          zip: input.zip || null,
+          website: input.website || null,
+          licenseNumber: input.licenseNumber || null,
+          marketArea: input.marketArea || null,
+          yearsExperience: input.yearsExperience || null,
+        };
+
+        if (existing.length > 0) {
+          await db.update(userProfiles).set(data).where(eq(userProfiles.userId, ctx.user.id));
+        } else {
+          await db.insert(userProfiles).values({ userId: ctx.user.id, ...data });
+        }
+
+        return { success: true };
+      }),
+  }),
 
   // ─── Quiz Results ──────────────────────────────────────────
   quiz: router({
@@ -781,6 +835,52 @@ Provide 3-5 comparable RENOVATED properties that recently sold as standard retai
         .where(eq(courseProgress.userId, ctx.user.id));
 
       return { success: true };
+    }),
+  }),
+
+  // ─── Certificate ──────────────────────────────────────────────
+  certificate: router({
+    /** Check if the user has completed all lessons and passed all quizzes */
+    eligibility: protectedProcedure.query(async ({ ctx }) => {
+      const db = (await getDb())!;
+
+      // Get completed lessons
+      const completedRows = await db
+        .select({ lessonId: courseProgress.lessonId })
+        .from(courseProgress)
+        .where(eq(courseProgress.userId, ctx.user.id));
+      const completedLessonIds = new Set(completedRows.map(r => r.lessonId));
+
+      // Get quiz results (best per module)
+      const quizRows = await db
+        .select()
+        .from(quizResults)
+        .where(eq(quizResults.userId, ctx.user.id))
+        .orderBy(desc(quizResults.score));
+
+      // Group best quiz per module
+      const bestQuizByModule = new Map<string, { score: number; totalQuestions: number }>();
+      for (const row of quizRows) {
+        if (!bestQuizByModule.has(row.moduleId)) {
+          bestQuizByModule.set(row.moduleId, { score: row.score, totalQuestions: row.totalQuestions });
+        }
+      }
+
+      // Get user profile for name
+      const profileRows = await db.select().from(userProfiles).where(eq(userProfiles.userId, ctx.user.id)).limit(1);
+      const profile = profileRows[0] || null;
+
+      // Get user info
+      const userRows = await db.select().from(users).where(eq(users.id, ctx.user.id)).limit(1);
+      const userData = userRows[0] || null;
+
+      return {
+        completedLessonCount: completedLessonIds.size,
+        quizzesPassed: bestQuizByModule.size,
+        bestQuizByModule: Object.fromEntries(bestQuizByModule),
+        userName: profile?.fullName || userData?.name || null,
+        companyName: profile?.companyName || null,
+      };
     }),
   }),
 

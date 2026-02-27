@@ -4,14 +4,48 @@ import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ALL_CONTRACTS, renderContract } from '@/lib/contracts';
 import type { ContractTemplate } from '@/lib/contracts';
-import { FileText, ChevronDown, ChevronRight, Copy, Check, AlertTriangle, Download } from 'lucide-react';
-import { useState, useCallback } from 'react';
+import { FileText, ChevronDown, ChevronRight, Copy, Check, AlertTriangle, Download, Info, User } from 'lucide-react';
+import { useState, useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
 import { printDocument } from '@/lib/printDocument';
+import { useProfileReplacer } from '@/hooks/useProfileReplacer';
+import { Link } from 'wouter';
+
+/**
+ * Map profile fields to contract placeholder field IDs.
+ * When a user has a profile, these buyer fields are pre-filled.
+ */
+function getProfilePlaceholderValues(profile: Record<string, string | undefined> | null): Record<string, string> {
+  if (!profile) return {};
+  const map: Record<string, string> = {};
+
+  if (profile.fullName) {
+    map['buyerName'] = `${profile.fullName} and/or Assigns`;
+  }
+  if (profile.address || profile.city || profile.state || profile.zip) {
+    const parts = [profile.address, profile.city, profile.state, profile.zip].filter(Boolean);
+    map['buyerAddress'] = parts.join(', ');
+  }
+  if (profile.phone) {
+    map['buyerPhone'] = profile.phone;
+  }
+  if (profile.email) {
+    map['buyerEmail'] = profile.email;
+  }
+
+  return map;
+}
 
 export default function Contracts() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const { profile, hasProfile, replaceInText } = useProfileReplacer();
+
+  // Build profile-based placeholder values for contract fields
+  const profilePlaceholders = useMemo(() => {
+    if (!profile) return {};
+    return getProfilePlaceholderValues(profile as unknown as Record<string, string | undefined>);
+  }, [profile]);
 
   const handleCopy = useCallback((id: string, text: string) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -22,17 +56,13 @@ export default function Contracts() {
   }, []);
 
   const handlePrint = useCallback((contract: ContractTemplate, renderedText: string) => {
-    // Split the contract into logical sections by double newlines
     const paragraphs = renderedText.split(/\n\n+/).filter(p => p.trim());
-    
-    // Group into sections: first paragraph is the preamble, rest are clauses
     const sections: { heading: string; body: string }[] = [];
-    
+
     paragraphs.forEach((para, i) => {
       if (i === 0) {
         sections.push({ heading: 'Agreement', body: para.trim() });
       } else {
-        // Check if the paragraph starts with a numbered clause or section header
         const headerMatch = para.match(/^(\d+\.\s+[A-Z][A-Z\s/&]+)/m);
         if (headerMatch) {
           const heading = headerMatch[1].replace(/^\d+\.\s+/, '').trim();
@@ -44,7 +74,6 @@ export default function Contracts() {
       }
     });
 
-    // If we couldn't parse sections well, just use the full text as one section
     if (sections.length <= 1) {
       sections.length = 0;
       sections.push({ heading: contract.title, body: renderedText });
@@ -90,16 +119,48 @@ export default function Contracts() {
           </div>
         </div>
 
+        {/* Profile auto-fill banner */}
+        {!hasProfile && (
+          <div className="mb-6 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg flex items-start gap-2.5">
+            <Info className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+            <div className="text-sm">
+              <p className="font-medium text-amber-700 dark:text-amber-400">Auto-fill buyer info</p>
+              <p className="text-muted-foreground text-xs mt-0.5">
+                <Link href="/profile" className="text-[oklch(0.48_0.20_18)] hover:underline font-medium">
+                  Set up your Business Profile →
+                </Link>{' '}
+                to auto-fill Buyer Name, Address, Phone, and Email in all contract templates.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {hasProfile && (
+          <div className="mb-6 p-3 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center gap-2.5">
+            <User className="w-4 h-4 text-green-600 shrink-0" />
+            <p className="text-sm text-green-700 dark:text-green-400">
+              Your business profile is auto-filling buyer fields.{' '}
+              <Link href="/profile" className="underline font-medium">Edit profile →</Link>
+            </p>
+          </div>
+        )}
+
         {/* Contract Templates */}
         <div className="space-y-4">
           {ALL_CONTRACTS.map((contract: ContractTemplate) => {
             const isExpanded = expandedId === contract.id;
             const isCopied = copiedId === contract.id;
+
+            // Build placeholder values: profile auto-fills buyer fields, rest show [Label]
             const placeholderValues: Record<string, string> = {};
             contract.fields.forEach(f => {
-              placeholderValues[f.id] = `[${f.label}]`;
+              if (profilePlaceholders[f.id]) {
+                placeholderValues[f.id] = profilePlaceholders[f.id];
+              } else {
+                placeholderValues[f.id] = `[${f.label}]`;
+              }
             });
-            const renderedText = renderContract(contract, placeholderValues);
+            const renderedText = replaceInText(renderContract(contract, placeholderValues));
 
             return (
               <Collapsible key={contract.id} open={isExpanded}>
@@ -129,8 +190,12 @@ export default function Contracts() {
                       <div className="flex flex-wrap gap-1.5">
                         <span className="text-xs font-semibold text-muted-foreground mr-1">Fields to fill in:</span>
                         {contract.fields.map((f) => (
-                          <Badge key={f.id} variant="outline" className="text-xs">
-                            {f.label} {f.required && '*'}
+                          <Badge
+                            key={f.id}
+                            variant={profilePlaceholders[f.id] ? 'default' : 'outline'}
+                            className={`text-xs ${profilePlaceholders[f.id] ? 'bg-green-600/80 text-white' : ''}`}
+                          >
+                            {f.label} {profilePlaceholders[f.id] ? '✓' : f.required ? '*' : ''}
                           </Badge>
                         ))}
                       </div>
