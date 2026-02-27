@@ -5,9 +5,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
+import { useLocation } from 'wouter';
 import {
   Camera, Upload, Paintbrush, Loader2, ExternalLink, DollarSign,
-  Hammer, Sparkles, Crown, ChevronRight, ArrowRight, ImageIcon, Info
+  Hammer, Sparkles, Crown, ChevronRight, ArrowRight, ImageIcon, Info, Calculator
 } from 'lucide-react';
 import {
   getDefaultRoomScopes,
@@ -80,6 +81,7 @@ export default function RenovationDesigner() {
   const [generatingTier, setGeneratingTier] = useState<MaterialTier | null>(null);
   const [selectedDesign, setSelectedDesign] = useState<DesignResult | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [, navigate] = useLocation();
 
   const uploadMutation = trpc.renovation.uploadRoomPhoto.useMutation();
   const generateMutation = trpc.renovation.generateDesign.useMutation();
@@ -535,14 +537,35 @@ export default function RenovationDesigner() {
                             <span className={config.color}>{formatCurrency(design.totalCost)}</span>
                           </div>
                         </div>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full mt-3 gap-1"
-                          onClick={() => setSelectedDesign(design)}
-                        >
-                          View Materials <ArrowRight className="w-3.5 h-3.5" />
-                        </Button>
+                        <div className="flex gap-2 mt-3">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex-1 gap-1"
+                            onClick={() => setSelectedDesign(design)}
+                          >
+                            View Materials <ArrowRight className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            className="flex-1 gap-1 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white"
+                            onClick={() => {
+                              const payload = {
+                                roomId: selectedRoom,
+                                tier: design.tier,
+                                totalCost: design.totalCost,
+                                totalMaterials: design.totalMaterials,
+                                totalLabor: design.totalLabor,
+                                timestamp: Date.now(),
+                              };
+                              localStorage.setItem('renovation-to-analyzer', JSON.stringify(payload));
+                              toast.success(`${TIER_CONFIG[design.tier].label} design applied! Redirecting to Analyzer...`);
+                              setTimeout(() => navigate('/analyzer'), 500);
+                            }}
+                          >
+                            <Calculator className="w-3.5 h-3.5" /> Apply to Analyzer
+                          </Button>
+                        </div>
                       </div>
                     );
                   })}

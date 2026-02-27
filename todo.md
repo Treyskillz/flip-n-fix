@@ -114,3 +114,9 @@
 - [x] Build shareable PDF download for deal analysis
 - [x] Investigate image generation quality for room renovation designer (PASSED - professional quality)
 - [x] Build room photo renovation designer with SKUs — 3 tiers, AI image gen, Home Depot SKUs, material/labor costs
+- [x] Add "Apply to Rehab Estimate" button in Renovation Designer — push selected tier costs to Deal Analyzer
+- [x] Store selected renovation design data in localStorage for transfer to Analyzer
+- [x] Update Analyzer page to detect and import renovation design data
+- [x] Build Deal Comparison View page for side-by-side saved deal comparison (already built in SavedDeals)
+- [x] Add compare selection UI to Saved Deals page (already built with checkbox selection)
+- [x] Add Deal Comparison route to App.tsx and navigation (integrated into SavedDeals page)

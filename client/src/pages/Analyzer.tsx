@@ -5,6 +5,7 @@ import { FinancingSection } from '@/components/FinancingSection';
 import { ProfitSummary } from '@/components/ProfitSummary';
 import { InvestorReport } from '@/components/InvestorReport';
 import { useFlipAnalyzer } from '@/hooks/useFlipAnalyzer';
+import { useEffect } from 'react';
 import { Calculator, Save, AlertTriangle, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -15,6 +16,35 @@ const STORAGE_KEY = 'freedom-one-saved-deals';
 
 export default function Analyzer() {
   const analyzer = useFlipAnalyzer();
+
+  // Receive renovation design data from Renovation Designer page
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('renovation-to-analyzer');
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      // Only apply if data is fresh (less than 30 seconds old)
+      if (Date.now() - data.timestamp > 30000) {
+        localStorage.removeItem('renovation-to-analyzer');
+        return;
+      }
+      // Apply the material tier
+      if (data.tier) {
+        analyzer.setMaterialTier(data.tier);
+      }
+      // Enable the room and set condition to heavy (full renovation)
+      if (data.roomId) {
+        analyzer.setRoomCondition(data.roomId, 'full');
+      }
+      // Switch to scope mode so the user sees the room-by-room breakdown
+      analyzer.setRehabMode('scope');
+      // Clean up
+      localStorage.removeItem('renovation-to-analyzer');
+      toast.success(`Renovation design applied to Rehab Estimator — ${data.tier} tier, ${data.roomId} room enabled.`);
+    } catch {
+      // Silently ignore parse errors
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSaveDeal = () => {
     const { property, profit, effectiveArv, rehabTotals, targetROI } = analyzer;
