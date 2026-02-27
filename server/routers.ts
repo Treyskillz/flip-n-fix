@@ -6,9 +6,12 @@ import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { PLANS, PlanKey } from "./stripe/products";
 import { createCheckoutSession, createPortalSession } from "./stripe/checkout";
 import { getDb } from "./db";
-import { users } from "../drizzle/schema";
-import { eq } from "drizzle-orm";
+import { users, sharedDeals } from "../drizzle/schema";
+import { eq, sql } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
+import { generateImage } from "./_core/imageGeneration";
+import { storagePut } from "./storage";
+import crypto from "crypto";
 
 export const appRouter = router({
   system: systemRouter,
@@ -124,6 +127,120 @@ Provide 3-5 comparable RENOVATED properties that recently sold as standard retai
         } catch {
           throw new Error("Failed to parse AI comp results");
         }
+      }),
+  }),
+
+  // ─── Shared Deals ──────────────────────────────────────────────
+  shareDeal: router({
+    create: publicProcedure
+      .input(
+        z.object({
+          dealData: z.string().min(1), // JSON string of full deal analysis
+          propertyAddress: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        const shareId = crypto.randomBytes(12).toString("hex"); // 24-char unique ID
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + 30); // expires in 30 days
+
+        await db.insert(sharedDeals).values({
+          shareId,
+          userId: ctx.user?.id || null,
+          propertyAddress: input.propertyAddress || null,
+          dealData: input.dealData,
+          expiresAt,
+        });
+
+        return { shareId };
+      }),
+
+    get: publicProcedure
+      .input(z.object({ shareId: z.string().min(1) }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        const result = await db
+          .select()
+          .from(sharedDeals)
+          .where(eq(sharedDeals.shareId, input.shareId))
+          .limit(1);
+
+        if (!result[0]) return null;
+
+        const deal = result[0];
+
+        // Check expiration
+        if (deal.expiresAt && new Date(deal.expiresAt) < new Date()) {
+          return null; // expired
+        }
+
+        // Increment view count
+        await db
+          .update(sharedDeals)
+          .set({ viewCount: sql`${sharedDeals.viewCount} + 1` })
+          .where(eq(sharedDeals.shareId, input.shareId));
+
+        return {
+          shareId: deal.shareId,
+          dealData: deal.dealData,
+          propertyAddress: deal.propertyAddress,
+          createdAt: deal.createdAt,
+          viewCount: deal.viewCount + 1,
+        };
+      }),
+  }),
+
+  // ─── Room Renovation Designer ─────────────────────────────────
+  renovation: router({
+    generateDesign: publicProcedure
+      .input(
+        z.object({
+          roomType: z.string().min(1),
+          tier: z.enum(["rental", "standard", "luxury"]),
+          imageUrl: z.string().url(),
+          propertyStyle: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const tierDescriptions: Record<string, string> = {
+          rental: "Budget rental-grade renovation: basic laminate countertops, stock white cabinets, vinyl plank flooring, basic lighting fixtures, standard white appliances. Clean and functional but minimal upgrades. Builder-grade materials throughout.",
+          standard: "Mid-range standard renovation: quartz countertops, shaker-style cabinets in white or gray, hardwood or luxury vinyl plank flooring, stainless steel appliances, subway tile backsplash, modern pendant lighting, brushed nickel or matte black hardware. Popular with homebuyers.",
+          luxury: "High-end luxury renovation: natural stone or premium quartz countertops with waterfall edge, custom inset cabinets, wide-plank hardwood floors, professional-grade stainless appliances, designer tile backsplash, statement lighting fixtures, solid brass hardware, crown molding. Magazine-worthy finishes.",
+        };
+
+        const prompt = `Renovate this ${input.roomType} with a ${input.tier}-grade renovation. ${tierDescriptions[input.tier]} Keep the same room layout, dimensions, and window/door positions. Professional real estate photography style, bright natural lighting, wide angle. ${input.propertyStyle ? `Home style: ${input.propertyStyle}.` : ''} Photorealistic, high quality.`;
+
+        const result = await generateImage({
+          prompt,
+          originalImages: [{ url: input.imageUrl, mimeType: "image/jpeg" }],
+        });
+
+        return {
+          imageUrl: result.url || "",
+          tier: input.tier,
+          roomType: input.roomType,
+        };
+      }),
+
+    uploadRoomPhoto: publicProcedure
+      .input(
+        z.object({
+          base64: z.string().min(1),
+          filename: z.string().min(1),
+          mimeType: z.string().min(1),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const buffer = Buffer.from(input.base64, "base64");
+        const suffix = crypto.randomBytes(4).toString("hex");
+        const key = `room-photos/${Date.now()}-${suffix}-${input.filename}`;
+        const { url } = await storagePut(key, buffer, input.mimeType);
+        return { url };
       }),
   }),
 

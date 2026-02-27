@@ -26,10 +26,22 @@ const CredibilityPackets = lazy(() => import("./pages/CredibilityPackets"));
 const StateGuide = lazy(() => import("./pages/StateGuide"));
 const Contractors = lazy(() => import("./pages/Contractors"));
 const QuickCheck = lazy(() => import("./pages/QuickCheck"));
+const SharedDealView = lazy(() => import("./pages/SharedDealView"));
+const RenovationDesigner = lazy(() => import("./pages/RenovationDesigner"));
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
+    <Switch>
+      {/* Shared deal view - standalone page without site layout */}
+      <Route path="/shared/:shareId">
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}>
+          <SharedDealView />
+        </Suspense>
+      </Route>
+
+      {/* All other routes with site layout */}
+      <Route>
     <SiteLayout>
       <Suspense fallback={<div className="container py-20 text-center text-muted-foreground">Loading...</div>}>
         <Switch>
@@ -49,7 +61,8 @@ function Router() {
           <Route path={"/checklists"} component={Checklists} />
           <Route path={"/credibility-packets"} component={CredibilityPackets} />
           <Route path={"/state-guide"} component={StateGuide} />
-          <Route path={"/contractors"} component={Contractors} />
+          <Route path={'/contractors'} component={Contractors} />
+          <Route path={'/renovation-designer'} component={RenovationDesigner} />
           <Route path={"/support"} component={Support} />
           <Route path={"/disclaimers"} component={Disclaimers} />
           <Route path={"/404"} component={NotFound} />
@@ -57,6 +70,8 @@ function Router() {
         </Switch>
       </Suspense>
     </SiteLayout>
+      </Route>
+    </Switch>
   );
 }
 

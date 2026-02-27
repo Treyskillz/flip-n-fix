@@ -109,3 +109,8 @@
 - [x] Fix edge case: zero ARV in deal scoring and 70% rule
 - [x] Fix edge case: missing data gracefully handled with fallback values
 - [x] Add input validation and error boundaries throughout calculations
+- [x] Test Meta Ads Manager connector and document capabilities
+- [x] Build shareable deal link feature (unique URL for each saved deal)
+- [x] Build shareable PDF download for deal analysis
+- [x] Investigate image generation quality for room renovation designer (PASSED - professional quality)
+- [x] Build room photo renovation designer with SKUs — 3 tiers, AI image gen, Home Depot SKUs, material/labor costs

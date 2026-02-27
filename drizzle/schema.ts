@@ -27,4 +27,17 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+// ─── Shared Deals ─────────────────────────────────────────
+export const sharedDeals = mysqlTable("shared_deals", {
+  id: int("id").autoincrement().primaryKey(),
+  shareId: varchar("shareId", { length: 32 }).notNull().unique(),
+  userId: int("userId"),
+  propertyAddress: text("propertyAddress"),
+  dealData: text("dealData").notNull(), // JSON blob of full deal analysis
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  expiresAt: timestamp("expiresAt"), // optional expiration
+  viewCount: int("viewCount").default(0).notNull(),
+});
+
+export type SharedDeal = typeof sharedDeals.$inferSelect;
+export type InsertSharedDeal = typeof sharedDeals.$inferInsert;

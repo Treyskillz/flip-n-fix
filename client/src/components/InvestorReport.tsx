@@ -7,8 +7,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { formatCurrency } from '@/lib/calculations';
 import type { SubjectProperty, CompProperty, ProfitAnalysis, FinancingDetails, ClosingCosts, HoldingCosts } from '@/lib/types';
 import { calculateRoomCost, type RoomScope, type MaterialTier } from '@/lib/scopeOfWork';
-import { FileText, Mail, Download, Printer, Building2, TrendingUp, DollarSign, Clock } from 'lucide-react';
+import { FileText, Mail, Download, Printer, Building2, TrendingUp, DollarSign, Clock, Share2, Link2, Check, Copy } from 'lucide-react';
 import { useState, useRef } from 'react';
+import { trpc } from '@/lib/trpc';
+import { toast } from 'sonner';
 
 interface Props {
   property: SubjectProperty;
@@ -318,7 +320,57 @@ export function InvestorReport(props: Props) {
   const [emailBody, setEmailBody] = useState('');
   const [showEmailDialog, setShowEmailDialog] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
+  const [shareCopied, setShareCopied] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
+  const shareMutation = trpc.shareDeal.create.useMutation({
+    onSuccess: (data) => {
+      const url = `${window.location.origin}/shared/${data.shareId}`;
+      setShareUrl(url);
+      setShowShareDialog(true);
+    },
+    onError: () => {
+      toast.error('Failed to create shareable link. Please try again.');
+    },
+  });
+
+  const handleShare = () => {
+    const dealData = JSON.stringify({
+      property,
+      profit,
+      financing,
+      closing,
+      holding,
+      effectiveArv,
+      rehabTotals,
+      materialTier,
+      targetROI,
+      comps: comps || [],
+      roomScopes: roomScopes?.filter(r => r.condition !== 'none') || [],
+      regionalLabel,
+    });
+    const addr = `${property.address}, ${property.city}, ${property.state} ${property.zip}`;
+    shareMutation.mutate({ dealData, propertyAddress: addr });
+  };
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    } catch {
+      // fallback
+      const input = document.createElement('input');
+      input.value = shareUrl;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    }
+  };
 
   const financingCost = financing.useHardMoney ? (financing.totalInterest + financing.totalPoints) : 0;
   const totalInvestment = property.purchasePrice + rehabTotals.totalCost +
@@ -466,16 +518,46 @@ Best regards`
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           <Button onClick={handlePrint} variant="outline" className="gap-2">
             <Printer className="w-4 h-4" />
-            Print / Save PDF
+            Print PDF
           </Button>
           <Button onClick={handleDownload} variant="outline" className="gap-2">
             <Download className="w-4 h-4" />
-            Download Report
+            Download
+          </Button>
+          <Button onClick={handleShare} variant="outline" className="gap-2" disabled={shareMutation.isPending}>
+            <Share2 className="w-4 h-4" />
+            {shareMutation.isPending ? 'Creating...' : 'Share Link'}
           </Button>
         </div>
+
+        {/* Share Link Dialog */}
+        <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Link2 className="w-5 h-5 text-[oklch(0.50_0.18_25)]" />
+                Shareable Deal Link
+              </DialogTitle>
+              <DialogDescription>
+                Anyone with this link can view the deal analysis. Link expires in 30 days.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-3 pt-2">
+              <div className="flex gap-2">
+                <Input value={shareUrl} readOnly className="text-xs font-mono" />
+                <Button onClick={handleCopyLink} variant="outline" size="icon" className="shrink-0">
+                  {shareCopied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                </Button>
+              </div>
+              <p className="text-[10px] text-muted-foreground">
+                This link includes the full deal analysis: property details, comps, rehab breakdown, financing, and profit projections.
+              </p>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Email Dialog */}
         <Dialog open={showEmailDialog} onOpenChange={setShowEmailDialog}>

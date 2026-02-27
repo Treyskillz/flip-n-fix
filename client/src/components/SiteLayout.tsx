@@ -2,7 +2,7 @@ import { Link, useLocation } from 'wouter';
 import {
   Calculator, Landmark, Megaphone, FileText, GraduationCap,
   Newspaper, BookOpen, Menu, X, Home, Building2, ClipboardList, Save, Shield, CreditCard,
-  Wrench, MapPin, Award, CheckSquare, HelpCircle, ChevronDown, Zap
+  Wrench, MapPin, Award, CheckSquare, HelpCircle, ChevronDown, Zap, Paintbrush
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useCallback, useRef, useEffect } from 'react';
@@ -22,6 +22,7 @@ const PRIMARY_NAV: NavItem[] = [
   { path: '/quick-check', label: 'Quick Check', icon: Zap },
   { path: '/scope-of-work', label: 'SOW', icon: ClipboardList },
   { path: '/course', label: 'Course', icon: GraduationCap },
+  { path: '/renovation-designer', label: 'Designer', icon: Paintbrush },
   { path: '/pricing', label: 'Pricing', icon: CreditCard },
 ];
 
