@@ -5,6 +5,7 @@ import { FinancingSection } from '@/components/FinancingSection';
 import { ProfitSummary } from '@/components/ProfitSummary';
 import { InvestorReport } from '@/components/InvestorReport';
 import { PropertyPhotoGallery } from '@/components/PropertyPhotoGallery';
+import { OnboardingTour, ReplayTourButton } from '@/components/OnboardingTour';
 import { useFlipAnalyzer } from '@/hooks/useFlipAnalyzer';
 import { useEffect, useState, useMemo } from 'react';
 import { trpc } from '@/lib/trpc';
@@ -113,6 +114,7 @@ export default function Analyzer() {
 
   return (
     <div className="min-h-screen bg-background">
+      <OnboardingTour />
       <div className="container py-8">
         {/* Page Header */}
         <div className="mb-8">
@@ -126,13 +128,16 @@ export default function Analyzer() {
                 <p className="text-sm text-muted-foreground">Analyze any property for profitability in real-time</p>
               </div>
             </div>
-            <Button
-              onClick={handleSaveDeal}
-              disabled={saveDealMutation.isPending}
-              className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white"
-            >
-              <Save className="w-4 h-4" /> {saveDealMutation.isPending ? 'Saving...' : 'Save Deal'}
-            </Button>
+            <div className="flex items-center gap-2" data-tour="save-deal">
+              <ReplayTourButton />
+              <Button
+                onClick={handleSaveDeal}
+                disabled={saveDealMutation.isPending}
+                className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white"
+              >
+                <Save className="w-4 h-4" /> {saveDealMutation.isPending ? 'Saving...' : 'Save Deal'}
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -140,14 +145,17 @@ export default function Analyzer() {
           {/* Left Column: Input Sections */}
           <div className="space-y-6">
             {/* 1. Subject Property */}
+            <div data-tour="property-input">
             <PropertyInput
               property={analyzer.property}
               onChange={analyzer.setProperty}
               regionalFactor={analyzer.regionalFactor}
               marketSelector={analyzer.marketSelector}
             />
+            </div>
 
             {/* 2. Comparable Sales */}
+            <div data-tour="comp-manager">
             <CompManager
               comps={analyzer.comps}
               addComp={analyzer.addComp}
@@ -169,8 +177,10 @@ export default function Analyzer() {
               subjectYearBuilt={analyzer.property.yearBuilt}
               subjectPropertyType={analyzer.property.propertyType}
             />
+            </div>
 
             {/* 3. Rehab Estimator */}
+            <div data-tour="rehab-estimator">
             <RehabEstimator
               rehabMode={analyzer.rehabMode}
               setRehabMode={analyzer.setRehabMode}
@@ -186,11 +196,13 @@ export default function Analyzer() {
               rehabTotals={analyzer.rehabTotals}
               regionalLabel={analyzer.regionalFactor.label}
             />
+            </div>
 
             {/* 4. Property Photos */}
             <PropertyPhotoGallery dealUniqueId={dealUniqueId} />
 
             {/* 5. Investor Presentation Report */}
+            <div data-tour="investor-report">
             <InvestorReport
               property={analyzer.property}
               profit={analyzer.profit}
@@ -209,6 +221,7 @@ export default function Analyzer() {
               laborFactor={analyzer.regionalFactor.laborFactor}
               photos={photosList}
             />
+            </div>
 
             {/* 5. Financing & Costs */}
             <FinancingSection
@@ -233,7 +246,7 @@ export default function Analyzer() {
           </div>
 
           {/* Right Column: Floating Profit Summary */}
-          <div className="xl:sticky xl:top-20 xl:self-start">
+          <div className="xl:sticky xl:top-20 xl:self-start" data-tour="profit-summary">
             <ProfitSummary
               profit={analyzer.profit}
               rehabCost={analyzer.rehabTotals.totalCost}

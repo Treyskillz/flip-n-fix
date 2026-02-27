@@ -12,7 +12,8 @@ import {
   ArrowRight, Calculator, AlertTriangle, Search, SortAsc, SortDesc,
   Download, Printer, FileText, Archive, Star, StarOff,
   ChevronDown, ChevronUp, Eye, Filter, LayoutGrid, LayoutList,
-  CheckCircle2, Clock, XCircle, Pause, Loader2, StickyNote, Database
+  CheckCircle2, Clock, XCircle, Pause, Loader2, StickyNote, Database,
+  CheckSquare, Square, X
 } from 'lucide-react';
 import { Link } from 'wouter';
 import { formatCurrency } from '@/lib/calculations';
@@ -710,6 +711,26 @@ export default function SavedDeals() {
     onError: (err) => toast.error(`Delete failed: ${err.message}`),
   });
 
+  const bulkUpdateStatus = trpc.deals.bulkUpdateStatus.useMutation({
+    onSuccess: (data) => {
+      utils.deals.list.invalidate();
+      utils.deals.portfolio.invalidate();
+      setSelectedIds(new Set());
+      toast.success(`Updated ${data.count} deal${data.count !== 1 ? 's' : ''}.`);
+    },
+    onError: (err) => toast.error(`Bulk update failed: ${err.message}`),
+  });
+
+  const bulkDelete = trpc.deals.bulkDelete.useMutation({
+    onSuccess: (data) => {
+      utils.deals.list.invalidate();
+      utils.deals.portfolio.invalidate();
+      setSelectedIds(new Set());
+      toast.success(`Deleted ${data.count} deal${data.count !== 1 ? 's' : ''}.`);
+    },
+    onError: (err) => toast.error(`Bulk delete failed: ${err.message}`),
+  });
+
   const saveDeal = trpc.deals.save.useMutation({
     onError: (err) => toast.error(`Migration failed for a deal: ${err.message}`),
   });
@@ -815,6 +836,67 @@ export default function SavedDeals() {
       setSortField(field);
       setSortDir('desc');
     }
+  };
+
+  // ─── Bulk Actions ─────────────────────────────────────────
+  const handleSelectAll = () => {
+    if (selectedIds.size === filteredDeals.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredDeals.map(d => d.id)));
+    }
+  };
+
+  const handleBulkStatusChange = (status: DealStatus) => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    bulkUpdateStatus.mutate({ uniqueIds: ids, status });
+  };
+
+  const handleBulkDelete = () => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    if (!window.confirm(`Are you sure you want to delete ${ids.length} deal${ids.length !== 1 ? 's' : ''}? This cannot be undone.`)) return;
+    bulkDelete.mutate({ uniqueIds: ids });
+  };
+
+  const handleCsvExport = () => {
+    const dealsToExport = selectedIds.size > 0
+      ? filteredDeals.filter(d => selectedIds.has(d.id))
+      : filteredDeals;
+
+    if (dealsToExport.length === 0) {
+      toast.error('No deals to export.');
+      return;
+    }
+
+    const headers = [
+      'Address', 'City', 'State', 'Zip', 'Purchase Price', 'ARV', 'Rehab Cost',
+      'Total Investment', 'Net Profit', 'ROI %', 'Deal Score', 'Verdict',
+      'Status', 'Starred', 'Sqft', 'Beds', 'Baths', 'Year Built', 'Market',
+      'Cash-on-Cash %', 'MAO', 'Recommended Max Price', 'Target ROI %', 'Saved Date', 'Notes'
+    ];
+
+    const rows = dealsToExport.map(d => [
+      d.address, d.city, d.state, d.zip,
+      d.purchasePrice, d.arv, d.rehabCost, d.totalInvestment,
+      d.netProfit, d.roi.toFixed(2), d.dealScore || '', d.dealVerdict,
+      d.status, d.starred ? 'Yes' : 'No',
+      d.sqft, d.beds, d.baths, d.yearBuilt, d.market || '',
+      d.cashOnCash?.toFixed(2) || '', d.maxAllowableOffer, d.recommendedMaxPrice,
+      d.targetROI, new Date(d.savedAt).toLocaleDateString(),
+      (d.notes || '').replace(/[\n\r,]/g, ' ')
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `saved-deals-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${dealsToExport.length} deal${dealsToExport.length !== 1 ? 's' : ''} to CSV.`);
   };
 
   // ─── Filter and Sort ──────────────────────────────────────
@@ -949,6 +1031,66 @@ export default function SavedDeals() {
             {/* Portfolio Stats */}
             <PortfolioStats deals={deals as SavedDeal[]} />
 
+            {/* Bulk Actions Bar */}
+            {selectedIds.size > 0 && (
+              <div className="mb-3 p-3 bg-[oklch(0.48_0.20_18)]/10 border border-[oklch(0.48_0.20_18)]/30 rounded-lg flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-2 mr-2">
+                  <CheckSquare className="w-4 h-4 text-[oklch(0.48_0.20_18)]" />
+                  <span className="text-sm font-semibold text-[oklch(0.48_0.20_18)]">
+                    {selectedIds.size} deal{selectedIds.size !== 1 ? 's' : ''} selected
+                  </span>
+                </div>
+
+                <div className="h-5 w-px bg-border" />
+
+                {/* Bulk Status Change */}
+                <Select onValueChange={(v) => handleBulkStatusChange(v as DealStatus)}>
+                  <SelectTrigger className="h-7 text-xs w-auto min-w-[140px] bg-background">
+                    <SelectValue placeholder="Change Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Set Active</SelectItem>
+                    <SelectItem value="under_contract">Set Under Contract</SelectItem>
+                    <SelectItem value="closed">Set Closed</SelectItem>
+                    <SelectItem value="passed">Set Passed</SelectItem>
+                    <SelectItem value="archived">Set Archived</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {/* CSV Export */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-7 text-xs gap-1 bg-background"
+                  onClick={handleCsvExport}
+                >
+                  <Download className="w-3 h-3" /> Export CSV
+                </Button>
+
+                {/* Bulk Delete */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-7 text-xs gap-1 bg-background text-red-600 border-red-200 hover:bg-red-50"
+                  onClick={handleBulkDelete}
+                  disabled={bulkDelete.isPending}
+                >
+                  {bulkDelete.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+                  Delete Selected
+                </Button>
+
+                {/* Clear Selection */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-xs gap-1 ml-auto"
+                  onClick={() => setSelectedIds(new Set())}
+                >
+                  <X className="w-3 h-3" /> Clear
+                </Button>
+              </div>
+            )}
+
             {/* Toolbar */}
             <div className="flex flex-wrap items-center gap-2 mb-4">
               {/* Search */}
@@ -1018,6 +1160,19 @@ export default function SavedDeals() {
                 </Select>
               )}
 
+              {/* Select All */}
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 text-xs gap-1"
+                onClick={handleSelectAll}
+              >
+                {selectedIds.size === filteredDeals.length && filteredDeals.length > 0
+                  ? <CheckSquare className="w-3 h-3" />
+                  : <Square className="w-3 h-3" />}
+                {selectedIds.size === filteredDeals.length && filteredDeals.length > 0 ? 'Deselect All' : 'Select All'}
+              </Button>
+
               {/* Starred Toggle */}
               <Button
                 variant={showStarredOnly ? "default" : "outline"}
@@ -1027,6 +1182,16 @@ export default function SavedDeals() {
               >
                 <Star className={`w-3 h-3 ${showStarredOnly ? 'fill-current' : ''}`} />
                 Starred
+              </Button>
+
+              {/* CSV Export */}
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 text-xs gap-1"
+                onClick={handleCsvExport}
+              >
+                <Download className="w-3 h-3" /> Export CSV
               </Button>
 
               {/* View Toggle */}

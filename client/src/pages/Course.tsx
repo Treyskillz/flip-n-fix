@@ -7,6 +7,9 @@ import { COURSE_MODULES } from '@/lib/course';
 import type { CourseModule, CourseLesson } from '@/lib/course';
 import { VIDEO_SCRIPTS } from '@/lib/videoScripts';
 import type { VideoScript, VideoSegment } from '@/lib/videoScripts';
+import { MODULE_QUIZZES } from '@/lib/quizData';
+import type { ModuleQuiz } from '@/lib/quizData';
+import { QuizModal } from '@/components/QuizModal';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { getLoginUrl } from '@/const';
@@ -196,6 +199,7 @@ export default function Course() {
   const [expandedModule, setExpandedModule] = useState<string | null>('mod-1');
   const [activeLesson, setActiveLesson] = useState<string | null>('l-1-1');
   const [showScript, setShowScript] = useState(false);
+  const [quizModule, setQuizModule] = useState<ModuleQuiz | null>(null);
 
   const { user, isAuthenticated, loading: authLoading } = useAuth();
 
@@ -499,6 +503,27 @@ export default function Course() {
                             </Button>
                           </div>
                         )}
+                        {/* Quiz button */}
+                        {(() => {
+                          const modQuiz = MODULE_QUIZZES.find(q => q.moduleId === mod.id);
+                          if (!modQuiz) return null;
+                          return (
+                            <div className="ml-8 mt-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setQuizModule(modQuiz);
+                                }}
+                                className="text-xs w-full gap-1.5 border-[oklch(0.48_0.20_18)]/40 text-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.48_0.20_18)]/10"
+                              >
+                                <Trophy className="w-3 h-3" />
+                                Take Quiz
+                              </Button>
+                            </div>
+                          );
+                        })()}
                       </CardContent>
                     </CollapsibleContent>
                   </Card>
@@ -658,6 +683,15 @@ export default function Course() {
           </div>
         </div>
       </div>
+
+      {/* Quiz Modal */}
+      {quizModule && (
+        <QuizModal
+          quiz={quizModule}
+          open={!!quizModule}
+          onOpenChange={(open) => { if (!open) setQuizModule(null); }}
+        />
+      )}
     </div>
   );
 }

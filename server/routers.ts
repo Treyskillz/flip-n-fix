@@ -6,8 +6,8 @@ import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { PLANS, PlanKey } from "./stripe/products";
 import { createCheckoutSession, createPortalSession } from "./stripe/checkout";
 import { getDb } from "./db";
-import { users, sharedDeals, savedDeals, dealPhotos, courseProgress } from "../drizzle/schema";
-import { eq, sql, desc, and, ne } from "drizzle-orm";
+import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults } from "../drizzle/schema";
+import { eq, sql, desc, and, ne, inArray } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
 import { storagePut } from "./storage";
@@ -15,6 +15,48 @@ import crypto from "crypto";
 
 export const appRouter = router({
   system: systemRouter,
+
+  // ─── Quiz Results ──────────────────────────────────────────
+  quiz: router({
+    /** Get all quiz results for the current user */
+    list: protectedProcedure.query(async ({ ctx }) => {
+      const db = (await getDb())!;
+      const results = await db.select().from(quizResults).where(eq(quizResults.userId, ctx.user.id)).orderBy(desc(quizResults.completedAt));
+      return results;
+    }),
+
+    /** Get the best result for a specific module */
+    getModuleBest: protectedProcedure
+      .input(z.object({ moduleId: z.string() }))
+      .query(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        const results = await db.select().from(quizResults)
+          .where(and(eq(quizResults.userId, ctx.user.id), eq(quizResults.moduleId, input.moduleId)))
+          .orderBy(desc(quizResults.score));
+        return results[0] || null;
+      }),
+
+    /** Submit quiz answers and save the result */
+    submit: protectedProcedure
+      .input(z.object({
+        moduleId: z.string(),
+        score: z.number().int().min(0),
+        totalQuestions: z.number().int().min(1),
+        answers: z.string(), // JSON string
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        const [result] = await db.insert(quizResults).values({
+          userId: ctx.user.id,
+          moduleId: input.moduleId,
+          score: input.score,
+          totalQuestions: input.totalQuestions,
+          answers: input.answers,
+        });
+        return { id: result.insertId, score: input.score, totalQuestions: input.totalQuestions };
+      }),
+  }),
+
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
@@ -379,6 +421,40 @@ Provide 3-5 comparable RENOVATED properties that recently sold as standard retai
         await db.delete(savedDeals).where(eq(savedDeals.uniqueId, input.uniqueId));
 
         return { success: true };
+      }),
+
+    // Bulk update status
+    bulkUpdateStatus: publicProcedure
+      .input(z.object({
+        uniqueIds: z.array(z.string().min(1)).min(1),
+        status: z.enum(["active", "under_contract", "closed", "passed", "archived"]),
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        await db
+          .update(savedDeals)
+          .set({ status: input.status })
+          .where(inArray(savedDeals.uniqueId, input.uniqueIds));
+
+        return { success: true, count: input.uniqueIds.length };
+      }),
+
+    // Bulk delete
+    bulkDelete: publicProcedure
+      .input(z.object({
+        uniqueIds: z.array(z.string().min(1)).min(1),
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        // Delete associated photos first
+        await db.delete(dealPhotos).where(inArray(dealPhotos.dealUniqueId, input.uniqueIds));
+        await db.delete(savedDeals).where(inArray(savedDeals.uniqueId, input.uniqueIds));
+
+        return { success: true, count: input.uniqueIds.length };
       }),
 
     // Portfolio aggregation

@@ -106,3 +106,16 @@ export const courseProgress = mysqlTable("course_progress", {
 
 export type CourseProgressRow = typeof courseProgress.$inferSelect;
 export type InsertCourseProgress = typeof courseProgress.$inferInsert;
+
+// ─── Quiz Results ─────────────────────────────────────────────
+export const quizResults = mysqlTable("quiz_results", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  moduleId: varchar("moduleId", { length: 64 }).notNull(), // matches module id from course.ts
+  score: int("score").notNull(), // number of correct answers
+  totalQuestions: int("totalQuestions").notNull(),
+  answers: text("answers").notNull(), // JSON string of user answers
+  completedAt: timestamp("completedAt").defaultNow().notNull(),
+});
+export type QuizResult = typeof quizResults.$inferSelect;
+export type InsertQuizResult = typeof quizResults.$inferInsert;

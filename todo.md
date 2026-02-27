@@ -160,3 +160,13 @@
 - [x] Add progress bar to Course page header showing overall completion percentage
 - [x] Add "Mark Complete" checkbox/button to each lesson
 - [x] Persist course progress in database per user
+- [x] Build getting-started onboarding tour component for the Analyzer page
+- [x] Add step-by-step walkthrough highlighting property entry, comps, rehab estimator, and deal score
+- [x] Show tour automatically for first-time users, with option to replay from help menu
+- [x] Add database schema for course quizzes (quiz_results table)
+- [x] Create quiz data with multiple-choice questions for each module
+- [x] Build quiz UI with question display, answer selection, scoring, and results
+- [x] Create tRPC endpoints for saving and fetching quiz results
+- [x] Add bulk actions toolbar to Saved Deals page
+- [x] Implement multi-select with checkboxes on deal cards and table rows
+- [x] Add bulk status change, bulk delete, and CSV export actions
