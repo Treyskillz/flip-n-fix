@@ -142,3 +142,12 @@
 - [x] Auto-save notes to database via tRPC mutation
 - [x] Add date-range filtering to Portfolio Dashboard (Last 30 Days, This Quarter, This Year, All Time, Custom)
 - [x] Filter portfolio metrics, charts, and deal table by selected date range
+- [x] Audit all app features and existing course content
+- [x] Create comprehensive User Manual / Help Center page covering every feature
+- [x] Update Course content with app usage tutorials for every tool
+- [ ] Add contextual help tooltips and onboarding guidance across the app
+- [x] Ensure all documentation reflects current features for paying users
+- [x] Create video scripts for all course lessons (Modules 1-9)
+- [x] Add video script viewer/toggle to Course page UI
+- [x] Update video placeholders for new Module 9 lessons
+- [x] Include presenter cues, screen recording directions, and talking points in scripts

@@ -1,35 +1,152 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { COURSE_MODULES } from '@/lib/course';
 import type { CourseModule, CourseLesson } from '@/lib/course';
-import { GraduationCap, ChevronDown, ChevronRight, BookOpen, Clock, PlayCircle, Video } from 'lucide-react';
+import { VIDEO_SCRIPTS } from '@/lib/videoScripts';
+import type { VideoScript, VideoSegment } from '@/lib/videoScripts';
+import {
+  GraduationCap, ChevronDown, ChevronRight, BookOpen, Clock,
+  PlayCircle, Video, FileText, Camera, Monitor, Presentation,
+  PenLine, Clapperboard, Eye, EyeOff
+} from 'lucide-react';
 import { useState } from 'react';
 import { Streamdown } from 'streamdown';
 
-// Video placeholder data keyed by lesson ID
-const VIDEO_PLACEHOLDERS: Record<string, { title: string; duration: string }> = {
-  'l-1-1': { title: 'Finding Profitable Deals in 2026', duration: '18:30' },
-  'l-1-2': { title: 'Property Analysis Deep Dive', duration: '22:15' },
-  'l-2-1': { title: 'Rehab Estimation & Scope of Work', duration: '25:40' },
-  'l-2-2': { title: 'Managing Contractors & Timelines', duration: '20:10' },
-  'l-3-1': { title: 'Fix & Flip: Complete Walkthrough', duration: '28:00' },
-  'l-3-2': { title: 'Maximizing Flip Profits', duration: '19:45' },
-  'l-4-1': { title: 'Wholesaling Fundamentals', duration: '24:20' },
-  'l-4-2': { title: 'Assignment Contracts & Closing', duration: '17:55' },
-  'l-5-1': { title: 'BRRRR Strategy Explained', duration: '26:30' },
-  'l-5-2': { title: 'Refinancing for Maximum Returns', duration: '21:00' },
-  'l-6-1': { title: 'Subject-To Acquisitions', duration: '23:15' },
-  'l-6-2': { title: 'Creative Finance Deal Structures', duration: '20:40' },
-  'l-7-1': { title: 'Short-Term Rental Setup', duration: '27:00' },
-  'l-7-2': { title: 'STR Revenue Optimization', duration: '22:30' },
-  'l-8-1': { title: 'Financing Options & Lender Guide', duration: '19:20' },
-  'l-8-2': { title: 'Building Your 90-Day Action Plan', duration: '16:45' },
+// Segment type icons
+const SEGMENT_ICONS: Record<string, typeof Camera> = {
+  'talking-head': Camera,
+  'screen-recording': Monitor,
+  'slides': Presentation,
+  'b-roll': Clapperboard,
+  'whiteboard': PenLine,
 };
 
-function VideoPlaceholder({ lessonId }: { lessonId: string }) {
-  const video = VIDEO_PLACEHOLDERS[lessonId];
-  if (!video) return null;
+const SEGMENT_LABELS: Record<string, string> = {
+  'talking-head': 'On Camera',
+  'screen-recording': 'Screen Recording',
+  'slides': 'Slides',
+  'b-roll': 'B-Roll',
+  'whiteboard': 'Whiteboard',
+};
+
+function SegmentBadge({ type }: { type: VideoSegment['type'] }) {
+  const Icon = SEGMENT_ICONS[type] || Camera;
+  const label = SEGMENT_LABELS[type] || type;
+  return (
+    <Badge variant="outline" className="text-xs flex items-center gap-1 shrink-0">
+      <Icon className="w-3 h-3" /> {label}
+    </Badge>
+  );
+}
+
+function VideoScriptViewer({ script }: { script: VideoScript }) {
+  const [expandedSegment, setExpandedSegment] = useState<number | null>(null);
+
+  return (
+    <div className="mt-6 border border-[oklch(0.50_0.18_25)]/20 bg-[oklch(0.50_0.18_25)]/5">
+      {/* Script Header */}
+      <div className="p-4 border-b border-[oklch(0.50_0.18_25)]/20 bg-[oklch(0.50_0.18_25)]/10">
+        <div className="flex items-center gap-2 mb-2">
+          <Clapperboard className="w-4 h-4 text-[oklch(0.50_0.18_25)]" />
+          <h3 className="font-bold text-sm">Video Production Script</h3>
+        </div>
+        <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+          <span className="flex items-center gap-1">
+            <Clock className="w-3 h-3" /> Runtime: {script.estimatedRuntime}
+          </span>
+          <span className="flex items-center gap-1">
+            <Camera className="w-3 h-3" /> {script.equipment}
+          </span>
+        </div>
+      </div>
+
+      {/* Opening Hook */}
+      <div className="p-4 border-b border-border/50">
+        <p className="text-xs font-semibold text-[oklch(0.50_0.18_25)] uppercase tracking-wider mb-1">Opening Hook</p>
+        <p className="text-sm italic text-foreground/80">{script.openingHook}</p>
+      </div>
+
+      {/* Segments */}
+      <div className="divide-y divide-border/50">
+        {script.segments.map((seg, i) => {
+          const isExpanded = expandedSegment === i;
+          return (
+            <div key={i} className="group">
+              <button
+                onClick={() => setExpandedSegment(isExpanded ? null : i)}
+                className="w-full text-left p-4 hover:bg-secondary/30 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="w-6 h-6 flex items-center justify-center bg-[oklch(0.50_0.18_25)]/15 text-[oklch(0.50_0.18_25)] text-xs font-bold shrink-0">
+                    {i + 1}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-medium text-sm">{seg.title}</span>
+                      <SegmentBadge type={seg.type} />
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Clock className="w-3 h-3" /> {seg.duration}
+                      </span>
+                    </div>
+                  </div>
+                  {isExpanded
+                    ? <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
+                    : <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+                  }
+                </div>
+              </button>
+              {isExpanded && (
+                <div className="px-4 pb-4 ml-9 space-y-3">
+                  {/* Script Text */}
+                  <div>
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Script</p>
+                    <div className="text-sm leading-relaxed whitespace-pre-line bg-background/80 p-3 border border-border/50">
+                      {seg.script}
+                    </div>
+                  </div>
+                  {/* Directions */}
+                  <div>
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Production Directions</p>
+                    <p className="text-sm text-muted-foreground italic bg-background/80 p-3 border border-border/50">
+                      {seg.directions}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Closing CTA */}
+      <div className="p-4 border-t border-border/50">
+        <p className="text-xs font-semibold text-[oklch(0.50_0.18_25)] uppercase tracking-wider mb-1">Closing CTA</p>
+        <p className="text-sm font-medium">{script.closingCTA}</p>
+      </div>
+
+      {/* B-Roll Suggestions */}
+      {script.bRollSuggestions.length > 0 && (
+        <div className="p-4 border-t border-border/50 bg-secondary/20">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">B-Roll Suggestions</p>
+          <ul className="text-sm text-muted-foreground space-y-1">
+            {script.bRollSuggestions.map((suggestion, i) => (
+              <li key={i} className="flex items-start gap-2">
+                <Clapperboard className="w-3 h-3 mt-1 shrink-0" />
+                <span>{suggestion}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function VideoPlaceholder({ lessonId, script }: { lessonId: string; script?: VideoScript }) {
+  const duration = script?.estimatedRuntime || '—';
+  const segmentCount = script?.segments.length || 0;
 
   return (
     <div className="mb-6">
@@ -48,11 +165,15 @@ function VideoPlaceholder({ lessonId }: { lessonId: string }) {
             <PlayCircle className="w-10 h-10 text-white" />
           </div>
           <div className="text-center">
-            <p className="text-white font-semibold text-lg">{video.title}</p>
             <p className="text-white/60 text-sm mt-1">
               <span className="inline-flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" /> {video.duration}
+                <Clock className="w-3.5 h-3.5" /> {duration}
               </span>
+              {segmentCount > 0 && (
+                <span className="ml-3 inline-flex items-center gap-1">
+                  <FileText className="w-3.5 h-3.5" /> {segmentCount} segments
+                </span>
+              )}
             </p>
           </div>
         </div>
@@ -71,7 +192,7 @@ function VideoPlaceholder({ lessonId }: { lessonId: string }) {
         </div>
       </div>
       <p className="text-xs text-muted-foreground mt-2 text-center italic">
-        Video lesson will be available here. Follow along with the written content below.
+        Video lesson will be available here. {script ? 'Toggle the script below to view the production script.' : 'Follow along with the written content below.'}
       </p>
     </div>
   );
@@ -80,11 +201,14 @@ function VideoPlaceholder({ lessonId }: { lessonId: string }) {
 export default function Course() {
   const [expandedModule, setExpandedModule] = useState<string | null>('mod-1');
   const [activeLesson, setActiveLesson] = useState<string | null>('l-1-1');
+  const [showScript, setShowScript] = useState(false);
 
   const currentModule = COURSE_MODULES.find(m => m.id === expandedModule);
   const currentLesson = currentModule?.lessons.find(l => l.id === activeLesson);
+  const currentScript = activeLesson ? VIDEO_SCRIPTS[activeLesson] : undefined;
 
   const totalLessons = COURSE_MODULES.reduce((sum, m) => sum + m.lessons.length, 0);
+  const totalScripts = Object.keys(VIDEO_SCRIPTS).length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -108,7 +232,7 @@ export default function Course() {
           </p>
 
           {/* Course Stats Bar */}
-          <div className="flex gap-6 mt-4 pt-4 border-t border-border/50">
+          <div className="flex flex-wrap gap-6 mt-4 pt-4 border-t border-border/50">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Video className="w-4 h-4 text-[oklch(0.50_0.18_25)]" />
               <span>{totalLessons} Video Lessons</span>
@@ -118,8 +242,12 @@ export default function Course() {
               <span>Written Guides Included</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Clapperboard className="w-4 h-4 text-[oklch(0.50_0.18_25)]" />
+              <span>{totalScripts} Production Scripts</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Clock className="w-4 h-4 text-[oklch(0.50_0.18_25)]" />
-              <span>~6 Hours Total</span>
+              <span>~8 Hours Total</span>
             </div>
           </div>
         </div>
@@ -137,6 +265,7 @@ export default function Course() {
                         setExpandedModule(isExpanded ? null : mod.id);
                         if (!isExpanded && mod.lessons.length > 0) {
                           setActiveLesson(mod.lessons[0].id);
+                          setShowScript(false);
                         }
                       }}
                       className="w-full text-left"
@@ -155,26 +284,35 @@ export default function Course() {
                     <CollapsibleContent>
                       <CardContent className="pt-0 pb-3 px-3">
                         <div className="space-y-1 ml-8">
-                          {mod.lessons.map((lesson: CourseLesson) => (
-                            <button
-                              key={lesson.id}
-                              onClick={() => setActiveLesson(lesson.id)}
-                              className={`w-full text-left p-2 rounded-md text-sm transition-colors ${
-                                activeLesson === lesson.id
-                                  ? 'bg-primary/10 text-primary font-medium'
-                                  : 'hover:bg-secondary/60 text-muted-foreground'
-                              }`}
-                            >
-                              <div className="flex items-center gap-2">
-                                <PlayCircle className="w-3.5 h-3.5 shrink-0" />
-                                <span className="flex-1 truncate">{lesson.title}</span>
-                              </div>
-                              <div className="flex items-center gap-1 ml-5.5 mt-0.5">
-                                <Clock className="w-3 h-3" />
-                                <span className="text-xs">{lesson.duration}</span>
-                              </div>
-                            </button>
-                          ))}
+                          {mod.lessons.map((lesson: CourseLesson) => {
+                            const hasScript = !!VIDEO_SCRIPTS[lesson.id];
+                            return (
+                              <button
+                                key={lesson.id}
+                                onClick={() => {
+                                  setActiveLesson(lesson.id);
+                                  setShowScript(false);
+                                }}
+                                className={`w-full text-left p-2 rounded-md text-sm transition-colors ${
+                                  activeLesson === lesson.id
+                                    ? 'bg-primary/10 text-primary font-medium'
+                                    : 'hover:bg-secondary/60 text-muted-foreground'
+                                }`}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <PlayCircle className="w-3.5 h-3.5 shrink-0" />
+                                  <span className="flex-1 truncate">{lesson.title}</span>
+                                  {hasScript && (
+                                    <FileText className="w-3 h-3 shrink-0 text-[oklch(0.50_0.18_25)]" />
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-1 ml-5.5 mt-0.5">
+                                  <Clock className="w-3 h-3" />
+                                  <span className="text-xs">{lesson.duration}</span>
+                                </div>
+                              </button>
+                            );
+                          })}
                         </div>
                       </CardContent>
                     </CollapsibleContent>
@@ -189,22 +327,45 @@ export default function Course() {
             {currentLesson ? (
               <Card>
                 <CardHeader>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Badge variant="outline" className="text-xs">
-                      Module {currentModule?.number}
-                    </Badge>
-                    <Badge variant="secondary" className="text-xs flex items-center gap-1">
-                      <Clock className="w-3 h-3" /> {currentLesson.duration}
-                    </Badge>
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Badge variant="outline" className="text-xs">
+                        Module {currentModule?.number}
+                      </Badge>
+                      <Badge variant="secondary" className="text-xs flex items-center gap-1">
+                        <Clock className="w-3 h-3" /> {currentLesson.duration}
+                      </Badge>
+                      {currentScript && (
+                        <Badge className="text-xs flex items-center gap-1 bg-[oklch(0.50_0.18_25)] text-white border-none">
+                          <FileText className="w-3 h-3" /> Script Available
+                        </Badge>
+                      )}
+                    </div>
+                    {currentScript && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowScript(!showScript)}
+                        className="text-xs gap-1.5"
+                      >
+                        {showScript ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                        {showScript ? 'Hide Script' : 'View Script'}
+                      </Button>
+                    )}
                   </div>
                   <CardTitle className="text-2xl">{currentLesson.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {/* Video Placeholder */}
-                  <VideoPlaceholder lessonId={currentLesson.id} />
+                  <VideoPlaceholder lessonId={currentLesson.id} script={currentScript} />
+
+                  {/* Video Script Viewer (toggled) */}
+                  {showScript && currentScript && (
+                    <VideoScriptViewer script={currentScript} />
+                  )}
 
                   {/* Written Content */}
-                  <div className="prose prose-sm max-w-none [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mt-6 [&_h2]:mb-3 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_p]:mb-3 [&_p]:leading-relaxed [&_ul]:mb-3 [&_ol]:mb-3 [&_li]:mb-1 [&_table]:w-full [&_table]:text-sm [&_th]:text-left [&_th]:p-2 [&_th]:bg-secondary/60 [&_th]:font-semibold [&_td]:p-2 [&_td]:border-b [&_td]:border-border/50 [&_strong]:font-semibold [&_blockquote]:border-l-4 [&_blockquote]:border-primary/30 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground">
+                  <div className={`prose prose-sm max-w-none [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mt-6 [&_h2]:mb-3 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_p]:mb-3 [&_p]:leading-relaxed [&_ul]:mb-3 [&_ol]:mb-3 [&_li]:mb-1 [&_table]:w-full [&_table]:text-sm [&_th]:text-left [&_th]:p-2 [&_th]:bg-secondary/60 [&_th]:font-semibold [&_td]:p-2 [&_td]:border-b [&_td]:border-border/50 [&_strong]:font-semibold [&_blockquote]:border-l-4 [&_blockquote]:border-primary/30 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground ${showScript ? 'mt-6' : ''}`}>
                     <Streamdown>{currentLesson.content}</Streamdown>
                   </div>
                 </CardContent>
@@ -238,7 +399,7 @@ export default function Course() {
               </p>
               <p>
                 Always consult with licensed professionals (attorney, CPA, financial advisor) before making investment decisions. 
-                <a href="/disclaimers" className="text-[oklch(0.48_0.20_18)] hover:underline font-medium">Read full Legal Disclaimers \u2192</a>
+                <a href="/disclaimers" className="text-[oklch(0.48_0.20_18)] hover:underline font-medium">Read full Legal Disclaimers →</a>
               </p>
             </div>
           </div>

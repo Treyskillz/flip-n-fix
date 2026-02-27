@@ -329,26 +329,63 @@ The detailed breakdown shows every cost category so you can see exactly where yo
     icon: '💾',
     content: `## Saving and Managing Deals
 
+All saved deals are stored securely in the cloud database, so you can access them from any device, any browser, at any time.
+
 ### Saving a Deal
-After analyzing a property, click the **Save Deal** button in the Deal Analyzer. The app saves all property details, comps, rehab estimates, financing terms, and profitability metrics.
+After analyzing a property in the Deal Analyzer, click the **Save Deal** button (floppy disk icon) in the Investor Report section. The app saves all property details, comps, rehab estimates, financing terms, profitability metrics, and any uploaded photos to the cloud database.
 
 ### Viewing Saved Deals
-Navigate to the **Saved Deals** page from the navigation menu. You will see a list of all your saved analyses with:
-- Property address and photo
-- Purchase price and ARV
-- Net profit and ROI
-- Deal score badge
+Navigate to **Saved Deals** from the top navigation bar. You will see all your saved analyses displayed as cards (grid view) or rows (table view). Toggle between views using the grid/list icons in the toolbar.
+
+Each deal card shows:
+- Property address and location
+- Purchase price, ARV, and rehab cost
+- Net profit and ROI percentage
+- Deal score badge with color-coded verdict
+- Status indicator and star rating
 - Date saved
 
-### Managing Saved Deals
-- **Open** — Click any saved deal to reload it in the Deal Analyzer with all data intact
-- **Delete** — Remove deals you no longer need
-- **Compare** — View multiple deals side by side to identify the best opportunity
+### Deal Status Management
+Every deal has a **status** that tracks where it is in your pipeline:
+- **Active** (blue) — Currently evaluating this deal
+- **Under Contract** (amber) — You have a signed contract
+- **Closed** (green) — Deal is completed
+- **Passed** (red) — You decided not to pursue this deal
+- **Archived** (gray) — Stored for reference but hidden from Portfolio
+
+To change a deal's status, click the **status dropdown** on the deal card or in the table view and select the new status.
+
+### Star / Favorite Deals
+Click the **star icon** on any deal card to mark it as a favorite. Starred deals appear at the top when sorting by favorites and are easy to find in a large portfolio.
+
+### Inline Notes
+Each deal has a **notes section** for tracking important details:
+- On the **card view**, click the **sticky note icon** to expand the notes area below the card
+- On the **table view**, click the **notes icon** in the Notes column
+- Type your notes (e.g., "Seller motivated, call back Friday" or "Needs new roof — get contractor quote")
+- Notes **auto-save** when you click outside the text area or after a brief pause
+- A small indicator shows the note was saved successfully
+
+### Sorting and Filtering
+Use the toolbar to organize your deals:
+- **Search** — Type an address to filter deals instantly
+- **Sort by** — ROI, Net Profit, Deal Score, Purchase Price, or Date Saved
+- **Sort direction** — Ascending or descending (click the arrow icon)
+- **Filter by Status** — Show only Active, Under Contract, Closed, etc.
+- **Filter by Verdict** — Show only Excellent, Good, Marginal, or Poor deals
+
+### Deleting Deals
+Click the **trash icon** on any deal card or in the table actions column. A confirmation dialog will appear before the deal is permanently removed.
+
+### Migrating from Browser Storage
+If you previously saved deals before the cloud database was added, you will see a yellow **migration banner** at the top of the Saved Deals page. Click **Migrate to Cloud** to move all your local deals to the database. After migration, your deals are accessible from any device.
 
 ### Tips for Deal Management
-- Save every deal you analyze, even the ones you pass on — this builds your market knowledge
-- Use the deal score to quickly sort and prioritize opportunities
-- Revisit saved deals periodically as market conditions change`,
+- Save every deal you analyze, even the ones you pass on — this builds your market knowledge over time
+- Use statuses to track your deal pipeline from analysis through closing
+- Add notes immediately after property visits or phone calls while details are fresh
+- Star your top 3-5 deals to keep them visible
+- Use the Portfolio Dashboard to see aggregate performance across all saved deals`,
   },
   {
     id: 'lenders',
@@ -741,6 +778,210 @@ The app offers tiered subscription plans to match your investing activity level.
 
 ### Testing Payments
 For testing purposes, use the card number **4242 4242 4242 4242** with any future expiration date and any CVC.`,
+  },
+  {
+    id: 'portfolio',
+    title: 'Portfolio Dashboard',
+    icon: '📊',
+    content: `## Portfolio Dashboard
+
+The Portfolio Dashboard gives you a bird's-eye view of your entire deal pipeline with aggregate financial metrics, charts, and performance tracking.
+
+### Accessing the Portfolio
+Click **Portfolio** in the top navigation bar. The dashboard loads all your saved deals from the cloud database and calculates aggregate metrics in real time.
+
+### KPI Cards
+Four key performance indicators are displayed at the top:
+- **Total Deals** — The number of deals in your portfolio (filtered by date range if active)
+- **Total Invested** — Sum of all purchase prices across your deals
+- **Projected Profit** — Sum of all net profit estimates
+- **Average ROI** — Weighted average return on investment across all deals
+
+### Date Range Filtering
+Use the **date range dropdown** in the header to filter all metrics, charts, and the deal table by time period:
+- **All Time** — Shows every deal you have ever saved
+- **Last 7 Days** — Deals saved in the past week
+- **Last 30 Days** — Deals saved in the past month
+- **Last 90 Days** — Deals saved in the past quarter
+- **This Quarter** — Current calendar quarter (Q1, Q2, Q3, or Q4)
+- **This Year** — Current calendar year
+- **Custom Range** — Pick specific start and end dates using the date pickers
+
+When a filter is active, all KPI cards, charts, the financial summary, and the deal table update to reflect only deals within that date range.
+
+### Financial Summary
+A detailed breakdown grid shows:
+- Total Purchase Price, Total Rehab Budget, Total ARV
+- Total Financing Costs, Total Holding Costs, Total Closing Costs
+- Total Net Profit and Average Deal Score
+
+### Charts
+- **ROI Distribution** (Doughnut) — Shows how many deals fall into each ROI bracket (Negative, 0–10%, 10–20%, 20–30%, 30%+)
+- **Profit by Deal** (Bar) — Horizontal bar chart showing net profit for each deal, sorted by profitability
+
+### Deal Table
+A sortable table lists every deal with columns for Address, Status, Purchase Price, ARV, Rehab, Net Profit, ROI, and Deal Score. Click column headers to sort. Click the star icon to favorite a deal.
+
+### Download Portfolio Summary PDF
+Click the **Download PDF** button in the header (visible when you have at least one deal). This opens a branded Portfolio Summary Report in a new browser tab with the print dialog. The PDF includes:
+- All KPI cards and financial summary
+- Deal status distribution chart
+- ROI-by-deal bar chart (top 15 deals)
+- Full deal table with totals row
+- Freedom One branding and disclaimer
+
+Save as PDF using your browser's print dialog (Ctrl+P / Cmd+P, then select "Save as PDF").
+
+### Tips
+- Use date range filtering to compare quarterly or monthly performance
+- Download the PDF before investor meetings to present your track record
+- Star your best deals so they stand out in the table
+- Update deal statuses as they progress through your pipeline`,
+  },
+  {
+    id: 'photos',
+    title: 'Property Photos',
+    icon: '📷',
+    content: `## Property Photo Gallery
+
+Upload and manage multiple photos for each deal to document property condition, share with partners, and include in investor reports.
+
+### Uploading Photos
+1. Open the **Deal Analyzer** and scroll down to the **Property Photos** section (below the Investor Report)
+2. Click the **upload area** or drag and drop image files into it
+3. Supported formats: JPEG, PNG, WebP (max 10 MB per file)
+4. You can upload multiple photos at once — they upload in parallel
+5. A progress indicator shows upload status for each file
+
+### Managing Photos
+- **Add Captions** — Click the pencil icon below any photo to add or edit a caption (e.g., "Kitchen — before renovation", "Master bath water damage")
+- **Delete Photos** — Click the trash icon to remove a photo. A confirmation dialog prevents accidental deletion.
+- **Lightbox View** — Click any photo thumbnail to open a full-screen lightbox. Use arrow keys or click the navigation arrows to browse through all photos.
+
+### Photos in Shared Deal Links
+When you share a deal using the **Share Deal** button in the Investor Report, all uploaded photos are included in the shared link. Recipients see a photo gallery section with thumbnails and lightbox viewing.
+
+### Photos in PDF Reports
+When you download the **Investor Report PDF**, all uploaded photos are included in a dedicated "Property Photos" section at the end of the report. Photos are displayed in a grid layout with captions.
+
+### Photo Storage
+All photos are stored securely in the cloud (S3). They are associated with the deal's unique ID and persist across devices and sessions. Photos are not stored in your browser — they are always available from any device.
+
+### Tips
+- Upload photos immediately after property visits while details are fresh
+- Use descriptive captions to document specific issues or features
+- Include before/after photos for completed rehabs to build your credibility packet
+- Photos make shared deal links much more compelling for partners and lenders`,
+  },
+  {
+    id: 'sharing',
+    title: 'Sharing & Reports',
+    icon: '📤',
+    content: `## Sharing Deals & Generating Reports
+
+The app provides multiple ways to share your deal analysis with partners, lenders, and investors.
+
+### Sharing a Deal Link
+1. In the Deal Analyzer, scroll to the **Investor Report** section
+2. Click the **Share** button (share icon)
+3. The app generates a unique shareable URL and copies it to your clipboard
+4. Send the link to anyone — they can view the full deal analysis without logging in
+
+The shared link includes:
+- Complete property details and address
+- All comparable sales with pricing
+- Rehab cost breakdown
+- Financing terms and costs
+- Profitability metrics (ROI, net profit, deal score)
+- Property photos (if uploaded)
+- Professional Freedom One branding
+
+### Downloading a PDF Report
+1. In the Deal Analyzer, scroll to the **Investor Report** section
+2. Click the **Download PDF** button
+3. A new browser tab opens with a professionally formatted report
+4. Use your browser's print dialog (Ctrl+P / Cmd+P) to save as PDF
+
+The PDF report includes:
+- Property overview with address and key metrics
+- Financial summary (purchase, rehab, ARV, profit)
+- Comparable sales table
+- Rehab cost breakdown
+- Financing details
+- Property photos with captions
+- Deal score and verdict
+- Freedom One branding and disclaimer
+
+### Emailing a Report
+1. In the Investor Report section, click the **Email** button (envelope icon)
+2. Enter the recipient's email address
+3. The app sends a professionally formatted email with the deal summary
+4. The recipient receives a branded email with key metrics and a link to the full analysis
+
+### Portfolio Summary PDF
+From the **Portfolio Dashboard**, click **Download PDF** to generate a summary of all your deals. See the Portfolio Dashboard section for details.
+
+### Tips
+- Share deal links with your lender when applying for financing — it shows you do thorough analysis
+- Include the PDF in your credibility packet when meeting new partners
+- Email reports to your CPA for tax planning discussions
+- Use shared links to collaborate with partners on deal evaluation`,
+  },
+  {
+    id: 'quick-check',
+    title: 'Quick Check',
+    icon: '⚡',
+    content: `## Quick Check Tool
+
+The Quick Check tool provides a fast, simplified deal screening before you commit to a full analysis.
+
+### How to Use Quick Check
+1. Navigate to **Quick Check** from the navigation menu
+2. Enter the basic property details: address, purchase price, estimated ARV, and estimated rehab cost
+3. The tool instantly calculates key metrics:
+   - **70% Rule** — Whether the deal passes the standard investor screening formula
+   - **Maximum Allowable Offer (MAO)** — The highest price you should pay
+   - **Estimated Profit** — Quick profit projection
+   - **ROI Estimate** — Approximate return on investment
+4. If the deal looks promising, click **Full Analysis** to open it in the Deal Analyzer with all details pre-filled
+
+### When to Use Quick Check vs. Full Analyzer
+- **Quick Check** — Use when you receive a new lead and need a 30-second screening. Great for driving for dollars, reviewing wholesaler emails, or scanning MLS listings.
+- **Full Analyzer** — Use when a deal passes the quick screen and you want detailed analysis with comps, scope of work, financing, and profitability metrics.
+
+### Tips
+- Screen 10–20 deals per day with Quick Check to build deal flow
+- Only move deals that pass the 70% rule to full analysis
+- Keep your ARV and rehab estimates conservative during quick screening`,
+  },
+  {
+    id: 'renovation-designer',
+    title: 'Renovation Designer',
+    icon: '🎨',
+    content: `## Renovation Designer
+
+The Renovation Designer helps you visualize and plan your rehab by selecting design styles, material finishes, and layout options for each room.
+
+### How to Use
+1. Navigate to **Renovation Designer** from the navigation menu or the Deal Analyzer
+2. Select a room type (Kitchen, Bathroom, Living Room, Bedroom, etc.)
+3. Browse design style options for that room
+4. Select material tiers and finishes to see how they affect the budget
+5. View estimated costs for each design choice
+
+### Design Categories
+- **Kitchen** — Cabinet styles, countertop materials, backsplash options, appliance packages
+- **Bathroom** — Vanity styles, tile options, fixture finishes, shower/tub configurations
+- **Living Areas** — Flooring types, paint palettes, trim and molding options
+- **Exterior** — Siding, landscaping, curb appeal improvements
+
+### Integration with Deal Analyzer
+Design selections in the Renovation Designer can inform your rehab budget in the Deal Analyzer. Use the designer to explore options and costs before committing to a material tier in your scope of work.
+
+### Tips
+- Match your design choices to the neighborhood — don't over-improve for the area
+- Use Rental Grade for investment properties, Standard for typical neighborhoods, Luxury for upscale areas
+- Take screenshots of your design selections to share with contractors`,
   },
   {
     id: 'support',

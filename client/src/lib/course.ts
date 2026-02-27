@@ -843,4 +843,376 @@ Short-term rentals (STR) through platforms like Airbnb and VRBO can generate 2-3
       },
     ],
   },
+  {
+    id: 'mod-9',
+    number: 9,
+    title: 'Mastering the Freedom One Platform',
+    description: 'Complete hands-on tutorials for every tool in the Freedom One Fix & Flip Analyzer — from deal analysis to portfolio management.',
+    icon: '💻',
+    lessons: [
+      {
+        id: 'l-9-1',
+        title: 'Deal Analyzer: Complete Walkthrough',
+        duration: '30 min',
+        content: `## Deal Analyzer: Complete Walkthrough
+
+The Deal Analyzer is the core of the Freedom One platform. This lesson walks you through every section, step by step.
+
+### Step 1: Enter the Subject Property
+1. Navigate to the **Deal Analyzer** from the home page or top navigation
+2. In the **Subject Property** section, enter:
+   - Full property address (street, city, state, ZIP)
+   - Property details: beds, baths, square footage, year built, lot size, property type, garage
+   - **Purchase price** — the price you will pay or offer for the property
+3. The app automatically detects your **metro market** based on the city and state, adjusting all rehab costs to local pricing
+
+### Step 2: Select Your Rehab Level
+In the **Rehab Estimator** section, choose one of two modes:
+- **Quick Estimate** — Select Light, Moderate, or Heavy rehab for a fast cost-per-sqft estimate
+- **Detailed Scope of Work** — Click each room to set condition (Good, Fair, Poor, Replace) and material tier (Rental, Standard, Luxury). Every line item links to real Home Depot products with current pricing.
+
+The rehab budget updates in real time as you make selections.
+
+### Step 3: Add Comparable Sales
+In the **Comparable Sales** section:
+1. Click **Add Comp** to add a comparable property
+2. Enter the comp's address, sale price, sale date, square footage, beds/baths, and condition
+3. Add 3–5 comps for the most reliable ARV
+4. The app calculates the average price per square foot and multiplies by your subject property's square footage
+5. Each comp is graded (A–F) based on similarity to your subject
+
+> **Important:** Only use standard retail (arms-length) sales. Never use foreclosures, short sales, or auction sales as comps.
+
+Alternatively, use the **ARV Override** field if you already have an appraiser's value or BPO.
+
+### Step 4: Configure Financing
+In the **Financing** section:
+- Toggle between **Cash** and **Financed** purchase
+- For financed deals, enter: loan amount (or LTV percentage), interest rate, loan term, and origination points
+- The calculator shows monthly payment, total interest, and total financing cost
+
+### Step 5: Review Holding & Closing Costs
+- **Holding costs** — Monthly expenses during the rehab period (taxes, insurance, utilities, loan payments)
+- **Closing costs** — Buyer and seller closing costs, agent commissions, transfer taxes
+- All costs are factored into the profitability calculation automatically
+
+### Step 6: Read the Investor Report
+The **Investor Report** section shows your complete deal analysis:
+- **Deal Score** (0–100) with color-coded verdict (Excellent, Good, Marginal, Poor)
+- **70% Rule** analysis — does the deal pass?
+- **Net Profit** and **ROI** calculations
+- **Cash-on-Cash Return** for financed deals
+- **Cost basis vs. ARV** comparison
+
+### Step 7: Save, Share, or Download
+- **Save Deal** — Saves to the cloud database for access from any device
+- **Share** — Generates a unique URL to share the full analysis with partners or lenders
+- **Download PDF** — Creates a professional investor report in PDF format
+- **Email** — Sends the report summary to any email address`,
+      },
+      {
+        id: 'l-9-2',
+        title: 'SOW Templates & Rehab Estimation',
+        duration: '25 min',
+        content: `## SOW Templates & Rehab Estimation
+
+Accurate rehab estimation is the difference between a profitable flip and a money pit. This lesson covers the Scope of Work (SOW) Templates and how to use them effectively.
+
+### Accessing SOW Templates
+Navigate to **SOW Templates** from the top navigation. You'll find 104 professional renovation templates organized by room category.
+
+### Room Categories
+The templates cover 14 room/phase categories:
+1. **Kitchen** — Cabinets, countertops, backsplash, appliances, lighting
+2. **Master Bathroom** — Vanity, toilet, tub/shower, tile, fixtures
+3. **Full Bathroom** — Complete bathroom renovation scope
+4. **Half Bathroom** — Powder room updates
+5. **Living Room** — Flooring, paint, baseboards, lighting
+6. **Bedroom** — Flooring, paint, closet systems
+7. **Landscaping** — Curb appeal, fencing, exterior
+8. **Roof & Gutter** — Roof replacement, gutter systems
+9. **Garage** — Door, floor coating, paint
+10. **Electrical** — Panel upgrades, outlets, switches
+11. **Plumbing** — Water heater, supply lines
+12. **HVAC** — Furnace, AC, ductwork, thermostat
+13. **Structural** — Foundation, framing, windows, insulation
+14. **Demo & Cleanup** — Dumpsters, demolition, staging
+
+### Material Tiers
+Each template offers three material tiers:
+- **Rental Grade** — Builder-grade materials for investment/rental properties. Lowest cost, functional but basic.
+- **Standard** — Mid-range materials for typical homebuyer neighborhoods. Best value for most flips.
+- **Luxury** — High-end finishes for upscale neighborhoods. Highest cost, premium appearance.
+
+> **Rule of thumb:** Match your material tier to the neighborhood. Don't put luxury finishes in a $150K neighborhood, and don't put rental grade in a $500K neighborhood.
+
+### Home Depot Product Links
+Every line item includes a direct link to the actual Home Depot product with real SKU numbers and current pricing. Click any product name to open the product page and verify pricing or order materials.
+
+### Regional Cost Adjustments
+All costs automatically adjust based on your selected metro market. The regional indicator shows separate material and labor multipliers. For example, San Francisco adds +15% to materials and +55% to labor, while Dallas subtracts -5% from materials and -10% from labor.
+
+### Using SOW Templates with the Deal Analyzer
+The SOW Templates page and the Deal Analyzer share the same market selector. When you select a market on either page, it syncs automatically. Use the SOW Templates to build detailed cost estimates, then apply those estimates in the Deal Analyzer.
+
+### Tips for Accurate Rehab Estimation
+- Always walk the property before finalizing your rehab budget
+- Add a 10–15% contingency for unexpected issues
+- Get contractor bids to validate your estimates
+- Use the detailed SOW (not quick estimate) for deals you plan to pursue
+- Print the SOW to hand to contractors for accurate bidding`,
+      },
+      {
+        id: 'l-9-3',
+        title: 'Portfolio Dashboard & Deal Management',
+        duration: '20 min',
+        content: `## Portfolio Dashboard & Deal Management
+
+Once you start saving deals, the Portfolio Dashboard and Saved Deals page become your command center for tracking and managing your entire deal pipeline.
+
+### Saving Deals to the Cloud
+After analyzing a property in the Deal Analyzer, click the **Save Deal** button in the Investor Report section. Your deal is saved to the cloud database with all property details, comps, rehab estimates, financing terms, and photos. You can access saved deals from any device.
+
+### The Saved Deals Page
+Navigate to **Saved Deals** from the top navigation. Here you can:
+
+**View Modes:**
+- **Card View** — Visual cards showing property details, metrics, and status badges
+- **Table View** — Compact spreadsheet-style view for comparing many deals at once
+
+**Deal Status Pipeline:**
+Track each deal through your pipeline by setting its status:
+- **Active** — Currently evaluating
+- **Under Contract** — Signed purchase agreement
+- **Closed** — Deal completed
+- **Passed** — Decided not to pursue
+- **Archived** — Stored for reference
+
+**Inline Notes:**
+Click the sticky note icon on any deal card to expand a notes area. Type your notes and they auto-save to the database. Use notes to track:
+- Seller contact information and motivation
+- Contractor bid amounts
+- Inspection findings
+- Next steps and follow-up dates
+
+**Sorting & Filtering:**
+- Search by address
+- Sort by ROI, profit, deal score, price, or date
+- Filter by status (Active, Under Contract, etc.)
+- Filter by verdict (Excellent, Good, Marginal, Poor)
+
+### The Portfolio Dashboard
+Navigate to **Portfolio** from the top navigation. The dashboard shows:
+
+**KPI Cards:** Total Deals, Total Invested, Projected Profit, Average ROI
+
+**Date Range Filtering:** Filter everything by All Time, Last 7/30/90 Days, This Quarter, This Year, or a custom date range. All metrics, charts, and the deal table update instantly.
+
+**Charts:**
+- ROI Distribution doughnut chart
+- Profit by Deal bar chart
+
+**Financial Summary Grid:** Detailed breakdown of total purchase, rehab, ARV, financing costs, holding costs, closing costs, net profit, and average deal score.
+
+**Portfolio Summary PDF:** Click Download PDF to generate a branded report with all metrics, charts, and a full deal table. Use this for investor meetings, lender presentations, or personal record-keeping.
+
+### Tips
+- Save every deal you analyze — even passes. This builds your market knowledge database.
+- Update statuses as deals progress through your pipeline
+- Use date range filtering to track monthly or quarterly performance
+- Download the Portfolio PDF before meeting with lenders or partners`,
+      },
+      {
+        id: 'l-9-4',
+        title: 'Property Photos, Sharing & PDF Reports',
+        duration: '20 min',
+        content: `## Property Photos, Sharing & PDF Reports
+
+This lesson covers how to document properties with photos, share deal analyses with partners and lenders, and generate professional PDF reports.
+
+### Uploading Property Photos
+1. In the Deal Analyzer, scroll to the **Property Photos** section (below the Investor Report)
+2. Click the upload area or drag and drop image files
+3. Supported formats: JPEG, PNG, WebP (max 10 MB per file)
+4. Upload multiple photos at once — they process in parallel
+5. Add captions by clicking the pencil icon below each photo
+6. Click any photo to open the full-screen lightbox viewer
+
+### Sharing a Deal
+1. In the Investor Report section, click the **Share** button
+2. The app generates a unique shareable URL and copies it to your clipboard
+3. Send the link to anyone — they can view the full analysis without logging in
+4. The shared link includes all property details, comps, rehab costs, financing, profitability metrics, and photos
+
+### Downloading a PDF Report
+1. Click **Download PDF** in the Investor Report section
+2. A new tab opens with a professionally formatted report
+3. Use Ctrl+P (Windows) or Cmd+P (Mac) to save as PDF
+4. The PDF includes property overview, financial summary, comps, rehab breakdown, photos, and deal score
+
+### Emailing a Report
+1. Click the **Email** button in the Investor Report section
+2. Enter the recipient's email address
+3. The app sends a branded email with key metrics and a link to the full analysis
+
+### When to Use Each Sharing Method
+
+| Method | Best For | Recipient Gets |
+|--------|----------|----------------|
+| **Share Link** | Partners, co-investors | Interactive web page with all details |
+| **PDF Download** | Lenders, formal presentations | Professional document for printing or emailing |
+| **Email** | Quick updates to team members | Summary email with link to full analysis |
+| **Portfolio PDF** | Investor meetings, track record | Aggregate performance across all deals |
+
+### Tips
+- Upload photos immediately after property visits
+- Use descriptive captions ("Kitchen — water damage behind dishwasher")
+- Share deal links with your lender when applying for financing
+- Include PDFs in your credibility packet
+- Before/after photos are powerful for building your investing reputation`,
+      },
+      {
+        id: 'l-9-5',
+        title: 'Marketing, Contracts & Lender Tools',
+        duration: '25 min',
+        content: `## Marketing, Contracts & Lender Tools
+
+The Freedom One platform includes a complete suite of business tools beyond deal analysis. This lesson covers the marketing templates, contract templates, and lender directory.
+
+### Marketing Templates
+Navigate to **Marketing** from the top navigation. You'll find ready-to-use templates for:
+
+**Direct Mail:**
+- Handwritten-style letters for absentee owners
+- Postcards for probate, pre-foreclosure, and high-equity leads
+- Yellow letters and professional investor letters
+
+**Email Sequences:**
+- 5-email drip campaigns for cold leads
+- Follow-up sequences for warm leads
+- Seller nurture campaigns
+
+**Cold Call Scripts:**
+- Initial contact scripts for different seller situations
+- Objection handling responses
+- Follow-up call frameworks
+
+**How to use:** Browse templates by category, customize with your business name and contact info, then deploy through your preferred marketing channel.
+
+### Contract Templates
+Navigate to **Contracts** from the top navigation. Available templates include:
+
+- **Assignable Purchase Agreement** — Standard purchase contract with "and/or assigns" language for wholesaling
+- **Wholesale Assignment Contract** — Contract to assign your purchase rights to an end buyer
+- **Joint Venture Agreement** — Partnership structure for co-investing on deals
+- **Contractor Agreement** — Scope of work contract for hiring contractors
+
+> **Important:** All contract templates must be reviewed by a licensed real estate attorney in your state before use. Laws vary by state and these templates are starting points, not legal advice.
+
+### Lender Directory
+Navigate to **Lenders** from the top navigation. The directory includes:
+
+- Hard money lenders with rates, LTV ranges, and terms
+- Private lenders and portfolio lenders
+- DSCR loan providers for rental properties
+- Geographic coverage (which states each lender serves)
+- Direct contact information (phone, email, website)
+
+**How to use:** Browse the full list or filter by loan type, state, or rate range. Contact 2–3 lenders to compare terms before committing.
+
+### Credibility Packets
+Navigate to **Credibility Packets** from the navigation. These are professional documents you can customize and present to:
+- Lenders (to get approved for financing)
+- Sellers (to prove you're a serious buyer)
+- Partners (to attract co-investors)
+
+### Checklists
+Navigate to **Checklists** from the navigation. Available checklists:
+- **Due Diligence Checklist** — Everything to verify before buying
+- **Closing Checklist** — Steps from contract to closing table
+- **Rehab Checklist** — Room-by-room renovation tracking
+- **Selling Checklist** — Preparing and listing your finished flip
+
+### Tips
+- Customize marketing templates with your business branding before sending
+- Always have an attorney review contracts before use
+- Build relationships with 2–3 lenders for competitive terms
+- Use credibility packets when meeting new partners or lenders for the first time
+- Print checklists and bring them to property walkthroughs`,
+      },
+      {
+        id: 'l-9-6',
+        title: 'State Guide, Contractors & Additional Tools',
+        duration: '20 min',
+        content: `## State Guide, Contractors & Additional Tools
+
+This final lesson covers the remaining tools in the Freedom One platform that help you invest smarter and more efficiently.
+
+### State Guide
+Navigate to **State Guide** from the navigation. This tool provides state-by-state information on:
+- Real estate investing regulations and requirements
+- Licensing requirements for wholesaling and flipping
+- Disclosure requirements when selling
+- Foreclosure process (judicial vs. non-judicial)
+- Transfer taxes and closing customs
+- Landlord-tenant laws (for rental exit strategies)
+
+**How to use:** Select your state from the dropdown to view all relevant regulations. If you invest in multiple states, compare the rules side by side.
+
+### Contractor Management
+Navigate to **Contractors** from the navigation. This tool helps you:
+- **Add contractors** with name, specialty, phone, email, and notes
+- **Track performance** — rate contractors after each project
+- **Organize by trade** — General contractors, electricians, plumbers, HVAC, roofers, etc.
+- **Store documents** — Keep license numbers, insurance certificates, and W-9s on file
+
+**Tips for managing contractors:**
+- Always get 3 bids for every project
+- Verify license and insurance before hiring
+- Use the SOW Templates to provide clear scope of work for bidding
+- Pay in draws tied to completion milestones, never upfront
+- Document everything with photos (use the Property Photos feature)
+
+### Quick Check Tool
+Navigate to **Quick Check** from the navigation. This is your rapid deal screening tool:
+1. Enter basic property details: address, purchase price, estimated ARV, estimated rehab
+2. Get instant 70% Rule analysis, MAO calculation, and estimated profit/ROI
+3. If the deal passes, click **Full Analysis** to open it in the Deal Analyzer
+
+**When to use:** Screen 10–20 leads per day from wholesaler emails, MLS alerts, or driving for dollars. Only move promising deals to the full analyzer.
+
+### Renovation Designer
+Navigate to **Renovation Designer** from the navigation. This visual tool helps you:
+- Browse design styles for each room type
+- Compare material finishes and their costs
+- Plan your rehab aesthetic before starting construction
+- Ensure your design choices match the neighborhood price point
+
+### Property Listings
+Navigate to **Listings** from the navigation. List your properties for sale with:
+- Photo galleries with multiple images
+- Property features and specifications
+- Pricing and status tracking (Active, Pending, Sold)
+- Contact information for interested buyers
+
+### Blog & Resources
+Navigate to **Blog** from the navigation for:
+- Market analysis articles and trends
+- Deal breakdown case studies
+- Rehab tips and construction best practices
+- Financing strategy guides
+- Legal updates affecting investors
+
+### Getting the Most Out of Freedom One
+1. **Start with the course** — Complete all 9 modules to build your knowledge foundation
+2. **Practice with Quick Check** — Screen 50+ deals to develop your analysis instincts
+3. **Deep-dive with the Analyzer** — Do full analysis on your top 5–10 deals
+4. **Save everything** — Build your market knowledge database in the cloud
+5. **Use the Portfolio Dashboard** — Track your performance over time
+6. **Share with confidence** — Use professional reports and shared links to build credibility
+7. **Read the User Manual** — The Manual page has detailed instructions for every feature
+8. **Stay current** — Check the Blog for market updates and new strategies`,
+      },
+    ],
+  },
 ];
