@@ -133,3 +133,8 @@
 - [x] Add "Download Portfolio Summary" button to Portfolio Dashboard
 - [x] Include aggregate metrics, deal table, and charts in PDF
 - [x] Brand PDF with Freedom One logo, header, and disclaimer
+- [x] Migrate Analyzer "Save Deal" button from localStorage to database (tRPC deals.save)
+- [x] Rewrite Saved Deals page to fetch from database instead of localStorage
+- [x] Add deal status update, star/unstar, notes, and delete via database
+- [x] Add one-time localStorage-to-database migration for existing saved deals
+- [x] Ensure Portfolio Dashboard and PDF export work with real database deals

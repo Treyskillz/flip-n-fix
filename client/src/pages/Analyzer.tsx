@@ -14,8 +14,6 @@ import { toast } from 'sonner';
 import { Link } from 'wouter';
 import { nanoid } from 'nanoid';
 
-const STORAGE_KEY = 'freedom-one-saved-deals';
-
 export default function Analyzer() {
   const analyzer = useFlipAnalyzer();
   const [dealUniqueId] = useState(() => {
@@ -25,6 +23,20 @@ export default function Analyzer() {
     const uid = nanoid();
     sessionStorage.setItem('analyzer-deal-uid', uid);
     return uid;
+  });
+
+  const saveDealMutation = trpc.deals.save.useMutation({
+    onSuccess: () => {
+      toast.success('Deal saved to your portfolio!', {
+        action: {
+          label: 'View',
+          onClick: () => window.location.href = '/saved-deals',
+        },
+      });
+    },
+    onError: (err) => {
+      toast.error(`Failed to save deal: ${err.message}`);
+    },
   });
 
   // Fetch photos for this deal to pass to InvestorReport
@@ -70,9 +82,8 @@ export default function Analyzer() {
       return;
     }
 
-    const deal = {
-      id: nanoid(),
-      savedAt: new Date().toISOString(),
+    saveDealMutation.mutate({
+      uniqueId: dealUniqueId,
       address: property.address,
       city: property.city,
       state: property.state,
@@ -94,24 +105,10 @@ export default function Analyzer() {
       market: analyzer.marketSelector.market.label,
       dealScore: profit.dealScore,
       cashOnCash: profit.cashOnCash,
-      status: 'active' as const,
+      status: 'active',
       starred: false,
       notes: '',
-    };
-
-    try {
-      const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      existing.push(deal);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
-      toast.success('Deal saved! View it in Saved Deals.', {
-        action: {
-          label: 'View',
-          onClick: () => window.location.href = '/saved-deals',
-        },
-      });
-    } catch {
-      toast.error('Failed to save deal. Storage may be full.');
-    }
+    });
   };
 
   return (
@@ -131,9 +128,10 @@ export default function Analyzer() {
             </div>
             <Button
               onClick={handleSaveDeal}
+              disabled={saveDealMutation.isPending}
               className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white"
             >
-              <Save className="w-4 h-4" /> Save Deal
+              <Save className="w-4 h-4" /> {saveDealMutation.isPending ? 'Saving...' : 'Save Deal'}
             </Button>
           </div>
         </div>

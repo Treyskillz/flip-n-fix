@@ -1,22 +1,29 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { trpc } from '@/lib/trpc';
 import {
   Save, Trash2, BarChart3, MapPin, DollarSign, TrendingUp,
   ArrowRight, Calculator, AlertTriangle, Search, SortAsc, SortDesc,
   Download, Printer, FileText, Archive, Star, StarOff,
   ChevronDown, ChevronUp, Eye, Filter, LayoutGrid, LayoutList,
-  CheckCircle2, Clock, XCircle, Pause
+  CheckCircle2, Clock, XCircle, Pause, Loader2, StickyNote, Database
 } from 'lucide-react';
 import { Link } from 'wouter';
 import { formatCurrency } from '@/lib/calculations';
+import { toast } from 'sonner';
+import { nanoid } from 'nanoid';
 
 // ─── Types ───────────────────────────────────────────────────
 type DealStatus = 'active' | 'under_contract' | 'closed' | 'passed' | 'archived';
+type SortField = 'savedAt' | 'netProfit' | 'roi' | 'dealScore' | 'purchasePrice' | 'arv' | 'rehabCost' | 'address';
+type SortDir = 'asc' | 'desc';
+type ViewMode = 'grid' | 'table';
 
 interface SavedDeal {
   id: string;
@@ -39,44 +46,13 @@ interface SavedDeal {
   beds: number;
   baths: number;
   yearBuilt: number;
-  market?: string;
-  dealScore?: number;
+  market?: string | null;
+  dealScore?: number | null;
   cashOnCash?: number;
-  status?: DealStatus;
-  starred?: boolean;
-  notes?: string;
-}
-
-type SortField = 'savedAt' | 'netProfit' | 'roi' | 'dealScore' | 'purchasePrice' | 'arv' | 'rehabCost' | 'address';
-type SortDir = 'asc' | 'desc';
-type ViewMode = 'grid' | 'table';
-
-// ─── Storage Helpers ─────────────────────────────────────────
-const STORAGE_KEY = 'freedom-one-saved-deals';
-
-function getSavedDeals(): SavedDeal[] {
-  try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveDeals(deals: SavedDeal[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(deals));
-}
-
-function deleteDeal(id: string): SavedDeal[] {
-  const deals = getSavedDeals().filter(d => d.id !== id);
-  saveDeals(deals);
-  return deals;
-}
-
-function updateDeal(id: string, updates: Partial<SavedDeal>): SavedDeal[] {
-  const deals = getSavedDeals().map(d => d.id === id ? { ...d, ...updates } : d);
-  saveDeals(deals);
-  return deals;
+  status: string;
+  starred: boolean;
+  notes?: string | null;
+  dealData?: string | null;
 }
 
 function fmt(n: number): string {
@@ -150,22 +126,11 @@ function exportDealPdf(deal: SavedDeal) {
     <div class="addr">${addr}</div>
     <div class="meta">Generated ${dateStr} | Saved ${new Date(deal.savedAt).toLocaleDateString()}${deal.market ? ` | Market: ${deal.market}` : ''}</div>
   </div>
-
   <div class="summary">
-    <div class="summary-card">
-      <div class="label">Purchase Price</div>
-      <div class="value">${fmt(deal.purchasePrice)}</div>
-    </div>
-    <div class="summary-card">
-      <div class="label">After Repair Value</div>
-      <div class="value" style="color:#c53030">${fmt(deal.arv)}</div>
-    </div>
-    <div class="summary-card">
-      <div class="label">Net Profit</div>
-      <div class="value ${isProfit ? 'positive' : 'negative'}">${fmt(deal.netProfit)}</div>
-    </div>
+    <div class="summary-card"><div class="label">Purchase Price</div><div class="value">${fmt(deal.purchasePrice)}</div></div>
+    <div class="summary-card"><div class="label">After Repair Value</div><div class="value" style="color:#c53030">${fmt(deal.arv)}</div></div>
+    <div class="summary-card"><div class="label">Net Profit</div><div class="value ${isProfit ? 'positive' : 'negative'}">${fmt(deal.netProfit)}</div></div>
   </div>
-
   <div class="section">
     <h2>Property Details</h2>
     <div class="grid">
@@ -175,7 +140,6 @@ function exportDealPdf(deal: SavedDeal) {
       <div class="stat"><div class="stat-label">Deal Score</div><div class="stat-value" style="font-size:15px">${deal.dealScore || '—'}/100</div></div>
     </div>
   </div>
-
   <div class="section">
     <h2>Financial Analysis</h2>
     <table>
@@ -185,7 +149,6 @@ function exportDealPdf(deal: SavedDeal) {
       <tr><td>After Repair Value (ARV)</td><td style="text-align:right; font-weight:700; color:#c53030">${fmt(deal.arv)}</td></tr>
     </table>
   </div>
-
   <div class="section">
     <h2>Profitability</h2>
     <div class="grid">
@@ -195,13 +158,10 @@ function exportDealPdf(deal: SavedDeal) {
       <div class="stat"><div class="stat-label">Max Price for ${deal.targetROI}% ROI</div><div class="stat-value" style="font-size:15px">${fmt(deal.recommendedMaxPrice)}</div></div>
     </div>
   </div>
-
   <div class="verdict-box ${verdictClass}">
     <div class="verdict-label" style="color:${verdictColor}">${deal.dealVerdict.toUpperCase().replace('_', ' ')}</div>
   </div>
-
   ${deal.notes ? `<div class="section" style="margin-top:24px"><h2>Notes</h2><p style="font-size:13px; color:#333">${deal.notes}</p></div>` : ''}
-
   <div class="footer">
     <p><strong>Freedom One Real Estate Investment System</strong></p>
     <p style="margin-top:4px">This report is for informational purposes only. All projections are estimates.</p>
@@ -214,6 +174,19 @@ function exportDealPdf(deal: SavedDeal) {
   w.document.write(html);
   w.document.close();
   w.print();
+}
+
+// ─── localStorage Migration Helper ──────────────────────────
+const LS_KEY = 'freedom-one-saved-deals';
+const LS_MIGRATED_KEY = 'freedom-one-deals-migrated';
+
+function getLocalStorageDeals(): any[] {
+  try {
+    const data = localStorage.getItem(LS_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch {
+    return [];
+  }
 }
 
 // ─── Portfolio Stats ─────────────────────────────────────────
@@ -252,15 +225,16 @@ function PortfolioStats({ deals }: { deals: SavedDeal[] }) {
 }
 
 // ─── Deal Card (Grid View) ───────────────────────────────────
-function DealCard({ deal, onDelete, onUpdate, selected, onToggle }: {
+function DealCard({ deal, onDelete, onUpdate, selected, onToggle, isUpdating }: {
   deal: SavedDeal;
   onDelete: () => void;
-  onUpdate: (updates: Partial<SavedDeal>) => void;
+  onUpdate: (updates: Partial<{ status: DealStatus; starred: boolean; notes: string }>) => void;
   selected: boolean;
   onToggle: () => void;
+  isUpdating: boolean;
 }) {
   const isProfit = deal.netProfit > 0;
-  const status = deal.status || 'active';
+  const status = (deal.status || 'active') as DealStatus;
   const StatusIcon = STATUS_CONFIG[status].icon;
 
   return (
@@ -270,7 +244,7 @@ function DealCard({ deal, onDelete, onUpdate, selected, onToggle }: {
         <div className="flex items-start justify-between mb-2">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 mb-0.5">
-              <button onClick={() => onUpdate({ starred: !deal.starred })} className="shrink-0">
+              <button onClick={() => onUpdate({ starred: !deal.starred })} className="shrink-0" disabled={isUpdating}>
                 {deal.starred
                   ? <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                   : <StarOff className="w-3.5 h-3.5 text-muted-foreground/40 hover:text-amber-400" />
@@ -359,7 +333,7 @@ function DealCard({ deal, onDelete, onUpdate, selected, onToggle }: {
               <SelectItem value="archived">Archived</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" size="sm" className="text-xs gap-1 h-7 text-destructive hover:text-destructive" onClick={onDelete}>
+          <Button variant="outline" size="sm" className="text-xs gap-1 h-7 text-destructive hover:text-destructive" onClick={onDelete} disabled={isUpdating}>
             <Trash2 className="w-3 h-3" />
           </Button>
         </div>
@@ -369,15 +343,16 @@ function DealCard({ deal, onDelete, onUpdate, selected, onToggle }: {
 }
 
 // ─── Table View ──────────────────────────────────────────────
-function DealTable({ deals, onDelete, onUpdate, selectedIds, onToggle, sortField, sortDir, onSort }: {
+function DealTable({ deals, onDelete, onUpdate, selectedIds, onToggle, sortField, sortDir, onSort, isUpdating }: {
   deals: SavedDeal[];
   onDelete: (id: string) => void;
-  onUpdate: (id: string, updates: Partial<SavedDeal>) => void;
+  onUpdate: (id: string, updates: Partial<{ status: DealStatus; starred: boolean; notes: string }>) => void;
   selectedIds: Set<string>;
   onToggle: (id: string) => void;
   sortField: SortField;
   sortDir: SortDir;
   onSort: (field: SortField) => void;
+  isUpdating: boolean;
 }) {
   const SortIcon = sortDir === 'asc' ? SortAsc : SortDesc;
 
@@ -400,51 +375,47 @@ function DealTable({ deals, onDelete, onUpdate, selectedIds, onToggle, sortField
           <tr className="bg-secondary/30 border-b border-border">
             <th className="p-2.5 w-8"></th>
             {sortHeader('Property', 'address')}
-            {sortHeader('Score', 'dealScore', 'right')}
             {sortHeader('Purchase', 'purchasePrice', 'right')}
             {sortHeader('ARV', 'arv', 'right')}
             {sortHeader('Rehab', 'rehabCost', 'right')}
             {sortHeader('Profit', 'netProfit', 'right')}
             {sortHeader('ROI', 'roi', 'right')}
-            <th className="p-2.5 text-xs font-semibold text-center">Status</th>
-            {sortHeader('Saved', 'savedAt', 'right')}
-            <th className="p-2.5 text-xs font-semibold text-center">Actions</th>
+            {sortHeader('Score', 'dealScore', 'right')}
+            <th className="p-2.5 font-semibold text-xs text-center">Status</th>
+            <th className="p-2.5 font-semibold text-xs text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
           {deals.map(deal => {
             const isProfit = deal.netProfit > 0;
-            const status = deal.status || 'active';
+            const status = (deal.status || 'active') as DealStatus;
             const StatusIcon = STATUS_CONFIG[status].icon;
             const isSelected = selectedIds.has(deal.id);
 
             return (
               <tr key={deal.id} className={`border-b border-border/30 hover:bg-secondary/20 ${isSelected ? 'bg-[oklch(0.48_0.20_18)]/5' : ''}`}>
-                <td className="p-2.5 text-center">
-                  <button onClick={() => onUpdate(deal.id, { starred: !deal.starred })}>
+                <td className="p-2">
+                  <button onClick={() => onUpdate(deal.id, { starred: !deal.starred })} disabled={isUpdating}>
                     {deal.starred
                       ? <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                       : <StarOff className="w-3.5 h-3.5 text-muted-foreground/30 hover:text-amber-400" />
                     }
                   </button>
                 </td>
-                <td className="p-2.5">
+                <td className="p-2">
                   <div className="font-semibold text-xs">{deal.address}</div>
-                  <div className="text-[10px] text-muted-foreground">{deal.city}, {deal.state} | {deal.beds}bd/{deal.baths}ba/{deal.sqft.toLocaleString()}sf</div>
+                  <div className="text-[10px] text-muted-foreground">{deal.city}, {deal.state} {deal.zip}</div>
                 </td>
-                <td className="p-2.5 text-right">{deal.dealScore != null ? <ScoreBadge score={deal.dealScore} /> : '—'}</td>
-                <td className="p-2.5 text-right text-xs tabular-nums font-medium">{fmt(deal.purchasePrice)}</td>
-                <td className="p-2.5 text-right text-xs tabular-nums font-medium">{fmt(deal.arv)}</td>
-                <td className="p-2.5 text-right text-xs tabular-nums">{fmt(deal.rehabCost)}</td>
-                <td className={`p-2.5 text-right text-xs tabular-nums font-bold ${isProfit ? 'text-green-600' : 'text-red-600'}`}>{fmt(deal.netProfit)}</td>
-                <td className={`p-2.5 text-right text-xs tabular-nums font-bold ${isProfit ? 'text-green-600' : 'text-red-600'}`}>{deal.roi.toFixed(1)}%</td>
-                <td className="p-2.5 text-center">
+                <td className="p-2 text-right tabular-nums text-xs">{fmt(deal.purchasePrice)}</td>
+                <td className="p-2 text-right tabular-nums text-xs font-semibold" style={{ color: '#c53030' }}>{fmt(deal.arv)}</td>
+                <td className="p-2 text-right tabular-nums text-xs">{fmt(deal.rehabCost)}</td>
+                <td className={`p-2 text-right tabular-nums text-xs font-bold ${isProfit ? 'text-green-600' : 'text-red-600'}`}>{fmt(deal.netProfit)}</td>
+                <td className={`p-2 text-right tabular-nums text-xs font-bold ${isProfit ? 'text-green-600' : 'text-red-600'}`}>{deal.roi.toFixed(1)}%</td>
+                <td className="p-2 text-right">{deal.dealScore != null && <ScoreBadge score={deal.dealScore} />}</td>
+                <td className="p-2 text-center">
                   <Select value={status} onValueChange={(v) => onUpdate(deal.id, { status: v as DealStatus })}>
-                    <SelectTrigger className="h-6 text-[10px] w-auto min-w-[80px] border-0 bg-transparent">
-                      <span className={`inline-flex items-center gap-1 ${STATUS_CONFIG[status].color}`}>
-                        <StatusIcon className="w-2.5 h-2.5" />
-                        {STATUS_CONFIG[status].label}
-                      </span>
+                    <SelectTrigger className="h-6 text-[10px] w-auto min-w-[80px]">
+                      <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="active">Active</SelectItem>
@@ -455,16 +426,15 @@ function DealTable({ deals, onDelete, onUpdate, selectedIds, onToggle, sortField
                     </SelectContent>
                   </Select>
                 </td>
-                <td className="p-2.5 text-right text-[10px] text-muted-foreground tabular-nums">{new Date(deal.savedAt).toLocaleDateString()}</td>
-                <td className="p-2.5">
-                  <div className="flex items-center gap-1 justify-center">
-                    <Button variant={isSelected ? "default" : "ghost"} size="sm" className="h-6 w-6 p-0" onClick={() => onToggle(deal.id)}>
+                <td className="p-2">
+                  <div className="flex gap-1 justify-center">
+                    <Button variant={isSelected ? "default" : "outline"} size="sm" className="h-6 w-6 p-0" onClick={() => onToggle(deal.id)}>
                       <BarChart3 className="w-3 h-3" />
                     </Button>
-                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => exportDealPdf(deal)}>
+                    <Button variant="outline" size="sm" className="h-6 w-6 p-0" onClick={() => exportDealPdf(deal)}>
                       <Download className="w-3 h-3" />
                     </Button>
-                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-destructive hover:text-destructive" onClick={() => onDelete(deal.id)}>
+                    <Button variant="outline" size="sm" className="h-6 w-6 p-0 text-destructive hover:text-destructive" onClick={() => onDelete(deal.id)} disabled={isUpdating}>
                       <Trash2 className="w-3 h-3" />
                     </Button>
                   </div>
@@ -480,26 +450,21 @@ function DealTable({ deals, onDelete, onUpdate, selectedIds, onToggle, sortField
 
 // ─── Comparison Table ────────────────────────────────────────
 function ComparisonTable({ deals }: { deals: SavedDeal[] }) {
-  if (deals.length < 2) return null;
-
-  const rows: { label: string; key: keyof SavedDeal; format?: 'currency' | 'percent' | 'number' | 'text' | 'score' }[] = [
-    { label: 'Address', key: 'address', format: 'text' },
-    { label: 'City/State', key: 'city', format: 'text' },
-    { label: 'Sq Ft', key: 'sqft', format: 'number' },
-    { label: 'Beds / Baths', key: 'beds', format: 'text' },
-    { label: 'Deal Score', key: 'dealScore', format: 'score' },
+  const rows: { label: string; key: keyof SavedDeal; format?: string }[] = [
+    { label: 'Location', key: 'city' },
     { label: 'Purchase Price', key: 'purchasePrice', format: 'currency' },
     { label: 'ARV', key: 'arv', format: 'currency' },
     { label: 'Rehab Cost', key: 'rehabCost', format: 'currency' },
     { label: 'Total Investment', key: 'totalInvestment', format: 'currency' },
     { label: 'Net Profit', key: 'netProfit', format: 'currency' },
     { label: 'ROI', key: 'roi', format: 'percent' },
-    { label: '70% Rule MAO', key: 'maxAllowableOffer', format: 'currency' },
-    { label: 'Max Price (Target ROI)', key: 'recommendedMaxPrice', format: 'currency' },
-    { label: 'Deal Verdict', key: 'dealVerdict', format: 'text' },
+    { label: 'Deal Score', key: 'dealScore', format: 'score' },
+    { label: 'Beds / Baths', key: 'beds' },
+    { label: 'Sqft', key: 'sqft', format: 'number' },
+    { label: 'Year Built', key: 'yearBuilt', format: 'number' },
+    { label: '70% MAO', key: 'maxAllowableOffer', format: 'currency' },
   ];
 
-  // Find best values for highlighting
   const bestProfit = Math.max(...deals.map(d => d.netProfit));
   const bestROI = Math.max(...deals.map(d => d.roi));
 
@@ -573,7 +538,8 @@ function ComparisonTable({ deals }: { deals: SavedDeal[] }) {
 
 // ─── Main Component ──────────────────────────────────────────
 export default function SavedDeals() {
-  const [deals, setDeals] = useState<SavedDeal[]>([]);
+  const utils = trpc.useUtils();
+  const { data: deals = [], isLoading, error } = trpc.deals.list.useQuery();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [search, setSearch] = useState('');
   const [sortField, setSortField] = useState<SortField>('savedAt');
@@ -582,14 +548,104 @@ export default function SavedDeals() {
   const [verdictFilter, setVerdictFilter] = useState<string>('all');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [showStarredOnly, setShowStarredOnly] = useState(false);
+  const [migrating, setMigrating] = useState(false);
 
-  useEffect(() => {
-    setDeals(getSavedDeals());
+  // ─── Mutations ─────────────────────────────────────────────
+  const updateDeal = trpc.deals.update.useMutation({
+    onSuccess: () => {
+      utils.deals.list.invalidate();
+      utils.deals.portfolio.invalidate();
+    },
+    onError: (err) => toast.error(`Update failed: ${err.message}`),
+  });
+
+  const deleteDeal = trpc.deals.delete.useMutation({
+    onSuccess: () => {
+      utils.deals.list.invalidate();
+      utils.deals.portfolio.invalidate();
+      toast.success('Deal deleted.');
+    },
+    onError: (err) => toast.error(`Delete failed: ${err.message}`),
+  });
+
+  const saveDeal = trpc.deals.save.useMutation({
+    onError: (err) => toast.error(`Migration failed for a deal: ${err.message}`),
+  });
+
+  // ─── localStorage Migration ────────────────────────────────
+  const migrateLocalStorage = async () => {
+    const localDeals = getLocalStorageDeals();
+    if (localDeals.length === 0) {
+      toast.info('No local deals to migrate.');
+      return;
+    }
+
+    setMigrating(true);
+    let migrated = 0;
+    let failed = 0;
+
+    for (const deal of localDeals) {
+      try {
+        await saveDeal.mutateAsync({
+          uniqueId: deal.id || nanoid(),
+          address: deal.address || 'Unknown Address',
+          city: deal.city || 'Unknown',
+          state: deal.state || 'XX',
+          zip: deal.zip || '00000',
+          purchasePrice: deal.purchasePrice || 0,
+          arv: deal.arv || 0,
+          rehabCost: deal.rehabCost || 0,
+          totalInvestment: deal.totalInvestment || 0,
+          netProfit: deal.netProfit || 0,
+          roi: deal.roi || 0,
+          dealVerdict: deal.dealVerdict || 'poor',
+          maxAllowableOffer: deal.maxAllowableOffer || 0,
+          recommendedMaxPrice: deal.recommendedMaxPrice || 0,
+          targetROI: deal.targetROI || 15,
+          sqft: deal.sqft || 0,
+          beds: deal.beds || 0,
+          baths: deal.baths || 0,
+          yearBuilt: deal.yearBuilt || 0,
+          market: deal.market || undefined,
+          dealScore: deal.dealScore || undefined,
+          cashOnCash: deal.cashOnCash || undefined,
+          status: deal.status || 'active',
+          starred: deal.starred || false,
+          notes: deal.notes || '',
+        });
+        migrated++;
+      } catch {
+        failed++;
+      }
+    }
+
+    await utils.deals.list.invalidate();
+    await utils.deals.portfolio.invalidate();
+    setMigrating(false);
+
+    if (failed === 0) {
+      // All succeeded — clear localStorage
+      localStorage.setItem(LS_MIGRATED_KEY, 'true');
+      localStorage.removeItem(LS_KEY);
+      toast.success(`Successfully migrated ${migrated} deal${migrated !== 1 ? 's' : ''} to the cloud database!`);
+    } else if (migrated > 0) {
+      toast.warning(`Migrated ${migrated} deals, ${failed} failed. Retry to migrate remaining deals.`);
+    } else {
+      toast.error(`Migration failed for all ${failed} deals. Please try again.`);
+    }
+  };
+
+  // Check if there are local deals to migrate
+  const hasLocalDeals = useMemo(() => {
+    const migrated = localStorage.getItem(LS_MIGRATED_KEY);
+    if (migrated === 'true') return false;
+    return getLocalStorageDeals().length > 0;
   }, []);
+  const localDealCount = useMemo(() => getLocalStorageDeals().length, []);
 
+  // ─── Handlers ──────────────────────────────────────────────
   const handleDelete = (id: string) => {
-    const updated = deleteDeal(id);
-    setDeals(updated);
+    deleteDeal.mutate({ uniqueId: id });
     setSelectedIds(prev => {
       const next = new Set(prev);
       next.delete(id);
@@ -597,9 +653,8 @@ export default function SavedDeals() {
     });
   };
 
-  const handleUpdate = (id: string, updates: Partial<SavedDeal>) => {
-    const updated = updateDeal(id, updates);
-    setDeals(updated);
+  const handleUpdate = (id: string, updates: Partial<{ status: DealStatus; starred: boolean; notes: string }>) => {
+    updateDeal.mutate({ uniqueId: id, ...updates });
   };
 
   const toggleSelect = (id: string) => {
@@ -620,11 +675,10 @@ export default function SavedDeals() {
     }
   };
 
-  // Filter and sort
+  // ─── Filter and Sort ──────────────────────────────────────
   const filteredDeals = useMemo(() => {
-    let result = [...deals];
+    let result = [...deals] as SavedDeal[];
 
-    // Search
     if (search) {
       const q = search.toLowerCase();
       result = result.filter(d =>
@@ -635,22 +689,18 @@ export default function SavedDeals() {
       );
     }
 
-    // Status filter
     if (statusFilter !== 'all') {
       result = result.filter(d => (d.status || 'active') === statusFilter);
     }
 
-    // Verdict filter
     if (verdictFilter !== 'all') {
       result = result.filter(d => d.dealVerdict === verdictFilter);
     }
 
-    // Starred only
     if (showStarredOnly) {
       result = result.filter(d => d.starred);
     }
 
-    // Sort
     result.sort((a, b) => {
       let aVal: number | string, bVal: number | string;
       switch (sortField) {
@@ -672,7 +722,8 @@ export default function SavedDeals() {
     return result;
   }, [deals, search, statusFilter, verdictFilter, showStarredOnly, sortField, sortDir]);
 
-  const selectedDeals = deals.filter(d => selectedIds.has(d.id));
+  const selectedDeals = (deals as SavedDeal[]).filter(d => selectedIds.has(d.id));
+  const isUpdating = updateDeal.isPending || deleteDeal.isPending;
 
   return (
     <div className="min-h-screen bg-background">
@@ -685,18 +736,56 @@ export default function SavedDeals() {
             </div>
             <div>
               <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Saved Deals Dashboard</h1>
-              <p className="text-sm text-[oklch(0.55_0_0)]">{deals.length} deal{deals.length !== 1 ? 's' : ''} in portfolio</p>
+              <p className="text-sm text-[oklch(0.55_0_0)]">
+                {isLoading ? 'Loading...' : `${deals.length} deal${deals.length !== 1 ? 's' : ''} in portfolio`}
+              </p>
             </div>
           </div>
           <p className="text-[oklch(0.6_0_0)] text-sm max-w-2xl mt-3 leading-relaxed">
             Track, compare, and manage your property analyses. Sort by any metric, filter by status or verdict, 
-            star your favorites, and export professional PDF reports for lenders and partners.
+            star your favorites, and export professional PDF reports for lenders and partners. 
+            All deals are stored securely in the cloud — accessible from any device.
           </p>
         </div>
       </section>
 
       <section className="container py-8">
-        {deals.length === 0 ? (
+        {/* Migration Banner */}
+        {hasLocalDeals && (
+          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-3">
+            <Database className="w-5 h-5 text-amber-600 shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-amber-800">
+                {localDealCount} deal{localDealCount !== 1 ? 's' : ''} found in local browser storage
+              </p>
+              <p className="text-xs text-amber-700 mt-0.5">
+                Migrate them to the cloud database so they appear in your Portfolio Dashboard, are backed up, and accessible from any device.
+              </p>
+            </div>
+            <Button
+              onClick={migrateLocalStorage}
+              disabled={migrating}
+              className="gap-2 bg-amber-600 hover:bg-amber-700 text-white shrink-0"
+              size="sm"
+            >
+              {migrating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Database className="w-3.5 h-3.5" />}
+              {migrating ? 'Migrating...' : 'Migrate to Cloud'}
+            </Button>
+          </div>
+        )}
+
+        {/* Loading State */}
+        {isLoading ? (
+          <div className="text-center py-16">
+            <Loader2 className="w-8 h-8 mx-auto mb-3 animate-spin text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">Loading your saved deals...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-16">
+            <AlertTriangle className="w-8 h-8 mx-auto mb-3 text-red-500" />
+            <p className="text-sm text-red-600">Failed to load deals: {error.message}</p>
+          </div>
+        ) : deals.length === 0 ? (
           <Card className="border-dashed border-2 border-border/60">
             <CardContent className="p-12 text-center">
               <AlertTriangle className="w-10 h-10 mx-auto mb-4 text-muted-foreground/40" />
@@ -716,7 +805,7 @@ export default function SavedDeals() {
         ) : (
           <>
             {/* Portfolio Stats */}
-            <PortfolioStats deals={deals} />
+            <PortfolioStats deals={deals as SavedDeal[]} />
 
             {/* Toolbar */}
             <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -833,9 +922,10 @@ export default function SavedDeals() {
                     key={deal.id}
                     deal={deal}
                     onDelete={() => handleDelete(deal.id)}
-                    onUpdate={(updates) => handleUpdate(deal.id, updates)}
+                    onUpdate={(updates) => handleUpdate(deal.id, updates as any)}
                     selected={selectedIds.has(deal.id)}
                     onToggle={() => toggleSelect(deal.id)}
+                    isUpdating={isUpdating}
                   />
                 ))}
               </div>
@@ -849,6 +939,7 @@ export default function SavedDeals() {
                 sortField={sortField}
                 sortDir={sortDir}
                 onSort={handleSort}
+                isUpdating={isUpdating}
               />
             )}
 
@@ -879,8 +970,8 @@ export default function SavedDeals() {
       <section className="bg-secondary/30 border-t border-border/50">
         <div className="container py-6">
           <p className="text-xs text-muted-foreground leading-relaxed">
-            <strong>Disclaimer:</strong> Saved deal data is stored locally in your browser and is not backed up to any server. 
-            Clearing your browser data will delete all saved deals. All calculations are estimates and should not be relied upon 
+            <strong>Disclaimer:</strong> All deals are stored securely in the cloud database and are accessible from any device. 
+            All calculations are estimates and should not be relied upon 
             as the sole basis for investment decisions. Always perform your own due diligence and consult with qualified professionals.
           </p>
         </div>
