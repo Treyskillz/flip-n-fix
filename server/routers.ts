@@ -6,8 +6,8 @@ import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { PLANS, PlanKey } from "./stripe/products";
 import { createCheckoutSession, createPortalSession } from "./stripe/checkout";
 import { getDb } from "./db";
-import { users, sharedDeals } from "../drizzle/schema";
-import { eq, sql } from "drizzle-orm";
+import { users, sharedDeals, savedDeals, dealPhotos } from "../drizzle/schema";
+import { eq, sql, desc, and, ne } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
 import { storagePut } from "./storage";
@@ -192,6 +192,371 @@ Provide 3-5 comparable RENOVATED properties that recently sold as standard retai
           createdAt: deal.createdAt,
           viewCount: deal.viewCount + 1,
         };
+      }),
+  }),
+
+  // ─── Saved Deals (Server-side) ────────────────────────────────
+  deals: router({
+    // Save or update a deal
+    save: publicProcedure
+      .input(
+        z.object({
+          uniqueId: z.string().min(1),
+          address: z.string().min(1),
+          city: z.string().min(1),
+          state: z.string().min(1),
+          zip: z.string().min(1),
+          purchasePrice: z.number(),
+          arv: z.number(),
+          rehabCost: z.number(),
+          totalInvestment: z.number(),
+          netProfit: z.number(),
+          roi: z.number(), // as percentage (e.g. 15.3)
+          dealVerdict: z.string(),
+          maxAllowableOffer: z.number(),
+          recommendedMaxPrice: z.number(),
+          targetROI: z.number(),
+          sqft: z.number(),
+          beds: z.number(),
+          baths: z.number(),
+          yearBuilt: z.number(),
+          market: z.string().optional(),
+          dealScore: z.number().optional(),
+          cashOnCash: z.number().optional(),
+          status: z.enum(["active", "under_contract", "closed", "passed", "archived"]).optional(),
+          starred: z.boolean().optional(),
+          notes: z.string().optional(),
+          dealData: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        const values: any = {
+          uniqueId: input.uniqueId,
+          userId: ctx.user?.id || null,
+          address: input.address,
+          city: input.city,
+          state: input.state,
+          zip: input.zip,
+          purchasePrice: Math.round(input.purchasePrice),
+          arv: Math.round(input.arv),
+          rehabCost: Math.round(input.rehabCost),
+          totalInvestment: Math.round(input.totalInvestment),
+          netProfit: Math.round(input.netProfit),
+          roiBps: Math.round(input.roi * 100), // 15.3% → 1530
+          dealVerdict: input.dealVerdict,
+          maxAllowableOffer: Math.round(input.maxAllowableOffer),
+          recommendedMaxPrice: Math.round(input.recommendedMaxPrice),
+          targetROI: Math.round(input.targetROI),
+          sqft: Math.round(input.sqft),
+          beds: Math.round(input.beds),
+          baths: Math.round(input.baths),
+          yearBuilt: Math.round(input.yearBuilt),
+          market: input.market || null,
+          dealScore: input.dealScore != null ? Math.round(input.dealScore) : null,
+          cashOnCashBps: input.cashOnCash != null ? Math.round(input.cashOnCash * 100) : null,
+          status: input.status || "active",
+          starred: input.starred ? 1 : 0,
+          notes: input.notes || null,
+          dealData: input.dealData || null,
+        };
+
+        // Upsert: insert or update on duplicate uniqueId
+        await db.insert(savedDeals).values(values).onDuplicateKeyUpdate({
+          set: {
+            address: values.address,
+            city: values.city,
+            state: values.state,
+            zip: values.zip,
+            purchasePrice: values.purchasePrice,
+            arv: values.arv,
+            rehabCost: values.rehabCost,
+            totalInvestment: values.totalInvestment,
+            netProfit: values.netProfit,
+            roiBps: values.roiBps,
+            dealVerdict: values.dealVerdict,
+            maxAllowableOffer: values.maxAllowableOffer,
+            recommendedMaxPrice: values.recommendedMaxPrice,
+            targetROI: values.targetROI,
+            sqft: values.sqft,
+            beds: values.beds,
+            baths: values.baths,
+            yearBuilt: values.yearBuilt,
+            market: values.market,
+            dealScore: values.dealScore,
+            cashOnCashBps: values.cashOnCashBps,
+            status: values.status,
+            starred: values.starred,
+            notes: values.notes,
+            dealData: values.dealData,
+          },
+        });
+
+        return { success: true, uniqueId: input.uniqueId };
+      }),
+
+    // List all saved deals
+    list: publicProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      const rows = await db
+        .select()
+        .from(savedDeals)
+        .orderBy(desc(savedDeals.createdAt));
+
+      return rows.map((r) => ({
+        id: r.uniqueId,
+        savedAt: r.createdAt.toISOString(),
+        address: r.address,
+        city: r.city,
+        state: r.state,
+        zip: r.zip,
+        purchasePrice: r.purchasePrice,
+        arv: r.arv,
+        rehabCost: r.rehabCost,
+        totalInvestment: r.totalInvestment,
+        netProfit: r.netProfit,
+        roi: r.roiBps / 100, // 1530 → 15.3
+        dealVerdict: r.dealVerdict,
+        maxAllowableOffer: r.maxAllowableOffer,
+        recommendedMaxPrice: r.recommendedMaxPrice,
+        targetROI: r.targetROI,
+        sqft: r.sqft,
+        beds: r.beds,
+        baths: r.baths,
+        yearBuilt: r.yearBuilt,
+        market: r.market,
+        dealScore: r.dealScore,
+        cashOnCash: r.cashOnCashBps != null ? r.cashOnCashBps / 100 : undefined,
+        status: r.status,
+        starred: r.starred === 1,
+        notes: r.notes,
+        dealData: r.dealData,
+      }));
+    }),
+
+    // Update a deal (status, starred, notes)
+    update: publicProcedure
+      .input(
+        z.object({
+          uniqueId: z.string().min(1),
+          status: z.enum(["active", "under_contract", "closed", "passed", "archived"]).optional(),
+          starred: z.boolean().optional(),
+          notes: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        const updates: Record<string, any> = {};
+        if (input.status !== undefined) updates.status = input.status;
+        if (input.starred !== undefined) updates.starred = input.starred ? 1 : 0;
+        if (input.notes !== undefined) updates.notes = input.notes;
+
+        if (Object.keys(updates).length > 0) {
+          await db
+            .update(savedDeals)
+            .set(updates)
+            .where(eq(savedDeals.uniqueId, input.uniqueId));
+        }
+
+        return { success: true };
+      }),
+
+    // Delete a deal
+    delete: publicProcedure
+      .input(z.object({ uniqueId: z.string().min(1) }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        // Also delete associated photos
+        await db.delete(dealPhotos).where(eq(dealPhotos.dealUniqueId, input.uniqueId));
+        await db.delete(savedDeals).where(eq(savedDeals.uniqueId, input.uniqueId));
+
+        return { success: true };
+      }),
+
+    // Portfolio aggregation
+    portfolio: publicProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) {
+        return {
+          totalDeals: 0,
+          activeDeals: 0,
+          closedDeals: 0,
+          underContractDeals: 0,
+          passedDeals: 0,
+          totalInvested: 0,
+          totalProfit: 0,
+          avgRoi: 0,
+          avgDealScore: 0,
+          profitableCount: 0,
+          totalArv: 0,
+          totalRehabCost: 0,
+          deals: [],
+        };
+      }
+
+      const rows = await db
+        .select()
+        .from(savedDeals)
+        .where(ne(savedDeals.status, "archived"))
+        .orderBy(desc(savedDeals.createdAt));
+
+      const deals = rows.map((r) => ({
+        id: r.uniqueId,
+        address: r.address,
+        city: r.city,
+        state: r.state,
+        zip: r.zip,
+        purchasePrice: r.purchasePrice,
+        arv: r.arv,
+        rehabCost: r.rehabCost,
+        totalInvestment: r.totalInvestment,
+        netProfit: r.netProfit,
+        roi: r.roiBps / 100,
+        dealVerdict: r.dealVerdict,
+        dealScore: r.dealScore,
+        status: r.status,
+        starred: r.starred === 1,
+        createdAt: r.createdAt.toISOString(),
+      }));
+
+      const totalDeals = deals.length;
+      const activeDeals = deals.filter((d) => d.status === "active").length;
+      const closedDeals = deals.filter((d) => d.status === "closed").length;
+      const underContractDeals = deals.filter((d) => d.status === "under_contract").length;
+      const passedDeals = deals.filter((d) => d.status === "passed").length;
+      const totalInvested = deals.reduce((s, d) => s + d.totalInvestment, 0);
+      const totalProfit = deals.reduce((s, d) => s + d.netProfit, 0);
+      const avgRoi = totalDeals > 0 ? deals.reduce((s, d) => s + d.roi, 0) / totalDeals : 0;
+      const avgDealScore = totalDeals > 0
+        ? deals.reduce((s, d) => s + (d.dealScore || 0), 0) / totalDeals
+        : 0;
+      const profitableCount = deals.filter((d) => d.netProfit > 0).length;
+      const totalArv = deals.reduce((s, d) => s + d.arv, 0);
+      const totalRehabCost = deals.reduce((s, d) => s + d.rehabCost, 0);
+
+      return {
+        totalDeals,
+        activeDeals,
+        closedDeals,
+        underContractDeals,
+        passedDeals,
+        totalInvested,
+        totalProfit,
+        avgRoi,
+        avgDealScore,
+        profitableCount,
+        totalArv,
+        totalRehabCost,
+        deals,
+      };
+    }),
+  }),
+
+  // ─── Deal Photos ──────────────────────────────────────────────
+  photos: router({
+    // Upload a photo for a deal
+    upload: publicProcedure
+      .input(
+        z.object({
+          dealUniqueId: z.string().min(1),
+          base64: z.string().min(1),
+          filename: z.string().min(1),
+          mimeType: z.string().min(1),
+          caption: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        const buffer = Buffer.from(input.base64, "base64");
+        const suffix = crypto.randomBytes(4).toString("hex");
+        const key = `deal-photos/${input.dealUniqueId}/${Date.now()}-${suffix}-${input.filename}`;
+        const { url } = await storagePut(key, buffer, input.mimeType);
+
+        // Get current max sortOrder
+        const existing = await db
+          .select({ maxSort: sql<number>`COALESCE(MAX(${dealPhotos.sortOrder}), -1)` })
+          .from(dealPhotos)
+          .where(eq(dealPhotos.dealUniqueId, input.dealUniqueId));
+
+        const nextSort = (existing[0]?.maxSort ?? -1) + 1;
+
+        await db.insert(dealPhotos).values({
+          dealUniqueId: input.dealUniqueId,
+          userId: ctx.user?.id || null,
+          url,
+          fileKey: key,
+          filename: input.filename,
+          mimeType: input.mimeType,
+          caption: input.caption || null,
+          sortOrder: nextSort,
+        });
+
+        return { url, fileKey: key, id: nextSort };
+      }),
+
+    // List photos for a deal
+    list: publicProcedure
+      .input(z.object({ dealUniqueId: z.string().min(1) }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return [];
+
+        const rows = await db
+          .select()
+          .from(dealPhotos)
+          .where(eq(dealPhotos.dealUniqueId, input.dealUniqueId))
+          .orderBy(dealPhotos.sortOrder);
+
+        return rows.map((r) => ({
+          id: r.id,
+          url: r.url,
+          fileKey: r.fileKey,
+          filename: r.filename,
+          mimeType: r.mimeType,
+          caption: r.caption,
+          sortOrder: r.sortOrder,
+        }));
+      }),
+
+    // Delete a photo
+    delete: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        await db.delete(dealPhotos).where(eq(dealPhotos.id, input.id));
+        return { success: true };
+      }),
+
+    // Update caption
+    updateCaption: publicProcedure
+      .input(
+        z.object({
+          id: z.number(),
+          caption: z.string(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        await db
+          .update(dealPhotos)
+          .set({ caption: input.caption })
+          .where(eq(dealPhotos.id, input.id));
+
+        return { success: true };
       }),
   }),
 

@@ -41,3 +41,57 @@ export const sharedDeals = mysqlTable("shared_deals", {
 
 export type SharedDeal = typeof sharedDeals.$inferSelect;
 export type InsertSharedDeal = typeof sharedDeals.$inferInsert;
+
+// ─── Saved Deals (server-side) ──────────────────────────────
+export const savedDeals = mysqlTable("saved_deals", {
+  id: int("id").autoincrement().primaryKey(),
+  uniqueId: varchar("uniqueId", { length: 64 }).notNull().unique(), // client-generated UUID
+  userId: int("userId"),
+  address: varchar("address", { length: 255 }).notNull(),
+  city: varchar("city", { length: 128 }).notNull(),
+  state: varchar("state", { length: 32 }).notNull(),
+  zip: varchar("zip", { length: 16 }).notNull(),
+  purchasePrice: int("purchasePrice").notNull(),
+  arv: int("arv").notNull(),
+  rehabCost: int("rehabCost").notNull(),
+  totalInvestment: int("totalInvestment").notNull(),
+  netProfit: int("netProfit").notNull(),
+  roiBps: int("roiBps").notNull(), // stored as basis points (15.3% = 1530)
+  dealVerdict: varchar("dealVerdict", { length: 32 }).notNull(),
+  maxAllowableOffer: int("maxAllowableOffer").notNull(),
+  recommendedMaxPrice: int("recommendedMaxPrice").notNull(),
+  targetROI: int("targetROI").notNull(),
+  sqft: int("sqft").notNull(),
+  beds: int("beds").notNull(),
+  baths: int("baths").notNull(),
+  yearBuilt: int("yearBuilt").notNull(),
+  market: varchar("market", { length: 128 }),
+  dealScore: int("dealScore"),
+  cashOnCashBps: int("cashOnCashBps"), // stored as basis points
+  status: mysqlEnum("status", ["active", "under_contract", "closed", "passed", "archived"]).default("active").notNull(),
+  starred: int("starred").default(0).notNull(), // 0 = false, 1 = true
+  notes: text("notes"),
+  dealData: text("dealData"), // Full JSON blob for sharing/export
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SavedDealRow = typeof savedDeals.$inferSelect;
+export type InsertSavedDeal = typeof savedDeals.$inferInsert;
+
+// ─── Deal Photos ────────────────────────────────────────────
+export const dealPhotos = mysqlTable("deal_photos", {
+  id: int("id").autoincrement().primaryKey(),
+  dealUniqueId: varchar("dealUniqueId", { length: 64 }).notNull(), // references savedDeals.uniqueId
+  userId: int("userId"),
+  url: text("url").notNull(), // S3 URL
+  fileKey: varchar("fileKey", { length: 512 }).notNull(), // S3 key
+  filename: varchar("filename", { length: 255 }),
+  mimeType: varchar("mimeType", { length: 64 }),
+  caption: varchar("caption", { length: 255 }),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type DealPhoto = typeof dealPhotos.$inferSelect;
+export type InsertDealPhoto = typeof dealPhotos.$inferInsert;

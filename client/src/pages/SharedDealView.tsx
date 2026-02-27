@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/calculations';
 import { trpc } from '@/lib/trpc';
 import { useParams, Link } from 'wouter';
+import { PhotoGalleryReadOnly } from '@/components/PropertyPhotoGallery';
 import {
   Building2, TrendingUp, DollarSign, BarChart3, Clock,
   ArrowLeft, Eye, Calendar, Printer, AlertTriangle,
@@ -69,7 +70,7 @@ export default function SharedDealView() {
     );
   }
 
-  const { property, profit, financing, closing, holding, effectiveArv, rehabTotals, materialTier, targetROI, comps, regionalLabel } = deal;
+  const { property, profit, financing, closing, holding, effectiveArv, rehabTotals, materialTier, targetROI, comps, regionalLabel, photos: dealPhotos } = deal;
 
   const verdictIcon = profit.dealVerdict === 'excellent' || profit.dealVerdict === 'good'
     ? <CheckCircle2 className="w-6 h-6 text-green-500" />
@@ -292,6 +293,11 @@ export default function SharedDealView() {
               </div>
             </CardContent>
           </Card>
+        )}
+
+        {/* Property Photos */}
+        {dealPhotos && dealPhotos.length > 0 && (
+          <PhotoGalleryReadOnly photos={dealPhotos} />
         )}
 
         {/* Financing Details */}

@@ -28,6 +28,7 @@ interface Props {
   materialTierKey?: MaterialTier;
   materialsFactor?: number;
   laborFactor?: number;
+  photos?: { url: string; caption?: string | null }[];
 }
 
 const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/MgvhsGurcOgbPgCR.png";
@@ -293,6 +294,20 @@ function buildPdfHtml(props: Props): string {
     </div>
   </div>
 
+  <!-- Property Photos -->
+  ${props.photos && props.photos.length > 0 ? `
+  <div class="section">
+    <h2>Property Photos</h2>
+    <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:12px;">
+      ${props.photos.map(p => `
+        <div style="text-align:center;">
+          <img src="${p.url}" style="width:100%; max-height:200px; object-fit:cover; border-radius:6px; border:1px solid #e5e7eb;" />
+          ${p.caption ? `<p style="font-size:11px; color:#666; margin-top:4px;">${p.caption}</p>` : ''}
+        </div>
+      `).join('')}
+    </div>
+  </div>` : ''}
+
   <!-- Verdict -->
   <div class="verdict-box ${verdictClass}">
     <div class="verdict-label" style="color:${verdictColor}">${profit.dealVerdict.toUpperCase().replace('_', ' ')}</div>
@@ -349,6 +364,7 @@ export function InvestorReport(props: Props) {
       comps: comps || [],
       roomScopes: roomScopes?.filter(r => r.condition !== 'none') || [],
       regionalLabel,
+      photos: props.photos || [],
     });
     const addr = `${property.address}, ${property.city}, ${property.state} ${property.zip}`;
     shareMutation.mutate({ dealData, propertyAddress: addr });

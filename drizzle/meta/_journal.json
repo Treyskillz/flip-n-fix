@@ -15,6 +15,13 @@
       "when": 1772159472176,
       "tag": "0001_clean_paibok",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1772161683293,
+      "tag": "0002_thankful_callisto",
+      "breakpoints": true
     }
   ]
 }

@@ -120,3 +120,12 @@
 - [x] Build Deal Comparison View page for side-by-side saved deal comparison (already built in SavedDeals)
 - [x] Add compare selection UI to Saved Deals page (already built with checkbox selection)
 - [x] Add Deal Comparison route to App.tsx and navigation (integrated into SavedDeals page)
+- [x] Build Portfolio Dashboard page with aggregate metrics (total invested, projected profit, avg ROI)
+- [x] Add deal count by status (active, under contract, closed, archived)
+- [x] Add performance chart showing ROI distribution or profit by deal
+- [x] Add Portfolio Dashboard route to App.tsx and navigation
+- [x] Build Property Photo Gallery — multi-photo upload per deal
+- [x] Add photo storage to S3 with database references
+- [x] Display photos in shared deal links
+- [x] Display photos in PDF investor reports
+- [x] Add photo management UI (upload, reorder, delete)

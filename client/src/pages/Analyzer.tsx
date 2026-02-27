@@ -4,8 +4,10 @@ import { RehabEstimator } from '@/components/RehabEstimator';
 import { FinancingSection } from '@/components/FinancingSection';
 import { ProfitSummary } from '@/components/ProfitSummary';
 import { InvestorReport } from '@/components/InvestorReport';
+import { PropertyPhotoGallery } from '@/components/PropertyPhotoGallery';
 import { useFlipAnalyzer } from '@/hooks/useFlipAnalyzer';
-import { useEffect } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import { trpc } from '@/lib/trpc';
 import { Calculator, Save, AlertTriangle, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -16,6 +18,21 @@ const STORAGE_KEY = 'freedom-one-saved-deals';
 
 export default function Analyzer() {
   const analyzer = useFlipAnalyzer();
+  const [dealUniqueId] = useState(() => {
+    // Use a stable unique ID per analyzer session for photo uploads
+    const stored = sessionStorage.getItem('analyzer-deal-uid');
+    if (stored) return stored;
+    const uid = nanoid();
+    sessionStorage.setItem('analyzer-deal-uid', uid);
+    return uid;
+  });
+
+  // Fetch photos for this deal to pass to InvestorReport
+  const { data: dealPhotos = [] } = trpc.photos.list.useQuery(
+    { dealUniqueId },
+    { enabled: !!dealUniqueId }
+  );
+  const photosList = useMemo(() => dealPhotos.map(p => ({ url: p.url, caption: p.caption })), [dealPhotos]);
 
   // Receive renovation design data from Renovation Designer page
   useEffect(() => {
@@ -172,7 +189,10 @@ export default function Analyzer() {
               regionalLabel={analyzer.regionalFactor.label}
             />
 
-            {/* 4. Investor Presentation Report */}
+            {/* 4. Property Photos */}
+            <PropertyPhotoGallery dealUniqueId={dealUniqueId} />
+
+            {/* 5. Investor Presentation Report */}
             <InvestorReport
               property={analyzer.property}
               profit={analyzer.profit}
@@ -189,6 +209,7 @@ export default function Analyzer() {
               materialTierKey={analyzer.materialTier as any}
               materialsFactor={analyzer.regionalFactor.materialsFactor}
               laborFactor={analyzer.regionalFactor.laborFactor}
+              photos={photosList}
             />
 
             {/* 5. Financing & Costs */}
