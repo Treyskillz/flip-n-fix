@@ -29,6 +29,8 @@ const QuickCheck = lazy(() => import("./pages/QuickCheck"));
 const SharedDealView = lazy(() => import("./pages/SharedDealView"));
 const RenovationDesigner = lazy(() => import("./pages/RenovationDesigner"));
 const Portfolio = lazy(() => import("./pages/Portfolio"));
+const Pipeline = lazy(() => import("./pages/Pipeline"));
+const DealDetail = lazy(() => import("./pages/DealDetail"));
 const Profile = lazy(() => import("./pages/Profile"));
 
 function Router() {
@@ -66,6 +68,8 @@ function Router() {
           <Route path={'/contractors'} component={Contractors} />
           <Route path={'/renovation-designer'} component={RenovationDesigner} />
           <Route path={'/portfolio'} component={Portfolio} />
+          <Route path={'/pipeline'} component={Pipeline} />
+          <Route path={'/pipeline/:id'} component={DealDetail} />
           <Route path={'/profile'} component={Profile} />
           <Route path={"/support"} component={Support} />
           <Route path={"/disclaimers"} component={Disclaimers} />

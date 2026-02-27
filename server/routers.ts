@@ -6,8 +6,8 @@ import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { PLANS, PlanKey } from "./stripe/products";
 import { createCheckoutSession, createPortalSession } from "./stripe/checkout";
 import { getDb } from "./db";
-import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments } from "../drizzle/schema";
-import { eq, sql, desc, and, ne, inArray } from "drizzle-orm";
+import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments, pipelineDeals, pipelineContacts, pipelineActivities } from "../drizzle/schema";
+import { eq, sql, desc, and, ne, inArray, asc, isNull } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
 import { storagePut } from "./storage";
@@ -1098,6 +1098,357 @@ Provide 3-5 comparable RENOVATED properties that meet ALL of these criteria:
         await db.delete(credibilityAttachments)
           .where(and(eq(credibilityAttachments.id, input.id), eq(credibilityAttachments.userId, ctx.user.id)));
         return { success: true };
+      }),
+  }),
+
+  // ─── Deal Pipeline (CRM) ───────────────────────────────────
+  pipeline: router({
+    // List all pipeline deals for the current user
+    listDeals: protectedProcedure.query(async ({ ctx }) => {
+      const db = (await getDb())!;
+      const rows = await db.select().from(pipelineDeals)
+        .where(eq(pipelineDeals.userId, ctx.user.id))
+        .orderBy(asc(pipelineDeals.sortOrder), desc(pipelineDeals.updatedAt));
+      return rows;
+    }),
+
+    // Create a new pipeline deal
+    createDeal: protectedProcedure
+      .input(z.object({
+        propertyAddress: z.string().min(1),
+        city: z.string().optional(),
+        state: z.string().optional(),
+        zip: z.string().optional(),
+        stage: z.enum(["lead", "analyzing", "offer_submitted", "under_contract", "closing", "rehab", "listed", "sold", "dead"]).default("lead"),
+        purchasePrice: z.number().optional(),
+        arv: z.number().optional(),
+        rehabCost: z.number().optional(),
+        estimatedProfit: z.number().optional(),
+        dealScore: z.number().optional(),
+        tags: z.string().optional(),
+        notes: z.string().optional(),
+        savedDealId: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        const result = await db.insert(pipelineDeals).values({
+          userId: ctx.user.id,
+          propertyAddress: input.propertyAddress,
+          city: input.city || null,
+          state: input.state || null,
+          zip: input.zip || null,
+          stage: input.stage,
+          purchasePrice: input.purchasePrice || null,
+          arv: input.arv || null,
+          rehabCost: input.rehabCost || null,
+          estimatedProfit: input.estimatedProfit || null,
+          dealScore: input.dealScore || null,
+          tags: input.tags || null,
+          notes: input.notes || null,
+          savedDealId: input.savedDealId || null,
+        });
+        const dealId = Number(result[0].insertId);
+        // Auto-create activity
+        await db.insert(pipelineActivities).values({
+          userId: ctx.user.id,
+          dealId,
+          type: "note",
+          title: "Deal added to pipeline",
+          description: `${input.propertyAddress} added as ${input.stage}`,
+        });
+        return { id: dealId };
+      }),
+
+    // Update a pipeline deal
+    updateDeal: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        propertyAddress: z.string().min(1).optional(),
+        city: z.string().nullable().optional(),
+        state: z.string().nullable().optional(),
+        zip: z.string().nullable().optional(),
+        stage: z.enum(["lead", "analyzing", "offer_submitted", "under_contract", "closing", "rehab", "listed", "sold", "dead"]).optional(),
+        purchasePrice: z.number().nullable().optional(),
+        arv: z.number().nullable().optional(),
+        rehabCost: z.number().nullable().optional(),
+        estimatedProfit: z.number().nullable().optional(),
+        dealScore: z.number().nullable().optional(),
+        tags: z.string().nullable().optional(),
+        notes: z.string().nullable().optional(),
+        deadReason: z.string().nullable().optional(),
+        offerDate: z.string().nullable().optional(),
+        contractDate: z.string().nullable().optional(),
+        closingDate: z.string().nullable().optional(),
+        rehabStartDate: z.string().nullable().optional(),
+        rehabEndDate: z.string().nullable().optional(),
+        listDate: z.string().nullable().optional(),
+        soldDate: z.string().nullable().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        const { id, ...updates } = input;
+        // Check for stage change to log activity
+        if (updates.stage) {
+          const existing = await db.select({ stage: pipelineDeals.stage })
+            .from(pipelineDeals)
+            .where(and(eq(pipelineDeals.id, id), eq(pipelineDeals.userId, ctx.user.id)))
+            .limit(1);
+          if (existing[0] && existing[0].stage !== updates.stage) {
+            await db.insert(pipelineActivities).values({
+              userId: ctx.user.id,
+              dealId: id,
+              type: "stage_change",
+              title: `Stage changed: ${existing[0].stage} → ${updates.stage}`,
+              metadata: JSON.stringify({ from: existing[0].stage, to: updates.stage }),
+            });
+            (updates as any).stageEnteredAt = new Date();
+          }
+        }
+        // Convert date strings to Date objects
+        const dateFields = ['offerDate', 'contractDate', 'closingDate', 'rehabStartDate', 'rehabEndDate', 'listDate', 'soldDate'] as const;
+        const processedUpdates: any = { ...updates };
+        for (const field of dateFields) {
+          if (processedUpdates[field] !== undefined) {
+            processedUpdates[field] = processedUpdates[field] ? new Date(processedUpdates[field]) : null;
+          }
+        }
+        await db.update(pipelineDeals).set(processedUpdates)
+          .where(and(eq(pipelineDeals.id, id), eq(pipelineDeals.userId, ctx.user.id)));
+        return { success: true };
+      }),
+
+    // Move deal to a new stage (shortcut for drag-and-drop)
+    moveStage: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        stage: z.enum(["lead", "analyzing", "offer_submitted", "under_contract", "closing", "rehab", "listed", "sold", "dead"]),
+        deadReason: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        const existing = await db.select({ stage: pipelineDeals.stage, propertyAddress: pipelineDeals.propertyAddress })
+          .from(pipelineDeals)
+          .where(and(eq(pipelineDeals.id, input.id), eq(pipelineDeals.userId, ctx.user.id)))
+          .limit(1);
+        if (!existing[0]) return { success: false };
+        const oldStage = existing[0].stage;
+        await db.update(pipelineDeals).set({
+          stage: input.stage,
+          stageEnteredAt: new Date(),
+          deadReason: input.stage === 'dead' ? (input.deadReason || null) : undefined,
+        }).where(and(eq(pipelineDeals.id, input.id), eq(pipelineDeals.userId, ctx.user.id)));
+        // Log stage change
+        await db.insert(pipelineActivities).values({
+          userId: ctx.user.id,
+          dealId: input.id,
+          type: "stage_change",
+          title: `Stage changed: ${oldStage} → ${input.stage}`,
+          metadata: JSON.stringify({ from: oldStage, to: input.stage }),
+        });
+        return { success: true };
+      }),
+
+    // Delete a pipeline deal
+    deleteDeal: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        // Delete related contacts and activities
+        await db.delete(pipelineActivities).where(and(eq(pipelineActivities.dealId, input.id), eq(pipelineActivities.userId, ctx.user.id)));
+        await db.delete(pipelineContacts).where(and(eq(pipelineContacts.dealId, input.id), eq(pipelineContacts.userId, ctx.user.id)));
+        await db.delete(pipelineDeals).where(and(eq(pipelineDeals.id, input.id), eq(pipelineDeals.userId, ctx.user.id)));
+        return { success: true };
+      }),
+
+    // ─── Contacts ─────────────────────────────────
+    listContacts: protectedProcedure
+      .input(z.object({ dealId: z.number().optional() }).optional())
+      .query(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        if (input?.dealId) {
+          return db.select().from(pipelineContacts)
+            .where(and(eq(pipelineContacts.userId, ctx.user.id), eq(pipelineContacts.dealId, input.dealId)))
+            .orderBy(asc(pipelineContacts.name));
+        }
+        // All contacts for user
+        return db.select().from(pipelineContacts)
+          .where(eq(pipelineContacts.userId, ctx.user.id))
+          .orderBy(asc(pipelineContacts.name));
+      }),
+
+    createContact: protectedProcedure
+      .input(z.object({
+        dealId: z.number().optional(),
+        name: z.string().min(1),
+        role: z.enum(["seller", "buyer", "listing_agent", "buyers_agent", "title_company", "attorney", "contractor", "lender", "wholesaler", "partner", "other"]).default("other"),
+        phone: z.string().optional(),
+        email: z.string().optional(),
+        company: z.string().optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        const result = await db.insert(pipelineContacts).values({
+          userId: ctx.user.id,
+          dealId: input.dealId || null,
+          name: input.name,
+          role: input.role,
+          phone: input.phone || null,
+          email: input.email || null,
+          company: input.company || null,
+          notes: input.notes || null,
+        });
+        const contactId = Number(result[0].insertId);
+        // Log activity if linked to a deal
+        if (input.dealId) {
+          await db.insert(pipelineActivities).values({
+            userId: ctx.user.id,
+            dealId: input.dealId,
+            type: "contact_added",
+            title: `Contact added: ${input.name} (${input.role.replace('_', ' ')})`,
+          });
+        }
+        return { id: contactId };
+      }),
+
+    updateContact: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().min(1).optional(),
+        role: z.enum(["seller", "buyer", "listing_agent", "buyers_agent", "title_company", "attorney", "contractor", "lender", "wholesaler", "partner", "other"]).optional(),
+        phone: z.string().nullable().optional(),
+        email: z.string().nullable().optional(),
+        company: z.string().nullable().optional(),
+        notes: z.string().nullable().optional(),
+        dealId: z.number().nullable().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        const { id, ...updates } = input;
+        await db.update(pipelineContacts).set(updates)
+          .where(and(eq(pipelineContacts.id, id), eq(pipelineContacts.userId, ctx.user.id)));
+        return { success: true };
+      }),
+
+    deleteContact: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        await db.delete(pipelineContacts)
+          .where(and(eq(pipelineContacts.id, input.id), eq(pipelineContacts.userId, ctx.user.id)));
+        return { success: true };
+      }),
+
+    // ─── Activities ───────────────────────────────
+    listActivities: protectedProcedure
+      .input(z.object({ dealId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        return db.select().from(pipelineActivities)
+          .where(and(eq(pipelineActivities.dealId, input.dealId), eq(pipelineActivities.userId, ctx.user.id)))
+          .orderBy(desc(pipelineActivities.createdAt));
+      }),
+
+    addActivity: protectedProcedure
+      .input(z.object({
+        dealId: z.number(),
+        type: z.enum(["note", "stage_change", "contact_added", "document_sent", "offer_made", "counter_received", "inspection", "appraisal", "closing_scheduled", "rehab_update", "listing_update", "other"]).default("note"),
+        title: z.string().min(1),
+        description: z.string().optional(),
+        metadata: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        const result = await db.insert(pipelineActivities).values({
+          userId: ctx.user.id,
+          dealId: input.dealId,
+          type: input.type,
+          title: input.title,
+          description: input.description || null,
+          metadata: input.metadata || null,
+        });
+        return { id: Number(result[0].insertId) };
+      }),
+
+    // ─── Dashboard Metrics ────────────────────────
+    metrics: protectedProcedure.query(async ({ ctx }) => {
+      const db = (await getDb())!;
+      const deals = await db.select().from(pipelineDeals)
+        .where(eq(pipelineDeals.userId, ctx.user.id));
+
+      const stages = ["lead", "analyzing", "offer_submitted", "under_contract", "closing", "rehab", "listed", "sold", "dead"] as const;
+      const byStage: Record<string, number> = {};
+      for (const s of stages) byStage[s] = 0;
+      let totalPipelineValue = 0;
+      let totalClosed = 0;
+      let totalDead = 0;
+      let totalActive = 0;
+      let totalDaysInStage = 0;
+      let activeCount = 0;
+
+      for (const deal of deals) {
+        byStage[deal.stage] = (byStage[deal.stage] || 0) + 1;
+        if (deal.stage === 'sold') {
+          totalClosed++;
+          if (deal.estimatedProfit) totalPipelineValue += deal.estimatedProfit;
+        } else if (deal.stage === 'dead') {
+          totalDead++;
+        } else {
+          totalActive++;
+          if (deal.estimatedProfit) totalPipelineValue += deal.estimatedProfit;
+          if (deal.stageEnteredAt) {
+            const days = Math.floor((Date.now() - new Date(deal.stageEnteredAt).getTime()) / (1000 * 60 * 60 * 24));
+            totalDaysInStage += days;
+            activeCount++;
+          }
+        }
+      }
+
+      return {
+        totalDeals: deals.length,
+        byStage,
+        totalPipelineValue,
+        totalClosed,
+        totalDead,
+        totalActive,
+        avgDaysInStage: activeCount > 0 ? Math.round(totalDaysInStage / activeCount) : 0,
+        winRate: (totalClosed + totalDead) > 0 ? Math.round((totalClosed / (totalClosed + totalDead)) * 100) : 0,
+      };
+    }),
+
+    // ─── Import from Saved Deals ──────────────────
+    importFromSavedDeal: protectedProcedure
+      .input(z.object({ savedDealId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        const deal = await db.select().from(savedDeals)
+          .where(and(eq(savedDeals.id, input.savedDealId), eq(savedDeals.userId, ctx.user.id)))
+          .limit(1);
+        if (!deal[0]) return { success: false, error: "Deal not found" };
+        const d = deal[0];
+        const result = await db.insert(pipelineDeals).values({
+          userId: ctx.user.id,
+          savedDealId: d.id,
+          propertyAddress: d.address,
+          city: d.city || null,
+          state: d.state || null,
+          zip: d.zip || null,
+          stage: "analyzing",
+          purchasePrice: d.purchasePrice,
+          arv: d.arv,
+          rehabCost: d.rehabCost,
+          estimatedProfit: d.netProfit,
+          dealScore: d.dealScore,
+        });
+        const dealId = Number(result[0].insertId);
+        await db.insert(pipelineActivities).values({
+          userId: ctx.user.id,
+          dealId,
+          type: "note",
+          title: "Imported from Saved Deals",
+          description: `Deal imported from saved analysis: ${d.address}`,
+        });
+        return { success: true, id: dealId };
       }),
   }),
 

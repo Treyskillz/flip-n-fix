@@ -183,3 +183,81 @@ export const credibilityAttachments = mysqlTable("credibility_attachments", {
 
 export type CredibilityAttachment = typeof credibilityAttachments.$inferSelect;
 export type InsertCredibilityAttachment = typeof credibilityAttachments.$inferInsert;
+
+// ─── Pipeline Deals (CRM) ─────────────────────────────────────
+export const pipelineDeals = mysqlTable("pipeline_deals", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  savedDealId: int("savedDealId"), // optional link to saved_deals.id
+  propertyAddress: varchar("propertyAddress", { length: 512 }).notNull(),
+  city: varchar("city", { length: 128 }),
+  state: varchar("state", { length: 64 }),
+  zip: varchar("zip", { length: 16 }),
+  stage: mysqlEnum("stage", [
+    "lead", "analyzing", "offer_submitted", "under_contract",
+    "closing", "rehab", "listed", "sold", "dead"
+  ]).default("lead").notNull(),
+  purchasePrice: int("purchasePrice"),
+  arv: int("arv"),
+  rehabCost: int("rehabCost"),
+  estimatedProfit: int("estimatedProfit"),
+  dealScore: int("dealScore"),
+  tags: text("tags"), // JSON array of tags e.g. ["flip", "wholesale", "BRRRR"]
+  offerDate: timestamp("offerDate"),
+  contractDate: timestamp("contractDate"),
+  closingDate: timestamp("closingDate"),
+  rehabStartDate: timestamp("rehabStartDate"),
+  rehabEndDate: timestamp("rehabEndDate"),
+  listDate: timestamp("listDate"),
+  soldDate: timestamp("soldDate"),
+  deadReason: varchar("deadReason", { length: 255 }),
+  notes: text("notes"),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  stageEnteredAt: timestamp("stageEnteredAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PipelineDeal = typeof pipelineDeals.$inferSelect;
+export type InsertPipelineDeal = typeof pipelineDeals.$inferInsert;
+
+// ─── Pipeline Contacts ────────────────────────────────────────
+export const pipelineContacts = mysqlTable("pipeline_contacts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  dealId: int("dealId"), // optional link to pipeline_deals.id (null = global contact)
+  name: varchar("name", { length: 255 }).notNull(),
+  role: mysqlEnum("role", [
+    "seller", "buyer", "listing_agent", "buyers_agent",
+    "title_company", "attorney", "contractor", "lender",
+    "wholesaler", "partner", "other"
+  ]).default("other").notNull(),
+  phone: varchar("phone", { length: 64 }),
+  email: varchar("email", { length: 320 }),
+  company: varchar("company", { length: 255 }),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PipelineContact = typeof pipelineContacts.$inferSelect;
+export type InsertPipelineContact = typeof pipelineContacts.$inferInsert;
+
+// ─── Pipeline Activities (Timeline) ──────────────────────────
+export const pipelineActivities = mysqlTable("pipeline_activities", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  dealId: int("dealId").notNull(), // references pipeline_deals.id
+  type: mysqlEnum("type", [
+    "note", "stage_change", "contact_added", "document_sent",
+    "offer_made", "counter_received", "inspection", "appraisal",
+    "closing_scheduled", "rehab_update", "listing_update", "other"
+  ]).default("note").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  metadata: text("metadata"), // JSON blob for extra data (e.g. old/new stage, document name, contact info)
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PipelineActivity = typeof pipelineActivities.$inferSelect;
+export type InsertPipelineActivity = typeof pipelineActivities.$inferInsert;

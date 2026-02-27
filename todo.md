@@ -185,21 +185,34 @@
 - [x] Build course completion certificate PDF generator
 - [x] Add certificate download button on Course page when all modules complete and quizzes passed
 - [x] Write vitest tests for profile and certificate features (8 tests, all passing)
-- [ ] Update comp search to filter comps within 1 mile of subject property
-- [ ] Update comp search to filter comps on market 90 days or less (DOM ≤ 90)
-- [ ] Update comp search to filter comps sold within the last 6 months
-- [ ] Update comp search UI to display filtering criteria to users
-- [ ] Update comp validation/quality scoring to reflect new criteria
-- [ ] Update comp search to filter comps within 200 sq ft of subject property
-- [ ] Update comp search to filter comps with similar bed/bath count (±1)
-- [ ] Update comp search to filter comps within 10 years of age of subject property
-- [ ] Update comp quality scoring to reflect all new criteria
-- [ ] Update comp guidance UI text with all criteria
-- [ ] Add database table for credibility packet projects (track record entries)
-- [ ] Add database table for credibility packet attachments (photos + documents linked to projects)
-- [ ] Build tRPC endpoints for CRUD on credibility packet projects and file uploads
-- [ ] Add before/after photo upload section to Credibility Packets page
-- [ ] Add closing statement / bill of sale document upload section
-- [ ] Display uploaded photos and documents in credibility packet print/preview
-- [ ] Update manual with credibility packet enhancements documentation
-- [ ] Expand credibility packet content with more detailed fix & flip company sections (investment philosophy, acquisition criteria, renovation standards, market expertise, team capabilities)
+- [x] Update comp search to filter comps within 1 mile of subject property
+- [x] Update comp search to filter comps on market 90 days or less (DOM ≤ 90)
+- [x] Update comp search to filter comps sold within the last 6 months
+- [x] Update comp search UI to display filtering criteria to users
+- [x] Update comp validation/quality scoring to reflect new criteria
+- [x] Update comp search to filter comps within 200 sq ft of subject property
+- [x] Update comp search to filter comps with similar bed/bath count (±1)
+- [x] Update comp search to filter comps within 10 years of age of subject property
+- [x] Update comp quality scoring to reflect all new criteria
+- [x] Update comp guidance UI text with all criteria
+- [x] Add database table for credibility packet projects (track record entries)
+- [x] Add database table for credibility packet attachments (photos + documents linked to projects)
+- [x] Build tRPC endpoints for CRUD on credibility packet projects and file uploads
+- [x] Add before/after photo upload section to Credibility Packets page
+- [x] Add closing statement / bill of sale document upload section
+- [x] Display uploaded photos and documents in credibility packet print/preview
+- [ ] Update manual with credibility packet enhancements documentation (deferred)
+- [x] Expand credibility packet content with more detailed fix & flip company sections (investment philosophy, acquisition criteria, renovation standards, market expertise, team capabilities)
+- [x] Design and create pipeline_deals database table (stage, dates, tags, linked saved deal)
+- [x] Design and create pipeline_contacts table (name, role, phone, email, linked to deals)
+- [x] Design and create pipeline_activities table (activity log, notes, stage changes, document sends)
+- [x] Build tRPC endpoints for pipeline deal CRUD (create, update, move stage, delete, list)
+- [x] Build tRPC endpoints for contact CRUD (add, edit, delete, list by deal)
+- [x] Build tRPC endpoints for activity log (add note, list timeline)
+- [x] Build document delivery utility (mailto-based with auto-filled contract content)
+- [x] Build Pipeline Kanban board page with drag-and-drop deal cards across stages
+- [x] Build deal detail view page with property info, contacts, activity timeline
+- [x] Build "Send Offer/Contract" flow — select template, auto-fill, preview, send to contact
+- [x] Build pipeline dashboard metrics (deals by stage, avg days per stage, win rate, pipeline value)
+- [x] Add Pipeline/CRM route to App.tsx and navigation
+- [x] Write vitest tests for pipeline, contacts, activities, and document delivery endpoints (16 tests, all passing)
