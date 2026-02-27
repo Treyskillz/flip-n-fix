@@ -28,7 +28,7 @@ import {
   Clock, ArrowRight, Trash2, Edit, Eye, ChevronDown,
   ChevronUp, BarChart3, Users, FileText, Target,
   Building2, AlertCircle, CheckCircle2, XCircle,
-  Layers, Import, Search, Upload
+  Layers, Import, Search, Upload, Download
 } from 'lucide-react';
 import CsvImportDialog from '@/components/CsvImport';
 
@@ -485,6 +485,52 @@ export default function Pipeline() {
     navigate(`/pipeline/${deal.id}`);
   }, [navigate]);
 
+  const handleExportCSV = useCallback(() => {
+    const deals = dealsQuery.data;
+    if (!deals || deals.length === 0) {
+      toast.error('No deals to export');
+      return;
+    }
+    const stageLabel = (id: string) => STAGES.find(s => s.id === id)?.label || id;
+    const esc = (v: any) => {
+      if (v == null) return '';
+      const s = String(v);
+      return s.includes(',') || s.includes('"') || s.includes('\n')
+        ? '"' + s.replace(/"/g, '""') + '"'
+        : s;
+    };
+    const headers = [
+      'Property Address', 'City', 'State', 'Zip', 'Stage',
+      'Purchase Price', 'ARV', 'Rehab Cost', 'Est. Profit', 'Deal Score',
+      'Tags', 'Notes', 'Days in Stage', 'Date Added'
+    ];
+    const rows = deals.map((d: any) => [
+      esc(d.propertyAddress),
+      esc(d.city),
+      esc(d.state),
+      esc(d.zip),
+      esc(stageLabel(d.stage)),
+      d.purchasePrice ?? '',
+      d.arv ?? '',
+      d.rehabCost ?? '',
+      d.estimatedProfit ?? '',
+      d.dealScore ?? '',
+      esc(d.tags),
+      esc(d.notes),
+      daysSince(d.stageEnteredAt) ?? '',
+      d.createdAt ? new Date(d.createdAt).toLocaleDateString() : '',
+    ]);
+    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `pipeline-deals-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${deals.length} deals to CSV`);
+  }, [dealsQuery.data]);
+
   // Auth gate
   if (authLoading) {
     return (
@@ -525,6 +571,9 @@ export default function Pipeline() {
               </p>
             </div>
             <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={handleExportCSV} className="border-[oklch(0.3_0_0)] text-[oklch(0.7_0_0)] hover:bg-white/5 text-xs">
+                <Download className="w-3.5 h-3.5 mr-1" /> CSV Export
+              </Button>
               <Button variant="outline" size="sm" onClick={() => setCsvImportOpen(true)} className="border-[oklch(0.3_0_0)] text-[oklch(0.7_0_0)] hover:bg-white/5 text-xs">
                 <Upload className="w-3.5 h-3.5 mr-1" /> CSV Import
               </Button>

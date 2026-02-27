@@ -221,3 +221,4 @@
 - [x] Add sample CSV download template for users
 - [x] Add import button to Pipeline page that opens the import flow
 - [x] Write vitest tests for CSV bulk import endpoint (7 tests, all passing)
+- [x] Add CSV Export button to Pipeline page to download all deal data as CSV
