@@ -48,21 +48,21 @@
 - [x] Add deal score, ROI, status tracking, and portfolio management to saved deals
 - [x] Add ability to edit/delete/archive saved deals from the dashboard
 - [x] Add filtering and sorting by deal score, ROI, date, status in the dashboard
-- [ ] Audit and fix Deal Analyzer calculation logic (ARV, profit, deal scoring, all financial formulas)
+- [x] Audit and fix Deal Analyzer calculation logic (ARV, profit, deal scoring, all financial formulas)
 - [x] Fix ARV methodology — ARV should not be determined without knowing rehab costs
-- [ ] Verify all profit calculations match industry-standard fix-and-flip formulas
-- [ ] CRITICAL: Full audit of all Deal Analyzer calculations for paid product accuracy
+- [x] Verify all profit calculations match industry-standard fix-and-flip formulas
+- [x] CRITICAL: Full audit of all Deal Analyzer calculations for paid product accuracy
 - [x] Fix ARV methodology — add clear comp guidance, validation, and warnings
 - [ ] Fix all calculation edge cases (division by zero, negative values, missing data)
 - [x] Fix CompManager UI — add comp quality guidance and after-repair comp labels
 - [x] Fix Profit Panel — ensure all numbers are accurate and clearly labeled
 - [x] Add professional disclaimers and safeguards for paid subscription product
-- [ ] Run comprehensive numerical test scenarios to verify all math
-- [ ] Expand financing to support Hard Money Lender, Private Money Lender, and Gap Funder simultaneously
-- [ ] Add gap funder calculations (covers down payment gap, separate interest rate and points)
-- [ ] Add private money lender option (alternative to hard money with different terms)
-- [ ] Calculate blended financing costs across all active lenders
-- [ ] Update total investment and profit calculations to include gap funding costs
+- [x] Run comprehensive numerical test scenarios to verify all math
+- [x] Expand financing to support Hard Money Lender, Private Money Lender, and Gap Funder simultaneously
+- [x] Add gap funder calculations (covers down payment gap, separate interest rate and points)
+- [x] Add private money lender option (alternative to hard money with different terms)
+- [x] Calculate blended financing costs across all active lenders
+- [x] Update total investment and profit calculations to include gap funding costs
 - [x] Build comp quality scoring system (distance, recency, similarity, condition)
 - [x] Add comp validation warnings (missing sqft, stale dates, extreme $/sqft outliers)
 - [x] Add "How to Find Good Comps" guidance panel in CompManager
@@ -92,3 +92,10 @@
 - [x] Fix Manual to document correct ARV calculation steps
 - [x] Ensure 70% Rule uses comp-based ARV: (ARV × 0.70) - Repairs = Max Purchase Price
 - [x] Update ProfitSummary right sidebar ARV display
+- [x] Complete private money lender (PML) calculations with correct ARV
+- [x] Complete gap funder calculations — covers down payment gap from primary lender
+- [x] Integrate blended financing costs (HML + PML + gap funder) into profit calculations
+- [x] Update ProfitSummary to show blended financing breakdown
+- [x] Update InvestorReport PDF with full financing details
+- [x] Update Manual with gap funder and PML documentation
+- [x] Test all financing scenarios with real deal examples
