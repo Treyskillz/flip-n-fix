@@ -178,6 +178,8 @@ export function useFlipAnalyzer() {
     if (comps.length === 0) return 0;
     const validComps = comps.filter(c => c.pricePerSqft > 0);
     if (validComps.length === 0) return 0;
+    // Edge case: if subject sqft is 0, can't calculate comp-based ARV
+    if (property.sqft <= 0) return 0;
     const avgPpsf = validComps.reduce((s, c) => s + c.pricePerSqft, 0) / validComps.length;
     return Math.round(avgPpsf * property.sqft);
   }, [comps, property.sqft]);

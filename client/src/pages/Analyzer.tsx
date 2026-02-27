@@ -117,6 +117,12 @@ export default function Analyzer() {
               subjectBaths={analyzer.property.baths}
               purchasePrice={analyzer.property.purchasePrice}
               rehabCost={analyzer.rehabTotals.totalCost}
+              subjectAddress={analyzer.property.address}
+              subjectCity={analyzer.property.city}
+              subjectState={analyzer.property.state}
+              subjectZip={analyzer.property.zip}
+              subjectYearBuilt={analyzer.property.yearBuilt}
+              subjectPropertyType={analyzer.property.propertyType}
             />
 
             {/* 3. Rehab Estimator */}

@@ -42,6 +42,17 @@ export function calculateFinancing(
   gapInterestRate: number = 15,
   gapPoints: number = 3
 ): FinancingDetails {
+  // Edge case guards: clamp negative values to 0
+  purchasePrice = Math.max(0, purchasePrice || 0);
+  rehabCost = Math.max(0, rehabCost || 0);
+  loanToValue = Math.max(0, Math.min(100, loanToValue || 0));
+  interestRate = Math.max(0, interestRate || 0);
+  points = Math.max(0, points || 0);
+  holdingMonths = Math.max(0, holdingMonths || 0);
+  gapCoveragePercent = Math.max(0, Math.min(100, gapCoveragePercent || 0));
+  gapInterestRate = Math.max(0, gapInterestRate || 0);
+  gapPoints = Math.max(0, gapPoints || 0);
+
   const totalProjectCost = purchasePrice + rehabCost;
 
   // ─── Primary Lender ──────────────────────────────────────
@@ -106,6 +117,12 @@ export function calculateClosingCosts(
   buyPct: number,
   sellPct: number
 ): ClosingCosts {
+  // Edge case guards
+  purchasePrice = Math.max(0, purchasePrice || 0);
+  arv = Math.max(0, arv || 0);
+  buyPct = Math.max(0, buyPct || 0);
+  sellPct = Math.max(0, sellPct || 0);
+
   const buyClosingAmount = Math.round(purchasePrice * (buyPct / 100));
   const sellClosingAmount = Math.round(arv * (sellPct / 100));
   return {
@@ -126,6 +143,13 @@ export function calculateHoldingCosts(
   monthlyOther: number,
   holdingMonths: number
 ): HoldingCosts {
+  // Edge case guards
+  monthlyPropertyTax = Math.max(0, monthlyPropertyTax || 0);
+  monthlyInsurance = Math.max(0, monthlyInsurance || 0);
+  monthlyUtilities = Math.max(0, monthlyUtilities || 0);
+  monthlyOther = Math.max(0, monthlyOther || 0);
+  holdingMonths = Math.max(0, holdingMonths || 0);
+
   const monthlyTotal = monthlyPropertyTax + monthlyInsurance + monthlyUtilities + monthlyOther;
   return {
     monthlyPropertyTax,
@@ -394,8 +418,8 @@ function getDealVerdict(
     reasons.push(`70% Rule MAO is negative (${formatCurrency(maxAllowableOffer)}) — rehab costs exceed 70% of ARV.`);
   }
 
-  // Check rehab-to-ARV ratio
-  const rehabToArv = (rehabCost / arv) * 100;
+  // Check rehab-to-ARV ratio — guard against division by zero
+  const rehabToArv = arv > 0 ? (rehabCost / arv) * 100 : 0;
   if (rehabToArv > 30) {
     reasons.push(`Rehab cost is ${rehabToArv.toFixed(0)}% of ARV — high rehab risk.`);
   } else if (rehabToArv > 20) {
@@ -468,26 +492,30 @@ export function calculateProfitability(
     cashOutOfPocket = purchasePrice + rehabCost + closing.buyClosingAmount;
   }
 
+  // Edge case: prevent division by zero and NaN
   const roi = totalInvestment > 0 ? (netProfit / totalInvestment) * 100 : 0;
   const cashOnCash = cashOutOfPocket > 0 ? (netProfit / cashOutOfPocket) * 100 : 0;
 
   // 70% Rule: MAO = ARV × 0.70 − Rehab Cost
-  const maxAllowableOffer = Math.round(arv * 0.7 - rehabCost);
+  // Edge case: if ARV is 0, MAO is meaningless
+  const maxAllowableOffer = arv > 0 ? Math.round(arv * 0.7 - rehabCost) : 0;
 
   // Deal Score: 0-100
+  // Edge case: score is 0 when no profit or no ARV
   let dealScore = 0;
   if (netProfit > 0 && arv > 0) {
-    const roiScore = Math.min(roi / 30 * 50, 50);
+    const roiScore = Math.min(Math.max(0, roi) / 30 * 50, 50);
     // Guard against negative or zero MAO
     const maoScore = maxAllowableOffer > 0
-      ? (purchasePrice <= maxAllowableOffer ? 30 : Math.max(0, 30 - ((purchasePrice - maxAllowableOffer) / maxAllowableOffer) * 100))
+      ? (purchasePrice <= maxAllowableOffer ? 30 : Math.max(0, 30 - ((purchasePrice - maxAllowableOffer) / Math.max(maxAllowableOffer, 1)) * 100))
       : 0;
-    const profitScore = Math.min(netProfit / 100000 * 20, 20);
-    dealScore = Math.round(Math.min(roiScore + maoScore + profitScore, 100));
+    const profitScore = Math.min(Math.max(0, netProfit) / 100000 * 20, 20);
+    dealScore = Math.round(Math.max(0, Math.min(roiScore + maoScore + profitScore, 100)));
   }
 
   // Recommended Max Purchase Price for target ROI
-  const recommendedMaxPrice = arv > 0
+  // Edge case: only calculate when ARV is positive and meaningful
+  const recommendedMaxPrice = arv > 0 && rehabCost >= 0
     ? calculateMaxPurchasePrice(
         arv, rehabCost, holding.totalHoldingCosts,
         closing.sellClosingPct, closing.buyClosingPct,

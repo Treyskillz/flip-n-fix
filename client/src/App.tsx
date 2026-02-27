@@ -25,6 +25,7 @@ const Checklists = lazy(() => import("./pages/Checklists"));
 const CredibilityPackets = lazy(() => import("./pages/CredibilityPackets"));
 const StateGuide = lazy(() => import("./pages/StateGuide"));
 const Contractors = lazy(() => import("./pages/Contractors"));
+const QuickCheck = lazy(() => import("./pages/QuickCheck"));
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -44,6 +45,7 @@ function Router() {
           <Route path={"/manual"} component={Manual} />
           <Route path={'/listings'} component={Listings} />
           <Route path={'/pricing'} component={Pricing} />
+          <Route path={'/quick-check'} component={QuickCheck} />
           <Route path={"/checklists"} component={Checklists} />
           <Route path={"/credibility-packets"} component={CredibilityPackets} />
           <Route path={"/state-guide"} component={StateGuide} />

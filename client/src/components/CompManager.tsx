@@ -6,8 +6,10 @@ import { CurrencyInput } from './CurrencyInput';
 import { Badge } from '@/components/ui/badge';
 import type { CompProperty, CompQualityScore } from '@/lib/types';
 import { formatCurrency, scoreComp } from '@/lib/calculations';
-import { BarChart3, Plus, Trash2, TrendingUp, AlertTriangle, Info, ShieldCheck, ShieldAlert, DollarSign, CheckCircle2, XCircle } from 'lucide-react';
+import { BarChart3, Plus, Trash2, TrendingUp, AlertTriangle, Info, ShieldCheck, ShieldAlert, DollarSign, CheckCircle2, XCircle, Sparkles, Loader2 } from 'lucide-react';
 import { useState, useCallback, useMemo } from 'react';
+import { trpc } from '@/lib/trpc';
+import { toast } from 'sonner';
 
 interface Props {
   comps: CompProperty[];
@@ -23,6 +25,13 @@ interface Props {
   subjectBaths: number;
   purchasePrice: number;
   rehabCost: number;
+  // Subject property info for AI comp search
+  subjectAddress?: string;
+  subjectCity?: string;
+  subjectState?: string;
+  subjectZip?: string;
+  subjectYearBuilt?: number;
+  subjectPropertyType?: string;
 }
 
 const emptyComp = {
@@ -52,10 +61,65 @@ export function CompManager({
   comps, addComp, removeComp, costBasis, compBasedArv,
   arvOverride, setArvOverride, effectiveArv,
   subjectSqft, subjectBeds, subjectBaths, purchasePrice, rehabCost,
+  subjectAddress, subjectCity, subjectState, subjectZip, subjectYearBuilt, subjectPropertyType,
 }: Props) {
   const [newComp, setNewComp] = useState(emptyComp);
   const [showForm, setShowForm] = useState(false);
   const [showGuidance, setShowGuidance] = useState(false);
+  const [aiResults, setAiResults] = useState<any[] | null>(null);
+  const [aiMarketNotes, setAiMarketNotes] = useState('');
+  const [aiDisclaimer, setAiDisclaimer] = useState('');
+
+  const findCompsMutation = trpc.compSearch.findComps.useMutation({
+    onSuccess: (data) => {
+      setAiResults(data.comps);
+      setAiMarketNotes(data.marketNotes);
+      setAiDisclaimer(data.disclaimer);
+      toast.success(`Found ${data.comps.length} comparable sales. Review and add the ones you want.`);
+    },
+    onError: (err) => {
+      toast.error(`Failed to find comps: ${err.message}`);
+    },
+  });
+
+  const handleAiSearch = useCallback(() => {
+    if (!subjectAddress || !subjectCity || !subjectState) {
+      toast.error('Enter the subject property address, city, and state first.');
+      return;
+    }
+    findCompsMutation.mutate({
+      address: subjectAddress,
+      city: subjectCity,
+      state: subjectState,
+      zip: subjectZip,
+      sqft: subjectSqft,
+      beds: subjectBeds,
+      baths: subjectBaths,
+      yearBuilt: subjectYearBuilt,
+      propertyType: subjectPropertyType,
+    });
+  }, [subjectAddress, subjectCity, subjectState, subjectZip, subjectSqft, subjectBeds, subjectBaths, subjectYearBuilt, subjectPropertyType, findCompsMutation]);
+
+  const handleAddAiComp = useCallback((aiComp: any) => {
+    addComp({
+      address: aiComp.address,
+      salePrice: aiComp.salePrice,
+      saleDate: aiComp.saleDate,
+      daysOnMarket: aiComp.daysOnMarket || 0,
+      sqft: aiComp.sqft,
+      beds: aiComp.beds,
+      baths: aiComp.baths,
+      lotSizeSqft: 0,
+      yearBuilt: aiComp.yearBuilt || 0,
+      neighborhood: aiComp.neighborhood || '',
+      notableFeatures: '',
+      source: 'auto' as const,
+      condition: (aiComp.condition === 'renovated' || aiComp.condition === 'updated') ? aiComp.condition : 'renovated',
+    });
+    // Remove from AI results
+    setAiResults(prev => prev ? prev.filter(c => c.address !== aiComp.address) : null);
+    toast.success(`Added: ${aiComp.address}`);
+  }, [addComp]);
 
   const handleAdd = useCallback(() => {
     if (newComp.address && newComp.salePrice > 0) {
@@ -124,6 +188,19 @@ export function CompManager({
             Comparable Sales &amp; ARV
           </CardTitle>
           <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="default"
+              onClick={handleAiSearch}
+              disabled={findCompsMutation.isPending}
+              className="gap-1.5 bg-[oklch(0.5_0.12_250)] hover:bg-[oklch(0.45_0.12_250)] text-white"
+            >
+              {findCompsMutation.isPending ? (
+                <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Searching...</>
+              ) : (
+                <><Sparkles className="w-3.5 h-3.5" /> AI Comp Search</>
+              )}
+            </Button>
             <Button size="sm" variant="ghost" onClick={() => setShowGuidance(!showGuidance)} className="text-xs">
               <Info className="w-3.5 h-3.5 mr-1" /> How to Find Comps
             </Button>
@@ -302,6 +379,73 @@ export function CompManager({
             </div>
           </div>
         </div>
+
+        {/* AI Comp Search Results */}
+        {aiResults && aiResults.length > 0 && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-semibold flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[oklch(0.5_0.12_250)]" />
+                AI-Suggested Comps
+              </h4>
+              <Button size="sm" variant="ghost" className="text-xs" onClick={() => setAiResults(null)}>
+                Dismiss
+              </Button>
+            </div>
+            <div className="p-2.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-xs text-amber-700 dark:text-amber-400">
+              <strong>Important:</strong> {aiDisclaimer}
+            </div>
+            {aiMarketNotes && (
+              <p className="text-xs text-muted-foreground italic">{aiMarketNotes}</p>
+            )}
+            <div className="space-y-2">
+              {aiResults.map((aiComp, idx) => (
+                <div key={idx} className="p-3 rounded-lg border border-dashed border-[oklch(0.5_0.12_250)]/40 bg-[oklch(0.5_0.12_250)]/5">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-medium text-sm truncate">{aiComp.address}</span>
+                        <Badge variant="outline" className="text-[10px] bg-[oklch(0.5_0.12_250)]/10 text-[oklch(0.5_0.12_250)] border-[oklch(0.5_0.12_250)]/30">
+                          AI Suggested
+                        </Badge>
+                        <Badge variant="outline" className="text-xs bg-green-500/10 text-green-600 border-green-500/30">
+                          {aiComp.condition === 'renovated' ? '✓ Renovated' : '✓ Updated'}
+                        </Badge>
+                      </div>
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                        <span className="font-semibold text-foreground tabular-nums">{formatCurrency(aiComp.salePrice)}</span>
+                        <span>{aiComp.beds}bd / {aiComp.baths}ba</span>
+                        <span>{aiComp.sqft?.toLocaleString()} sqft</span>
+                        <span className="tabular-nums">${aiComp.sqft > 0 ? Math.round(aiComp.salePrice / aiComp.sqft) : 0}/sqft</span>
+                        {aiComp.saleDate && <span>Sold: {aiComp.saleDate}</span>}
+                        {aiComp.daysOnMarket > 0 && <span>{aiComp.daysOnMarket} DOM</span>}
+                        {aiComp.neighborhood && <span>{aiComp.neighborhood}</span>}
+                      </div>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="shrink-0 gap-1 text-xs border-[oklch(0.5_0.12_250)]/40 text-[oklch(0.5_0.12_250)] hover:bg-[oklch(0.5_0.12_250)]/10"
+                      onClick={() => handleAddAiComp(aiComp)}
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Add
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              className="w-full gap-1.5"
+              onClick={() => {
+                aiResults.forEach(c => handleAddAiComp(c));
+              }}
+            >
+              <Plus className="w-3.5 h-3.5" /> Add All {aiResults.length} Comps
+            </Button>
+          </div>
+        )}
 
         {/* Comp List with Quality Scores */}
         {comps.length > 0 && (

@@ -53,7 +53,7 @@
 - [x] Verify all profit calculations match industry-standard fix-and-flip formulas
 - [x] CRITICAL: Full audit of all Deal Analyzer calculations for paid product accuracy
 - [x] Fix ARV methodology — add clear comp guidance, validation, and warnings
-- [ ] Fix all calculation edge cases (division by zero, negative values, missing data)
+- [x] Fix all calculation edge cases (division by zero, negative values, missing data)
 - [x] Fix CompManager UI — add comp quality guidance and after-repair comp labels
 - [x] Fix Profit Panel — ensure all numbers are accurate and clearly labeled
 - [x] Add professional disclaimers and safeguards for paid subscription product
@@ -67,7 +67,7 @@
 - [x] Add comp validation warnings (missing sqft, stale dates, extreme $/sqft outliers)
 - [x] Add "How to Find Good Comps" guidance panel in CompManager
 - [x] Add after-repair comp labeling and guidance
-- [ ] Fix deal score edge cases (negative MAO, zero ARV)
+- [x] Fix deal score edge cases (negative MAO, zero ARV)
 - [x] Strengthen disclaimers for paid subscription product
 - [x] CRITICAL: Implement Cost Approach ARV (ARV = Purchase Price + Rehab Budget) as primary method
 - [x] Update calculations.ts to compute Cost Approach ARV from purchase + rehab
@@ -99,3 +99,13 @@
 - [x] Update InvestorReport PDF with full financing details
 - [x] Update Manual with gap funder and PML documentation
 - [x] Test all financing scenarios with real deal examples
+- [x] Research and integrate real estate comp API for auto-search by address (AI-powered via LLM)
+- [x] Build comp auto-search backend tRPC procedure
+- [x] Build comp auto-search UI in CompManager (search by address, auto-fill comp data)
+- [x] Build Quick Deal Check page — simplified one-screen go/no-go verdict
+- [x] Add Quick Deal Check route to App.tsx and navigation
+- [x] Fix edge case: division by zero when ARV is 0
+- [x] Fix edge case: negative values in purchase price, rehab, or ARV
+- [x] Fix edge case: zero ARV in deal scoring and 70% rule
+- [x] Fix edge case: missing data gracefully handled with fallback values
+- [x] Add input validation and error boundaries throughout calculations
