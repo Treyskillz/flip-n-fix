@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ALL_CONTRACTS, renderContract } from '@/lib/contracts';
 import type { ContractTemplate } from '@/lib/contracts';
-import { FileText, ChevronDown, ChevronRight, Copy, Check, AlertTriangle } from 'lucide-react';
-import { useState, useCallback, useMemo } from 'react';
+import { FileText, ChevronDown, ChevronRight, Copy, Check, AlertTriangle, Download } from 'lucide-react';
+import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
+import { printDocument } from '@/lib/printDocument';
 
 export default function Contracts() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -17,6 +18,43 @@ export default function Contracts() {
       setCopiedId(id);
       toast.success('Contract template copied to clipboard!');
       setTimeout(() => setCopiedId(null), 2000);
+    });
+  }, []);
+
+  const handlePrint = useCallback((contract: ContractTemplate, renderedText: string) => {
+    // Split the contract into logical sections by double newlines
+    const paragraphs = renderedText.split(/\n\n+/).filter(p => p.trim());
+    
+    // Group into sections: first paragraph is the preamble, rest are clauses
+    const sections: { heading: string; body: string }[] = [];
+    
+    paragraphs.forEach((para, i) => {
+      if (i === 0) {
+        sections.push({ heading: 'Agreement', body: para.trim() });
+      } else {
+        // Check if the paragraph starts with a numbered clause or section header
+        const headerMatch = para.match(/^(\d+\.\s+[A-Z][A-Z\s/&]+)/m);
+        if (headerMatch) {
+          const heading = headerMatch[1].replace(/^\d+\.\s+/, '').trim();
+          const body = para.replace(headerMatch[0], '').trim();
+          sections.push({ heading: heading || `Section ${i}`, body: body || para.trim() });
+        } else {
+          sections.push({ heading: '', body: para.trim() });
+        }
+      }
+    });
+
+    // If we couldn't parse sections well, just use the full text as one section
+    if (sections.length <= 1) {
+      sections.length = 0;
+      sections.push({ heading: contract.title, body: renderedText });
+    }
+
+    printDocument({
+      title: contract.title,
+      subtitle: contract.useCase,
+      sections,
+      footer: `LEGAL DISCLAIMER: This contract template is provided for educational and informational purposes only. It is NOT legal advice. Real estate laws vary by state and locality. You MUST have a licensed real estate attorney in your state review and customize this contract before use. Freedom One System of Real Estate Investing assumes no liability for any consequences arising from the use of this template.`,
     });
   }, []);
 
@@ -57,7 +95,6 @@ export default function Contracts() {
           {ALL_CONTRACTS.map((contract: ContractTemplate) => {
             const isExpanded = expandedId === contract.id;
             const isCopied = copiedId === contract.id;
-            // Render with placeholder values
             const placeholderValues: Record<string, string> = {};
             contract.fields.forEach(f => {
               placeholderValues[f.id] = `[${f.label}]`;
@@ -103,15 +140,25 @@ export default function Contracts() {
                         <pre className="p-4 rounded-lg bg-secondary/60 text-sm whitespace-pre-wrap font-sans leading-relaxed max-h-[600px] overflow-y-auto">
                           {renderedText}
                         </pre>
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          className="absolute top-2 right-2 gap-1.5"
-                          onClick={(e) => { e.stopPropagation(); handleCopy(contract.id, renderedText); }}
-                        >
-                          {isCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                          {isCopied ? 'Copied!' : 'Copy'}
-                        </Button>
+                        <div className="absolute top-2 right-2 flex gap-1.5">
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            className="gap-1.5"
+                            onClick={(e) => { e.stopPropagation(); handlePrint(contract, renderedText); }}
+                          >
+                            <Download className="w-3.5 h-3.5" /> Print
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            className="gap-1.5"
+                            onClick={(e) => { e.stopPropagation(); handleCopy(contract.id, renderedText); }}
+                          >
+                            {isCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                            {isCopied ? 'Copied!' : 'Copy'}
+                          </Button>
+                        </div>
                       </div>
                     </CardContent>
                   </CollapsibleContent>

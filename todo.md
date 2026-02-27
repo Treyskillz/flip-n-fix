@@ -170,3 +170,7 @@
 - [x] Add bulk actions toolbar to Saved Deals page
 - [x] Implement multi-select with checkboxes on deal cards and table rows
 - [x] Add bulk status change, bulk delete, and CSV export actions
+- [x] Fix credibility packet documents to render as full printable documents
+- [x] Remove copy-paste icons and disjointed layout from print output
+- [x] Add proper print CSS with page breaks, margins, and professional formatting
+- [x] Ensure each document prints as a cohesive multi-page document

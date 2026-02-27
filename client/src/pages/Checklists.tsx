@@ -1,4 +1,5 @@
 import { ClipboardList, Download, CheckSquare, Home, Wrench, Building2, DollarSign, Search, FileText } from 'lucide-react';
+import { printDocument } from '@/lib/printDocument';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
@@ -194,7 +195,16 @@ function ChecklistDetail({ checklist, onBack }: { checklist: Checklist; onBack: 
   };
 
   const handlePrint = () => {
-    window.print();
+    const sections = checklist.items.map((item, i) => ({
+      heading: `${i + 1}. ${item.text}`,
+      body: item.detail || '',
+    }));
+    printDocument({
+      title: checklist.title,
+      subtitle: checklist.description,
+      sections,
+      footer: 'Checklist from the Freedom One Real Estate Investment System. Use this as a guide — always consult with licensed professionals for your specific situation.',
+    });
   };
 
   return (

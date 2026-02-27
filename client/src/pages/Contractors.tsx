@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
+import { printDocument } from '@/lib/printDocument';
 
 /* ─── Types ─── */
 interface Contractor {
@@ -1094,12 +1095,18 @@ function DocumentViewer({ doc }: { doc: { title: string; icon: any; description:
   };
 
   const handlePrint = () => {
-    const w = window.open('', '_blank');
-    if (w) {
-      w.document.write(`<html><head><title>${doc.title}</title><style>body{font-family:Courier New,monospace;padding:40px;font-size:12px;line-height:1.6;white-space:pre-wrap;max-width:800px;margin:0 auto;}h1{font-family:Arial,sans-serif;font-size:18px;border-bottom:2px solid #C41E3A;padding-bottom:8px;}</style></head><body><h1>${doc.title}</h1>${doc.content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</body></html>`);
-      w.document.close();
-      w.print();
-    }
+    // Split content into logical sections by double newlines
+    const paragraphs = doc.content.split(/\n\n+/).filter((p: string) => p.trim());
+    const sections = paragraphs.map((para: string, i: number) => ({
+      heading: i === 0 ? doc.title : '',
+      body: para.trim(),
+    }));
+    printDocument({
+      title: doc.title,
+      subtitle: doc.description,
+      sections,
+      footer: 'Document from the Freedom One Real Estate Investment System. Customize all bracketed fields with your business information. This is a template \u2014 not legal or financial advice.',
+    });
   };
 
   return (

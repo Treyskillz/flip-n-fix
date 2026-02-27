@@ -1,7 +1,8 @@
-import { Award, Download, Users, Briefcase, HandshakeIcon, Banknote, Home as HomeIcon, UserCheck, FileText, Copy, Check } from 'lucide-react';
+import { Award, Users, Briefcase, HandshakeIcon, Banknote, Home as HomeIcon, UserCheck, FileText, Download } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { printDocument } from '@/lib/printDocument';
 
 interface PacketSection {
   title: string;
@@ -232,30 +233,17 @@ function PacketCard({ packet, onSelect }: { packet: CredibilityPacket; onSelect:
   );
 }
 
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-  const handleCopy = () => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-  return (
-    <button
-      onClick={handleCopy}
-      className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
-    >
-      {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-      {copied ? 'Copied!' : 'Copy'}
-    </button>
-  );
-}
-
 function PacketDetail({ packet, onBack }: { packet: CredibilityPacket; onBack: () => void }) {
   const Icon = packet.icon;
 
-  const handlePrint = () => window.print();
-
-  const allContent = packet.sections.map(s => `## ${s.title}\n\n${s.content}`).join('\n\n---\n\n');
+  const handlePrint = () => {
+    printDocument({
+      title: packet.title,
+      subtitle: packet.audience,
+      sections: packet.sections.map((s) => ({ heading: s.title, body: s.content })),
+      footer: `Prepared using the Freedom One Real Estate Investment System. All bracketed fields [like this] should be customized with your actual business information before distributing. This document is a template — not legal, financial, or investment advice.`,
+    });
+  };
 
   return (
     <div>
@@ -273,28 +261,20 @@ function PacketDetail({ packet, onBack }: { packet: CredibilityPacket; onBack: (
             <p className="text-sm text-muted-foreground">{packet.audience}</p>
           </div>
         </div>
-        <div className="flex gap-2 shrink-0">
-          <CopyButton text={allContent} />
-          <Button variant="outline" size="sm" onClick={handlePrint} className="gap-1.5">
-            <Download className="w-3.5 h-3.5" /> Print / Save PDF
-          </Button>
-        </div>
+        <Button variant="outline" size="sm" onClick={handlePrint} className="gap-1.5 shrink-0">
+          <Download className="w-3.5 h-3.5" /> Print / Save PDF
+        </Button>
       </div>
 
-      {/* Sections */}
-      <div className="space-y-4 mb-8">
+      {/* Document Preview */}
+      <div className="space-y-6 mb-8">
         {packet.sections.map((section, i) => (
-          <Card key={i}>
-            <CardContent className="p-5">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-bold text-base">{section.title}</h3>
-                <CopyButton text={section.content} />
-              </div>
-              <div className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-                {section.content}
-              </div>
-            </CardContent>
-          </Card>
+          <div key={i}>
+            <h3 className="font-bold text-lg mb-2 text-[oklch(0.48_0.20_18)]">{section.title}</h3>
+            <div className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+              {section.content}
+            </div>
+          </div>
         ))}
       </div>
 
@@ -329,8 +309,8 @@ export default function CredibilityPackets() {
           <Award className="w-10 h-10 mx-auto mb-4 text-[oklch(0.65_0.18_18)]" />
           <h1 className="text-3xl lg:text-4xl font-bold tracking-tight mb-3">Business Credibility Packets</h1>
           <p className="text-[oklch(0.6_0_0)] max-w-lg mx-auto">
-            Professional, editable credibility packets for every audience — sellers, buyers, agents,
-            contractors, and private lenders. Copy, customize, and print.
+            Professional credibility packets for every audience — sellers, buyers, agents,
+            contractors, and private lenders. Customize and print as full documents.
           </p>
         </div>
       </section>
@@ -343,7 +323,7 @@ export default function CredibilityPackets() {
             <div className="text-center mb-8">
               <h2 className="text-2xl font-bold tracking-tight mb-2">Choose a Packet</h2>
               <p className="text-muted-foreground text-sm">
-                Each packet is fully customizable. Click to view, copy sections, or print the entire packet.
+                Each packet is fully customizable. Click to preview, then print as a professional full-page document.
               </p>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">

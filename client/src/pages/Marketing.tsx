@@ -3,9 +3,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { MARKETING_TEMPLATES, TEMPLATE_CATEGORIES } from '@/lib/marketing';
-import { Megaphone, ChevronDown, ChevronRight, Copy, Check, Lightbulb } from 'lucide-react';
+import { Megaphone, ChevronDown, ChevronRight, Copy, Check, Lightbulb, Download } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
+import { printDocument } from '@/lib/printDocument';
 
 export default function Marketing() {
   const [activeCategory, setActiveCategory] = useState<string>('letter');
@@ -21,6 +22,22 @@ export default function Marketing() {
       setCopiedId(id);
       toast.success('Template copied to clipboard!');
       setTimeout(() => setCopiedId(null), 2000);
+    });
+  }, []);
+
+  const handlePrint = useCallback((template: typeof MARKETING_TEMPLATES[0]) => {
+    // Split the body into logical paragraphs as sections
+    const paragraphs = template.body.split(/\n\n+/).filter(p => p.trim());
+    const sections = paragraphs.map((para, i) => ({
+      heading: i === 0 ? template.title : '',
+      body: para.trim(),
+    }));
+
+    printDocument({
+      title: template.title,
+      subtitle: `${template.category.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())} — Target: ${template.target}`,
+      sections,
+      footer: `Marketing template from the Freedom One Real Estate Investment System. Customize all bracketed fields with your business information before use. This is a template — not legal or financial advice.`,
     });
   }, []);
 
@@ -93,15 +110,25 @@ export default function Marketing() {
                         <pre className="p-4 rounded-lg bg-secondary/60 text-sm whitespace-pre-wrap font-sans leading-relaxed max-h-[500px] overflow-y-auto">
                           {template.body}
                         </pre>
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          className="absolute top-2 right-2 gap-1.5"
-                          onClick={(e) => { e.stopPropagation(); handleCopy(template.id, template.body); }}
-                        >
-                          {isCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                          {isCopied ? 'Copied!' : 'Copy'}
-                        </Button>
+                        <div className="absolute top-2 right-2 flex gap-1.5">
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            className="gap-1.5"
+                            onClick={(e) => { e.stopPropagation(); handlePrint(template); }}
+                          >
+                            <Download className="w-3.5 h-3.5" /> Print
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            className="gap-1.5"
+                            onClick={(e) => { e.stopPropagation(); handleCopy(template.id, template.body); }}
+                          >
+                            {isCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                            {isCopied ? 'Copied!' : 'Copy'}
+                          </Button>
+                        </div>
                       </div>
 
                       {/* Tips */}
