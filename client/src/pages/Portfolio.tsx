@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
 import { trpc } from '@/lib/trpc';
 import { formatCurrency } from '@/lib/calculations';
 import { downloadPortfolioPdf } from '@/lib/portfolioPdf';
@@ -11,8 +13,38 @@ import { toast } from 'sonner';
 import {
   DollarSign, TrendingUp, BarChart3, PieChart, Building2,
   ArrowRight, Calculator, Target, Award, CheckCircle2,
-  Clock, XCircle, FileText, Archive, Star, Loader2, Download
+  Clock, XCircle, FileText, Archive, Star, Loader2, Download,
+  CalendarDays
 } from 'lucide-react';
+
+type DateRange = 'all' | '7d' | '30d' | '90d' | 'quarter' | 'year' | 'custom';
+
+const DATE_RANGE_LABELS: Record<DateRange, string> = {
+  all: 'All Time',
+  '7d': 'Last 7 Days',
+  '30d': 'Last 30 Days',
+  '90d': 'Last 90 Days',
+  quarter: 'This Quarter',
+  year: 'This Year',
+  custom: 'Custom Range',
+};
+
+function getDateRangeBounds(range: DateRange, customStart?: Date, customEnd?: Date): { start: Date | null; end: Date | null } {
+  const now = new Date();
+  switch (range) {
+    case 'all': return { start: null, end: null };
+    case '7d': return { start: new Date(now.getTime() - 7 * 86400000), end: now };
+    case '30d': return { start: new Date(now.getTime() - 30 * 86400000), end: now };
+    case '90d': return { start: new Date(now.getTime() - 90 * 86400000), end: now };
+    case 'quarter': {
+      const qMonth = Math.floor(now.getMonth() / 3) * 3;
+      return { start: new Date(now.getFullYear(), qMonth, 1), end: now };
+    }
+    case 'year': return { start: new Date(now.getFullYear(), 0, 1), end: now };
+    case 'custom': return { start: customStart || null, end: customEnd || null };
+    default: return { start: null, end: null };
+  }
+}
 
 type DealStatus = 'active' | 'under_contract' | 'closed' | 'passed' | 'archived';
 
@@ -121,10 +153,47 @@ export default function Portfolio() {
   const { data: portfolio, isLoading } = trpc.deals.portfolio.useQuery();
 
   const [sortBy, setSortBy] = useState<'roi' | 'netProfit' | 'dealScore' | 'purchasePrice'>('roi');
+  const [dateRange, setDateRange] = useState<DateRange>('all');
+  const [customStart, setCustomStart] = useState<Date | undefined>(undefined);
+  const [customEnd, setCustomEnd] = useState<Date | undefined>(undefined);
+
+  // Filter deals by date range
+  const filteredDeals = useMemo(() => {
+    if (!portfolio?.deals) return [];
+    const { start, end } = getDateRangeBounds(dateRange, customStart, customEnd);
+    if (!start && !end) return portfolio.deals;
+    return portfolio.deals.filter(d => {
+      const dealDate = new Date(d.createdAt);
+      if (start && dealDate < start) return false;
+      if (end && dealDate > end) return false;
+      return true;
+    });
+  }, [portfolio?.deals, dateRange, customStart, customEnd]);
+
+  // Recompute aggregate metrics from filtered deals
+  const filteredMetrics = useMemo(() => {
+    const deals = filteredDeals;
+    const totalDeals = deals.length;
+    const activeDeals = deals.filter(d => d.status === 'active').length;
+    const closedDeals = deals.filter(d => d.status === 'closed').length;
+    const underContractDeals = deals.filter(d => d.status === 'under_contract').length;
+    const passedDeals = deals.filter(d => d.status === 'passed').length;
+    const totalInvested = deals.reduce((s, d) => s + d.totalInvestment, 0);
+    const totalProfit = deals.reduce((s, d) => s + d.netProfit, 0);
+    const avgRoi = totalDeals > 0 ? deals.reduce((s, d) => s + d.roi, 0) / totalDeals : 0;
+    const avgDealScore = totalDeals > 0 ? deals.reduce((s, d) => s + (d.dealScore || 0), 0) / totalDeals : 0;
+    const profitableCount = deals.filter(d => d.netProfit > 0).length;
+    const totalArv = deals.reduce((s, d) => s + d.arv, 0);
+    const totalRehabCost = deals.reduce((s, d) => s + d.rehabCost, 0);
+    return {
+      totalDeals, activeDeals, closedDeals, underContractDeals, passedDeals,
+      totalInvested, totalProfit, avgRoi, avgDealScore, profitableCount,
+      totalArv, totalRehabCost, deals,
+    };
+  }, [filteredDeals]);
 
   const sortedDeals = useMemo(() => {
-    if (!portfolio?.deals) return [];
-    return [...portfolio.deals].sort((a, b) => {
+    return [...filteredDeals].sort((a, b) => {
       switch (sortBy) {
         case 'roi': return b.roi - a.roi;
         case 'netProfit': return b.netProfit - a.netProfit;
@@ -133,12 +202,11 @@ export default function Portfolio() {
         default: return 0;
       }
     });
-  }, [portfolio?.deals, sortBy]);
+  }, [filteredDeals, sortBy]);
 
   const profitByStatus = useMemo(() => {
-    if (!portfolio?.deals) return [];
     const grouped: Record<string, number> = {};
-    portfolio.deals.forEach(d => {
+    filteredDeals.forEach(d => {
       const status = d.status || 'active';
       grouped[status] = (grouped[status] || 0) + d.netProfit;
     });
@@ -147,10 +215,9 @@ export default function Portfolio() {
       value: profit,
       color: STATUS_CONFIG[status as DealStatus]?.chartColor || '#6b7280',
     }));
-  }, [portfolio?.deals]);
+  }, [filteredDeals]);
 
   const roiDistribution = useMemo(() => {
-    if (!portfolio?.deals) return [];
     return sortedDeals.slice(0, 10).map(d => ({
       name: d.address.length > 15 ? d.address.substring(0, 15) + '...' : d.address,
       value: d.roi,
@@ -159,14 +226,16 @@ export default function Portfolio() {
   }, [sortedDeals]);
 
   const statusSegments = useMemo(() => {
-    if (!portfolio) return [];
     return [
-      { label: 'Active', value: portfolio.activeDeals, color: '#3b82f6' },
-      { label: 'Under Contract', value: portfolio.underContractDeals, color: '#f59e0b' },
-      { label: 'Closed', value: portfolio.closedDeals, color: '#22c55e' },
-      { label: 'Passed', value: portfolio.passedDeals, color: '#ef4444' },
+      { label: 'Active', value: filteredMetrics.activeDeals, color: '#3b82f6' },
+      { label: 'Under Contract', value: filteredMetrics.underContractDeals, color: '#f59e0b' },
+      { label: 'Closed', value: filteredMetrics.closedDeals, color: '#22c55e' },
+      { label: 'Passed', value: filteredMetrics.passedDeals, color: '#ef4444' },
     ];
-  }, [portfolio]);
+  }, [filteredMetrics]);
+
+  const isFiltered = dateRange !== 'all';
+  const fm = filteredMetrics; // shorthand
 
   if (isLoading) {
     return (
@@ -198,40 +267,117 @@ export default function Portfolio() {
   return (
     <div className="container py-8 max-w-7xl space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            <BarChart3 className="w-6 h-6 text-[oklch(0.50_0.18_25)]" />
-            Portfolio Dashboard
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Aggregate performance across {portfolio.totalDeals} saved deal{portfolio.totalDeals !== 1 ? 's' : ''}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-1.5"
-            onClick={() => {
-              if (portfolio) {
-                downloadPortfolioPdf(portfolio);
-                toast.success('Portfolio PDF opened — use your browser\'s Print dialog to save as PDF.');
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+              <BarChart3 className="w-6 h-6 text-[oklch(0.50_0.18_25)]" />
+              Portfolio Dashboard
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              {isFiltered
+                ? `Showing ${fm.totalDeals} of ${portfolio.totalDeals} deals (${DATE_RANGE_LABELS[dateRange]})`
+                : `Aggregate performance across ${portfolio.totalDeals} saved deal${portfolio.totalDeals !== 1 ? 's' : ''}`
               }
-            }}
-          >
-            <Download className="w-3.5 h-3.5" /> Download PDF
-          </Button>
-          <Link href="/saved-deals">
-            <Button variant="outline" size="sm" className="gap-1.5">
-              <Building2 className="w-3.5 h-3.5" /> View All Deals
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              onClick={() => {
+                if (portfolio) {
+                  downloadPortfolioPdf(portfolio);
+                  toast.success('Portfolio PDF opened — use your browser\'s Print dialog to save as PDF.');
+                }
+              }}
+            >
+              <Download className="w-3.5 h-3.5" /> Download PDF
             </Button>
-          </Link>
-          <Link href="/analyzer">
-            <Button size="sm" className="gap-1.5">
-              <Calculator className="w-3.5 h-3.5" /> New Analysis
+            <Link href="/saved-deals">
+              <Button variant="outline" size="sm" className="gap-1.5">
+                <Building2 className="w-3.5 h-3.5" /> View All Deals
+              </Button>
+            </Link>
+            <Link href="/analyzer">
+              <Button size="sm" className="gap-1.5">
+                <Calculator className="w-3.5 h-3.5" /> New Analysis
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Date Range Filter */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <CalendarDays className="w-4 h-4 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground font-medium">Time Period:</span>
+          <div className="flex gap-1 flex-wrap">
+            {(Object.keys(DATE_RANGE_LABELS) as DateRange[]).filter(r => r !== 'custom').map(range => (
+              <Button
+                key={range}
+                variant={dateRange === range ? 'default' : 'outline'}
+                size="sm"
+                className="h-7 text-xs px-2.5"
+                onClick={() => setDateRange(range)}
+              >
+                {DATE_RANGE_LABELS[range]}
+              </Button>
+            ))}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={dateRange === 'custom' ? 'default' : 'outline'}
+                  size="sm"
+                  className="h-7 text-xs px-2.5 gap-1"
+                >
+                  <CalendarDays className="w-3 h-3" />
+                  {dateRange === 'custom' && customStart && customEnd
+                    ? `${customStart.toLocaleDateString()} - ${customEnd.toLocaleDateString()}`
+                    : 'Custom'
+                  }
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-3" align="start">
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-xs font-semibold mb-1">Start Date</p>
+                    <Calendar
+                      mode="single"
+                      selected={customStart}
+                      onSelect={(d) => {
+                        setCustomStart(d);
+                        if (d) setDateRange('custom');
+                      }}
+                      disabled={(date) => date > new Date()}
+                    />
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold mb-1">End Date</p>
+                    <Calendar
+                      mode="single"
+                      selected={customEnd}
+                      onSelect={(d) => {
+                        setCustomEnd(d);
+                        if (d) setDateRange('custom');
+                      }}
+                      disabled={(date) => date > new Date() || (customStart ? date < customStart : false)}
+                    />
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
+          {isFiltered && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 text-xs text-muted-foreground"
+              onClick={() => { setDateRange('all'); setCustomStart(undefined); setCustomEnd(undefined); }}
+            >
+              Clear filter
             </Button>
-          </Link>
+          )}
         </div>
       </div>
 
@@ -241,22 +387,22 @@ export default function Portfolio() {
           <CardContent className="pt-4 pb-4 text-center">
             <Building2 className="w-5 h-5 mx-auto text-blue-500 mb-1" />
             <p className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Total Deals</p>
-            <p className="text-2xl font-bold tabular-nums">{portfolio.totalDeals}</p>
+            <p className="text-2xl font-bold tabular-nums">{fm.totalDeals}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4 pb-4 text-center">
             <DollarSign className="w-5 h-5 mx-auto text-[oklch(0.50_0.18_25)] mb-1" />
             <p className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Total Invested</p>
-            <p className="text-2xl font-bold tabular-nums">{fmt(portfolio.totalInvested)}</p>
+            <p className="text-2xl font-bold tabular-nums">{fmt(fm.totalInvested)}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4 pb-4 text-center">
             <TrendingUp className="w-5 h-5 mx-auto text-green-500 mb-1" />
             <p className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Projected Profit</p>
-            <p className={`text-2xl font-bold tabular-nums ${portfolio.totalProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {fmt(portfolio.totalProfit)}
+            <p className={`text-2xl font-bold tabular-nums ${fm.totalProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {fmt(fm.totalProfit)}
             </p>
           </CardContent>
         </Card>
@@ -264,8 +410,8 @@ export default function Portfolio() {
           <CardContent className="pt-4 pb-4 text-center">
             <Target className="w-5 h-5 mx-auto text-purple-500 mb-1" />
             <p className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Average ROI</p>
-            <p className={`text-2xl font-bold tabular-nums ${portfolio.avgRoi >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {portfolio.avgRoi.toFixed(1)}%
+            <p className={`text-2xl font-bold tabular-nums ${fm.avgRoi >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {fm.avgRoi.toFixed(1)}%
             </p>
           </CardContent>
         </Card>
@@ -273,7 +419,7 @@ export default function Portfolio() {
           <CardContent className="pt-4 pb-4 text-center">
             <Award className="w-5 h-5 mx-auto text-amber-500 mb-1" />
             <p className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Avg Deal Score</p>
-            <p className="text-2xl font-bold tabular-nums">{Math.round(portfolio.avgDealScore)}/100</p>
+            <p className="text-2xl font-bold tabular-nums">{Math.round(fm.avgDealScore)}/100</p>
           </CardContent>
         </Card>
         <Card>
@@ -281,7 +427,7 @@ export default function Portfolio() {
             <CheckCircle2 className="w-5 h-5 mx-auto text-green-500 mb-1" />
             <p className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Profitable</p>
             <p className="text-2xl font-bold tabular-nums text-green-600">
-              {portfolio.profitableCount}/{portfolio.totalDeals}
+              {fm.profitableCount}/{fm.totalDeals}
             </p>
           </CardContent>
         </Card>
@@ -301,7 +447,7 @@ export default function Portfolio() {
             <DonutChart
               segments={statusSegments}
               centerLabel="Total Deals"
-              centerValue={String(portfolio.totalDeals)}
+              centerValue={String(fm.totalDeals)}
             />
           </CardContent>
         </Card>
@@ -366,20 +512,20 @@ export default function Portfolio() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="p-3 bg-secondary/40 rounded-lg">
               <p className="text-[10px] uppercase text-muted-foreground font-semibold">Total Purchase Prices</p>
-              <p className="text-lg font-bold tabular-nums">{fmt(portfolio.deals.reduce((s, d) => s + d.purchasePrice, 0))}</p>
+              <p className="text-lg font-bold tabular-nums">{fmt(filteredDeals.reduce((s, d) => s + d.purchasePrice, 0))}</p>
             </div>
             <div className="p-3 bg-secondary/40 rounded-lg">
               <p className="text-[10px] uppercase text-muted-foreground font-semibold">Total Rehab Costs</p>
-              <p className="text-lg font-bold tabular-nums">{fmt(portfolio.totalRehabCost)}</p>
+              <p className="text-lg font-bold tabular-nums">{fmt(fm.totalRehabCost)}</p>
             </div>
             <div className="p-3 bg-secondary/40 rounded-lg">
               <p className="text-[10px] uppercase text-muted-foreground font-semibold">Total ARV</p>
-              <p className="text-lg font-bold tabular-nums text-[oklch(0.50_0.18_25)]">{fmt(portfolio.totalArv)}</p>
+              <p className="text-lg font-bold tabular-nums text-[oklch(0.50_0.18_25)]">{fmt(fm.totalArv)}</p>
             </div>
             <div className="p-3 bg-secondary/40 rounded-lg">
               <p className="text-[10px] uppercase text-muted-foreground font-semibold">Avg Profit/Deal</p>
-              <p className={`text-lg font-bold tabular-nums ${portfolio.totalProfit / portfolio.totalDeals >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {fmt(portfolio.totalProfit / portfolio.totalDeals)}
+              <p className={`text-lg font-bold tabular-nums ${fm.totalDeals > 0 && fm.totalProfit / fm.totalDeals >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {fm.totalDeals > 0 ? fmt(fm.totalProfit / fm.totalDeals) : '$0'}
               </p>
             </div>
           </div>

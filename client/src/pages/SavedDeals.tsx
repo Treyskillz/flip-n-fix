@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -224,6 +224,72 @@ function PortfolioStats({ deals }: { deals: SavedDeal[] }) {
   );
 }
 
+// ─── Inline Notes Editor ────────────────────────────────────
+function InlineNotes({ notes, onSave, isUpdating }: {
+  notes: string | null | undefined;
+  onSave: (notes: string) => void;
+  isUpdating: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState(notes || '');
+  const [saved, setSaved] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Sync draft when notes prop changes externally
+  useEffect(() => {
+    setDraft(notes || '');
+  }, [notes]);
+
+  const handleChange = (val: string) => {
+    setDraft(val);
+    setSaved(false);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      onSave(val);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    }, 800);
+  };
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, []);
+
+  const hasNotes = !!(notes && notes.trim());
+
+  return (
+    <div className="mt-2">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <StickyNote className="w-3 h-3" />
+        {hasNotes ? 'View/Edit Notes' : 'Add Notes'}
+        {open ? <ChevronUp className="w-2.5 h-2.5" /> : <ChevronDown className="w-2.5 h-2.5" />}
+      </button>
+      {open && (
+        <div className="mt-1.5 relative">
+          <Textarea
+            value={draft}
+            onChange={(e) => handleChange(e.target.value)}
+            placeholder="Add notes about this deal... (e.g., seller motivation, contractor quotes, inspection findings)"
+            className="text-xs min-h-[60px] max-h-[120px] resize-y"
+            disabled={isUpdating}
+          />
+          <div className="flex items-center justify-end mt-1 h-4">
+            {saved && (
+              <span className="text-[10px] text-green-600 flex items-center gap-0.5">
+                <CheckCircle2 className="w-2.5 h-2.5" /> Saved
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Deal Card (Grid View) ───────────────────────────────────
 function DealCard({ deal, onDelete, onUpdate, selected, onToggle, isUpdating }: {
   deal: SavedDeal;
@@ -337,8 +403,76 @@ function DealCard({ deal, onDelete, onUpdate, selected, onToggle, isUpdating }: 
             <Trash2 className="w-3 h-3" />
           </Button>
         </div>
+
+        {/* Inline Notes */}
+        <InlineNotes
+          notes={deal.notes}
+          onSave={(notes) => onUpdate({ notes })}
+          isUpdating={isUpdating}
+        />
       </CardContent>
     </Card>
+  );
+}
+
+// ─── Table Notes (compact inline editor) ──────────────────
+function TableNotes({ notes, onSave, isUpdating }: {
+  notes: string | null | undefined;
+  onSave: (notes: string) => void;
+  isUpdating: boolean;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(notes || '');
+  const [saved, setSaved] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => { setDraft(notes || ''); }, [notes]);
+  useEffect(() => { return () => { if (timerRef.current) clearTimeout(timerRef.current); }; }, []);
+
+  const handleChange = (val: string) => {
+    setDraft(val);
+    setSaved(false);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      onSave(val);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    }, 800);
+  };
+
+  const hasNotes = !!(notes && notes.trim());
+
+  if (!editing) {
+    return (
+      <button
+        onClick={() => setEditing(true)}
+        className={`flex items-center gap-1 text-[10px] mx-auto ${
+          hasNotes ? 'text-amber-600 hover:text-amber-700' : 'text-muted-foreground/50 hover:text-muted-foreground'
+        }`}
+        title={hasNotes ? notes! : 'Add notes'}
+      >
+        <StickyNote className="w-3 h-3" />
+        {hasNotes ? 'Edit' : 'Add'}
+      </button>
+    );
+  }
+
+  return (
+    <div className="min-w-[180px]">
+      <Textarea
+        value={draft}
+        onChange={(e) => handleChange(e.target.value)}
+        placeholder="Add notes..."
+        className="text-[10px] min-h-[40px] max-h-[80px] resize-y"
+        disabled={isUpdating}
+        autoFocus
+        onBlur={() => setTimeout(() => setEditing(false), 200)}
+      />
+      <div className="flex items-center justify-between mt-0.5">
+        <button onClick={() => setEditing(false)} className="text-[9px] text-muted-foreground hover:text-foreground">Close</button>
+        {saved && <span className="text-[9px] text-green-600 flex items-center gap-0.5"><CheckCircle2 className="w-2 h-2" /> Saved</span>}
+      </div>
+    </div>
   );
 }
 
@@ -382,6 +516,7 @@ function DealTable({ deals, onDelete, onUpdate, selectedIds, onToggle, sortField
             {sortHeader('ROI', 'roi', 'right')}
             {sortHeader('Score', 'dealScore', 'right')}
             <th className="p-2.5 font-semibold text-xs text-center">Status</th>
+            <th className="p-2.5 font-semibold text-xs text-center">Notes</th>
             <th className="p-2.5 font-semibold text-xs text-center">Actions</th>
           </tr>
         </thead>
@@ -425,6 +560,13 @@ function DealTable({ deals, onDelete, onUpdate, selectedIds, onToggle, sortField
                       <SelectItem value="archived">Archived</SelectItem>
                     </SelectContent>
                   </Select>
+                </td>
+                <td className="p-2">
+                  <TableNotes
+                    notes={deal.notes}
+                    onSave={(notes) => onUpdate(deal.id, { notes })}
+                    isUpdating={isUpdating}
+                  />
                 </td>
                 <td className="p-2">
                   <div className="flex gap-1 justify-center">

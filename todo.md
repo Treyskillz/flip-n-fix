@@ -138,3 +138,7 @@
 - [x] Add deal status update, star/unstar, notes, and delete via database
 - [x] Add one-time localStorage-to-database migration for existing saved deals
 - [x] Ensure Portfolio Dashboard and PDF export work with real database deals
+- [x] Add inline notes editing on Saved Deals page (click-to-edit per deal)
+- [x] Auto-save notes to database via tRPC mutation
+- [x] Add date-range filtering to Portfolio Dashboard (Last 30 Days, This Quarter, This Year, All Time, Custom)
+- [x] Filter portfolio metrics, charts, and deal table by selected date range
