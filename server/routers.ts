@@ -6,7 +6,7 @@ import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { PLANS, PlanKey } from "./stripe/products";
 import { createCheckoutSession, createPortalSession } from "./stripe/checkout";
 import { getDb } from "./db";
-import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles } from "../drizzle/schema";
+import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments } from "../drizzle/schema";
 import { eq, sql, desc, and, ne, inArray } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
@@ -147,13 +147,16 @@ RULES:
 - Comps MUST be STANDARD RETAIL SALES ONLY (arms-length transactions)
 - NEVER include foreclosures, short sales, REO, bank-owned, or auction sales
 - Comps should be RENOVATED or UPDATED properties (matching what the subject will look like after rehab)
-- Comps should be within 0.5 miles of the subject address
-- Comps should have sold within the last 6 months
-- Comps should be within 20% of the subject square footage
-- Comps should have similar bed/bath counts (±1)
+- Comps MUST be within 1 mile of the subject address
+- Comps MUST have sold within the last 6 months from today's date
+- Comps MUST have been on market 90 days or less (Days On Market / DOM ≤ 90)
+- Comps MUST be within 200 sq ft of the subject property's square footage
+- Comps MUST have similar bed/bath counts (±1 bedroom, ±1 bathroom)
+- Comps MUST be within 10 years of the subject property's year built
 - Use realistic addresses near the subject property (real street names in that area)
 - Use realistic sale prices based on the local market
 - All prices should reflect AFTER-RENOVATION values
+- The daysOnMarket field MUST reflect how many days the property was listed before it sold (DOM)
 
 Return ONLY valid JSON matching the schema. Do not include any explanation.`,
             },
@@ -167,8 +170,16 @@ Bedrooms: ${input.beds}
 Bathrooms: ${input.baths}
 Year Built: ${input.yearBuilt || "Unknown"}
 Property Type: ${input.propertyType || "Single Family"}
+Today's Date: ${new Date().toISOString().split('T')[0]}
 
-Provide 3-5 comparable RENOVATED properties that recently sold as standard retail sales near this address.`,
+Provide 3-5 comparable RENOVATED properties that meet ALL of these criteria:
+1. Within 1 mile of the subject address
+2. On market 90 days or less (DOM ≤ 90)
+3. Sold within the last 6 months from today's date
+4. Standard retail sales only (no distressed sales)
+5. Within 200 sq ft of the subject's ${input.sqft} sq ft
+6. Similar bed/bath count (±1 bed, ±1 bath)
+7. Built within 10 years of ${input.yearBuilt || 'the subject'} (year built ±10 years)`,
             },
           ],
           response_format: {
@@ -194,8 +205,9 @@ Provide 3-5 comparable RENOVATED properties that recently sold as standard retai
                         yearBuilt: { type: "number", description: "Year the property was built" },
                         condition: { type: "string", enum: ["renovated", "updated"], description: "Property condition" },
                         neighborhood: { type: "string", description: "Neighborhood or subdivision name" },
+                        distanceMiles: { type: "number", description: "Approximate distance in miles from the subject property (must be ≤ 1.0)" },
                       },
-                      required: ["address", "salePrice", "saleDate", "daysOnMarket", "sqft", "beds", "baths", "yearBuilt", "condition", "neighborhood"],
+                      required: ["address", "salePrice", "saleDate", "daysOnMarket", "sqft", "beds", "baths", "yearBuilt", "condition", "neighborhood", "distanceMiles"],
                       additionalProperties: false,
                     },
                   },
@@ -215,10 +227,53 @@ Provide 3-5 comparable RENOVATED properties that recently sold as standard retai
 
         try {
           const parsed = JSON.parse(content);
+          const rawComps = parsed.comps || [];
+
+          // Post-process: enforce comp criteria
+          const now = new Date();
+          const sixMonthsAgo = new Date(now);
+          sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+          const subjectSqft = input.sqft;
+          const subjectBeds = input.beds;
+          const subjectBaths = input.baths;
+          const subjectYearBuilt = input.yearBuilt || 0;
+
+          const filteredComps = rawComps.filter((c: any) => {
+            // Filter: DOM must be 90 days or less
+            if (c.daysOnMarket > 90) return false;
+            // Filter: sold within last 6 months
+            if (c.saleDate) {
+              const saleDate = new Date(c.saleDate);
+              if (saleDate < sixMonthsAgo) return false;
+            }
+            // Filter: within 1 mile
+            if (c.distanceMiles > 1.0) return false;
+            // Filter: within 200 sq ft of subject
+            if (Math.abs(c.sqft - subjectSqft) > 200) return false;
+            // Filter: similar bed/bath (±1)
+            if (Math.abs(c.beds - subjectBeds) > 1) return false;
+            if (Math.abs(c.baths - subjectBaths) > 1) return false;
+            // Filter: within 10 years of subject year built
+            if (subjectYearBuilt > 0 && c.yearBuilt > 0) {
+              if (Math.abs(c.yearBuilt - subjectYearBuilt) > 10) return false;
+            }
+            return true;
+          });
+
           return {
-            comps: parsed.comps || [],
+            comps: filteredComps,
             marketNotes: parsed.marketNotes || "",
-            disclaimer: "AI-generated estimates based on market analysis. Verify all data with MLS, county records, or your real estate agent before making investment decisions.",
+            disclaimer: "AI-generated estimates based on market analysis. All comps are filtered to: within 1 mile, sold in the last 6 months, on market \u226490 days, within 200 sq ft, similar bed/bath (\u00b11), and within 10 years of age. Verify all data with MLS, county records, or your real estate agent.",
+            criteria: {
+              maxDistanceMiles: 1.0,
+              maxDaysOnMarket: 90,
+              maxMonthsAgo: 6,
+              maxSqftDiff: 200,
+              maxBedDiff: 1,
+              maxBathDiff: 1,
+              maxAgeDiff: 10,
+            },
           };
         } catch {
           throw new Error("Failed to parse AI comp results");
@@ -884,7 +939,169 @@ Provide 3-5 comparable RENOVATED properties that recently sold as standard retai
     }),
   }),
 
-  // ─── Subscription & Billing ────────────────────────────────────
+  // ─── Credibility Packet Projects ───────────────────────────
+  credibility: router({
+    // List all projects for the current user
+    listProjects: protectedProcedure.query(async ({ ctx }) => {
+      const db = (await getDb())!;
+      const rows = await db
+        .select()
+        .from(credibilityProjects)
+        .where(eq(credibilityProjects.userId, ctx.user.id))
+        .orderBy(credibilityProjects.sortOrder);
+      return rows;
+    }),
+
+    // Create a new project
+    createProject: protectedProcedure
+      .input(z.object({
+        projectName: z.string().min(1),
+        address: z.string().optional(),
+        city: z.string().optional(),
+        state: z.string().optional(),
+        purchasePrice: z.number().optional(),
+        rehabCost: z.number().optional(),
+        salePrice: z.number().optional(),
+        profit: z.number().optional(),
+        purchaseDate: z.string().optional(),
+        saleDate: z.string().optional(),
+        daysToComplete: z.number().optional(),
+        description: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        // Get next sort order
+        const existing = await db
+          .select({ maxSort: sql<number>`COALESCE(MAX(${credibilityProjects.sortOrder}), -1)` })
+          .from(credibilityProjects)
+          .where(eq(credibilityProjects.userId, ctx.user.id));
+        const nextSort = (existing[0]?.maxSort ?? -1) + 1;
+
+        const result = await db.insert(credibilityProjects).values({
+          userId: ctx.user.id,
+          projectName: input.projectName,
+          address: input.address || null,
+          city: input.city || null,
+          state: input.state || null,
+          purchasePrice: input.purchasePrice || null,
+          rehabCost: input.rehabCost || null,
+          salePrice: input.salePrice || null,
+          profit: input.profit || null,
+          purchaseDate: input.purchaseDate || null,
+          saleDate: input.saleDate || null,
+          daysToComplete: input.daysToComplete || null,
+          description: input.description || null,
+          sortOrder: nextSort,
+        });
+        return { id: Number(result[0].insertId), sortOrder: nextSort };
+      }),
+
+    // Update a project
+    updateProject: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        projectName: z.string().min(1).optional(),
+        address: z.string().optional(),
+        city: z.string().optional(),
+        state: z.string().optional(),
+        purchasePrice: z.number().nullable().optional(),
+        rehabCost: z.number().nullable().optional(),
+        salePrice: z.number().nullable().optional(),
+        profit: z.number().nullable().optional(),
+        purchaseDate: z.string().nullable().optional(),
+        saleDate: z.string().nullable().optional(),
+        daysToComplete: z.number().nullable().optional(),
+        description: z.string().nullable().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        const { id, ...data } = input;
+        await db.update(credibilityProjects)
+          .set(data as any)
+          .where(and(eq(credibilityProjects.id, id), eq(credibilityProjects.userId, ctx.user.id)));
+        return { success: true };
+      }),
+
+    // Delete a project and its attachments
+    deleteProject: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        await db.delete(credibilityAttachments).where(eq(credibilityAttachments.projectId, input.id));
+        await db.delete(credibilityProjects)
+          .where(and(eq(credibilityProjects.id, input.id), eq(credibilityProjects.userId, ctx.user.id)));
+        return { success: true };
+      }),
+
+    // Upload an attachment (photo or document)
+    uploadAttachment: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        type: z.enum(["before_photo", "after_photo", "closing_statement", "bill_of_sale", "other_document"]),
+        base64: z.string().min(1),
+        filename: z.string().min(1),
+        mimeType: z.string().min(1),
+        caption: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        const buffer = Buffer.from(input.base64, "base64");
+        const suffix = crypto.randomBytes(4).toString("hex");
+        const key = `credibility/${ctx.user.id}/${input.projectId}/${input.type}/${Date.now()}-${suffix}-${input.filename}`;
+        const { url } = await storagePut(key, buffer, input.mimeType);
+
+        const existing = await db
+          .select({ maxSort: sql<number>`COALESCE(MAX(${credibilityAttachments.sortOrder}), -1)` })
+          .from(credibilityAttachments)
+          .where(and(
+            eq(credibilityAttachments.projectId, input.projectId),
+            eq(credibilityAttachments.type, input.type),
+          ));
+        const nextSort = (existing[0]?.maxSort ?? -1) + 1;
+
+        await db.insert(credibilityAttachments).values({
+          projectId: input.projectId,
+          userId: ctx.user.id,
+          type: input.type,
+          url,
+          fileKey: key,
+          filename: input.filename,
+          mimeType: input.mimeType,
+          caption: input.caption || null,
+          sortOrder: nextSort,
+        });
+
+        return { url, fileKey: key };
+      }),
+
+    // List attachments for a project
+    listAttachments: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        const rows = await db
+          .select()
+          .from(credibilityAttachments)
+          .where(and(
+            eq(credibilityAttachments.projectId, input.projectId),
+            eq(credibilityAttachments.userId, ctx.user.id),
+          ))
+          .orderBy(credibilityAttachments.type, credibilityAttachments.sortOrder);
+        return rows;
+      }),
+
+    // Delete an attachment
+    deleteAttachment: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = (await getDb())!;
+        await db.delete(credibilityAttachments)
+          .where(and(eq(credibilityAttachments.id, input.id), eq(credibilityAttachments.userId, ctx.user.id)));
+        return { success: true };
+      }),
+  }),
+
+  // ─── Subscription & Billing ────────────────────────────────
   subscription: router({
     // Get available plans
     plans: publicProcedure.query(() => {

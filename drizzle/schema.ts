@@ -141,3 +141,45 @@ export const userProfiles = mysqlTable("user_profiles", {
 
 export type UserProfile = typeof userProfiles.$inferSelect;
 export type InsertUserProfile = typeof userProfiles.$inferInsert;
+
+// ─── Credibility Packet Projects (Track Record) ─────────────
+export const credibilityProjects = mysqlTable("credibility_projects", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  projectName: varchar("projectName", { length: 255 }).notNull(), // e.g. "123 Main St Flip"
+  address: varchar("address", { length: 512 }),
+  city: varchar("city", { length: 128 }),
+  state: varchar("state", { length: 64 }),
+  purchasePrice: int("purchasePrice"),
+  rehabCost: int("rehabCost"),
+  salePrice: int("salePrice"),
+  profit: int("profit"),
+  purchaseDate: varchar("purchaseDate", { length: 32 }),
+  saleDate: varchar("saleDate", { length: 32 }),
+  daysToComplete: int("daysToComplete"),
+  description: text("description"), // project narrative
+  sortOrder: int("sortOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CredibilityProject = typeof credibilityProjects.$inferSelect;
+export type InsertCredibilityProject = typeof credibilityProjects.$inferInsert;
+
+// ─── Credibility Packet Attachments (Photos + Documents) ─────
+export const credibilityAttachments = mysqlTable("credibility_attachments", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(), // references credibilityProjects.id
+  userId: int("userId").notNull(),
+  type: mysqlEnum("type", ["before_photo", "after_photo", "closing_statement", "bill_of_sale", "other_document"]).notNull(),
+  url: text("url").notNull(), // S3 URL
+  fileKey: varchar("fileKey", { length: 512 }).notNull(),
+  filename: varchar("filename", { length: 255 }),
+  mimeType: varchar("mimeType", { length: 64 }),
+  caption: varchar("caption", { length: 255 }),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CredibilityAttachment = typeof credibilityAttachments.$inferSelect;
+export type InsertCredibilityAttachment = typeof credibilityAttachments.$inferInsert;

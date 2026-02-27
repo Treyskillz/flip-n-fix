@@ -137,9 +137,10 @@ export function CompManager({
   // Score each comp
   const subjectForScoring = useMemo(() => ({
     address: '', city: '', state: '', zip: '', propertyType: '', garage: '',
-    purchasePrice: 0, lotSizeSqft: 0, yearBuilt: 0,
+    purchasePrice: 0, lotSizeSqft: 0,
+    yearBuilt: subjectYearBuilt || 0,
     sqft: subjectSqft, beds: subjectBeds, baths: subjectBaths,
-  }), [subjectSqft, subjectBeds, subjectBaths]);
+  }), [subjectSqft, subjectBeds, subjectBaths, subjectYearBuilt]);
 
   const compScores = useMemo(() => {
     return comps.map(comp => scoreComp(comp, subjectForScoring));
@@ -227,15 +228,16 @@ export function CompManager({
             </div>
             <div className="grid sm:grid-cols-2 gap-3 text-xs text-muted-foreground">
               <div>
-                <p className="font-semibold text-foreground mb-1">What Makes a Good Comp:</p>
+                <p className="font-semibold text-foreground mb-1">Comp Criteria (All Required):</p>
                 <ul className="space-y-1 list-disc list-inside">
-                  <li><strong>Standard retail sale</strong> (arms-length transaction)</li>
-                  <li><strong>Sold within 6 months</strong> (3 months is ideal)</li>
-                  <li><strong>Within 0.5 miles</strong> of subject property</li>
-                  <li><strong>Similar size</strong> (within 20% of sqft)</li>
-                  <li><strong>Same bed/bath count</strong> (±1 bed, ±1 bath)</li>
+                  <li><strong>Within 1 mile</strong> of the subject property</li>
+                  <li><strong>On market 90 days or less</strong> (DOM ≤ 90)</li>
+                  <li><strong>Sold within 6 months</strong> of when you pull comps</li>
+                  <li><strong>Within 200 sq ft</strong> of the subject property</li>
+                  <li><strong>Similar bed/bath</strong> (±1 bed, ±1 bath)</li>
+                  <li><strong>Within 10 years of age</strong> of the subject (year built ±10)</li>
+                  <li><strong>Standard retail sale only</strong> (no distressed sales)</li>
                   <li><strong>Renovated/updated condition</strong> (matching your rehab level)</li>
-                  <li><strong>Similar property type</strong> (SFR vs. condo vs. townhouse)</li>
                 </ul>
               </div>
               <div>
@@ -394,6 +396,9 @@ export function CompManager({
                 Dismiss
               </Button>
             </div>
+            <div className="p-2.5 rounded-md bg-blue-500/10 border border-blue-500/20 text-xs text-blue-700 dark:text-blue-400 mb-1">
+              <strong>Filter Criteria Applied:</strong> Within 1 mile · DOM ≤90 days · Sold within 6 months · Within 200 sq ft · ±1 bed/bath · Within 10 years of age · Retail sales only
+            </div>
             <div className="p-2.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-xs text-amber-700 dark:text-amber-400">
               <strong>Important:</strong> {aiDisclaimer}
             </div>
@@ -421,6 +426,8 @@ export function CompManager({
                         <span className="tabular-nums">${aiComp.sqft > 0 ? Math.round(aiComp.salePrice / aiComp.sqft) : 0}/sqft</span>
                         {aiComp.saleDate && <span>Sold: {aiComp.saleDate}</span>}
                         {aiComp.daysOnMarket > 0 && <span>{aiComp.daysOnMarket} DOM</span>}
+                        {aiComp.distanceMiles != null && <span>{aiComp.distanceMiles.toFixed(1)} mi</span>}
+                        {aiComp.yearBuilt > 0 && <span>Built {aiComp.yearBuilt}</span>}
                         {aiComp.neighborhood && <span>{aiComp.neighborhood}</span>}
                       </div>
                     </div>

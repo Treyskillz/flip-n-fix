@@ -185,3 +185,21 @@
 - [x] Build course completion certificate PDF generator
 - [x] Add certificate download button on Course page when all modules complete and quizzes passed
 - [x] Write vitest tests for profile and certificate features (8 tests, all passing)
+- [ ] Update comp search to filter comps within 1 mile of subject property
+- [ ] Update comp search to filter comps on market 90 days or less (DOM ≤ 90)
+- [ ] Update comp search to filter comps sold within the last 6 months
+- [ ] Update comp search UI to display filtering criteria to users
+- [ ] Update comp validation/quality scoring to reflect new criteria
+- [ ] Update comp search to filter comps within 200 sq ft of subject property
+- [ ] Update comp search to filter comps with similar bed/bath count (±1)
+- [ ] Update comp search to filter comps within 10 years of age of subject property
+- [ ] Update comp quality scoring to reflect all new criteria
+- [ ] Update comp guidance UI text with all criteria
+- [ ] Add database table for credibility packet projects (track record entries)
+- [ ] Add database table for credibility packet attachments (photos + documents linked to projects)
+- [ ] Build tRPC endpoints for CRUD on credibility packet projects and file uploads
+- [ ] Add before/after photo upload section to Credibility Packets page
+- [ ] Add closing statement / bill of sale document upload section
+- [ ] Display uploaded photos and documents in credibility packet print/preview
+- [ ] Update manual with credibility packet enhancements documentation
+- [ ] Expand credibility packet content with more detailed fix & flip company sections (investment philosophy, acquisition criteria, renovation standards, market expertise, team capabilities)

@@ -148,10 +148,12 @@ If you have your own ARV estimate (from an appraiser, agent, or your own analysi
 ### Tips for Selecting Good Comps
 - **Sale Type** — Standard retail sale ONLY (arms-length transaction)
 - **Condition** — Renovated or updated, matching your planned rehab level
-- **Location** — Within 0.5 miles, same neighborhood preferred
-- **Recency** — Sold within the last 6 months (3 months is ideal)
-- **Size** — Within 20% of your property's square footage
-- **DOM** — Comps that sold in 90 days or less indicate strong demand
+- **Location** — Within 1 mile of the subject property
+- **Recency** — Sold within the last 6 months from when you pull comps
+- **Days on Market** — On market 90 days or less (DOM ≤ 90)
+- **Size** — Within 200 sq ft of the subject property
+- **Bed/Bath** — Similar bed/bath count (±1 bedroom, ±1 bathroom)
+- **Age** — Within 10 years of the subject property's year built
 - **Use 3-6 comps** for the most reliable market validation
 
 ### Comp Analysis Features

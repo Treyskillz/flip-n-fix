@@ -43,6 +43,13 @@
       "when": 1772205035571,
       "tag": "0005_silly_whizzer",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1772209408055,
+      "tag": "0006_rainy_rafael_vega",
+      "breakpoints": true
     }
   ]
 }

@@ -184,6 +184,53 @@ export function scoreComp(
   let bedBathMatch = 0;
   let completeness = 0;
 
+  // ── Hard-fail criteria (generate warnings for violations) ──
+
+  // DOM check: must be 90 days or less
+  if (comp.daysOnMarket > 90) {
+    warnings.push(`\u26d4 DOM is ${comp.daysOnMarket} days — comps must be on market 90 days or less. This comp does not meet criteria.`);
+  }
+
+  // Sold within 6 months check
+  if (comp.saleDate) {
+    const saleDate = new Date(comp.saleDate);
+    const now = new Date();
+    const sixMonthsAgo = new Date(now);
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    if (saleDate < sixMonthsAgo) {
+      const monthsAgo = Math.round((now.getTime() - saleDate.getTime()) / (1000 * 60 * 60 * 24 * 30));
+      warnings.push(`\u26d4 Sold ${monthsAgo} months ago — comps must have sold within the last 6 months.`);
+    }
+  }
+
+  // Sqft within 200 check
+  if (comp.sqft > 0 && subject.sqft > 0) {
+    const sqftDiff = Math.abs(comp.sqft - subject.sqft);
+    if (sqftDiff > 200) {
+      warnings.push(`\u26d4 Sq ft differs by ${sqftDiff} — comps must be within 200 sq ft of the subject (${subject.sqft} sq ft).`);
+    }
+  }
+
+  // Bed/bath within ±1 check
+  const bedDiff = Math.abs(comp.beds - subject.beds);
+  const bathDiff = Math.abs(comp.baths - subject.baths);
+  if (bedDiff > 1) {
+    warnings.push(`\u26d4 Bedrooms differ by ${bedDiff} — comps must be within \u00b11 bedroom of the subject (${subject.beds} beds).`);
+  }
+  if (bathDiff > 1) {
+    warnings.push(`\u26d4 Bathrooms differ by ${bathDiff} — comps must be within \u00b11 bathroom of the subject (${subject.baths} baths).`);
+  }
+
+  // Age within 10 years check
+  if (comp.yearBuilt > 0 && subject.yearBuilt > 0) {
+    const ageDiff = Math.abs(comp.yearBuilt - subject.yearBuilt);
+    if (ageDiff > 10) {
+      warnings.push(`\u26d4 Year built differs by ${ageDiff} years — comps must be within 10 years of the subject (built ${subject.yearBuilt}).`);
+    }
+  }
+
+  // ── Scoring categories ──
+
   // 1. Recency (0-25): how recently the comp sold
   if (comp.saleDate) {
     const saleDate = new Date(comp.saleDate);
@@ -193,31 +240,26 @@ export function scoreComp(
       recency = 25;
     } else if (monthsAgo <= 6) {
       recency = 20;
-    } else if (monthsAgo <= 12) {
-      recency = 10;
-      warnings.push('Comp sold 6-12 months ago — market conditions may have changed.');
     } else {
       recency = 5;
-      warnings.push('Comp sold over 12 months ago — likely outdated for current market.');
+      // Warning already added above for >6 months
     }
   } else {
     recency = 5;
     warnings.push('No sale date provided — cannot assess recency.');
   }
 
-  // 2. Size Similarity (0-25): sqft closeness to subject
+  // 2. Size Similarity (0-25): sqft closeness to subject (within 200 sq ft)
   if (comp.sqft > 0 && subject.sqft > 0) {
-    const pctDiff = Math.abs(comp.sqft - subject.sqft) / subject.sqft;
-    if (pctDiff <= 0.10) {
+    const sqftDiff = Math.abs(comp.sqft - subject.sqft);
+    if (sqftDiff <= 100) {
       sizeSimilarity = 25;
-    } else if (pctDiff <= 0.20) {
+    } else if (sqftDiff <= 200) {
       sizeSimilarity = 20;
-    } else if (pctDiff <= 0.30) {
-      sizeSimilarity = 15;
-      warnings.push(`Comp sqft differs by ${(pctDiff * 100).toFixed(0)}% from subject — may affect $/sqft accuracy.`);
+    } else if (sqftDiff <= 300) {
+      sizeSimilarity = 10;
     } else {
       sizeSimilarity = 5;
-      warnings.push(`Comp sqft differs by ${(pctDiff * 100).toFixed(0)}% from subject — weak comparability.`);
     }
   } else if (comp.sqft <= 0) {
     sizeSimilarity = 0;
@@ -225,21 +267,15 @@ export function scoreComp(
   }
 
   // 3. Bed/Bath Match (0-25)
-  const bedDiff = Math.abs(comp.beds - subject.beds);
-  const bathDiff = Math.abs(comp.baths - subject.baths);
   if (bedDiff === 0 && bathDiff === 0) {
     bedBathMatch = 25;
   } else if (bedDiff <= 1 && bathDiff <= 1) {
     bedBathMatch = 18;
-  } else if (bedDiff <= 1 || bathDiff <= 1) {
-    bedBathMatch = 12;
-    warnings.push('Bed/bath count differs significantly from subject.');
   } else {
     bedBathMatch = 5;
-    warnings.push('Bed/bath count is very different from subject — weak comp.');
   }
 
-  // 4. Data Completeness (0-25)
+  // 4. Data Completeness & DOM (0-25)
   let fields = 0;
   if (comp.address) fields++;
   if (comp.salePrice > 0) fields++;
@@ -248,8 +284,9 @@ export function scoreComp(
   if (comp.beds > 0) fields++;
   if (comp.baths > 0) fields++;
   if (comp.yearBuilt > 0) fields++;
-  // 7 fields total
-  completeness = Math.round((fields / 7) * 25);
+  if (comp.daysOnMarket > 0 && comp.daysOnMarket <= 90) fields++;
+  // 8 fields total
+  completeness = Math.round((fields / 8) * 25);
   if (fields < 5) {
     warnings.push('Incomplete comp data — fill in all fields for better accuracy.');
   }
