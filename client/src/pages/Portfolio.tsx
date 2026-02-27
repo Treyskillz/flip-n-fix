@@ -5,11 +5,13 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { trpc } from '@/lib/trpc';
 import { formatCurrency } from '@/lib/calculations';
+import { downloadPortfolioPdf } from '@/lib/portfolioPdf';
 import { Link } from 'wouter';
+import { toast } from 'sonner';
 import {
   DollarSign, TrendingUp, BarChart3, PieChart, Building2,
   ArrowRight, Calculator, Target, Award, CheckCircle2,
-  Clock, XCircle, FileText, Archive, Star, Loader2
+  Clock, XCircle, FileText, Archive, Star, Loader2, Download
 } from 'lucide-react';
 
 type DealStatus = 'active' | 'under_contract' | 'closed' | 'passed' | 'archived';
@@ -207,6 +209,19 @@ export default function Portfolio() {
           </p>
         </div>
         <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5"
+            onClick={() => {
+              if (portfolio) {
+                downloadPortfolioPdf(portfolio);
+                toast.success('Portfolio PDF opened — use your browser\'s Print dialog to save as PDF.');
+              }
+            }}
+          >
+            <Download className="w-3.5 h-3.5" /> Download PDF
+          </Button>
           <Link href="/saved-deals">
             <Button variant="outline" size="sm" className="gap-1.5">
               <Building2 className="w-3.5 h-3.5" /> View All Deals

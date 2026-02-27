@@ -129,3 +129,7 @@
 - [x] Display photos in shared deal links
 - [x] Display photos in PDF investor reports
 - [x] Add photo management UI (upload, reorder, delete)
+- [x] Build server-side portfolio PDF generation endpoint
+- [x] Add "Download Portfolio Summary" button to Portfolio Dashboard
+- [x] Include aggregate metrics, deal table, and charts in PDF
+- [x] Brand PDF with Freedom One logo, header, and disclaimer
