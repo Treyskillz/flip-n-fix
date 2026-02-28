@@ -3,7 +3,7 @@ import {
   Calculator, Landmark, Megaphone, FileText, GraduationCap,
   Newspaper, BookOpen, Menu, X, Home, Building2, ClipboardList, Save, Shield, CreditCard,
   Wrench, MapPin, Award, CheckSquare, HelpCircle, ChevronDown, Zap, Paintbrush, BarChart3,
-  Kanban
+  Kanban, TrendingUp
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useCallback, useRef, useEffect } from 'react';
@@ -24,6 +24,7 @@ const PRIMARY_NAV: NavItem[] = [
   { path: '/scope-of-work', label: 'SOW', icon: ClipboardList },
   { path: '/course', label: 'Course', icon: GraduationCap },
   { path: '/renovation-designer', label: 'Designer', icon: Paintbrush },
+  { path: '/profit-calculator', label: 'Profit Calc', icon: TrendingUp },
   { path: '/pipeline', label: 'Pipeline', icon: Kanban },
   { path: '/portfolio', label: 'Portfolio', icon: BarChart3 },
   { path: '/pricing', label: 'Pricing', icon: CreditCard },

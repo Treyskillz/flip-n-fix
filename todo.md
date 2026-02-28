@@ -222,3 +222,32 @@
 - [x] Add import button to Pipeline page that opens the import flow
 - [x] Write vitest tests for CSV bulk import endpoint (7 tests, all passing)
 - [x] Add CSV Export button to Pipeline page to download all deal data as CSV
+- [ ] Build merged Profit Calculator engine with all financing scenarios from BOTH spreadsheets:
+  - HML on ARV + Gap Funder (Debt & Equity)
+  - HML on Purchase Price + Gap Funder (Debt & Equity)
+  - 100% Private Lender (Debt & Equity)
+  - Resale sensitivity table (ARV -$20K to +$20K)
+  - Interest type toggle (Annual/Straight/Monthly/Deferred)
+  - Deal/No Deal indicator (MAX(ARV*10%, $20K))
+  - GAP Funder ROI display
+  - Out of Pocket calculation
+  - 70% rule (not 65%), updated formulas
+  - Rapid-fire offer pricing
+  - Year-built rehab lookup
+  - Property evaluation scoring
+- [ ] Build rapid-fire offer pricing system (18% down to 13% ROI targets)
+- [ ] Build year-built rehab lookup table with sqft adjustments and rehab levels 1-2-3
+- [ ] Build Rehab Cost Analyzer with detailed line-item budgeting (exterior, interior, electrical, HVAC, plumbing, kitchen, baths, flooring)
+- [ ] Build Local Area Pricing template for users to input local market prices
+- [ ] Build Projects Page summary view
+- [ ] Build Profit Calculator UI page
+- [ ] Build Rehab Cost Analyzer UI page
+- [ ] Add Private Money Prospectus as a resource page in the app
+- [ ] Recreate Freedom One 3-Option Brochure (modernized from Code One) as a resource page
+- [ ] Add Price Reduction Form under Resources with Armando Montelongo training
+- [ ] Package all source code, instructions, and manuals into a ZIP file
+- [ ] Push all code to GitHub
+- [ ] Build Profit Calculator UI page with all 6 financing scenarios
+- [ ] Add Profit Calculator to app navigation
+- [ ] Build detailed instructions/training guide for the Profit Calculator (in-app)
+- [ ] Generate downloadable Excel spreadsheet version of the Profit Calculator (for sale/signup bonus)
