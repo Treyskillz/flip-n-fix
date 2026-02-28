@@ -237,11 +237,11 @@
   - Property evaluation scoring
 - [x] Build rapid-fire offer pricing system (18% down to 13% ROI targets)
 - [x] Build year-built rehab lookup table with sqft adjustments and rehab levels 1-2-3
-- [ ] Build Rehab Cost Analyzer with detailed line-item budgeting (exterior, interior, electrical, HVAC, plumbing, kitchen, baths, flooring)
+- [x] Build Rehab Cost Analyzer with detailed line-item budgeting (exterior, interior, electrical, HVAC, plumbing, kitchen, baths, flooring) — built as Rehab Budget Worksheet
 - [ ] Build Local Area Pricing template for users to input local market prices
 - [ ] Build Projects Page summary view
 - [x] Build Profit Calculator UI page
-- [ ] Build Rehab Cost Analyzer UI page
+- [x] Build Rehab Cost Analyzer UI page — built as Rehab Budget Worksheet
 - [x] Add Private Money Prospectus as a resource page in the app
 - [x] Recreate Freedom One 3-Option Brochure (modernized from Code One) as a resource page
 - [x] Add Price Reduction Form under Resources with Armando Montelongo training
@@ -254,7 +254,7 @@
 - [x] Add Price Reduction Form to Resources/Forms with ethical negotiation training content
 - [x] Build Private Money Prospectus resource page (from uploaded PDF)
 - [x] Build Freedom One 3-Option Brochure page (modernized from CODEONE3OPTIONBROCHURE)
-- [ ] Create downloadable Excel spreadsheet version of Profit Calculator
+- [x] Create downloadable Excel spreadsheet version of Profit Calculator
 - [x] Add Price Reduction Strategy lesson to fix-and-flip course module
 - [x] Create downloadable course book (ebook PDF) for sale or giveaway
 - [x] Add legal ninja negotiation tips to Price Reduction Form training
@@ -270,3 +270,7 @@
 - [x] Add premium Asset Protection bonus module (trusts, entities, LLCs, Series LLCs, Land Trusts, IRAs)
 - [x] Gate Asset Protection module behind higher-tier subscription
 - [x] Add premium Creative Financing bonus module (seller financing, wraps, lease options, private money structuring)
+- [x] Add more quiz questions to modules 4-8 (currently only 2 each, need at least 3)
+- [x] Build downloadable Excel spreadsheet version of Profit Calculator
+- [x] Build Rehab Cost Analyzer page with detailed line-item budgeting — built as Rehab Budget Worksheet
+- [ ] Push source code to GitHub

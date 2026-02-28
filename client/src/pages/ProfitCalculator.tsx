@@ -12,6 +12,7 @@ import {
   calculateAll, getDefaultInputs, estimateRehabFromYearBuilt,
   type CalculatorInputs, type ScenarioResult, type InterestType
 } from '@/lib/profitCalculator';
+import { generateProfitCalcExcel, generateBlankTemplate } from '@/lib/generateExcel';
 
 const fmt = (n: number) => n < 0
   ? `-$${Math.abs(n).toLocaleString()}`
@@ -306,6 +307,22 @@ export default function ProfitCalculator() {
                 className="gap-1.5 border-[oklch(0.3_0_0)] text-[oklch(0.6_0_0)] hover:text-white"
               >
                 <Printer className="w-3.5 h-3.5" /> Print
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => generateProfitCalcExcel(inputs)}
+                className="gap-1.5 border-[oklch(0.3_0_0)] text-[oklch(0.6_0_0)] hover:text-white"
+              >
+                <Download className="w-3.5 h-3.5" /> Export Excel
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => generateBlankTemplate()}
+                className="gap-1.5 border-[oklch(0.3_0_0)] text-[oklch(0.6_0_0)] hover:text-white"
+              >
+                <Download className="w-3.5 h-3.5" /> Blank Template
               </Button>
             </div>
           </div>
