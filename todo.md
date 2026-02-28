@@ -244,10 +244,29 @@
 - [ ] Build Rehab Cost Analyzer UI page
 - [ ] Add Private Money Prospectus as a resource page in the app
 - [ ] Recreate Freedom One 3-Option Brochure (modernized from Code One) as a resource page
-- [ ] Add Price Reduction Form under Resources with Armando Montelongo training
+- [x] Add Price Reduction Form under Resources with Armando Montelongo training
 - [ ] Package all source code, instructions, and manuals into a ZIP file
 - [ ] Push all code to GitHub
 - [ ] Build Profit Calculator UI page with all 6 financing scenarios
 - [ ] Add Profit Calculator to app navigation
 - [ ] Build detailed instructions/training guide for the Profit Calculator (in-app)
 - [ ] Generate downloadable Excel spreadsheet version of the Profit Calculator (for sale/signup bonus)
+- [x] Add Price Reduction Form to Resources/Forms with ethical negotiation training content
+- [ ] Build Private Money Prospectus resource page (from uploaded PDF)
+- [ ] Build Freedom One 3-Option Brochure page (modernized from CODEONE3OPTIONBROCHURE)
+- [ ] Create downloadable Excel spreadsheet version of Profit Calculator
+- [x] Add Price Reduction Strategy lesson to fix-and-flip course module
+- [ ] Create downloadable course book (ebook PDF) for sale or giveaway
+- [x] Add legal ninja negotiation tips to Price Reduction Form training
+- [x] Add Ninja Tips to course Module 1 (Foundation/Mindset)
+- [x] Add Ninja Tips to course Module 2 (Finding Deals/Acquisition)
+- [x] Add Ninja Tips to course Module 3 (Fix & Flip) - DONE via price reduction lesson
+- [x] Add Ninja Tips to course Module 4 (Wholesaling)
+- [x] Add Ninja Tips to course Module 5 (BRRRR)
+- [x] Add Ninja Tips to course Module 6 (Subject-To)
+- [x] Add Ninja Tips to course Module 7 (Short-Term Rentals)
+- [x] Add Ninja Tips to course Module 8 (Financing)
+- [x] Add Ninja Tips to course Module 9 (Platform Mastery)
+- [x] Add premium Asset Protection bonus module (trusts, entities, LLCs, Series LLCs, Land Trusts, IRAs)
+- [x] Gate Asset Protection module behind higher-tier subscription
+- [x] Add premium Creative Financing bonus module (seller financing, wraps, lease options, private money structuring)

@@ -1518,4 +1518,395 @@ I believe in you. Go make it happen.`,
       'Closing table celebration',
     ],
   },
+
+  // ─────────────────────────────────────────────────────────
+  // MODULE 3 LESSON 3: Price Reduction Strategy
+  // ─────────────────────────────────────────────────────────
+  'l-3-3': {
+    lessonId: 'l-3-3',
+    estimatedRuntime: '18:00',
+    equipment: 'Camera (talking head), slide deck, screen recording, sample documents',
+    openingHook: `"One of the most powerful tools in your negotiation toolkit costs nothing, is completely legal, and can save you $5,000 to $30,000 on every deal. It's the post-inspection price reduction request — and today I'm going to show you exactly how to use it."`,
+    segments: [
+      {
+        title: 'What Is a Price Reduction Request',
+        type: 'talking-head',
+        duration: '4:00',
+        script: `Let me be clear from the start — this is not a trick, not a loophole, and not a bait-and-switch. A price reduction request is a standard, ethical negotiation tool that every professional real estate investor and agent uses.
+
+Here's how it works. When you put a property under contract, your purchase agreement includes an inspection contingency — typically 7 to 14 days. During that period, you hire a licensed inspector to examine the property. If the inspection reveals issues that weren't anticipated when you made your offer, you have the contractual right to request a price reduction.
+
+This is completely normal. It happens in the majority of real estate transactions. The seller can accept your request, counter-offer, reject it, or you can exercise your contingency and walk away.
+
+The key is that your request must be based on REAL findings from a REAL inspection. You're not making things up. You're documenting legitimate issues and asking the seller to account for them in the price.`,
+        directions: 'Presenter on camera, professional and authoritative tone. Emphasize the ethical and legal nature of this strategy.',
+      },
+      {
+        title: 'The Step-by-Step Process',
+        type: 'slides',
+        duration: '6:00',
+        script: `Here's the exact process, step by step.
+
+Step 1: Make a strong offer with an inspection contingency. This is standard language in virtually every purchase agreement. Your offer should be competitive enough to get accepted.
+
+Step 2: Hire a licensed home inspector. Budget $300 to $500 for a thorough inspection. This is not the place to cut corners. A good inspector will find things you'd never notice — foundation issues, electrical problems, plumbing concerns, roof damage, HVAC issues.
+
+Step 3: Attend the inspection in person. Walk through with the inspector. Take detailed photos of every issue they find. Document everything — dates, descriptions, locations.
+
+Step 4: Get repair estimates. For significant issues, get written estimates from licensed contractors. A contractor's written bid carries far more weight than your own guess.
+
+Step 5: Prepare your Price Reduction Request letter. Use the Freedom One Price Reduction Form in the Resources section. It auto-fills your business information and creates a professional letter with itemized repair costs.
+
+Step 6: Submit the letter to the seller or their agent within your inspection contingency period. Be professional, factual, and specific.
+
+Step 7: Negotiate. The seller will respond — accept, counter, or reject. Be prepared to negotiate, but know your walk-away number before you start.`,
+        directions: 'Show slides with each step numbered. Include sample photos of common inspection findings. Show a brief screen recording of the Freedom One Price Reduction Form.',
+      },
+      {
+        title: 'Ninja Negotiation Tips',
+        type: 'talking-head',
+        duration: '5:00',
+        script: `Now let me share some advanced tips that will make your price reduction requests more effective.
+
+Ninja Tip 1: Take inspection photos immediately. Document issues the moment they're discovered, before any cleanup. This captures the true worst condition and gives you the strongest documentation for your request.
+
+Ninja Tip 2: Get multiple contractor bids. Having 2 to 3 written estimates from licensed contractors is far more persuasive than a single bid. It shows the repair costs are legitimate and market-rate.
+
+Ninja Tip 3: Itemize everything separately. Instead of saying "$15,000 in repairs," list 25 individual items at $600 each. A detailed list of 25 items looks more substantial and is harder for the seller to dismiss.
+
+Ninja Tip 4: Always hire a licensed inspector. A professional inspector's report carries significantly more weight than your own observations. The report becomes an objective third-party document that supports your request.
+
+Ninja Tip 5: Calculate your daily burn rate. Know exactly how much each day costs you in holding costs. This helps you decide how hard to negotiate versus when to accept a counter-offer and move forward.
+
+Remember — the goal is a fair deal for both parties. You're not trying to steal the property. You're asking the seller to account for legitimate repair costs that affect the property's value.`,
+        directions: 'Presenter on camera, experienced and advisory tone. Show examples of itemized repair lists versus lump-sum requests.',
+      },
+      {
+        title: 'Closing',
+        type: 'talking-head',
+        duration: '3:00',
+        script: `The price reduction strategy is one of the most valuable tools in your investing toolkit. Used ethically and professionally, it can save you thousands on every deal.
+
+Your action items: Go to the Freedom One Resources section and review the Price Reduction Form. Familiarize yourself with the letter template. And on your next deal, hire a licensed inspector and use this process.
+
+In Module 4, we'll cover Wholesaling — a strategy that requires zero rehab and zero risk. See you there.`,
+        directions: 'Presenter on camera, encouraging tone. Show a quick screen recording of the Price Reduction Form in the Resources section.',
+      },
+    ],
+    closingCTA: 'Review the Price Reduction Form in Resources. Practice this strategy on your next deal.',
+    bRollSuggestions: [
+      'Home inspector examining a property',
+      'Close-up of inspection report with noted issues',
+      'Screen recording of Freedom One Price Reduction Form',
+      'Contractor writing an estimate',
+      'Before photos of common repair issues (roof, plumbing, electrical)',
+    ],
+  },
+
+  // ─────────────────────────────────────────────────────────
+  // BONUS MODULE 10: Asset Protection
+  // ─────────────────────────────────────────────────────────
+  'l-10-1': {
+    lessonId: 'l-10-1',
+    estimatedRuntime: '22:00',
+    equipment: 'Camera (talking head), slide deck, whiteboard',
+    openingHook: `"You can make a million dollars in real estate, but if you don't protect it properly, one lawsuit can take it all away. In this bonus module, I'm going to show you exactly how to structure your entities, trusts, and accounts to build an asset protection fortress around your wealth."`,
+    segments: [
+      {
+        title: 'Entity Structures',
+        type: 'whiteboard',
+        duration: '8:00',
+        script: `Let me draw out the entity structures that every serious investor needs to understand.
+
+First, the basic LLC. This is your foundation. An LLC creates a legal wall between your personal assets and your business. If a tenant slips and falls at your rental property and sues, they can only reach the assets inside that LLC — not your personal home, savings, or retirement accounts.
+
+But here's where it gets powerful. A Series LLC — available in Texas, Delaware, Illinois, Nevada, Wyoming, and other states — lets you create separate "series" within a single LLC. Each property goes into its own series. If someone sues over Property A, they can only reach the assets in Series A. Properties B, C, and D are completely protected.
+
+For investors in states without Series LLCs, use the Multi-LLC strategy. Create a Management LLC that owns no property but manages everything. Then create separate Property LLCs for each property or group of properties.
+
+And for active flippers doing 3 or more deals per year, consider an S-Corporation election. This can save you $5,000 to $15,000 per year in self-employment taxes by allowing you to split income between salary and distributions.`,
+        directions: 'Draw entity structures on whiteboard. Show the Series LLC with separate series boxes. Draw the Multi-LLC structure with arrows showing management relationships.',
+      },
+      {
+        title: 'Trusts for Real Estate',
+        type: 'slides',
+        duration: '7:00',
+        script: `Trusts are the second layer of your asset protection strategy.
+
+A Land Trust provides privacy. When you hold property in a land trust, your name doesn't appear in public records. The trust name is on the deed. This is especially valuable for subject-to deals where you don't want the lender to easily identify you as the new owner.
+
+A Revocable Living Trust is essential for estate planning. Without one, your heirs face months or years of probate court to access your properties. During that time, properties go unmaintained, tenants stop paying, and value erodes. A living trust lets your properties pass to your heirs immediately, without court involvement.
+
+The most sophisticated investors combine trusts and LLCs. Your Revocable Living Trust owns the membership interests of your LLCs. Your LLCs own the individual properties. This gives you privacy from the trust, liability protection from the LLCs, and estate planning that avoids probate.`,
+        directions: 'Show slides with trust structure diagrams. Display the Trust + LLC layering strategy as a visual hierarchy.',
+      },
+      {
+        title: 'Self-Directed IRA Investing',
+        type: 'talking-head',
+        duration: '5:00',
+        script: `Here's something most people don't know — you can use your IRA or 401k to invest in real estate. A Self-Directed IRA allows you to buy properties, fund private loans, and invest in tax liens — all with tax-advantaged dollars.
+
+Imagine buying a property for $100,000 in your Roth IRA, rehabbing it for $30,000, and selling it for $200,000. That's $70,000 in profit — completely tax-free. Forever.
+
+But there are strict rules. You cannot live in or vacation at a property owned by your IRA. You cannot hire yourself or family members to work on it. You cannot use personal funds to pay IRA property expenses. Violating these rules can disqualify your entire IRA.
+
+The Solo 401k is even more powerful for self-employed investors. Higher contribution limits — up to $69,000 per year — plus you can borrow up to $50,000 from your own account for any purpose. And some Solo 401k plans offer checkbook control, so you can write checks directly without custodian delays.`,
+        directions: 'Presenter on camera, knowledgeable and advisory tone. Show comparison tables of Traditional vs. Roth IRA tax treatment.',
+      },
+      {
+        title: 'Closing',
+        type: 'talking-head',
+        duration: '2:00',
+        script: `Asset protection isn't optional — it's essential. The time to set up your entity structure is BEFORE you need it, not after a lawsuit is filed.
+
+Your action items: consult with a real estate attorney about the right entity structure for your state, talk to your CPA about the S-Corp election if you're doing 3 or more flips per year, and research Self-Directed IRA custodians if you have retirement funds you want to put to work.
+
+In the next bonus module, we'll cover Creative Financing Mastery — advanced deal structures that let you buy properties with little to no money down.`,
+        directions: 'Presenter on camera, serious and professional tone.',
+      },
+    ],
+    closingCTA: 'Consult a real estate attorney about entity structure. Research SDIRA custodians. Next: Creative Financing Mastery.',
+    bRollSuggestions: [
+      'Whiteboard diagrams of LLC and Series LLC structures',
+      'Attorney reviewing documents at a desk',
+      'Entity structure hierarchy diagram',
+      'IRA account dashboard screenshot',
+      'Courthouse exterior (symbolizing legal protection)',
+    ],
+  },
+  'l-10-2': {
+    lessonId: 'l-10-2',
+    estimatedRuntime: '20:00',
+    equipment: 'Camera (talking head), slide deck',
+    openingHook: `"Trusts aren't just for the wealthy — they're for the smart. In this lesson, I'll show you how land trusts, living trusts, and irrevocable trusts can protect your real estate portfolio and ensure your wealth passes to your family without the nightmare of probate."`,
+    segments: [
+      {
+        title: 'Land Trusts Deep Dive',
+        type: 'slides',
+        duration: '8:00',
+        script: `A land trust is one of the most underused tools in real estate investing. Let me show you exactly how it works and when to use it.
+
+A land trust has three parties: the grantor (you — the person creating the trust), the trustee (a title company, attorney, or trust company who holds legal title), and the beneficiary (you again — the person who controls and benefits from the property).
+
+The power of a land trust is privacy. When someone searches public records, they see the trust name — not your name. This is valuable for several reasons. First, it prevents tenants from finding your personal address and showing up at your door. Second, it makes it harder for ambulance-chasing attorneys to identify you as a target. Third, for subject-to deals, it provides a layer of separation from the original mortgage.
+
+To create a land trust: draft the trust agreement naming yourself as beneficiary and a third party as trustee, then deed the property into the trust. Record the deed with the county. That's it.
+
+Name your trusts generically — "123 Main Street Trust" or "Oak Avenue Land Trust" — not "John Smith Family Trust." Generic names provide maximum privacy.`,
+        directions: 'Show slides explaining the three-party structure of a land trust. Display examples of generic trust names.',
+      },
+      {
+        title: 'Living Trusts and Estate Planning',
+        type: 'talking-head',
+        duration: '7:00',
+        script: `If you own 5 or more properties, a revocable living trust is not optional — it's mandatory.
+
+Here's what happens without one. You pass away. Your family has to go to probate court for EVERY property you own. In some states, probate takes 6 to 18 months. During that time, nobody can sell the properties, refinance them, or make major decisions. Tenants may stop paying rent. Properties may fall into disrepair. And probate costs 3 to 7 percent of the estate value — that's $30,000 to $70,000 on a $1 million portfolio.
+
+With a living trust, your successor trustee takes over immediately. No court involvement. No delays. No public record. Your properties continue to be managed, rents continue to be collected, and your family is protected.
+
+The cost to set up a living trust is $1,500 to $3,000 with an estate planning attorney. That's a one-time cost that saves your family tens of thousands and months of stress.
+
+Review your trust every 3 years as your portfolio grows and laws change.`,
+        directions: 'Presenter on camera, serious and caring tone. Show comparison of probate vs. trust administration timelines.',
+      },
+      {
+        title: 'Closing',
+        type: 'talking-head',
+        duration: '2:00',
+        script: `Trusts are the second pillar of your asset protection strategy. Combined with proper LLC structure, they create a comprehensive shield around your wealth.
+
+Your action items: if you own investment property, schedule a consultation with an estate planning attorney this month. Ask specifically about land trusts for privacy and a revocable living trust for estate planning. The cost is minimal compared to the protection you receive.`,
+        directions: 'Presenter on camera, advisory and motivational.',
+      },
+    ],
+    closingCTA: 'Schedule a consultation with an estate planning attorney. Set up land trusts for privacy on your properties.',
+    bRollSuggestions: [
+      'Trust document being signed',
+      'Attorney meeting with clients',
+      'County recorder office exterior',
+      'Family reviewing estate planning documents',
+    ],
+  },
+  'l-10-3': {
+    lessonId: 'l-10-3',
+    estimatedRuntime: '22:00',
+    equipment: 'Camera (talking head), slide deck, screen recording',
+    openingHook: `"What if I told you that you could flip a house and keep 100% of the profit — tax-free? That's the power of a Self-Directed Roth IRA. In this lesson, I'll show you exactly how to use your retirement accounts to invest in real estate."`,
+    segments: [
+      {
+        title: 'SDIRA Basics',
+        type: 'slides',
+        duration: '8:00',
+        script: `A Self-Directed IRA is a retirement account that lets you invest in alternative assets — including real estate. Most people don't know this exists because traditional brokerages like Fidelity and Schwab don't offer it. You need a specialized custodian.
+
+Here's how it works. You open a SDIRA with a custodian that allows real estate — Equity Trust, Directed IRA, Entrust, or Alto IRA are popular options. You fund the account via contribution, rollover from an existing IRA or 401k, or transfer.
+
+Then you find a deal using the same strategies you've learned in this course. You direct your custodian to purchase the property on behalf of your IRA. All income and expenses flow through the IRA — rent comes in, expenses go out, all within the account.
+
+The Traditional SDIRA gives you tax-deferred growth — you pay taxes when you withdraw in retirement. But the Roth SDIRA is the real game-changer. With a Roth, all growth is tax-FREE. A $70,000 flip profit in a Roth IRA? Zero taxes. Ever.
+
+The Solo 401k is even better for self-employed investors. Contribution limits up to $69,000 per year, a loan provision that lets you borrow $50,000 from your own account, and some plans offer checkbook control for instant transactions.`,
+        directions: 'Show comparison tables of account types, contribution limits, and tax treatment. Display custodian logos and features.',
+      },
+      {
+        title: 'Rules and Strategies',
+        type: 'talking-head',
+        duration: '8:00',
+        script: `The IRS has strict rules about SDIRA investing, and violating them can destroy your entire account. So pay attention.
+
+Prohibited transactions: You cannot live in or vacation at a property owned by your IRA. You cannot hire yourself or family members to work on it. You cannot buy from or sell to yourself or family members. You cannot use personal funds to pay IRA property expenses.
+
+Disqualified persons include you, your spouse, your parents, your children, their spouses, and any entity you own 50% or more of.
+
+The penalty for a prohibited transaction? The entire IRA is treated as distributed. That means income tax on the full balance plus a 10% early withdrawal penalty if you're under 59 and a half.
+
+Now for the strategies. Number one: buy and hold rentals in your IRA. Collect rent tax-free and build long-term wealth. Number two: private lending. Use your IRA to fund hard money loans to other investors at 8 to 12 percent interest. This is actually the easiest way to start — no property management required. Number three: fix and flip inside your IRA. Buy, rehab using IRA funds to pay contractors, and sell for tax-free profit.
+
+One critical tip: keep 6 months of expenses in your IRA as cash. If your IRA property needs a repair and you don't have cash in the account, you cannot use personal funds to cover it. That would be a prohibited transaction.`,
+        directions: 'Presenter on camera, serious tone when discussing rules, enthusiastic when discussing strategies. Show the prohibited transaction rules as a clear graphic.',
+      },
+      {
+        title: 'Closing',
+        type: 'talking-head',
+        duration: '2:00',
+        script: `Self-Directed IRAs and Solo 401ks are powerful tools that most investors never discover. If you have retirement funds sitting in a traditional brokerage earning 7 to 10 percent, imagine putting that money to work in real estate earning 15 to 25 percent — or more — tax-free.
+
+Your action items: research SDIRA custodians, calculate how much you could roll over from existing retirement accounts, and consider starting with private lending to build your IRA balance before buying property directly.`,
+        directions: 'Presenter on camera, motivational and forward-looking.',
+      },
+    ],
+    closingCTA: 'Research SDIRA custodians and calculate your rollover potential. Start with private lending to build your IRA balance.',
+    bRollSuggestions: [
+      'IRA custodian website screenshots',
+      'Calculator showing tax-free growth projections',
+      'Retirement account statement',
+      'Property purchased with IRA funds',
+    ],
+  },
+
+  // ─────────────────────────────────────────────────────────
+  // BONUS MODULE 11: Creative Financing Mastery
+  // ─────────────────────────────────────────────────────────
+  'l-11-1': {
+    lessonId: 'l-11-1',
+    estimatedRuntime: '20:00',
+    equipment: 'Camera (talking head), slide deck, whiteboard',
+    openingHook: `"What if you could buy a $300,000 property with $20,000 down, no bank qualification, and a 5% interest rate? That's seller financing — and in this lesson, I'll show you how to structure these deals so both you and the seller win."`,
+    segments: [
+      {
+        title: 'Seller Financing Structures',
+        type: 'whiteboard',
+        duration: '8:00',
+        script: `Seller financing is when the seller acts as the bank. Instead of getting a mortgage from a traditional lender, you make payments directly to the seller. Let me draw out the three main structures.
+
+First, Full Seller Carry. The seller finances 100 percent of the purchase price. You make monthly payments of principal plus interest directly to the seller. Typical terms are 10 to 30 year amortization with a 5 to 7 year balloon payment.
+
+Second, Partial Seller Carry. A bank finances 70 to 80 percent as the first mortgage. The seller finances 10 to 20 percent as a second mortgage. You bring 5 to 10 percent as a down payment. This dramatically reduces your cash needed.
+
+Third, the Wrap-Around Mortgage. This is the most creative structure. The seller has an existing mortgage at, say, 3.5 percent. You create a new mortgage at 7 percent that wraps around the existing one. You pay the seller at 7 percent. The seller continues paying their 3.5 percent mortgage. The seller profits from the interest rate spread.
+
+Why do sellers agree to this? Higher sale price, monthly income stream, tax benefits from installment sales, and interest income that beats any bank CD.`,
+        directions: 'Draw each structure on whiteboard with payment flows and interest rates. Use different colors for each party. Show the wrap-around mortgage with the existing mortgage inside the new one.',
+      },
+      {
+        title: 'Negotiation and Legal Requirements',
+        type: 'slides',
+        duration: '7:00',
+        script: `The key to seller financing is how you approach the conversation. Never lead with "Will you finance the deal?" Instead, ask about their goals.
+
+If they want retirement income, say: "What if I could give you a guaranteed monthly income at a better rate than any bank CD, secured by this property?"
+
+If they want to pay off debt, say: "What if we structured a deal where you get a large down payment to pay off your debts, plus monthly income for the next 10 years?"
+
+Always present it as THEIR benefit.
+
+For the terms negotiation, remember the framework: the seller controls the price, you control the terms. If a seller insists on full asking price, agree — but negotiate 5 percent interest, 30-year amortization, and 10 percent down. The terms determine your actual cost, not the sticker price.
+
+Legal requirements: use a real estate attorney to draft the promissory note and mortgage. Record the mortgage with the county. Use a loan servicing company to handle payments. Comply with Dodd-Frank rules. And always get title insurance.`,
+        directions: 'Show slides with negotiation scripts and term comparison tables. Display legal checklist.',
+      },
+      {
+        title: 'Closing',
+        type: 'talking-head',
+        duration: '3:00',
+        script: `Seller financing opens doors that traditional financing keeps locked. It lets you buy properties with less money down, avoid bank qualification, and create terms that work for your investment strategy.
+
+Your action items: identify free-and-clear properties in your target market by searching county records for properties with no recorded liens. These owners have maximum flexibility to offer seller financing. Practice your pitch and be ready to present it on your next deal.
+
+In the next lesson, we'll cover lease options, private money, and advanced deal stacking strategies.`,
+        directions: 'Presenter on camera, confident and forward-looking.',
+      },
+    ],
+    closingCTA: 'Search county records for free-and-clear properties. Practice your seller financing pitch.',
+    bRollSuggestions: [
+      'Whiteboard diagrams of seller financing structures',
+      'Seller and buyer shaking hands',
+      'Promissory note document',
+      'County records search on computer screen',
+    ],
+  },
+  'l-11-2': {
+    lessonId: 'l-11-2',
+    estimatedRuntime: '24:00',
+    equipment: 'Camera (talking head), slide deck, whiteboard, screen recording',
+    openingHook: `"In this lesson, I'm going to show you the most advanced creative financing strategies — lease options, private money, and deal stacking. These are the techniques that let experienced investors buy properties with zero money out of pocket."`,
+    segments: [
+      {
+        title: 'Lease Options',
+        type: 'whiteboard',
+        duration: '8:00',
+        script: `A lease option gives you the right — but not the obligation — to purchase a property at a predetermined price within a specified timeframe. Let me draw this out.
+
+You negotiate a lease with the property owner for 1 to 3 years. You pay an option consideration fee — typically $2,000 to $10,000 — for the exclusive right to buy at a set price. You make monthly lease payments, and a portion may credit toward the purchase.
+
+Now here's where it gets powerful — the Sandwich Lease Option. You lease-option a property from the owner at one price. Then you sub-lease-option it to a tenant-buyer at a higher price and higher monthly payment. You profit from both the monthly spread and the price spread.
+
+Example: You lease-option at $200,000 with $1,200 monthly payments. You sub-lease-option to a tenant-buyer at $225,000 with $1,600 monthly payments. You collect a $7,000 option fee from the tenant-buyer after paying $3,000 to the owner. That's $4,000 upfront, $400 per month cash flow, and a $25,000 price spread when the tenant-buyer exercises.
+
+You can also use lease options for flips — lease-option a property that needs work, rehab during the lease period, then exercise the option and sell at full market value.`,
+        directions: 'Draw the sandwich lease option on whiteboard showing all three parties and money flows. Use different colors for each party.',
+      },
+      {
+        title: 'Private Money and Deal Stacking',
+        type: 'slides',
+        duration: '8:00',
+        script: `Private money comes from individuals — not institutions — who want better returns on their capital. Your job is to find these people and present them with a compelling opportunity.
+
+Where to find private money: friends and family, fellow investors at REIA meetings, professionals like doctors and lawyers with idle capital, self-directed IRA holders, and online platforms.
+
+The pitch: lead with THEIR return. "I have an opportunity for you to earn 10 percent annually, secured by real property." Show your track record using Freedom One Credibility Packets. Explain the security — first-position lien, title insurance, hazard insurance. Present a specific deal with numbers from the Freedom One Deal Analyzer.
+
+Now, deal stacking. This is where you combine multiple financing sources on a single deal. Example: hard money covers 80 percent of purchase, private money covers the remaining 20 percent, hard money also covers the rehab draw. Total funded: 100 percent. Your cash in: zero.
+
+The most advanced structure combines subject-to plus wrap plus lease option. Buy subject-to the existing mortgage at 3.5 percent. Create a wrap mortgage at 7 percent and sell to a buyer on owner financing. Profit from the rate spread — potentially $700 to $900 per month in cash flow plus a large down payment upfront.`,
+        directions: 'Show slides with private money pitch framework, deal stacking examples with funding sources table, and the subject-to + wrap + lease option combo diagram.',
+      },
+      {
+        title: 'Ninja Tips and Closing',
+        type: 'talking-head',
+        duration: '5:00',
+        script: `Let me leave you with the most important creative financing ninja tips.
+
+Always get the deed. In any creative deal — subject-to, seller financing, wrap — make sure you get the deed recorded in your name or your entity's name. Controlling payments without the deed is risky.
+
+Use a loan servicing company. For $15 to $25 per month, they handle payment collection, escrow, tax reporting, and create a professional paper trail. This protects you legally.
+
+Build a capital stack spreadsheet for every deal. List every source of funds, the cost of each source, and the total blended cost of capital. This tells you instantly whether a deal works.
+
+And most importantly — start with one creative strategy and master it. Don't try to learn seller financing, subject-to, wraps, and lease options all at once. Pick one, do 3 to 5 deals, then add the next strategy.
+
+Congratulations on completing the bonus modules. You now have knowledge that 99 percent of investors never access. Use it wisely, use it ethically, and go build your real estate empire.`,
+        directions: 'Presenter on camera, experienced and motivational tone. End on a high note as this is the final lesson of the bonus content.',
+      },
+    ],
+    closingCTA: 'Build your credibility packet. Find your first private money partner. Master one creative strategy at a time.',
+    bRollSuggestions: [
+      'Whiteboard diagram of sandwich lease option',
+      'Private money meeting between investor and lender',
+      'Deal stacking spreadsheet on screen',
+      'Closing table celebration',
+      'Freedom One platform montage',
+    ],
+  },
 };

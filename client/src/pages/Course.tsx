@@ -478,9 +478,10 @@ export default function Course() {
               const isExpanded = expandedModule === mod.id;
               const modProgress = getModuleProgress(mod);
               const isModuleComplete = modProgress.completed === modProgress.total;
+              const isPremium = mod.premium === true;
               return (
                 <Collapsible key={mod.id} open={isExpanded}>
-                  <Card className={`transition-all ${isExpanded ? 'border-primary shadow-sm' : ''}`}>
+                  <Card className={`transition-all ${isExpanded ? 'border-primary shadow-sm' : ''} ${isPremium ? 'border-amber-500/30 bg-amber-500/5' : ''}`}>
                     <CollapsibleTrigger
                       onClick={() => {
                         setExpandedModule(isExpanded ? null : mod.id);
@@ -496,7 +497,12 @@ export default function Course() {
                           <span className="text-xl">{mod.icon}</span>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <p className="text-xs text-muted-foreground">Module {mod.number}</p>
+                              <p className="text-xs text-muted-foreground">{isPremium ? 'Bonus' : `Module ${mod.number}`}</p>
+                              {isPremium && (
+                                <Badge className="text-[10px] px-1.5 py-0 bg-amber-500/20 text-amber-600 border-amber-500/30 hover:bg-amber-500/20">
+                                  PRO
+                                </Badge>
+                              )}
                               {isAuthenticated && isModuleComplete && (
                                 <CheckCircle2 className="w-3.5 h-3.5 text-green-500 shrink-0" />
                               )}

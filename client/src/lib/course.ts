@@ -10,6 +10,7 @@ export interface CourseModule {
   description: string;
   lessons: CourseLesson[];
   icon: string;
+  premium?: boolean;
 }
 
 export interface CourseLesson {
@@ -57,7 +58,15 @@ The investors who will thrive in 2026 are those who:
 - Understand multiple exit strategies
 - Build systems for finding and closing deals
 - Manage rehabs efficiently with detailed scopes of work
-- Market properties effectively for maximum sale price`,
+- Market properties effectively for maximum sale price
+
+### 🥷 Ninja Tips: Investor Mindset
+
+1. **Analyze 100 deals before buying one** — Most new investors jump on the first deal they find. Train your eye by running 100 deals through the Freedom One Analyzer first. By deal #50, you'll spot winners and losers in seconds.
+
+2. **Track your "cost per lead"** — Know exactly how much you spend on marketing per deal closed. If direct mail costs $2,000 and produces 1 deal, your cost per lead is $2,000. Compare channels and double down on what works.
+
+3. **Set a "walk-away" alarm** — Before analyzing any deal, write down your maximum purchase price. If the numbers don't work, walk away immediately. Emotional attachment to a property is the #1 profit killer.`,
       },
       {
         id: 'l-1-2',
@@ -110,7 +119,17 @@ Many experienced investors use two entities:
 1. **Acquisition LLC** — Buys and rehabs properties
 2. **Holding LLC** — Holds rental properties for long-term wealth building
 
-This separation provides additional liability protection and tax planning flexibility.`,
+This separation provides additional liability protection and tax planning flexibility.
+
+### 🥷 Ninja Tips: Business Setup
+
+1. **Get your EIN before your LLC** — You can apply for an EIN on IRS.gov in 5 minutes, even before your LLC is approved. This lets you open a business bank account faster.
+
+2. **Use a registered agent service ($50-$150/year)** — Don't use your home address for your LLC. A registered agent keeps your personal address off public records and looks more professional.
+
+3. **Create a "deal folder" template** — Set up a Google Drive or Dropbox folder template with subfolders: Contracts, Inspection, Photos, Estimates, Closing Docs. Clone it for every deal. Organization prevents costly mistakes.
+
+4. **Open TWO business bank accounts** — One for operating expenses (marketing, gas, software) and one for deal funds (earnest money, rehab draws, closing costs). This makes bookkeeping dramatically easier at tax time.`,
       },
       {
         id: 'l-1-3',
@@ -171,7 +190,15 @@ No successful investor works alone. Here's who you need on your team and how to 
 2. **BiggerPockets.com** — Online forums and local meetups
 3. **Facebook Groups** — Search "[Your City] Real Estate Investors"
 4. **REI Meetups** — Check Meetup.com for local groups
-5. **Courthouse Steps** — Meet other investors at foreclosure auctions`,
+5. **Courthouse Steps** — Meet other investors at foreclosure auctions
+
+### 🥷 Ninja Tips: Building Your Team
+
+1. **Take your contractor to lunch, not just to job sites** — Relationships matter. The contractors who give you priority scheduling and honest bids are the ones who like working with you. A $30 lunch saves you $3,000 in overcharges.
+
+2. **Ask your title company for a "net sheet" on every deal** — Before you make an offer, ask your title company to run a preliminary net sheet showing all closing costs. This prevents surprises and gives you exact numbers for your analysis.
+
+3. **Build a "B-team" for every position** — Your main contractor gets sick, your agent goes on vacation, your lender runs out of funds. Always have a backup for every key team member. One phone call shouldn't be able to kill your deal.`,
       },
     ],
   },
@@ -253,7 +280,19 @@ The best deals often come from:
 - Real estate agents who know distressed sellers
 - Attorneys (probate, divorce, bankruptcy)
 - Property managers with tired landlord clients
-- Contractors who see distressed properties daily`,
+- Contractors who see distressed properties daily
+
+### 🥷 Ninja Tips: Finding Deals
+
+1. **The "Yellow Letter" hack** — Handwritten yellow letters get 3-5x the response rate of printed postcards. You don't have to write them yourself — services like Yellow Letters Complete or Ballpoint Marketing print letters that look handwritten. Cost: $1.50-$2.50 each, but the response rate makes it worth it.
+
+2. **Drive for dollars on trash day** — The best time to spot distressed properties is on trash/recycling day. Overflowing bins, no bins out at all, or bins that haven't been moved in weeks are all signs of vacancy or distress.
+
+3. **Befriend code enforcement officers** — They know every problem property in town before anyone else. Attend city council meetings and introduce yourself. They can't give you owner info directly, but they can point you to public records.
+
+4. **Set up "stalker alerts" on Zillow and Redfin** — Create saved searches for price reductions, back-on-market listings, and properties listed 60+ days. These automated alerts do your deal-finding while you sleep.
+
+5. **The "2-touch" follow-up rule** — 80% of deals close after the 5th contact. Most investors give up after 1-2 attempts. Set up a 6-touch follow-up sequence (mail, call, text, mail, call, mail) over 90 days. Persistence wins.`,
       },
       {
         id: 'l-2-2',
@@ -326,7 +365,17 @@ Use the scope of work approach in this app for accurate estimates:
 | Net Profit | $25,000+ per flip |
 | ROI | 15%+ |
 | Cash-on-Cash Return | 30%+ |
-| Profit Margin | 10%+ of ARV |`,
+| Profit Margin | 10%+ of ARV |
+
+### 🥷 Ninja Tips: Deal Analysis
+
+1. **Always verify comps in person** — Online photos can be deceiving. Drive by your top 3 comps to verify condition, neighborhood quality, and street appeal. A comp that looks great online might be next to a junkyard.
+
+2. **Use the "3-ARV" method** — Calculate three ARVs: Conservative (lowest comp), Realistic (average), and Optimistic (highest comp). Only buy deals that work at the Conservative ARV. If it works at conservative and you hit realistic, that's bonus profit.
+
+3. **Add $5,000 to every rehab estimate** — No matter how detailed your scope of work, something unexpected will come up. Plumbing behind walls, electrical issues, permit delays. The $5,000 buffer has saved more deals than any other single habit.
+
+4. **Calculate your "daily burn rate"** — Add up all monthly holding costs (mortgage, taxes, insurance, utilities, lawn care) and divide by 30. This is how much every single day costs you. When your contractor says "we need one more week," you'll know exactly what that means in dollars.`,
       },
     ],
   },
@@ -390,7 +439,19 @@ Never pay a contractor 100% upfront. Use a draw schedule:
 4. **Not having a contingency budget** — Always add 10-15% for surprises
 5. **Choosing the cheapest contractor** — The cheapest bid often costs the most in delays and rework
 6. **Scope creep** — Stick to your SOW unless the change clearly adds value
-7. **Ignoring the timeline** — Every extra month costs you $2,000-4,000 in holding costs`,
+7. **Ignoring the timeline** — Every extra month costs you $2,000-4,000 in holding costs
+
+### 🥷 Ninja Tips: Rehab Management
+
+1. **The "morning photo" rule** — Every morning before work starts, take a photo of each room from the same angle. This documents progress for lenders, catches mistakes early, and creates incredible before/after content for marketing.
+
+2. **Pay for materials yourself, labor only to contractors** — Buy materials directly from Home Depot or Lowe's with your own account. This prevents contractor markup (typically 15-30%) and ensures you get the exact materials specified in your SOW.
+
+3. **The "punch list walk" trick** — Do your final walk with a roll of blue painter's tape. Stick tape next to every defect — paint drips, uneven caulk, scratched fixtures. Hand the contractor the list AND leave the tape in place. Nothing gets "forgotten."
+
+4. **Schedule inspections on Fridays** — Contractors rush to finish before weekends. Schedule your inspections for Friday afternoons. You'll get more work done in the 48 hours before a Friday inspection than in any other week.
+
+5. **Keep a "change order log"** — Every change from the original SOW gets written down with the cost impact BEFORE the work is done. No verbal agreements. This single habit prevents 90% of contractor disputes.`,
       },
       {
         id: 'l-3-2',
@@ -444,7 +505,119 @@ Get your own inspection before listing to:
 - Counter-offer rather than reject
 - Consider net proceeds, not just price (closing cost credits, etc.)
 - Set an offer deadline to create urgency
-- Be willing to negotiate on terms (closing date, inspections) to hold firm on price`,
+- Be willing to negotiate on terms (closing date, inspections) to hold firm on price
+
+### 🥷 Ninja Tips: Selling Your Flip
+
+1. **List on Thursday, not Monday** — Properties listed Thursday get maximum weekend showing traffic. Buyers browse Thursday night, schedule showings Friday, and visit Saturday/Sunday.
+
+2. **Price at $X99,900 not $X00,000** — List at $299,900 instead of $300,000. This puts your property in the "under $300K" search filter that most buyers use. You lose $100 but gain thousands of additional eyeballs.
+
+3. **Offer a home warranty ($400-$600)** — A 1-year home warranty removes buyer fear about rehab quality. It costs $400-$600 but can be the difference between getting an offer and not.
+
+4. **The "fresh cookie" open house** — Bake cookies or use a cookie-scented candle during open houses. The smell of fresh baking triggers feelings of home and comfort and increases perceived property value.
+
+5. **Create a property website** — Use the Freedom One Listings feature to create a dedicated page for your flip with photos, features, and contact info. Share the link on social media for professional lead capture.`,
+      },
+      {
+        id: 'l-3-3',
+        title: 'The Price Reduction Strategy: Post-Inspection Negotiation',
+        duration: '25 min',
+        content: `## The Price Reduction Strategy: Post-Inspection Negotiation
+
+One of the most powerful — and completely legal — tools in a real estate investor's toolkit is the **post-inspection price reduction request**. This lesson teaches you how to use the inspection contingency in your purchase contract to negotiate a better price based on legitimate findings.
+
+### What Is a Price Reduction Request?
+
+A Price Reduction Request is a formal, written letter submitted to the seller (or their listing agent) after a professional property inspection reveals repair issues that were not anticipated at the time of your original offer.
+
+This is a **standard practice** in real estate — not a trick or loophole. Every standard purchase agreement includes an inspection contingency period (typically 7–14 days) that gives you the contractual right to:
+- Inspect the property
+- Request repairs or a price reduction based on findings
+- Cancel the contract if you cannot reach agreement
+
+### When to Use It
+
+Use the Price Reduction Request when **all** of these conditions are met:
+1. You have a signed purchase agreement with an inspection contingency
+2. A licensed inspector has completed a thorough inspection
+3. The inspection revealed **material defects** not visible or disclosed before your offer
+4. The repair costs significantly impact deal economics
+5. You are negotiating in **good faith** — you genuinely want to buy the property
+
+**Legitimate triggers:** Foundation issues, roof damage, outdated electrical, plumbing problems, HVAC failure, mold/asbestos, structural damage, code violations.
+
+### When NOT to Use It
+
+- For cosmetic issues visible during your initial walkthrough
+- For items already disclosed by the seller
+- As a pretext to renegotiate a price you never intended to pay
+- For minor issues that don't materially affect value
+
+**Your reputation is your most valuable asset.** If you develop a reputation for using inspections to renegotiate every deal, agents will stop presenting your offers.
+
+### How to Calculate Your Revised Offer
+
+**Step 1:** Start with your original MAO
+MAO = (ARV × 70%) − Estimated Repairs
+
+**Step 2:** Get written contractor estimates for each new issue (at least 2 bids per major item)
+
+**Step 3:** Calculate additional repair costs
+Additional Repairs = New Total Estimate − Original Estimate
+
+**Step 4:** Calculate revised MAO
+Revised MAO = (ARV × 70%) − New Total Repairs
+
+**Step 5:** Set your revised offer at or below the Revised MAO
+
+**Example:**
+| Item | Amount |
+|------|--------|
+| ARV | $300,000 |
+| Original repair estimate | $40,000 |
+| Original MAO | $170,000 |
+| Original offer | $165,000 |
+| Additional repairs found | $15,000 |
+| New total repairs | $55,000 |
+| Revised MAO | $155,000 |
+| Revised offer | $150,000–$155,000 |
+
+### Ninja Negotiation Tips
+
+These advanced tactics are 100% legal and ethical:
+
+1. **Document immediately** — Take photos during the inspection before anything gets cleaned up. Active water intrusion is more compelling than a dry stain photographed later.
+
+2. **Get multiple contractor bids** — Present 2-3 written estimates from licensed contractors. The highest bid is often the most thorough and hardest to argue against.
+
+3. **Itemize everything separately** — A list of 25 line items at $600 each creates stronger impact than one line saying "$15,000 in repairs."
+
+4. **Use the inspector's language** — Quote phrases like "safety hazard," "code violation," "end of useful life," and "recommended immediate repair" directly from the report.
+
+5. **Present costs as a percentage** — "$18,000 in additional repairs represents 10.5% of the purchase price" sounds more significant than just the dollar amount.
+
+6. **Offer a quick close as incentive** — "If we agree on the revised price, we'll close in 14 days instead of 30." Speed costs you nothing but motivates the seller.
+
+7. **Time it strategically** — Submit early in the contingency period, not at the last minute. Early feels like good faith; last-minute feels like pressure.
+
+### Using the Freedom One Price Reduction Form
+
+The Freedom One platform includes a **Price Reduction Form** tool (under Resources) that:
+- Auto-fills your business information from your profile
+- Calculates revised MAO automatically
+- Generates a professional letter ready to print or email
+- Includes all the training content from this lesson
+
+Navigate to **Resources → Price Reduction Form** to access it.
+
+### Legal & Ethical Reminders
+
+- This is a contractual right, not a loophole — exercise it honestly
+- Your request must be based on actual, documented inspection findings
+- State laws vary — always consult a real estate attorney in your jurisdiction
+- All parties have an implied duty of good faith and fair dealing
+- If you knew about defects before your offer, they don't qualify as new findings`,
       },
     ],
   },
@@ -526,7 +699,19 @@ Use the contract templates in this app — they already include proper assignmen
 - Always use a proper purchase contract (not just a letter of intent)
 - Disclose your role as an investor, not a licensed agent
 - Never misrepresent the property condition
-- Consult a real estate attorney in your state`,
+- Consult a real estate attorney in your state
+
+### 🥷 Ninja Tips: Wholesaling
+
+1. **The "reverse wholesale" method** — Instead of finding a deal first, find your buyer first. Ask cash buyers exactly what they want (location, price range, bed/bath, condition). Then go find that exact property. You already have a buyer before you even make an offer.
+
+2. **Use the "3-offer" strategy** — When talking to a motivated seller, present three offers: (1) All cash, lowest price, fast close; (2) Slightly higher price with seller financing terms; (3) Highest price with a lease-option. This gives the seller choices and makes you look professional, not predatory.
+
+3. **Build a "deal sheet" template** — Create a one-page PDF with property photos, address, ARV, rehab estimate, and your asking price. Email this to your entire buyers list within 2 hours of getting a property under contract. Speed is everything — the first wholesaler to send a deal sheet gets the buyer.
+
+4. **Never say "I'm a wholesaler"** — Say "I'm a real estate investor and I buy properties in this area." The word "wholesaler" has negative connotations with some sellers and agents. You ARE an investor — you just happen to use the assignment exit strategy.
+
+5. **The "earnest money" power move** — Offer $1,000-$2,500 in earnest money (not $100). A larger earnest money deposit signals you're serious and makes your offer stand out. You get it back if you exercise your inspection contingency.`,
       },
     ],
   },
@@ -600,7 +785,19 @@ DSCR (Debt Service Coverage Ratio) loans qualify based on rental income, not you
 - Based on property cash flow
 - 30-year fixed rates available
 - 75-80% LTV typical
-- See our Lender Directory for DSCR lender options`,
+- See our Lender Directory for DSCR lender options
+
+### 🥷 Ninja Tips: BRRRR Strategy
+
+1. **Rehab for rent, not for sale** — BRRRR rehabs should prioritize durability over aesthetics. Use commercial-grade LVP flooring (not hardwood), semi-gloss paint (wipes clean), and lever-style door handles (tenants break knobs). Every material choice should answer: "Will this survive 5 years of tenants?"
+
+2. **Get your refinance appraisal BEFORE placing a tenant** — An empty, freshly renovated property appraises higher than one with a tenant's furniture and personal items. Schedule the appraisal during the 2-week window between rehab completion and tenant move-in.
+
+3. **The "rent-ready" photo trick** — Take professional photos of every room immediately after rehab, before any tenant moves in. Use these photos for every future tenant listing. You'll never need to photograph the property again.
+
+4. **Screen tenants like you screen deals** — Require credit score 620+, income 3x rent, 2 years employment history, and landlord references. One bad tenant costs more than 6 months of vacancy. Never skip screening to fill a unit faster.
+
+5. **Build your "refinance packet" during rehab** — Keep a folder with before/after photos, receipts for all improvements, the SOW, and a list of comparable rents. Hand this to your appraiser. Appraisers appreciate organized investors and it helps justify a higher value.`,
       },
     ],
   },
@@ -678,7 +875,19 @@ DSCR (Debt Service Coverage Ratio) loans qualify based on rental income, not you
 - Record the deed transfer with the county
 - Get a signed authorization from the seller to communicate with their lender
 - Set up a loan servicing company to handle payments (creates paper trail)
-- Document everything — the seller should sign extensive disclosures`,
+- Document everything — the seller should sign extensive disclosures
+
+### 🥷 Ninja Tips: Subject-To Deals
+
+1. **The "payment relief" pitch** — Never lead with "I want to take over your mortgage." Instead say: "What if I could take over your monthly payments so you never have to worry about them again, AND you can walk away clean?" Frame it as solving their problem, not as your investment strategy.
+
+2. **Set up auto-pay on DAY ONE** — The moment you close a subject-to deal, set up automatic payments from your business account to the mortgage servicer. A single late payment can trigger the due-on-sale clause. Automate it and forget it.
+
+3. **Get a "letter of authorization" signed at closing** — Have the seller sign a letter authorizing you to communicate with their mortgage company. This lets you verify payment posting, request payoff amounts, and handle any issues without needing the seller involved.
+
+4. **Use a land trust for privacy** — Transfer the property into a land trust with you as beneficiary. This adds a layer of privacy that makes it less likely the lender will notice the transfer and trigger the due-on-sale clause. It's legal and commonly used.
+
+5. **Always have an exit plan** — Before closing any subject-to deal, know your three exits: (1) Rent it for cash flow, (2) Refinance into your own loan within 12-24 months, (3) Sell with owner financing at a higher rate. Never enter a deal with only one way out.`,
       },
     ],
   },
@@ -776,7 +985,19 @@ Short-term rentals (STR) through platforms like Airbnb and VRBO can generate 2-3
 **Property Manager** — 15-25% of revenue
 - Best for 4+ properties or remote investors
 - They handle everything: guests, cleaning, maintenance
-- Interview multiple managers and check reviews`,
+- Interview multiple managers and check reviews
+
+### 🥷 Ninja Tips: Short-Term Rentals
+
+1. **The "Superhost fast-track"** — Price your first 5 bookings 20-30% below market rate to get reviews fast. Airbnb's algorithm heavily favors listings with 5+ reviews. Once you hit Superhost status, raise your prices to market rate. The initial discount pays for itself 10x over.
+
+2. **Create a "local guide" binder** — Put a physical binder in the property with your favorite restaurants, attractions, grocery stores, and emergency contacts. Guests love this personal touch and mention it in reviews. It costs $10 and generates 5-star reviews consistently.
+
+3. **Install a smart lock + noise monitor** — A smart lock (August or Schlage, $200-$300) eliminates key handoff logistics and lets you change codes between guests automatically. A noise monitor (NoiseAware, $150 + $10/month) alerts you to parties before neighbors complain. These two devices prevent 90% of STR headaches.
+
+4. **The "gap night" discount** — If you have a 1-2 night gap between bookings, offer a steep discount (40-50% off) for those nights. An empty night earns $0. Even a heavily discounted night earns something and keeps your occupancy rate high.
+
+5. **Photograph for the thumbnail** — Your listing's main photo is everything. It needs to look stunning at thumbnail size on a phone screen. Hire a professional photographer ($200-$400) and make the hero image a wide-angle shot of the most impressive room with natural light.`,
       },
     ],
   },
@@ -839,7 +1060,19 @@ Short-term rentals (STR) through platforms like Airbnb and VRBO can generate 2-3
 - **Types:** Self-directed IRA, Solo 401(k), SDIRA LLC
 - **Advantage:** Profits grow tax-free (Roth) or tax-deferred
 - **Rules:** Cannot benefit personally (no living in the property)
-- **Custodians:** Equity Trust, Directed IRA, Entrust`,
+- **Custodians:** Equity Trust, Directed IRA, Entrust
+
+### 🥷 Ninja Tips: Financing
+
+1. **Get pre-approved with 3 hard money lenders BEFORE you find a deal** — When a great deal hits, you need to move in hours, not days. Having pre-approval letters ready means you can make offers with confidence and close fast. Sellers and wholesalers prioritize buyers who can prove they can close.
+
+2. **The "points negotiation" trick** — Hard money lenders will often reduce origination points if you ask. "I'll pay your full rate, but can we do 1 point instead of 2?" On a $200K loan, that saves you $2,000. Most investors never negotiate points — the lender expects you to ask.
+
+3. **Build a "credibility packet" for private money** — Create a professional packet with your bio, track record (even if it's just 1-2 deals), your business plan, and a sample deal analysis from Freedom One. This transforms you from "someone asking for money" to "a professional seeking investment partners." Use the Freedom One Credibility Packets feature.
+
+4. **Stack financing creatively** — Use hard money for 70-80% of purchase + rehab, then use a private money second position or a HELOC for the remaining 20-30%. This lets you do deals with little to no money out of pocket. Always disclose all liens to all lenders.
+
+5. **Refinance at 6 months, not 12** — Many DSCR lenders will refinance at 6 months seasoning (not 12). This cuts your hard money holding costs in half on BRRRR deals. Ask specifically about "delayed financing" or "6-month seasoning" programs.`,
       },
     ],
   },
@@ -1211,7 +1444,513 @@ Navigate to **Blog** from the navigation for:
 5. **Use the Portfolio Dashboard** — Track your performance over time
 6. **Share with confidence** — Use professional reports and shared links to build credibility
 7. **Read the User Manual** — The Manual page has detailed instructions for every feature
-8. **Stay current** — Check the Blog for market updates and new strategies`,
+8. **Stay current** — Check the Blog for market updates and new strategies
+
+### 🥷 Ninja Tips: Platform Mastery
+
+1. **Run Quick Check on every lead within 60 seconds** — The moment you get a lead (wholesaler email, MLS alert, driving for dollars), open Quick Check and punch in the numbers. If it doesn't pass the 70% rule in 60 seconds, move on. Speed-screening prevents analysis paralysis.
+
+2. **Save EVERY deal you analyze** — Even deals you pass on. In 6 months, you'll have a database of 50-100 analyzed deals in your market. This becomes your personal comp database and market intelligence system. You'll spot trends before anyone else.
+
+3. **Share your analysis with your lender** — Before asking for money, send your lender a Freedom One deal analysis PDF. It shows you're professional, data-driven, and serious. Lenders fund investors who do their homework, not investors who say "trust me, it's a good deal."
+
+4. **Use the Pipeline for accountability** — Move every deal through the pipeline stages: Lead → Analyzing → Offer Made → Under Contract → Rehab → Listed → Closed. This visual workflow prevents deals from falling through the cracks and shows you exactly where your bottleneck is.
+
+5. **Review your Portfolio Dashboard monthly** — Set a calendar reminder to review your portfolio on the 1st of every month. Track your average profit per deal, average days to close, and total ROI. These numbers tell you if you're improving or stagnating.`,
+      },
+    ],
+  },
+  {
+    id: 'mod-10',
+    number: 10,
+    title: 'Bonus: Asset Protection for Real Estate Investors',
+    description: 'Protect your wealth with proper entity structures, trusts, and tax-advantaged accounts. Premium content for Pro subscribers.',
+    icon: '🛡️',
+    premium: true,
+    lessons: [
+      {
+        id: 'l-10-1',
+        title: 'Entity Structures: LLCs, Series LLCs & Corporations',
+        duration: '30 min',
+        content: `## Entity Structures for Real Estate Investors
+
+Proper entity structure is the foundation of asset protection. Without it, a single lawsuit from a slip-and-fall at one of your properties could wipe out everything you own.
+
+### Why Entity Structure Matters
+
+As a real estate investor, you face unique liability risks:
+- Tenant injuries on your properties
+- Contractor disputes and mechanic's liens
+- Environmental issues (lead paint, mold, asbestos)
+- Fair housing violations
+- Construction defects on flips you've sold
+
+Without proper entity structure, your personal assets (home, savings, retirement accounts) are exposed to all of these risks.
+
+### LLC (Limited Liability Company)
+
+The LLC is the most popular entity for real estate investors.
+
+**Key Benefits:**
+- Separates personal assets from business liabilities
+- Pass-through taxation (no double taxation)
+- Flexible management structure
+- Relatively inexpensive to form ($50-$500 per state)
+- Can be single-member or multi-member
+
+**Best Practices:**
+- Maintain a separate bank account for each LLC
+- Never co-mingle personal and business funds
+- Keep proper records (operating agreement, meeting minutes)
+- File annual reports and pay franchise taxes on time
+- Maintain adequate insurance in addition to the LLC
+
+### Series LLC
+
+Available in select states (TX, DE, IL, NV, WY, and others), the Series LLC allows you to create separate "series" within a single LLC.
+
+**How It Works:**
+- Each property goes into its own series
+- Each series has its own assets, liabilities, and members
+- Liability in one series does NOT affect other series
+- One filing fee, one annual report, one tax return
+
+**Example Structure:**
+| Series | Property | Value |
+|--------|----------|-------|
+| Series A | 123 Main St (Rental) | $200,000 |
+| Series B | 456 Oak Ave (Flip) | $175,000 |
+| Series C | 789 Pine Dr (STR) | $250,000 |
+
+If a tenant sues over Series A, they can only reach the assets in Series A. Series B and C are protected.
+
+**Limitations:**
+- Not recognized in all states
+- Some lenders won't lend to a Series LLC
+- Court precedent is still developing
+- May need a separate LLC in states that don't recognize Series LLCs
+
+### The Multi-LLC Strategy
+
+For investors in states without Series LLCs, use multiple LLCs:
+
+**Recommended Structure:**
+1. **Management LLC** — Owns no property. Manages all other LLCs. Collects management fees.
+2. **Property LLC #1** — Owns Property A
+3. **Property LLC #2** — Owns Property B
+4. **Holding LLC** — Owns long-term rental properties
+5. **Flipping LLC** — Buys and sells flip properties
+
+**Cost:** $500-$1,500 per LLC to form + $100-$800/year per LLC for annual filings. Worth every penny when you have $500K+ in real estate assets.
+
+### S-Corporation Election
+
+For active flippers doing 3+ deals per year, an S-Corp election can save significant taxes:
+
+- Pay yourself a "reasonable salary" (subject to payroll taxes)
+- Take remaining profits as distributions (NOT subject to self-employment tax)
+- Potential savings: $5,000-$15,000+ per year on self-employment taxes
+- Requires more complex tax filing (Form 1120-S)
+
+**Example:**
+| Without S-Corp | With S-Corp |
+|----------------|-------------|
+| Flip profit: $100,000 | Flip profit: $100,000 |
+| SE tax (15.3%): $15,300 | Salary: $50,000 |
+| | Payroll tax: $7,650 |
+| | Distribution: $50,000 |
+| | Distribution tax: $0 |
+| **Total tax on SE: $15,300** | **Total tax on SE: $7,650** |
+| | **Savings: $7,650** |
+
+### 🥷 Ninja Tips: Entity Structure
+
+1. **Form your LLC in your home state, not Delaware or Wyoming** — Unless you have a specific reason, forming in your home state is cheaper and simpler. You'd need a registered agent AND a foreign LLC filing in your home state anyway if you form elsewhere.
+
+2. **Get an Operating Agreement even for single-member LLCs** — Without one, courts may "pierce the corporate veil" and treat your LLC as if it doesn't exist. A $200 attorney-drafted operating agreement protects your entire portfolio.
+
+3. **Use a separate EIN for each LLC** — Never use your SSN for business accounts. Each LLC should have its own EIN (free from IRS.gov) and its own bank account.`,
+      },
+      {
+        id: 'l-10-2',
+        title: 'Trusts for Real Estate: Land Trusts, Living Trusts & More',
+        duration: '25 min',
+        content: `## Trusts for Real Estate Investors
+
+Trusts are powerful tools for privacy, asset protection, estate planning, and creative deal structuring.
+
+### Land Trusts
+
+A land trust holds title to real property with a trustee (often a title company or attorney) as the legal owner, while you (the beneficiary) control and benefit from the property.
+
+**Key Benefits:**
+- **Privacy** — Your name doesn't appear in public records. The trust name is on the deed.
+- **Avoids due-on-sale triggers** — Transferring property into a land trust generally does not trigger the due-on-sale clause (protected by the Garn-St. Germain Act)
+- **Easy transfers** — Change beneficiaries without recording a new deed
+- **Avoids probate** — Property in a trust passes outside of probate
+
+**How to Use Land Trusts:**
+1. Create the trust document naming yourself as beneficiary and a trustee
+2. Deed the property into the trust
+3. Record the deed with the county
+4. The trust holds title; you control and benefit from the property
+
+**Best For:**
+- Subject-to deals (privacy from lenders)
+- Properties in your personal name that you want to protect
+- Multi-property portfolios where you want privacy
+
+### Revocable Living Trust
+
+A revocable living trust is primarily an estate planning tool, but it has real benefits for investors.
+
+**Key Benefits:**
+- **Avoids probate** — Properties pass to heirs without court involvement
+- **Privacy** — Unlike a will, trusts are not public record
+- **Incapacity planning** — If you become incapacitated, your successor trustee manages your properties
+- **Control** — You maintain full control during your lifetime
+
+**For Investors With 5+ Properties:**
+A living trust is essential. Without one, your heirs face months or years of probate court to access your properties. During that time, properties may go unmaintained, tenants may stop paying, and value erodes.
+
+### Irrevocable Trust
+
+An irrevocable trust removes assets from your estate permanently.
+
+**Key Benefits:**
+- **Lawsuit protection** — Assets in an irrevocable trust are generally beyond the reach of creditors
+- **Estate tax reduction** — Removes assets from your taxable estate
+- **Medicaid planning** — Assets transferred 5+ years before application may be protected
+
+**Drawbacks:**
+- You give up control of the assets
+- Cannot easily be changed or revoked
+- Complex and expensive to set up ($2,000-$5,000+)
+
+**Best For:** Investors with $1M+ in real estate assets who want maximum protection.
+
+### Trust + LLC Layering Strategy
+
+The most sophisticated investors combine trusts and LLCs:
+
+**Structure:**
+1. **Revocable Living Trust** — Owns the membership interests of your LLCs
+2. **Management LLC** — Manages all property LLCs
+3. **Property LLCs** — Each owns individual properties
+
+**Result:** Privacy (trust), liability protection (LLCs), estate planning (trust avoids probate), and operational efficiency (management LLC).
+
+### 🥷 Ninja Tips: Trusts
+
+1. **Name your land trusts generically** — Use names like "123 Main Street Trust" or "Oak Avenue Trust" instead of "John Smith Family Trust." Generic names provide maximum privacy.
+
+2. **Use a corporate trustee for land trusts** — Using yourself as trustee defeats the privacy purpose. Use your attorney, a title company, or a trust company as trustee.
+
+3. **Review your trust every 3 years** — Laws change, your portfolio grows, and your estate plan needs to keep up. Schedule a review with your estate planning attorney every 3 years.`,
+      },
+      {
+        id: 'l-10-3',
+        title: 'Self-Directed IRA & 401(k) Real Estate Investing',
+        duration: '30 min',
+        content: `## Investing in Real Estate with Your IRA & 401(k)
+
+Most people don't know that you can use your retirement accounts to invest in real estate. Self-directed accounts allow you to buy properties, fund loans, and participate in real estate deals — all with tax-advantaged dollars.
+
+### What Is a Self-Directed IRA (SDIRA)?
+
+A Self-Directed IRA is a retirement account that allows you to invest in alternative assets, including real estate, private loans, tax liens, and more.
+
+**Types of SDIRAs:**
+| Type | Tax Treatment | Contribution Limit (2026) |
+|------|--------------|---------------------------|
+| Traditional SDIRA | Tax-deductible contributions, taxed on withdrawal | $7,000 ($8,000 if 50+) |
+| Roth SDIRA | After-tax contributions, TAX-FREE withdrawals | $7,000 ($8,000 if 50+) |
+| SEP SDIRA | Employer contributions, taxed on withdrawal | Up to $69,000 |
+| Solo 401(k) | Both employee + employer contributions | Up to $69,000 ($76,500 if 50+) |
+
+### How SDIRA Real Estate Investing Works
+
+1. **Open a SDIRA** with a custodian that allows real estate (Equity Trust, Directed IRA, Entrust, Alto IRA)
+2. **Fund the account** via contribution, rollover from existing IRA/401(k), or transfer
+3. **Find a deal** using the same strategies you've learned in this course
+4. **Direct your custodian** to purchase the property on behalf of your IRA
+5. **All income and expenses flow through the IRA** — rent comes in, expenses go out, all within the account
+6. **When you sell**, profits stay in the IRA (tax-deferred or tax-free for Roth)
+
+### The Power of a Roth SDIRA
+
+Imagine buying a property for $100,000 in your Roth SDIRA, rehabbing it for $30,000, and selling it for $200,000. That's $70,000 in profit — **completely tax-free.** Forever. No capital gains tax, no income tax, nothing.
+
+**Example:**
+| Scenario | Traditional IRA | Roth IRA |
+|----------|----------------|----------|
+| Purchase price | $100,000 | $100,000 |
+| Rehab cost | $30,000 | $30,000 |
+| Sale price | $200,000 | $200,000 |
+| Profit | $70,000 | $70,000 |
+| Tax on withdrawal (25%) | $17,500 | **$0** |
+| Net profit | $52,500 | **$70,000** |
+
+### Solo 401(k) Advantage
+
+If you're self-employed (which most active investors are), a Solo 401(k) offers:
+- **Higher contribution limits** ($69,000+ per year vs. $7,000 for IRA)
+- **Loan provision** — Borrow up to $50,000 from your own account for any purpose
+- **Roth option** — Designate contributions as Roth for tax-free growth
+- **Checkbook control** — Some Solo 401(k) plans allow you to write checks directly from the account, eliminating custodian delays
+
+### Critical Rules (Prohibited Transactions)
+
+The IRS has strict rules about SDIRA real estate investing. Violating them can disqualify your entire IRA:
+
+**You CANNOT:**
+- Live in or vacation at a property owned by your IRA
+- Use the property for personal benefit in any way
+- Hire yourself or family members to work on the property
+- Buy property from or sell property to yourself or family members ("disqualified persons")
+- Use personal funds to pay IRA property expenses (or vice versa)
+- Provide personal guarantees on IRA property loans
+
+**Disqualified Persons Include:**
+- You, your spouse, your parents, your children, and their spouses
+- Any entity you own 50%+ of
+- Your IRA custodian or administrator
+
+**Penalty for Violation:** The entire IRA is treated as distributed, triggering income tax + 10% early withdrawal penalty on the full balance.
+
+### SDIRA Real Estate Strategies
+
+1. **Buy and hold rentals** — Purchase rental properties, collect rent into your IRA, and build tax-free wealth
+2. **Fix and flip** — Buy, rehab, and sell properties within your IRA (note: may trigger UBIT tax)
+3. **Private lending** — Use your IRA to fund hard money loans to other investors at 8-12% interest
+4. **Tax lien investing** — Buy tax liens and earn 8-36% returns depending on the state
+5. **Wholesale** — Use your IRA to fund earnest money deposits and collect assignment fees
+
+### UBIT (Unrelated Business Income Tax)
+
+If your IRA uses debt financing (mortgage) to buy property, a portion of the income may be subject to UBIT. This applies to:
+- Rental income from leveraged properties
+- Capital gains from selling leveraged properties
+
+**Workaround:** Buy properties with all cash in your IRA, or use a Solo 401(k) (which is exempt from UBIT on leveraged real estate).
+
+### 🥷 Ninja Tips: IRA Investing
+
+1. **Start a Roth conversion ladder NOW** — Even if your Roth IRA is small, start converting Traditional IRA funds to Roth each year (pay the tax now). In 5-10 years, you'll have a substantial Roth balance to invest in real estate completely tax-free.
+
+2. **Use your SDIRA for private lending first** — Before buying property in your IRA, start by lending money to other investors at 8-12% interest. This builds your IRA balance without the complexity of property management. Once you have $100K+, buy your first IRA property.
+
+3. **Partner your IRA with your personal funds** — Your IRA can co-invest with you on a deal. Example: IRA puts up 60% of the purchase price, you put up 40%. Profits split proportionally. This lets you do bigger deals than either account could handle alone. (Consult your custodian for proper structuring.)
+
+4. **Keep 6 months of expenses in your IRA as cash** — IRA properties need repairs, vacancies happen, and taxes come due. If your IRA doesn't have cash to cover expenses, you can't use personal funds (prohibited transaction). Always maintain a cash buffer.`,
+      },
+    ],
+  },
+  {
+    id: 'mod-11',
+    number: 11,
+    title: 'Bonus: Creative Financing Mastery',
+    description: 'Advanced deal structures that let you buy properties with little to no money down. Premium content for Pro subscribers.',
+    icon: '🎯',
+    premium: true,
+    lessons: [
+      {
+        id: 'l-11-1',
+        title: 'Seller Financing: Structuring Win-Win Deals',
+        duration: '25 min',
+        content: `## Seller Financing: The Ultimate Creative Tool
+
+Seller financing (also called "owner financing" or "owner carry") is when the seller acts as the bank. Instead of getting a traditional mortgage, you make payments directly to the seller.
+
+### Why Sellers Agree to Finance
+
+Sellers agree to finance for several reasons:
+- **Higher sale price** — Sellers can often get a higher price by offering financing
+- **Monthly income stream** — Retirees love predictable monthly payments
+- **Tax benefits** — Installment sale spreads capital gains over multiple years
+- **Faster sale** — No bank approval means faster closing
+- **Interest income** — Sellers earn 6-10% interest vs. 1-2% in a savings account
+
+### Seller Financing Structures
+
+**1. Full Seller Carry**
+- Seller finances 100% of the purchase price
+- You make monthly payments (principal + interest) to the seller
+- Typical terms: 10-30 year amortization, 5-7 year balloon
+
+**2. Partial Seller Carry (Second Position)**
+- Bank finances 70-80% (first mortgage)
+- Seller finances 10-20% (second mortgage)
+- You bring 5-10% down payment
+- Reduces your out-of-pocket cash significantly
+
+**3. Wrap-Around Mortgage ("Wrap")**
+- Seller has an existing mortgage at 3.5%
+- You create a new mortgage at 7% that "wraps around" the existing one
+- You pay the seller at 7%; seller continues paying their 3.5% mortgage
+- Seller profits from the interest rate spread
+
+**Example:**
+| Item | Amount |
+|------|--------|
+| Property value | $300,000 |
+| Existing mortgage | $200,000 at 3.5% |
+| Your wrap mortgage | $280,000 at 7% |
+| Your monthly payment to seller | $1,863 |
+| Seller's existing payment | $898 |
+| Seller's monthly profit | $965 |
+| Your down payment | $20,000 |
+
+### Key Terms to Negotiate
+
+| Term | Investor-Friendly | Seller-Friendly |
+|------|-------------------|------------------|
+| Interest rate | 4-6% | 8-10% |
+| Down payment | 0-5% | 15-20% |
+| Amortization | 30 years | 15 years |
+| Balloon | 7-10 years | 3-5 years |
+| Prepayment penalty | None | 1-3% |
+
+### How to Approach Sellers About Financing
+
+Never lead with "Will you finance the deal?" Instead:
+
+1. **Ask about their goals** — "What are you planning to do with the proceeds from the sale?"
+2. **If they say retirement/income** — "What if I could give you a guaranteed monthly income at a better rate than any bank CD, secured by this property?"
+3. **If they say pay off debt** — "What if we structured a deal where you get a large down payment to pay off your debts, plus monthly income for the next 10 years?"
+4. **Present it as THEIR benefit** — Tax advantages, higher price, guaranteed income, no maintenance headaches
+
+### Legal Requirements
+
+- Use a real estate attorney to draft the promissory note and mortgage/deed of trust
+- Record the mortgage with the county
+- Use a loan servicing company to handle payments (creates a paper trail)
+- Comply with Dodd-Frank rules (may require a Residential Mortgage Loan Originator for owner-occupied properties)
+- Title insurance is still required
+
+### 🥷 Ninja Tips: Seller Financing
+
+1. **Target free-and-clear properties** — Sellers with no mortgage have maximum flexibility. Search county records for properties with no recorded liens. These owners can finance 100% of the deal.
+
+2. **Offer a higher price for better terms** — "I'll pay your full asking price of $250,000 if you'll finance it at 5% with 10% down." Sellers focus on price; you focus on terms. A higher price with great terms often beats a lower price with cash.
+
+3. **Use a "substitution of collateral" clause** — This allows you to swap the property securing the loan with a different property. Useful when you want to refinance or sell the original property but keep the seller financing in place.`,
+      },
+      {
+        id: 'l-11-2',
+        title: 'Lease Options, Private Money & Advanced Structures',
+        duration: '30 min',
+        content: `## Advanced Creative Financing Structures
+
+### Lease Options (Rent-to-Own)
+
+A lease option gives you the right (but not the obligation) to purchase a property at a predetermined price within a specified timeframe.
+
+**Two Components:**
+1. **Lease Agreement** — Standard rental agreement with monthly payments
+2. **Option Agreement** — Gives you the exclusive right to buy at a set price
+
+**How It Works:**
+1. Negotiate a lease with the property owner (1-3 year term)
+2. Pay an "option consideration" fee ($2,000-$10,000) for the right to buy
+3. Agree on a future purchase price (typically today's market value or slightly above)
+4. Make monthly lease payments (portion may credit toward purchase)
+5. Exercise your option to buy before expiration, or walk away
+
+**Lease Option Strategies:**
+
+**Strategy 1: Sandwich Lease Option**
+- Lease-option a property from the owner
+- Sub-lease-option it to a tenant-buyer at a higher price and higher monthly payment
+- Profit from the monthly spread AND the price spread when the tenant-buyer exercises
+
+**Example:**
+| Your Lease Option | Tenant-Buyer's Lease Option |
+|-------------------|-----------------------------|
+| Purchase price: $200,000 | Purchase price: $225,000 |
+| Monthly payment: $1,200 | Monthly payment: $1,600 |
+| Option fee paid: $3,000 | Option fee received: $7,000 |
+| | Monthly spread: $400 |
+| | Price spread: $25,000 |
+
+**Strategy 2: Lease Option for Flips**
+- Lease-option a property that needs work
+- Rehab during the lease period
+- Exercise the option and sell at full market value
+- Advantage: You control the property without owning it during rehab
+
+### Private Money Lending
+
+Private money comes from individuals (not institutions) who want to earn better returns on their capital.
+
+**Where to Find Private Money:**
+- Friends and family (start here)
+- Fellow investors at REIA meetings
+- Professionals (doctors, lawyers, business owners) with idle capital
+- Self-directed IRA holders looking for returns
+- Online platforms (Fund That Flip, PeerStreet)
+
+**Structuring Private Money Deals:**
+
+| Structure | Description | Typical Terms |
+|-----------|-------------|---------------|
+| Straight loan | Lender provides capital, you pay interest + principal | 8-12% interest, 6-24 months |
+| Equity partnership | Lender provides capital, shares in profits | 50/50 or 60/40 split |
+| Preferred return | Lender gets fixed return first, then profit split | 8-10% preferred + 50% of remaining |
+| Joint venture | Both parties contribute (capital + expertise) | Negotiable split |
+
+**The Private Money Pitch:**
+1. Lead with THEIR return: "I have an opportunity for you to earn 10% annually, secured by real property"
+2. Show your track record (use Freedom One Credibility Packets)
+3. Explain the security: first-position lien on the property, title insurance, hazard insurance
+4. Present a specific deal with numbers (use Freedom One Deal Analyzer PDF)
+5. Offer references from previous lenders or partners
+
+### Deal Stacking: Combining Multiple Financing Sources
+
+The most creative investors combine multiple financing sources on a single deal:
+
+**Example: Zero-Down Flip**
+| Source | Amount | Terms |
+|--------|--------|-------|
+| Hard money (1st position) | $120,000 (80% of purchase) | 11%, 12 months |
+| Private money (2nd position) | $30,000 (20% of purchase) | 10%, 12 months |
+| Hard money rehab draw | $40,000 | Included in 1st |
+| **Total funded** | **$190,000** | |
+| **Your cash in** | **$0** | |
+
+**Result:** You control a $150K property with $40K in rehab, sell for $250K, and your only cost is interest payments. All financing is repaid at closing.
+
+### Subject-To + Wrap + Lease Option Combo
+
+The most advanced creative financing structure:
+
+1. **Buy subject-to** the existing mortgage (3.5% rate)
+2. **Create a wrap mortgage** at 7% and sell to a buyer on owner financing
+3. **Or lease-option** to a tenant-buyer at a higher monthly payment
+4. **Profit from the spread** between what you pay (3.5%) and what you receive (7%)
+
+**Example:**
+| Layer | Payment | Rate |
+|-------|---------|------|
+| Existing mortgage (you pay) | $898/month | 3.5% |
+| Wrap mortgage (buyer pays you) | $1,663/month | 7.0% |
+| **Monthly cash flow** | **$765/month** | |
+| **Annual cash flow** | **$9,180** | |
+
+Plus you receive a down payment of $20,000-$40,000 upfront.
+
+### 🥷 Ninja Tips: Creative Financing
+
+1. **Always get the deed** — In any creative deal (subject-to, seller financing, wrap), make sure you get the deed recorded in your name (or your entity's name). Controlling payments without the deed is risky. The deed is your security.
+
+2. **Use a loan servicing company** — For $15-$25/month, a loan servicing company (e.g., FCI Lender Services) handles payment collection, escrow, tax reporting, and creates a professional paper trail. This protects you legally and makes your operation look institutional.
+
+3. **The "terms" vs. "price" framework** — In every negotiation, remember: the seller controls the price, you control the terms. If a seller insists on full price, agree — but negotiate 0% interest, 30-year amortization, and no down payment. The terms determine your actual cost, not the sticker price.
+
+4. **Build a "capital stack" spreadsheet** — For every deal, create a simple spreadsheet showing every source of funds, the cost of each source, and the total blended cost of capital. This tells you instantly whether a deal works and which financing source to optimize.
+
+5. **Start with one creative strategy and master it** — Don't try to learn seller financing, subject-to, wraps, and lease options all at once. Pick one, do 3-5 deals with it, then add the next strategy. Mastery beats variety every time.`,
       },
     ],
   },

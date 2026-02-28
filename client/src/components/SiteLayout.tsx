@@ -34,6 +34,7 @@ const RESOURCES_NAV: NavItem[] = [
   { path: '/lenders', label: 'Lender Directory', icon: Landmark },
   { path: '/marketing', label: 'Marketing Templates', icon: Megaphone },
   { path: '/contracts', label: 'Contract Templates', icon: FileText },
+  { path: '/price-reduction-form', label: 'Price Reduction Form', icon: FileText },
   { path: '/checklists', label: 'Investor Checklists', icon: CheckSquare },
   { path: '/credibility-packets', label: 'Credibility Packets', icon: Award },
   { path: '/state-guide', label: 'State Reference Guide', icon: MapPin },
