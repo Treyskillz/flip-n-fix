@@ -222,7 +222,7 @@
 - [x] Add import button to Pipeline page that opens the import flow
 - [x] Write vitest tests for CSV bulk import endpoint (7 tests, all passing)
 - [x] Add CSV Export button to Pipeline page to download all deal data as CSV
-- [ ] Build merged Profit Calculator engine with all financing scenarios from BOTH spreadsheets:
+- [x] Build merged Profit Calculator engine with all financing scenarios from BOTH spreadsheets:
   - HML on ARV + Gap Funder (Debt & Equity)
   - HML on Purchase Price + Gap Funder (Debt & Equity)
   - 100% Private Lender (Debt & Equity)
@@ -235,28 +235,28 @@
   - Rapid-fire offer pricing
   - Year-built rehab lookup
   - Property evaluation scoring
-- [ ] Build rapid-fire offer pricing system (18% down to 13% ROI targets)
-- [ ] Build year-built rehab lookup table with sqft adjustments and rehab levels 1-2-3
+- [x] Build rapid-fire offer pricing system (18% down to 13% ROI targets)
+- [x] Build year-built rehab lookup table with sqft adjustments and rehab levels 1-2-3
 - [ ] Build Rehab Cost Analyzer with detailed line-item budgeting (exterior, interior, electrical, HVAC, plumbing, kitchen, baths, flooring)
 - [ ] Build Local Area Pricing template for users to input local market prices
 - [ ] Build Projects Page summary view
-- [ ] Build Profit Calculator UI page
+- [x] Build Profit Calculator UI page
 - [ ] Build Rehab Cost Analyzer UI page
-- [ ] Add Private Money Prospectus as a resource page in the app
-- [ ] Recreate Freedom One 3-Option Brochure (modernized from Code One) as a resource page
+- [x] Add Private Money Prospectus as a resource page in the app
+- [x] Recreate Freedom One 3-Option Brochure (modernized from Code One) as a resource page
 - [x] Add Price Reduction Form under Resources with Armando Montelongo training
 - [ ] Package all source code, instructions, and manuals into a ZIP file
 - [ ] Push all code to GitHub
-- [ ] Build Profit Calculator UI page with all 6 financing scenarios
-- [ ] Add Profit Calculator to app navigation
+- [x] Build Profit Calculator UI page with all 6 financing scenarios
+- [x] Add Profit Calculator to app navigation
 - [ ] Build detailed instructions/training guide for the Profit Calculator (in-app)
 - [ ] Generate downloadable Excel spreadsheet version of the Profit Calculator (for sale/signup bonus)
 - [x] Add Price Reduction Form to Resources/Forms with ethical negotiation training content
-- [ ] Build Private Money Prospectus resource page (from uploaded PDF)
-- [ ] Build Freedom One 3-Option Brochure page (modernized from CODEONE3OPTIONBROCHURE)
+- [x] Build Private Money Prospectus resource page (from uploaded PDF)
+- [x] Build Freedom One 3-Option Brochure page (modernized from CODEONE3OPTIONBROCHURE)
 - [ ] Create downloadable Excel spreadsheet version of Profit Calculator
 - [x] Add Price Reduction Strategy lesson to fix-and-flip course module
-- [ ] Create downloadable course book (ebook PDF) for sale or giveaway
+- [x] Create downloadable course book (ebook PDF) for sale or giveaway
 - [x] Add legal ninja negotiation tips to Price Reduction Form training
 - [x] Add Ninja Tips to course Module 1 (Foundation/Mindset)
 - [x] Add Ninja Tips to course Module 2 (Finding Deals/Acquisition)

@@ -34,6 +34,8 @@ const DealDetail = lazy(() => import("./pages/DealDetail"));
 const Profile = lazy(() => import("./pages/Profile"));
 const ProfitCalculator = lazy(() => import("./pages/ProfitCalculator"));
 const PriceReductionForm = lazy(() => import("./pages/PriceReductionForm"));
+const PrivateMoneyProspectus = lazy(() => import("./pages/PrivateMoneyProspectus"));
+const ThreeOptionBrochure = lazy(() => import("./pages/ThreeOptionBrochure"));
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -75,6 +77,8 @@ function Router() {
           <Route path={'/profile'} component={Profile} />
           <Route path={'/profit-calculator'} component={ProfitCalculator} />
           <Route path={'/price-reduction-form'} component={PriceReductionForm} />
+          <Route path={'/private-money-prospectus'} component={PrivateMoneyProspectus} />
+          <Route path={'/3-option-brochure'} component={ThreeOptionBrochure} />
           <Route path={"/support"} component={Support} />
           <Route path={"/disclaimers"} component={Disclaimers} />
           <Route path={"/404"} component={NotFound} />

@@ -1,0 +1,120 @@
+import { describe, it, expect } from 'vitest';
+import { COURSE_MODULES } from '../client/src/lib/course';
+import { MODULE_QUIZZES } from '../client/src/lib/quizData';
+import { VIDEO_SCRIPTS } from '../client/src/lib/videoScripts';
+
+describe('Course Content Integrity', () => {
+  it('should have 11 total modules (9 base + 2 premium)', () => {
+    expect(COURSE_MODULES.length).toBe(11);
+  });
+
+  it('should have 9 non-premium modules', () => {
+    const base = COURSE_MODULES.filter(m => !m.premium);
+    expect(base.length).toBe(9);
+  });
+
+  it('should have 2 premium bonus modules', () => {
+    const premium = COURSE_MODULES.filter(m => m.premium);
+    expect(premium.length).toBe(2);
+    expect(premium[0].title).toContain('Asset Protection');
+    expect(premium[1].title).toContain('Creative Financing');
+  });
+
+  it('every module should have at least 1 lesson', () => {
+    for (const mod of COURSE_MODULES) {
+      expect(mod.lessons.length).toBeGreaterThanOrEqual(1);
+    }
+  });
+
+  it('every lesson should have non-empty content', () => {
+    for (const mod of COURSE_MODULES) {
+      for (const lesson of mod.lessons) {
+        expect(lesson.content.length).toBeGreaterThan(100);
+        expect(lesson.title.length).toBeGreaterThan(0);
+        expect(lesson.id).toBeTruthy();
+      }
+    }
+  });
+
+  it('Module 3 should contain the Price Reduction Strategy lesson', () => {
+    const mod3 = COURSE_MODULES.find(m => m.id === 'mod-3');
+    expect(mod3).toBeTruthy();
+    const prLesson = mod3!.lessons.find(l => l.id === 'l-3-3');
+    expect(prLesson).toBeTruthy();
+    expect(prLesson!.title).toContain('Price Reduction');
+    expect(prLesson!.content).toContain('Ninja');
+  });
+
+  it('all base modules should contain Ninja Tips in at least one lesson', () => {
+    const baseModules = COURSE_MODULES.filter(m => !m.premium);
+    for (const mod of baseModules) {
+      const hasNinja = mod.lessons.some(l =>
+        l.content.toLowerCase().includes('ninja')
+      );
+      expect(hasNinja).toBe(true);
+    }
+  });
+
+  it('every module should have quiz questions', () => {
+    for (const mod of COURSE_MODULES) {
+      const quiz = MODULE_QUIZZES.find(q => q.moduleId === mod.id);
+      expect(quiz).toBeTruthy();
+      expect(quiz!.questions.length).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it('quiz questions should have correct answer indices', () => {
+    for (const quiz of MODULE_QUIZZES) {
+      for (const q of quiz.questions) {
+        expect(q.correctIndex).toBeGreaterThanOrEqual(0);
+        expect(q.correctIndex).toBeLessThan(q.options.length);
+        expect(q.options.length).toBeGreaterThanOrEqual(3);
+      }
+    }
+  });
+
+  it('should have unique lesson IDs across all modules', () => {
+    const allIds = new Set<string>();
+    for (const mod of COURSE_MODULES) {
+      for (const lesson of mod.lessons) {
+        expect(allIds.has(lesson.id)).toBe(false);
+        allIds.add(lesson.id);
+      }
+    }
+  });
+
+  it('should have unique module IDs', () => {
+    const ids = COURSE_MODULES.map(m => m.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('module numbers should be sequential', () => {
+    for (let i = 0; i < COURSE_MODULES.length; i++) {
+      expect(COURSE_MODULES[i].number).toBe(i + 1);
+    }
+  });
+
+  it('premium modules should have premium flag set to true', () => {
+    const mod10 = COURSE_MODULES.find(m => m.id === 'mod-10');
+    const mod11 = COURSE_MODULES.find(m => m.id === 'mod-11');
+    expect(mod10?.premium).toBe(true);
+    expect(mod11?.premium).toBe(true);
+  });
+
+  it('Asset Protection module should cover LLCs, trusts, and IRAs', () => {
+    const mod10 = COURSE_MODULES.find(m => m.id === 'mod-10');
+    expect(mod10).toBeTruthy();
+    const allContent = mod10!.lessons.map(l => l.content).join(' ');
+    expect(allContent).toContain('LLC');
+    expect(allContent.toLowerCase()).toContain('trust');
+    expect(allContent).toContain('IRA');
+  });
+
+  it('Creative Financing module should cover seller financing and lease options', () => {
+    const mod11 = COURSE_MODULES.find(m => m.id === 'mod-11');
+    expect(mod11).toBeTruthy();
+    const allContent = mod11!.lessons.map(l => l.content).join(' ');
+    expect(allContent.toLowerCase()).toContain('seller financing');
+    expect(allContent.toLowerCase()).toContain('lease option');
+  });
+});

@@ -21,6 +21,7 @@ import {
   RotateCcw, Loader2, Lock, Trophy, Award, Download
 } from 'lucide-react';
 import { generateCertificate } from '@/lib/generateCertificate';
+import { generateCourseEbook } from '@/lib/generateEbook';
 import { useState, useMemo, useCallback } from 'react';
 import { Streamdown } from 'streamdown';
 
@@ -449,6 +450,36 @@ export default function Course() {
               </Button>
             </div>
           )}
+
+          {/* Ebook Download */}
+          <div className="mt-4 p-4 bg-[oklch(0.48_0.20_18)]/5 border border-[oklch(0.48_0.20_18)]/20 rounded-lg flex items-center gap-4">
+            <div className="p-2.5 rounded-lg bg-[oklch(0.48_0.20_18)]/15">
+              <BookOpen className="w-6 h-6 text-[oklch(0.48_0.20_18)]" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-sm">Course Ebook</h3>
+              <p className="text-xs text-muted-foreground">Download the complete course as a professional PDF book — perfect for offline reading, printing, or sharing as a lead magnet.</p>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => generateCourseEbook({ includePremium: false })}
+                variant="outline"
+                size="sm"
+                className="gap-1.5 border-[oklch(0.48_0.20_18)]/30 text-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.48_0.20_18)]/10"
+              >
+                <Download className="w-3.5 h-3.5" />
+                Standard
+              </Button>
+              <Button
+                onClick={() => generateCourseEbook({ includePremium: true })}
+                size="sm"
+                className="gap-1.5 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white"
+              >
+                <Download className="w-3.5 h-3.5" />
+                Full (w/ Bonus)
+              </Button>
+            </div>
+          </div>
 
           {/* Course Stats Bar */}
           <div className="flex flex-wrap gap-6 mt-4 pt-4 border-t border-border/50">
