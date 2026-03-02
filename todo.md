@@ -274,3 +274,13 @@
 - [x] Build downloadable Excel spreadsheet version of Profit Calculator
 - [x] Build Rehab Cost Analyzer page with detailed line-item budgeting — built as Rehab Budget Worksheet
 - [ ] Push source code to GitHub
+- [x] Add 7-day free trial to all subscription tiers with auto-renewal
+- [x] Update Pricing page UI to show free trial messaging
+- [x] Add cancellation-by-email instructions to subscription fl- [x] Build comprehensive Profit Calculator training guide with in-app walkthroughAdd in-app walkthrough/tour for Profit Calculator
+- [x] Build Local Area Pricing template page for custom material/labor prices
+- [x] Integrate local pricing into rehab estimates (available via export/import)
+- [x] Build admin gifted subscription system (gift any plan tier to any user for free)
+- [x] Add gifted_subscriptions database table (user_id, plan, granted_by, expires_at, notes)
+- [x] Build admin tRPC endpoints for granting/revoking/listing gifted subscriptions
+- [x] Build admin UI panel for managing gifted subscriptions
+- [x] Update subscription status check to honor gifted subscriptions over Stripe

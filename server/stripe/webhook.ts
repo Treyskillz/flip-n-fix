@@ -65,16 +65,23 @@ export function registerStripeWebhook(app: express.Express) {
 
             const db = await getDb();
             if (db) {
-              if (status === "active") {
-                // Subscription is active
-                console.log(`[Webhook] Subscription active for customer ${customerId}`);
-              } else if (status === "canceled" || status === "unpaid") {
+              if (status === "active" || status === "trialing") {
+                // Subscription is active or in trial — grant full plan access
+                const plan = subscription.metadata?.plan as "pro" | "elite" | "team" | undefined;
+                if (plan) {
+                  await db
+                    .update(users)
+                    .set({ subscriptionPlan: plan })
+                    .where(eq(users.stripeCustomerId, customerId));
+                }
+                console.log(`[Webhook] Subscription ${status} for customer ${customerId} (plan: ${plan || 'unchanged'})`);
+              } else if (status === "canceled" || status === "unpaid" || status === "past_due") {
                 // Downgrade to free
                 await db
                   .update(users)
                   .set({ subscriptionPlan: "free" })
                   .where(eq(users.stripeCustomerId, customerId));
-                console.log(`[Webhook] Downgraded customer ${customerId} to free`);
+                console.log(`[Webhook] Downgraded customer ${customerId} to free (status: ${status})`);
               }
             }
             break;

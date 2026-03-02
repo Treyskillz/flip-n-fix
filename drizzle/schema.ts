@@ -261,3 +261,18 @@ export const pipelineActivities = mysqlTable("pipeline_activities", {
 
 export type PipelineActivity = typeof pipelineActivities.$inferSelect;
 export type InsertPipelineActivity = typeof pipelineActivities.$inferInsert;
+
+// ─── Gifted Subscriptions ────────────────────────────────────
+export const giftedSubscriptions = mysqlTable("gifted_subscriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(), // references users.id — the recipient
+  plan: mysqlEnum("plan", ["pro", "elite", "team"]).notNull(),
+  grantedBy: int("grantedBy").notNull(), // admin user who granted it
+  reason: varchar("reason", { length: 512 }), // e.g. "Referral bonus", "Contest winner"
+  expiresAt: timestamp("expiresAt"), // null = permanent / never expires
+  revokedAt: timestamp("revokedAt"), // null = active; set when revoked
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type GiftedSubscription = typeof giftedSubscriptions.$inferSelect;
+export type InsertGiftedSubscription = typeof giftedSubscriptions.$inferInsert;

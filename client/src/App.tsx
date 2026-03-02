@@ -37,6 +37,9 @@ const PriceReductionForm = lazy(() => import("./pages/PriceReductionForm"));
 const PrivateMoneyProspectus = lazy(() => import("./pages/PrivateMoneyProspectus"));
 const ThreeOptionBrochure = lazy(() => import("./pages/ThreeOptionBrochure"));
 const RehabBudget = lazy(() => import("./pages/RehabBudget"));
+const ProfitCalcGuide = lazy(() => import("./pages/ProfitCalcGuide"));
+const LocalPricing = lazy(() => import("./pages/LocalPricing"));
+const AdminGiftedSubs = lazy(() => import("./pages/AdminGiftedSubs"));
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -81,6 +84,9 @@ function Router() {
           <Route path={'/private-money-prospectus'} component={PrivateMoneyProspectus} />
           <Route path={'/3-option-brochure'} component={ThreeOptionBrochure} />
           <Route path={'/rehab-budget'} component={RehabBudget} />
+          <Route path={'/profit-calc-guide'} component={ProfitCalcGuide} />
+          <Route path={'/local-pricing'} component={LocalPricing} />
+          <Route path={'/admin/gifted-subs'} component={AdminGiftedSubs} />
           <Route path={"/support"} component={Support} />
           <Route path={"/disclaimers"} component={Disclaimers} />
           <Route path={"/404"} component={NotFound} />

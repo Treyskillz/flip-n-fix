@@ -30,6 +30,13 @@ export async function createCheckoutSession(params: CreateCheckoutParams) {
     customer_email: userEmail,
     client_reference_id: userId.toString(),
     allow_promotion_codes: true,
+    subscription_data: {
+      trial_period_days: 7,
+      metadata: {
+        user_id: userId.toString(),
+        plan: plan,
+      },
+    },
     metadata: {
       user_id: userId.toString(),
       customer_email: userEmail,

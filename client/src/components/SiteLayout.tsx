@@ -38,6 +38,8 @@ const RESOURCES_NAV: NavItem[] = [
   { path: '/private-money-prospectus', label: 'Private Money Prospectus', icon: DollarSign },
   { path: '/3-option-brochure', label: '3-Option Brochure', icon: Briefcase },
   { path: '/rehab-budget', label: 'Rehab Budget Worksheet', icon: Hammer },
+  { path: '/local-pricing', label: 'Local Area Pricing', icon: MapPin },
+  { path: '/profit-calc-guide', label: 'Profit Calc Guide', icon: BookOpen },
   { path: '/checklists', label: 'Investor Checklists', icon: CheckSquare },
   { path: '/credibility-packets', label: 'Credibility Packets', icon: Award },
   { path: '/state-guide', label: 'State Reference Guide', icon: MapPin },

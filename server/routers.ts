@@ -2,11 +2,11 @@ import { z } from "zod";
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
 import { PLANS, PlanKey } from "./stripe/products";
 import { createCheckoutSession, createPortalSession } from "./stripe/checkout";
 import { getDb } from "./db";
-import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments, pipelineDeals, pipelineContacts, pipelineActivities } from "../drizzle/schema";
+import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments, pipelineDeals, pipelineContacts, pipelineActivities, giftedSubscriptions } from "../drizzle/schema";
 import { eq, sql, desc, and, ne, inArray, asc, isNull } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
@@ -1524,10 +1524,10 @@ Provide 3-5 comparable RENOVATED properties that meet ALL of these criteria:
       }));
     }),
 
-    // Get current user's subscription status
+    // Get current user's subscription status (checks gifted subs too)
     status: protectedProcedure.query(async ({ ctx }) => {
       const db = await getDb();
-      if (!db) return { plan: "free" as PlanKey, stripeCustomerId: null };
+      if (!db) return { plan: "free" as PlanKey, stripeCustomerId: null, isGifted: false };
 
       const result = await db
         .select({
@@ -1538,9 +1538,42 @@ Provide 3-5 comparable RENOVATED properties that meet ALL of these criteria:
         .where(eq(users.id, ctx.user.id))
         .limit(1);
 
+      const stripePlan = (result[0]?.subscriptionPlan || "free") as PlanKey;
+
+      // Check for active gifted subscription
+      const now = new Date();
+      const giftedRows = await db
+        .select()
+        .from(giftedSubscriptions)
+        .where(
+          and(
+            eq(giftedSubscriptions.userId, ctx.user.id),
+            isNull(giftedSubscriptions.revokedAt)
+          )
+        )
+        .orderBy(desc(giftedSubscriptions.createdAt))
+        .limit(1);
+
+      const activeGift = giftedRows[0] && (!giftedRows[0].expiresAt || giftedRows[0].expiresAt > now)
+        ? giftedRows[0]
+        : null;
+
+      // Use the higher tier between Stripe and gifted
+      const planRank: Record<string, number> = { free: 0, pro: 1, elite: 2, team: 3 };
+      let effectivePlan = stripePlan;
+      let isGifted = false;
+
+      if (activeGift && (planRank[activeGift.plan] || 0) > (planRank[stripePlan] || 0)) {
+        effectivePlan = activeGift.plan as PlanKey;
+        isGifted = true;
+      }
+
       return {
-        plan: (result[0]?.subscriptionPlan || "free") as PlanKey,
+        plan: effectivePlan,
         stripeCustomerId: result[0]?.stripeCustomerId || null,
+        isGifted,
+        giftedPlan: activeGift?.plan || null,
+        giftExpiresAt: activeGift?.expiresAt || null,
       };
     }),
 
@@ -1588,6 +1621,139 @@ Provide 3-5 comparable RENOVATED properties that meet ALL of these criteria:
         }
 
         return createPortalSession(customerId, input.origin);
+      }),
+  }),
+
+  // ─── Admin: Gifted Subscriptions ─────────────────────────────
+  giftedSubs: router({
+    /** List all gifted subscriptions (admin only) */
+    list: adminProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+
+      const rows = await db
+        .select({
+          id: giftedSubscriptions.id,
+          userId: giftedSubscriptions.userId,
+          plan: giftedSubscriptions.plan,
+          grantedBy: giftedSubscriptions.grantedBy,
+          reason: giftedSubscriptions.reason,
+          expiresAt: giftedSubscriptions.expiresAt,
+          revokedAt: giftedSubscriptions.revokedAt,
+          createdAt: giftedSubscriptions.createdAt,
+          userName: users.name,
+          userEmail: users.email,
+        })
+        .from(giftedSubscriptions)
+        .leftJoin(users, eq(giftedSubscriptions.userId, users.id))
+        .orderBy(desc(giftedSubscriptions.createdAt));
+
+      return rows;
+    }),
+
+    /** Grant a gifted subscription to a user (admin only) */
+    grant: adminProcedure
+      .input(z.object({
+        userEmail: z.string().email(),
+        plan: z.enum(["pro", "elite", "team"]),
+        reason: z.string().optional(),
+        durationDays: z.number().optional(), // null = permanent
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        // Find user by email
+        const userRows = await db
+          .select({ id: users.id, name: users.name, email: users.email })
+          .from(users)
+          .where(eq(users.email, input.userEmail))
+          .limit(1);
+
+        if (!userRows[0]) {
+          throw new Error(`No user found with email: ${input.userEmail}`);
+        }
+
+        const targetUser = userRows[0];
+        const expiresAt = input.durationDays
+          ? new Date(Date.now() + input.durationDays * 24 * 60 * 60 * 1000)
+          : null;
+
+        await db.insert(giftedSubscriptions).values({
+          userId: targetUser.id,
+          plan: input.plan,
+          grantedBy: ctx.user.id,
+          reason: input.reason || null,
+          expiresAt,
+        });
+
+        return {
+          success: true,
+          userName: targetUser.name,
+          userEmail: targetUser.email,
+          plan: input.plan,
+          expiresAt,
+        };
+      }),
+
+    /** Revoke a gifted subscription (admin only) */
+    revoke: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        await db
+          .update(giftedSubscriptions)
+          .set({ revokedAt: new Date() })
+          .where(eq(giftedSubscriptions.id, input.id));
+
+        return { success: true };
+      }),
+
+    /** Extend a gifted subscription (admin only) */
+    extend: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        additionalDays: z.number(),
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        const rows = await db
+          .select()
+          .from(giftedSubscriptions)
+          .where(eq(giftedSubscriptions.id, input.id))
+          .limit(1);
+
+        if (!rows[0]) throw new Error("Gifted subscription not found");
+
+        const currentExpiry = rows[0].expiresAt || new Date();
+        const newExpiry = new Date(currentExpiry.getTime() + input.additionalDays * 24 * 60 * 60 * 1000);
+
+        await db
+          .update(giftedSubscriptions)
+          .set({ expiresAt: newExpiry })
+          .where(eq(giftedSubscriptions.id, input.id));
+
+        return { success: true, newExpiresAt: newExpiry };
+      }),
+
+    /** Search users by email for the gift form (admin only) */
+    searchUsers: adminProcedure
+      .input(z.object({ query: z.string().min(1) }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return [];
+
+        const rows = await db
+          .select({ id: users.id, name: users.name, email: users.email, subscriptionPlan: users.subscriptionPlan })
+          .from(users)
+          .where(sql`${users.email} LIKE ${`%${input.query}%`} OR ${users.name} LIKE ${`%${input.query}%`}`)
+          .limit(10);
+
+        return rows;
       }),
   }),
 });

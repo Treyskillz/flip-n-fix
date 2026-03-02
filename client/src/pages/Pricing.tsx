@@ -51,7 +51,7 @@ export default function Pricing() {
   // Handle success/cancel URL params
   useEffect(() => {
     if (params.get("success") === "true") {
-      toast.success(`Welcome to Freedom One ${params.get("plan")?.toUpperCase() || "Pro"}! Your subscription is now active.`);
+      toast.success(`Welcome to Freedom One ${params.get("plan")?.toUpperCase() || "Pro"}! Your 7-day free trial is now active.`);
     }
     if (params.get("canceled") === "true") {
       toast.info("Checkout was canceled. No charges were made.");
@@ -85,10 +85,14 @@ export default function Pricing() {
           <h1 className="text-3xl lg:text-4xl font-bold tracking-tight mb-3">
             Choose Your <span className="text-[oklch(0.65_0.18_18)]">Investment Plan</span>
           </h1>
-          <p className="text-[oklch(0.6_0_0)] max-w-xl mx-auto mb-8">
+          <p className="text-[oklch(0.6_0_0)] max-w-xl mx-auto mb-4">
             Unlock the full Freedom One system. Every plan includes our core deal analyzer.
             Upgrade anytime to access advanced tools, education, and team features.
           </p>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[oklch(0.55_0.18_145)]/15 border border-[oklch(0.55_0.18_145)]/30 text-[oklch(0.75_0.15_145)] text-sm font-medium mb-8">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            All paid plans include a 7-day FREE trial — no charge until day 8
+          </div>
 
           {/* Interval Toggle */}
           <div className="inline-flex items-center gap-1 p-1 rounded-lg bg-[oklch(0.2_0_0)]">
@@ -174,6 +178,9 @@ export default function Pricing() {
                           Billed ${displayPrice.toFixed(0)}/year
                         </p>
                       )}
+                      <p className="text-xs text-[oklch(0.55_0.18_145)] font-medium mt-1">
+                        7 days free, then auto-renews
+                      </p>
                     </div>
                   )}
                 </div>
@@ -224,7 +231,7 @@ export default function Pricing() {
                     {createCheckout.isPending ? (
                       <Loader2 className="w-4 h-4 animate-spin mr-2" />
                     ) : null}
-                    {!isAuthenticated ? "Sign In to Subscribe" : "Subscribe"}
+                    {!isAuthenticated ? "Sign In to Start Free Trial" : "Start 7-Day Free Trial"}
                   </Button>
                 )}
               </div>
@@ -232,11 +239,26 @@ export default function Pricing() {
           })}
         </div>
 
-        {/* Test mode notice */}
-        <div className="max-w-2xl mx-auto mt-10 text-center">
-          <p className="text-xs text-muted-foreground">
+        {/* Trial & Cancellation Info */}
+        <div className="max-w-2xl mx-auto mt-10 space-y-4">
+          <div className="bg-[oklch(0.15_0_0)] rounded-xl p-6 border border-[oklch(0.25_0_0)]">
+            <h3 className="font-bold text-sm mb-3 text-white">How the 7-Day Free Trial Works</h3>
+            <div className="space-y-2 text-sm text-[oklch(0.6_0_0)]">
+              <p><span className="text-[oklch(0.55_0.18_145)] font-medium">Day 1:</span> Sign up and get instant access to all plan features. No charge today.</p>
+              <p><span className="text-[oklch(0.55_0.18_145)] font-medium">Day 2-7:</span> Explore the full system — analyze deals, estimate rehabs, access the course, and more.</p>
+              <p><span className="text-[oklch(0.55_0.18_145)] font-medium">Day 8:</span> Your subscription automatically begins. You'll be charged the plan price and it renews each billing cycle until canceled.</p>
+            </div>
+          </div>
+          <div className="bg-[oklch(0.15_0_0)] rounded-xl p-6 border border-[oklch(0.25_0_0)]">
+            <h3 className="font-bold text-sm mb-2 text-white">Cancellation Policy</h3>
+            <p className="text-sm text-[oklch(0.6_0_0)]">
+              Your subscription renews automatically each billing period until you cancel. To cancel your subscription, 
+              email us at <a href="mailto:support@freedom1realsystem.com" className="text-[oklch(0.65_0.18_18)] hover:underline font-medium">support@freedom1realsystem.com</a> with 
+              your account email and we'll process your cancellation within 24 hours. You'll retain access through the end of your current billing period.
+            </p>
+          </div>
+          <p className="text-xs text-muted-foreground text-center">
             Payments are processed securely by Stripe. You can test with card number 4242 4242 4242 4242.
-            All plans include a 14-day money-back guarantee.
           </p>
         </div>
       </section>

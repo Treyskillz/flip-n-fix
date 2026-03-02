@@ -364,6 +364,12 @@ export default function ProfitCalculator() {
                 A deal is considered viable when projected profit exceeds the greater of 10% of ARV or $20,000.
               </p>
             </div>
+            <div className="mt-3 text-center">
+              <a href="/profit-calc-guide" className="inline-flex items-center gap-1.5 text-xs text-[oklch(0.65_0.18_18)] hover:text-[oklch(0.75_0.18_18)] transition-colors font-medium">
+                <HelpCircle className="w-3.5 h-3.5" /> Read the Full Training Guide — master every feature in detail
+                <ArrowRight className="w-3 h-3" />
+              </a>
+            </div>
           </div>
         </section>
       )}
