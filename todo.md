@@ -308,3 +308,4 @@
 - [x] Apply glow treatment to footer logo for visibility on dark background
 - [x] Create Freedom One shield favicon and add to site
 - [x] Publish updated site
+- [x] Remove Armando name from Profit Calculator Excel and all other documents
