@@ -311,3 +311,5 @@
 - [x] Remove Armando name from Profit Calculator Excel and all other documents
 - [x] Add Open Graph and Twitter Card social media meta tags
 - [x] Add robots.txt and sitemap.xml for SEO
+- [ ] Add before/after pictures to 3-Option Brochure like original uploaded version
+- [ ] Add before/after pictures to Private Money Prospectus like original uploaded version
