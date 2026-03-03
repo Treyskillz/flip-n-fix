@@ -218,7 +218,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         <div className="container py-8">
           <div className="flex flex-col md:flex-row items-start justify-between gap-6">
             <div className="flex items-center gap-3">
-              <img src={MAIN_LOGO_URL} alt="Freedom One" className="h-12 w-auto object-contain" />
+              <img src={MAIN_LOGO_URL} alt="Freedom One" className="h-12 w-auto object-contain" style={{ filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.7)) drop-shadow(0 0 4px rgba(255,255,255,0.9))' }} />
             </div>
             <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-[oklch(0.6_0_0)]">
               <Link href="/support" className="hover:text-[oklch(0.65_0.18_18)] transition-colors">Support</Link>

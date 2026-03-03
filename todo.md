@@ -10,7 +10,7 @@
 - [x] Lighten hero background overlay so the house photo and logo are clearly visible
 - [x] Lighten footer background so logo is clearly visible
 - [x] Add success/cancel handling on Pricing page after Stripe checkout redirect (already built in)
-- [ ] Add favicon with Freedom One logo
+- [x] Add favicon with Freedom One logo
 - [ ] Update page title and meta tags
 - [x] Create comprehensive setup and hosting guide document
 - [x] Add Support/Contact page with email, hours, FAQ
@@ -305,3 +305,6 @@
 - [x] Update Course Ebook PDF with instructions on how to use the app's Profit Calculator page
 - [x] Fix website logos - user reports logos were not updated on the live site
 - [x] Verify all logo references use the correct Freedom One logo consistently
+- [x] Apply glow treatment to footer logo for visibility on dark background
+- [x] Create Freedom One shield favicon and add to site
+- [x] Publish updated site
