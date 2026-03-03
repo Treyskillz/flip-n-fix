@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 
 const HERO_IMG = 'https://private-us-east-1.manuscdn.com/sessionFile/X2mbdSBH7FFfDzhrqRzFf2/sandbox/zKWPwM8kWvCMfUkxG9CWgB-img-1_1771972190000_na1fn_aGVyby1yZW5vdmF0aW9u.jpg?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvWDJtYmRTQkg3RkZmRHpocnFSekZmMi9zYW5kYm94L3pLV1B3TThrV3ZDTWZVa3hHOUNXZ0ItaW1nLTFfMTc3MTk3MjE5MDAwMF9uYTFmbl9hR1Z5YnkxeVpXNXZkbUYwYVc5dS5qcGc~eC1vc3MtcHJvY2Vzcz1pbWFnZS9yZXNpemUsd18xOTIwLGhfMTkyMC9mb3JtYXQsd2VicC9xdWFsaXR5LHFfODAiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3OTg3NjE2MDB9fX1dfQ__&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=KEIlWuGpETZNjtFQcGyQSbFkrMJ5~EWaW35l-VRByShs7StAk09cnnK-BLqv5oTDzyJ0LKRy7Zd3DLEXV4wqLlypP9HKmWDyq8uY9gGxpi7XDP17AtAIXV~h1g83-1zM30kDBoxW0CTpAdrdOad2d97ZUPKl5uDyJ1Z-ToGGBzU7mugkVlTkLt9pgi1Ht7eROx22Dktb5IN4BKUuJpG8V~XZccGbl7xJ3ZxK64zNDL0twxfv7fWCbw3LU3uEPXSpV8eC7GsvekkTYeqi-BzZ1FtmV0SauDZ7SOfuebFfwT3r0i7AWc7G8iB0GflTEBfreFJeYCTUPdTKYJI1T21gZg__';
-const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/RUvFlwFYmtbQizbR.png";
+const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663030273730/c3pk6dbyVkhix88pdfEyoY/logo-transparent-black_1d2d479c.png";
 
 const FEATURES = [
   {
@@ -86,7 +86,7 @@ export default function Home() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
           <img src={HERO_IMG} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[oklch(0.08_0_0/0.65)] via-[oklch(0.08_0_0/0.45)] to-[oklch(0.08_0_0/0.20)]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[oklch(0.08_0_0/0.45)] via-[oklch(0.08_0_0/0.30)] to-[oklch(0.08_0_0/0.10)]" />
         </div>
         <div className="container relative py-20 lg:py-28">
           <div className="max-w-2xl">
@@ -94,7 +94,7 @@ export default function Home() {
               <TrendingUp className="w-3.5 h-3.5" />
               <span>Real Estate Investment System</span>
             </div>
-            <img src={LOGO_URL} alt="Freedom One" className="h-20 lg:h-28 object-contain mb-6" />
+            <img src={LOGO_URL} alt="Freedom One" className="h-28 lg:h-44 object-contain mb-6" style={{ filter: 'drop-shadow(0 0 14px rgba(255,255,255,0.8)) drop-shadow(0 0 6px rgba(255,255,255,1))' }} />
             <h1 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-white tracking-tight leading-[1.1] mb-5">
               Analyze Deals. Estimate Rehabs.<br />
               <span className="text-[oklch(0.70_0.18_18)]">Maximize Profit.</span>

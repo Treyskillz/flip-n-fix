@@ -303,3 +303,5 @@
 - [x] Test Profit Calculator with real deal numbers and verify all 6 scenarios, rapid-fire, and comparison tools
 - [x] Add Download Excel button to Profit Calculator page that exports current analysis as pre-filled Excel
 - [x] Update Course Ebook PDF with instructions on how to use the app's Profit Calculator page
+- [x] Fix website logos - user reports logos were not updated on the live site
+- [x] Verify all logo references use the correct Freedom One logo consistently

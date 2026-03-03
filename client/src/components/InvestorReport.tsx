@@ -31,7 +31,7 @@ interface Props {
   photos?: { url: string; caption?: string | null }[];
 }
 
-const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/RUvFlwFYmtbQizbR.png";
+const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663030273730/c3pk6dbyVkhix88pdfEyoY/logo-transparent-black_1d2d479c.png";
 
 function buildPdfHtml(props: Props): string {
   const { property, profit, financing, closing, holding, effectiveArv, rehabTotals, materialTier, targetROI, comps, roomScopes, regionalLabel, materialTierKey, materialsFactor, laborFactor } = props;

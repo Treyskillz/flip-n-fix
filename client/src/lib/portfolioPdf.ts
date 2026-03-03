@@ -3,7 +3,7 @@
 // Generates a branded, print-ready HTML document for all saved deals
 // ============================================================
 
-const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/MgvhsGurcOgbPgCR.png";
+const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663030273730/c3pk6dbyVkhix88pdfEyoY/logo-transparent-black_1d2d479c.png";
 
 function fmt(n: number): string {
   return new Intl.NumberFormat('en-US', {

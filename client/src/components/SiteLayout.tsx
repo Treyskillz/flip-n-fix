@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useState, useCallback, useRef, useEffect } from 'react';
 
 // Main Freedom One logo (shield + red text, transparent background)
-const MAIN_LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/RUvFlwFYmtbQizbR.png";
+const MAIN_LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663030273730/c3pk6dbyVkhix88pdfEyoY/logo-transparent-black_1d2d479c.png";
 
 interface NavItem {
   path: string;
