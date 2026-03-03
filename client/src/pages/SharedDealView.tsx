@@ -10,7 +10,7 @@ import {
   CheckCircle2, XCircle, MinusCircle
 } from 'lucide-react';
 
-const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/MgvhsGurcOgbPgCR.png";
+const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/RUvFlwFYmtbQizbR.png";
 
 export default function SharedDealView() {
   const params = useParams<{ shareId: string }>();
