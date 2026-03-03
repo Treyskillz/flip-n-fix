@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Disallow admin and private routes
+Disallow: /admin/
+Disallow: /profile
+Disallow: /saved-deals
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://freedom1realsystem.com/sitemap.xml

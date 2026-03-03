@@ -310,3 +310,4 @@
 - [x] Publish updated site
 - [x] Remove Armando name from Profit Calculator Excel and all other documents
 - [x] Add Open Graph and Twitter Card social media meta tags
+- [x] Add robots.txt and sitemap.xml for SEO
