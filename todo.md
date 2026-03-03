@@ -316,3 +316,10 @@
 - [ ] Rebuild 3-Option Brochure to match original uploaded version exactly (all content, Trey Hill signature, layout)
 - [x] Completely rewrite 3-Option Brochure to 8 pages matching original (Trey Hill signature, all content, black/burgundy/red scheme)
 - [x] Update Prospectus with before/after photos per property, truth-in-lending placeholders, bill of sale placeholders
+- [ ] Check/fix testimonial section on homepage
+- [ ] Create "Top 5 Rehabbing Mistakes" standalone PDF lead magnet
+- [ ] Build database schema for email leads
+- [ ] Build backend API for lead capture and PDF delivery
+- [ ] Build lead capture section on homepage with "5 Biggest Mistakes" free download
+- [ ] Create dedicated landing page for the lead magnet (/free-guide)
+- [ ] Set up email collection that stores leads in database

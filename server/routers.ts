@@ -6,7 +6,7 @@ import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_
 import { PLANS, PlanKey } from "./stripe/products";
 import { createCheckoutSession, createPortalSession } from "./stripe/checkout";
 import { getDb } from "./db";
-import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments, pipelineDeals, pipelineContacts, pipelineActivities, giftedSubscriptions } from "../drizzle/schema";
+import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments, pipelineDeals, pipelineContacts, pipelineActivities, giftedSubscriptions, emailLeads } from "../drizzle/schema";
 import { eq, sql, desc, and, ne, inArray, asc, isNull } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
@@ -1755,7 +1755,48 @@ Provide 3-5 comparable RENOVATED properties that meet ALL of these criteria:
 
         return rows;
       }),
+   }),
+
+  // ─── Lead Capture ───────────────────────────────────────────
+  leads: router({
+    /** Capture an email lead (public - no auth required) */
+    capture: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        name: z.string().optional(),
+        source: z.string().default("homepage"),
+        leadMagnet: z.string().default("5-mistakes"),
+      }))
+      .mutation(async ({ input }) => {
+        const db = (await getDb())!;
+        // Check if email already exists
+        const existing = await db.select().from(emailLeads).where(eq(emailLeads.email, input.email)).limit(1);
+        if (existing.length > 0) {
+          // Already captured, just return success with download URL
+          return { success: true, alreadySubscribed: true, downloadUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310419663030273730/c3pk6dbyVkhix88pdfEyoY/Freedom-One-Top-5-Rehabbing-Mistakes_c11078c9.pdf" };
+        }
+        await db.insert(emailLeads).values({
+          email: input.email,
+          name: input.name || null,
+          source: input.source,
+          leadMagnet: input.leadMagnet,
+        });
+        return { success: true, alreadySubscribed: false, downloadUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310419663030273730/c3pk6dbyVkhix88pdfEyoY/Freedom-One-Top-5-Rehabbing-Mistakes_c11078c9.pdf" };
+      }),
+
+    /** List all leads (admin only) */
+    list: adminProcedure.query(async () => {
+      const db = (await getDb())!;
+      const rows = await db.select().from(emailLeads).orderBy(desc(emailLeads.createdAt)).limit(500);
+      return rows;
+    }),
+
+    /** Get lead count (admin only) */
+    count: adminProcedure.query(async () => {
+      const db = (await getDb())!;
+      const result = await db.select({ count: sql<number>`count(*)` }).from(emailLeads);
+      return { count: result[0]?.count || 0 };
+    }),
   }),
 });
-
 export type AppRouter = typeof appRouter;

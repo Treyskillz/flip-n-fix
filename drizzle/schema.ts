@@ -276,3 +276,17 @@ export const giftedSubscriptions = mysqlTable("gifted_subscriptions", {
 
 export type GiftedSubscription = typeof giftedSubscriptions.$inferSelect;
 export type InsertGiftedSubscription = typeof giftedSubscriptions.$inferInsert;
+
+// ─── Email Leads (Lead Magnet Captures) ─────────────────────
+export const emailLeads = mysqlTable("email_leads", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 320 }).notNull(),
+  name: varchar("name", { length: 255 }),
+  source: varchar("source", { length: 128 }).default("homepage").notNull(), // homepage, landing-page, etc.
+  leadMagnet: varchar("leadMagnet", { length: 128 }).default("5-mistakes").notNull(),
+  convertedToUser: int("convertedToUser").default(0).notNull(), // 0=no, 1=yes
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type EmailLead = typeof emailLeads.$inferSelect;
+export type InsertEmailLead = typeof emailLeads.$inferInsert;
