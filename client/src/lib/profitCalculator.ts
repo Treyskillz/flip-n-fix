@@ -8,13 +8,13 @@
 // ── Configuration Defaults ───────────────────────────────────
 
 export const DEFAULTS = {
-  realtorCostRate: 0.05,            // 5% realtor commission
+  realtorCostRate: 0.04,            // 4% realtor commission (post-NAR settlement 2024, ~3% listing + negotiable buyer agent)
   sellingClosingCostRate: 0.02,     // 2% selling closing costs
   purchaseClosingRate: 0.02,        // 2% purchase closing costs
   annualPropertyTaxRate: 0.0125,    // 1.25% annual property tax
   minProfitPercent: 0.10,           // 10% minimum profit threshold
   minProfitFloor: 20000,            // $20K minimum profit floor
-  alwaysItemsBaseline: 21000,       // Base rehab for year-built lookup
+  alwaysItemsBaseline: 25000,       // Base rehab for year-built lookup (updated from $21K for 2026)
   localAreaAdditional: 0,           // Local area additional costs
   perAdditional500Sqft: 3000,       // Per additional 500 sqft above 2000
   level2Multiplier: 0.30,           // Level 2 rehab multiplier
@@ -34,6 +34,13 @@ export interface PropertyInputs {
   monthsToHold: number;           // Total months: rehab + DOM + escrow
   hasPool: boolean;
   rehabLevel: 1 | 2 | 3;
+  // 2012 Profit Calculator fields
+  agentName: string;              // Agent who provided the property lead
+  initialOfferDate: string;       // Initial offer date (ISO string or empty)
+  resubmittalDate: string;        // Resubmittal date (ISO string or empty)
+  notes: string;                  // Property-specific notes
+  gapProjectPercent: number;      // Developer's gap funder "Project %" (e.g. 0.15 = 15%)
+  gapAnnualizedPercent: number;   // Developer's gap funder "Annualized %" (e.g. 0.12 = 12%)
 }
 
 export type InterestType = 'annual' | 'straight' | 'monthly' | 'deferred';
@@ -127,7 +134,7 @@ export interface ScenarioResult {
 }
 
 export interface RapidFireRow {
-  roiTarget: number;              // Target ROI (18% down to 13%)
+  roiTarget: number;              // Target ROI (20% down to 13%)
   offerPrice: number;
   percentOfAsking: number;
   projectedProfit: number;
@@ -150,6 +157,38 @@ export interface PropertyEvaluation {
   recommendation: string;
 }
 
+// ── 2012 Profit Calculator Additional Results ───────────────
+
+export interface AllCashResult {
+  totalInvestment: number;        // TPC (purchase + rehab + closing + holding)
+  netResale: number;              // ARV minus selling costs
+  profit: number;                 // Net resale - total investment
+  roi: number;                    // profit / totalInvestment
+  annualizedROI: number;          // (roi / months) * 12
+}
+
+export interface FiftyFiftySplitResult {
+  totalInvestment: number;
+  profit: number;                 // All-cash profit / 2
+  trustDeedAmount: number;        // Total investment (what PL puts up)
+  roiAnnualized: number;          // (profit / trustDeed) * (12 / months)
+  roi12Month: number;             // profit / trustDeed
+}
+
+export interface DeveloperProfitResult {
+  hmlProfit: number;              // Profit after HML costs
+  gapFundsNeeded: number;         // TPC - HML loan + HML costs
+  // Project % method
+  gapLenderProfitProject: number; // gapProjectPercent * gapFundsNeeded
+  developerProfitProject: number; // hmlProfit - gapLenderProfitProject
+  gapLenderROIProject: number;    // (gapProjectPercent * 12) / months
+  // Annualized % method
+  gapLenderProfitAnnual: number;  // gapAnnualizedPercent * gapFundsNeeded * months / 12
+  developerProfitAnnual: number;  // hmlProfit - gapLenderProfitAnnual
+  // Comparison: 50-50 vs own funds
+  interestEarnedOwnFunds: number; // (hmlProfit - allCashProfit/2) / gapFundsNeeded
+}
+
 export interface ProfitCalculatorResult {
   tpc: TotalProjectCost;
   rehab: RehabBreakdown;
@@ -157,6 +196,10 @@ export interface ProfitCalculatorResult {
   scenarios: ScenarioResult[];
   rapidFire: RapidFireRow[];
   evaluation?: PropertyEvaluation;
+  // 2012 Profit Calculator sections
+  allCash: AllCashResult;
+  fiftyFifty: FiftyFiftySplitResult;
+  developerProfit: DeveloperProfitResult;
 }
 
 // ── Helper Functions ─────────────────────────────────────────
@@ -384,7 +427,7 @@ function buildRapidFire(prop: PropertyInputs): RapidFireRow[] {
   const rows: RapidFireRow[] = [];
   const totalSellRate = DEFAULTS.realtorCostRate + DEFAULTS.sellingClosingCostRate;
 
-  for (let roiTarget = 0.18; roiTarget >= 0.125; roiTarget -= 0.01) {
+  for (let roiTarget = 0.20; roiTarget >= 0.125; roiTarget -= 0.01) {
     // Solve for offer price where:
     // profit / totalInvestment = roiTarget
     // profit = ARV*(1-sellRate) - (offer + rehab + offer*closingRate + holdingCosts*months)
@@ -460,20 +503,26 @@ export function getDefaultInputs(): CalculatorInputs {
       monthsToHold: 6,
       hasPool: false,
       rehabLevel: 1,
+      agentName: '',
+      initialOfferDate: '',
+      resubmittalDate: '',
+      notes: '',
+      gapProjectPercent: 0,
+      gapAnnualizedPercent: 0,
     },
     hmlARV: {
-      ltvPercent: 0.65,
+      ltvPercent: 0.70,             // Updated from 65% to 70% for 2026
       loanBasis: 'arv',
-      pointsPercent: 0.02,
+      pointsPercent: 0.03,          // Updated from 2% to 3% (2026 typical)
       interestRate: 0.12,
-      adminFee: 1000,
+      adminFee: 2500,               // Updated from $1,000 to $2,500 (2026 junk fees)
     },
     hmlPP: {
-      ltvPercent: 0.90,
+      ltvPercent: 0.85,             // Updated from 90% to 85% for 2026
       loanBasis: 'pp',
-      pointsPercent: 0.02,
+      pointsPercent: 0.03,          // Updated from 2% to 3% (2026 typical)
       interestRate: 0.12,
-      adminFee: 1000,
+      adminFee: 2500,               // Updated from $1,000 to $2,500 (2026 junk fees)
     },
     gapDebt: {
       pointsPercent: 0,
@@ -532,5 +581,49 @@ export function calculateAll(inputs: CalculatorInputs): ProfitCalculatorResult {
 
   const rapidFire = buildRapidFire(property);
 
-  return { tpc, rehab, seventyPercentRule, scenarios, rapidFire };
+  // ── 2012 Profit Calculator: All-Cash Scenario ──
+  const netResale = calcNetResale(property.arv);
+  const allCashProfit = netResale - tpc.tpc;
+  const allCashROI = tpc.tpc > 0 ? allCashProfit / tpc.tpc : 0;
+  const allCashAROI = property.monthsToHold > 0 ? (allCashROI / property.monthsToHold) * 12 : 0;
+  const allCash: AllCashResult = {
+    totalInvestment: tpc.tpc,
+    netResale,
+    profit: Math.round(allCashProfit),
+    roi: allCashROI,
+    annualizedROI: allCashAROI,
+  };
+
+  // ── 2012 Profit Calculator: 50-50 Private Lender Split ──
+  const fiftyFiftyProfit = Math.round(allCashProfit / 2);
+  const fiftyFifty: FiftyFiftySplitResult = {
+    totalInvestment: tpc.tpc,
+    profit: fiftyFiftyProfit,
+    trustDeedAmount: tpc.tpc,
+    roiAnnualized: tpc.tpc > 0 && property.monthsToHold > 0
+      ? (fiftyFiftyProfit / tpc.tpc) * (12 / property.monthsToHold) : 0,
+    roi12Month: tpc.tpc > 0 ? fiftyFiftyProfit / tpc.tpc : 0,
+  };
+
+  // ── 2012 Profit Calculator: Developer's Profit with Predetermined Gap Rate ──
+  // Uses the HML ARV scenario as the base (matching the 2012 file)
+  const hmlCalc = scenarios[0]; // HML ARV + Gap Debt
+  const hmlProfit = hmlCalc ? (netResale - tpc.tpc - (hmlCalc.hml?.totalHMLCosts || 0)) : 0;
+  const gapFundsNeeded = hmlCalc?.gapDebt?.gapLoan || 0;
+  const gapProjPct = property.gapProjectPercent;
+  const gapAnnPct = property.gapAnnualizedPercent;
+  const gapLenderProfitProject = Math.round(gapProjPct * gapFundsNeeded);
+  const gapLenderProfitAnnual = Math.round(gapAnnPct * gapFundsNeeded * property.monthsToHold / 12);
+  const developerProfit: DeveloperProfitResult = {
+    hmlProfit: Math.round(hmlProfit),
+    gapFundsNeeded,
+    gapLenderProfitProject,
+    developerProfitProject: Math.round(hmlProfit - gapLenderProfitProject),
+    gapLenderROIProject: property.monthsToHold > 0 ? (gapProjPct * 12) / property.monthsToHold : 0,
+    gapLenderProfitAnnual,
+    developerProfitAnnual: Math.round(hmlProfit - gapLenderProfitAnnual),
+    interestEarnedOwnFunds: gapFundsNeeded > 0 ? (hmlProfit - fiftyFiftyProfit) / gapFundsNeeded : 0,
+  };
+
+  return { tpc, rehab, seventyPercentRule, scenarios, rapidFire, allCash, fiftyFifty, developerProfit };
 }

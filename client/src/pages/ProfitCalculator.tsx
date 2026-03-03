@@ -6,7 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import {
   Calculator, DollarSign, TrendingUp, ChevronDown, ChevronUp, Info,
-  Download, Zap, CheckCircle2, XCircle, ArrowRight, HelpCircle, Printer
+  Download, Zap, CheckCircle2, XCircle, ArrowRight, HelpCircle, Printer,
+  Users, Banknote, Scale, FileText, CalendarDays, StickyNote
 } from 'lucide-react';
 import {
   calculateAll, getDefaultInputs, estimateRehabFromYearBuilt,
@@ -564,7 +565,7 @@ export default function ProfitCalculator() {
         {/* Rapid-Fire Offers */}
         <div className="p-5 rounded-lg bg-[oklch(0.15_0_0)] border border-[oklch(0.25_0_0)]">
           <SectionHeader title="Rapid-Fire Offer Prices" icon={Zap}>
-            <p className="text-xs text-[oklch(0.5_0_0)]">Based on ROI targets from 18% to 13%</p>
+            <p className="text-xs text-[oklch(0.5_0_0)]">Based on ROI targets from 20% to 13%</p>
           </SectionHeader>
           <p className="text-xs text-[oklch(0.55_0_0)] mb-4">
             Submit multiple offers at different price points. Start with the lowest offer and work up. 
@@ -606,6 +607,196 @@ export default function ProfitCalculator() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+
+        {/* 2012 Profit Calculator Sections */}
+        <div className="grid lg:grid-cols-3 gap-4">
+          {/* All-Cash Profit */}
+          <div className="p-5 rounded-lg bg-[oklch(0.15_0_0)] border border-[oklch(0.25_0_0)]">
+            <SectionHeader title="All-Cash Profit" icon={Banknote} />
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs">
+                <span className="text-[oklch(0.5_0_0)]">Total Investment</span>
+                <span className="text-white font-medium">{fmt(results.allCash.totalInvestment)}</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-[oklch(0.5_0_0)]">Net Resale (ARV - selling costs)</span>
+                <span className="text-white font-medium">{fmt(results.allCash.netResale)}</span>
+              </div>
+              <div className="border-t border-[oklch(0.3_0_0)] pt-2 flex justify-between text-sm">
+                <span className="text-white font-bold">Profit</span>
+                <span className={`font-bold ${results.allCash.profit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {fmt(results.allCash.profit)}
+                </span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-[oklch(0.5_0_0)]">ROI</span>
+                <span className="text-[oklch(0.65_0.18_18)] font-medium">{pct(results.allCash.roi)}</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-[oklch(0.5_0_0)]">Annualized ROI</span>
+                <span className="text-[oklch(0.65_0.18_18)] font-medium">{pct(results.allCash.annualizedROI)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 50-50 Private Lender Split */}
+          <div className="p-5 rounded-lg bg-[oklch(0.15_0_0)] border border-[oklch(0.25_0_0)]">
+            <SectionHeader title="50-50 Private Lender" icon={Users} />
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs">
+                <span className="text-[oklch(0.5_0_0)]">Trust Deed Amount</span>
+                <span className="text-white font-medium">{fmt(results.fiftyFifty.trustDeedAmount)}</span>
+              </div>
+              <div className="border-t border-[oklch(0.3_0_0)] pt-2 flex justify-between text-sm">
+                <span className="text-white font-bold">Your 50% Profit</span>
+                <span className={`font-bold ${results.fiftyFifty.profit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {fmt(results.fiftyFifty.profit)}
+                </span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-[oklch(0.5_0_0)]">ROI Annualized</span>
+                <span className="text-[oklch(0.65_0.18_18)] font-medium">{pct(results.fiftyFifty.roiAnnualized)}</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-[oklch(0.5_0_0)]">ROI (12-month)</span>
+                <span className="text-[oklch(0.65_0.18_18)] font-medium">{pct(results.fiftyFifty.roi12Month)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Developer's Profit with Gap Rate */}
+          <div className="p-5 rounded-lg bg-[oklch(0.15_0_0)] border border-[oklch(0.25_0_0)]">
+            <SectionHeader title="Developer's Profit" icon={Scale} />
+            <p className="text-[10px] text-[oklch(0.5_0_0)] mb-3">Predetermined gap funder rate (not 50-50 split)</p>
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs">
+                <span className="text-[oklch(0.5_0_0)]">HML Profit (after loan costs)</span>
+                <span className="text-white font-medium">{fmt(results.developerProfit.hmlProfit)}</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-[oklch(0.5_0_0)]">Gap Funds Needed</span>
+                <span className="text-white font-medium">{fmt(results.developerProfit.gapFundsNeeded)}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                <div className="flex items-center gap-1">
+                  <Label className="text-[10px] text-[oklch(0.6_0_0)] shrink-0">Project %</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={inputs.property.gapProjectPercent || ''}
+                    onChange={e => updateProp('gapProjectPercent', Number(e.target.value))}
+                    placeholder="0.15"
+                    className="h-7 text-xs bg-[oklch(0.18_0_0)] border-[oklch(0.3_0_0)] text-white w-20"
+                  />
+                </div>
+                <div className="flex items-center gap-1">
+                  <Label className="text-[10px] text-[oklch(0.6_0_0)] shrink-0">Annual %</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={inputs.property.gapAnnualizedPercent || ''}
+                    onChange={e => updateProp('gapAnnualizedPercent', Number(e.target.value))}
+                    placeholder="0.12"
+                    className="h-7 text-xs bg-[oklch(0.18_0_0)] border-[oklch(0.3_0_0)] text-white w-20"
+                  />
+                </div>
+              </div>
+              {inputs.property.gapProjectPercent > 0 && (
+                <div className="mt-2 p-2 rounded bg-[oklch(0.18_0_0)]">
+                  <p className="text-[10px] text-[oklch(0.65_0.18_18)] font-semibold mb-1">Project % Method</p>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-[oklch(0.5_0_0)]">Gap Lender Profit</span>
+                    <span className="text-amber-400">{fmt(results.developerProfit.gapLenderProfitProject)}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-[oklch(0.5_0_0)]">Your Profit</span>
+                    <span className="text-emerald-400 font-bold">{fmt(results.developerProfit.developerProfitProject)}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-[oklch(0.5_0_0)]">Gap Lender AROI</span>
+                    <span className="text-[oklch(0.65_0.18_18)]">{pct(results.developerProfit.gapLenderROIProject)}</span>
+                  </div>
+                </div>
+              )}
+              {inputs.property.gapAnnualizedPercent > 0 && (
+                <div className="mt-2 p-2 rounded bg-[oklch(0.18_0_0)]">
+                  <p className="text-[10px] text-[oklch(0.65_0.18_18)] font-semibold mb-1">Annualized % Method</p>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-[oklch(0.5_0_0)]">Gap Lender Profit</span>
+                    <span className="text-amber-400">{fmt(results.developerProfit.gapLenderProfitAnnual)}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-[oklch(0.5_0_0)]">Your Profit</span>
+                    <span className="text-emerald-400 font-bold">{fmt(results.developerProfit.developerProfitAnnual)}</span>
+                  </div>
+                </div>
+              )}
+              <div className="mt-2 p-2 rounded bg-[oklch(0.48_0.20_18)]/10 border border-[oklch(0.48_0.20_18)]/20">
+                <p className="text-[10px] text-[oklch(0.65_0.18_18)] font-semibold">50-50 vs Own Funds Comparison</p>
+                <p className="text-xs text-white mt-1">
+                  Interest earned using your own funds for the gap: <span className="text-[oklch(0.65_0.18_18)] font-bold">{pct(results.developerProfit.interestEarnedOwnFunds)}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Agent, Dates & Notes */}
+        <div className="p-5 rounded-lg bg-[oklch(0.15_0_0)] border border-[oklch(0.25_0_0)]">
+          <SectionHeader title="Deal Tracking" icon={FileText} />
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Label className="text-xs text-[oklch(0.6_0_0)] w-28 shrink-0">Agent Name</Label>
+                <Input
+                  value={inputs.property.agentName}
+                  onChange={e => updateProp('agentName', e.target.value)}
+                  placeholder="Agent who provided the lead"
+                  className="h-8 text-xs bg-[oklch(0.18_0_0)] border-[oklch(0.3_0_0)] text-white"
+                />
+              </div>
+              <p className="text-[10px] text-[oklch(0.45_0_0)] italic pl-30">
+                Always honor the realtor that brought you the property
+              </p>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Label className="text-xs text-[oklch(0.6_0_0)] w-28 shrink-0 flex items-center gap-1">
+                  <CalendarDays className="w-3 h-3" /> Offer Date
+                </Label>
+                <Input
+                  type="date"
+                  value={inputs.property.initialOfferDate}
+                  onChange={e => updateProp('initialOfferDate', e.target.value)}
+                  className="h-8 text-xs bg-[oklch(0.18_0_0)] border-[oklch(0.3_0_0)] text-white"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Label className="text-xs text-[oklch(0.6_0_0)] w-28 shrink-0 flex items-center gap-1">
+                  <CalendarDays className="w-3 h-3" /> Resubmittal
+                </Label>
+                <Input
+                  type="date"
+                  value={inputs.property.resubmittalDate}
+                  onChange={e => updateProp('resubmittalDate', e.target.value)}
+                  className="h-8 text-xs bg-[oklch(0.18_0_0)] border-[oklch(0.3_0_0)] text-white"
+                />
+              </div>
+            </div>
+            <div>
+              <Label className="text-xs text-[oklch(0.6_0_0)] flex items-center gap-1 mb-1">
+                <StickyNote className="w-3 h-3" /> Notes
+              </Label>
+              <textarea
+                value={inputs.property.notes}
+                onChange={e => updateProp('notes', e.target.value)}
+                placeholder="Property-specific notes... unique features, neighborhood info, etc."
+                rows={3}
+                className="w-full text-xs bg-[oklch(0.18_0_0)] border border-[oklch(0.3_0_0)] text-white rounded-md p-2 resize-none"
+              />
+            </div>
           </div>
         </div>
       </div>

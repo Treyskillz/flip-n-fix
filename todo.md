@@ -284,3 +284,17 @@
 - [x] Build admin tRPC endpoints for granting/revoking/listing gifted subscriptions
 - [x] Build admin UI panel for managing gifted subscriptions
 - [x] Update subscription status check to honor gifted subscriptions over Stripe
+
+## 2012 Profit Calculator Features - Add to App & Excel
+- [x] Add All-Cash profit scenario (net ARV - total investment, annualized ROI, ROI)
+- [x] Add 50-50 Private Lender split scenario (trust deed amount, ROI annualized, ROI 12-month)
+- [x] Add Developer's Profit with predetermined gap funder rate (Project % vs Annualized %)
+- [x] Add Comparison tool: Private Investor 50-50 vs own funds + HML
+- [x] Add Agent/lead tracking fields
+- [x] Add Offer date tracking (initial offer date, resubmittal date)
+- [x] Add Notes field for property-specific notes
+- [x] Expand Rapid-Fire ROI targets to include 20% and 19%
+- [x] Rebuild Excel deliverable matching 2012 Profit Calculator style with all additions
+- [x] Update Excel defaults for 2026: LTV 70%, Points 3, Interest 12%, Junk Fees $2,500, Base Closing $25K, Commission 6%
+- [x] Update app profitCalculator.ts defaults to match 2026 Excel updates
+- [ ] Fix PDFs: truly white backgrounds, clean images without watermarks, logo color scheme
