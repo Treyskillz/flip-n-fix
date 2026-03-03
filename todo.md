@@ -313,3 +313,6 @@
 - [x] Add robots.txt and sitemap.xml for SEO
 - [x] Add before/after pictures to 3-Option Brochure like original uploaded version
 - [x] Add before/after pictures to Private Money Prospectus like original uploaded version
+- [ ] Rebuild 3-Option Brochure to match original uploaded version exactly (all content, Trey Hill signature, layout)
+- [ ] Completely rewrite 3-Option Brochure to 8 pages matching original (Trey Hill signature, all content, black/burgundy/red scheme)
+- [ ] Update Prospectus with before/after photos per property, truth-in-lending placeholders, bill of sale placeholders
