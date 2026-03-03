@@ -1,6 +1,7 @@
 // ============================================================
 // Excel Export — Generates a multi-sheet .xlsx workbook
-// matching all 6 financing scenarios from the Profit Calculator
+// matching all 6 financing scenarios + 2012 Profit Calculator
+// sections from the merged Profit Calculator engine
 // ============================================================
 
 import * as XLSX from 'xlsx';
@@ -13,9 +14,6 @@ import {
   type ScenarioResult,
   DEFAULTS,
 } from './profitCalculator';
-
-const fmt$ = (n: number) => n;
-const fmtPct = (n: number) => n;
 
 function addSummarySheet(wb: XLSX.WorkBook, inputs: CalculatorInputs, result: ProfitCalculatorResult) {
   const prop = inputs.property;
@@ -31,6 +29,12 @@ function addSummarySheet(wb: XLSX.WorkBook, inputs: CalculatorInputs, result: Pr
     ['Square Footage', prop.sqft],
     ['Has Pool', prop.hasPool ? 'Yes' : 'No'],
     ['Rehab Level', prop.rehabLevel === 1 ? 'Level 1 (Basic)' : prop.rehabLevel === 2 ? 'Level 2 (Standard)' : 'Level 3 (Luxury)'],
+    [''],
+    ['DEAL TRACKING'],
+    ['Agent / Lead Source', prop.agentName || 'N/A'],
+    ['Initial Offer Date', prop.initialOfferDate || 'N/A'],
+    ['Resubmittal Date', prop.resubmittalDate || 'N/A'],
+    ['Notes', prop.notes || 'N/A'],
     [''],
     ['COST BREAKDOWN'],
     ['Purchase Price', result.tpc.purchase],
@@ -61,7 +65,6 @@ function addSummarySheet(wb: XLSX.WorkBook, inputs: CalculatorInputs, result: Pr
   ];
 
   const ws = XLSX.utils.aoa_to_sheet(data);
-  // Set column widths
   ws['!cols'] = [{ wch: 32 }, { wch: 20 }];
   XLSX.utils.book_append_sheet(wb, ws, 'Summary');
 }
@@ -82,7 +85,6 @@ function addScenarioSheet(wb: XLSX.WorkBook, scenario: ScenarioResult, inputs: C
     [''],
   ];
 
-  // HML details
   if (scenario.hml) {
     data.push(['HARD MONEY LOAN DETAILS']);
     data.push(['Loan Amount', scenario.hml.loanAmount]);
@@ -93,7 +95,6 @@ function addScenarioSheet(wb: XLSX.WorkBook, scenario: ScenarioResult, inputs: C
     data.push(['']);
   }
 
-  // Gap Debt details
   if (scenario.gapDebt) {
     data.push(['GAP FUNDER DETAILS (DEBT)']);
     data.push(['Gap Difference (TPC - HML)', scenario.gapDebt.gapDiff]);
@@ -104,7 +105,6 @@ function addScenarioSheet(wb: XLSX.WorkBook, scenario: ScenarioResult, inputs: C
     data.push(['']);
   }
 
-  // Gap Equity details
   if (scenario.gapEquity) {
     data.push(['GAP FUNDER DETAILS (EQUITY)']);
     data.push(['Gap Funder Equity %', `${(scenario.gapEquity.gapPercent * 100).toFixed(0)}%`]);
@@ -114,7 +114,6 @@ function addScenarioSheet(wb: XLSX.WorkBook, scenario: ScenarioResult, inputs: C
     data.push(['']);
   }
 
-  // PL Debt details
   if (scenario.plDebt) {
     data.push(['PRIVATE LENDER DETAILS (DEBT)']);
     data.push(['PL Loan Amount', scenario.plDebt.plLoan]);
@@ -124,7 +123,6 @@ function addScenarioSheet(wb: XLSX.WorkBook, scenario: ScenarioResult, inputs: C
     data.push(['']);
   }
 
-  // PL Equity details
   if (scenario.plEquity) {
     data.push(['PRIVATE LENDER DETAILS (EQUITY)']);
     data.push(['PL Loan Amount', scenario.plEquity.plLoan]);
@@ -184,37 +182,119 @@ function addRapidFireSheet(wb: XLSX.WorkBook, result: ProfitCalculatorResult, in
   XLSX.utils.book_append_sheet(wb, ws, 'Rapid-Fire Offers');
 }
 
+function addAllCashSheet(wb: XLSX.WorkBook, result: ProfitCalculatorResult, inputs: CalculatorInputs) {
+  const ac = result.allCash;
+  const ff = result.fiftyFifty;
+  const data: (string | number | null)[][] = [
+    ['FREEDOM ONE — All-Cash & 50-50 Split Analysis'],
+    [`Property: ${inputs.property.address || 'N/A'}`],
+    [''],
+    ['ALL-CASH SCENARIO (No Financing)'],
+    ['Total Investment (TPC)', ac.totalInvestment],
+    ['Net Resale (ARV minus selling costs)', ac.netResale],
+    ['Profit', ac.profit],
+    ['ROI', `${(ac.roi * 100).toFixed(1)}%`],
+    ['Annualized ROI', `${(ac.annualizedROI * 100).toFixed(1)}%`],
+    [''],
+    ['50-50 PRIVATE LENDER SPLIT'],
+    ['Total Investment', ff.totalInvestment],
+    ['Trust Deed Amount (PL puts up)', ff.trustDeedAmount],
+    ['Your 50% Profit', ff.profit],
+    ['ROI (12-month basis)', `${(ff.roi12Month * 100).toFixed(1)}%`],
+    ['ROI Annualized', `${(ff.roiAnnualized * 100).toFixed(1)}%`],
+    [''],
+    ['EXPLANATION'],
+    ['All-Cash: You fund the entire project yourself. Maximum profit, maximum risk.'],
+    ['50-50 Split: A private lender funds the project via trust deed. You split profit 50/50.'],
+    ['The PL earns a return on their money. You earn profit with zero out of pocket.'],
+  ];
+
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  ws['!cols'] = [{ wch: 40 }, { wch: 20 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'All-Cash & 50-50');
+}
+
+function addDeveloperProfitSheet(wb: XLSX.WorkBook, result: ProfitCalculatorResult, inputs: CalculatorInputs) {
+  const dp = result.developerProfit;
+  const prop = inputs.property;
+  const data: (string | number | null)[][] = [
+    ["FREEDOM ONE — Developer's Profit Analysis"],
+    [`Property: ${prop.address || 'N/A'}`],
+    [''],
+    ['DEVELOPER PROFIT WITH PREDETERMINED GAP RATE'],
+    ['HML Profit (after HML costs)', dp.hmlProfit],
+    ['Gap Funds Needed', dp.gapFundsNeeded],
+    [''],
+    ['METHOD 1: Project Percentage'],
+    ['Gap Funder Project %', `${(prop.gapProjectPercent * 100).toFixed(1)}%`],
+    ['Gap Lender Profit', dp.gapLenderProfitProject],
+    ['Developer Profit', dp.developerProfitProject],
+    ['Gap Lender ROI (Annualized)', `${(dp.gapLenderROIProject * 100).toFixed(1)}%`],
+    [''],
+    ['METHOD 2: Annualized Percentage'],
+    ['Gap Funder Annual %', `${(prop.gapAnnualizedPercent * 100).toFixed(1)}%`],
+    ['Gap Lender Profit', dp.gapLenderProfitAnnual],
+    ['Developer Profit', dp.developerProfitAnnual],
+    [''],
+    ['COMPARISON: 50-50 SPLIT vs OWN FUNDS + HML'],
+    ['50-50 Split Profit (your half)', result.fiftyFifty.profit],
+    ['HML + Gap Profit', dp.hmlProfit],
+    ['Effective Interest on Own Funds', `${(dp.interestEarnedOwnFunds * 100).toFixed(1)}%`],
+    [''],
+    ['EXPLANATION'],
+    ['Project %: Gap funder earns a flat percentage of their investment per project.'],
+    ['Annualized %: Gap funder earns an annualized return prorated by hold period.'],
+    ['Compare both methods to determine which is more favorable for your gap funder pitch.'],
+  ];
+
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  ws['!cols'] = [{ wch: 40 }, { wch: 20 }];
+  XLSX.utils.book_append_sheet(wb, ws, "Developer's Profit");
+}
+
 function addInstructionsSheet(wb: XLSX.WorkBook) {
   const data: (string | number | null)[][] = [
     ['FREEDOM ONE — Fix & Flip Profit Calculator'],
     ['Instructions & How to Use'],
     [''],
     ['OVERVIEW'],
-    ['This spreadsheet contains 6 financing scenarios for analyzing fix & flip deals.'],
-    ['Each scenario sheet shows the full cost breakdown, deal analysis, and resale sensitivity.'],
+    ['This spreadsheet contains a complete deal analysis with multiple financing scenarios,'],
+    ['rapid-fire offer pricing, all-cash analysis, 50-50 splits, and developer profit calculations.'],
     [''],
     ['SHEETS INCLUDED'],
-    ['1. Summary — Property info, cost breakdown, 70% rule, rehab estimate'],
-    ['2. HML ARV Debt — Hard money loan on ARV with gap funder earning interest'],
-    ['3. HML ARV Equity — Hard money loan on ARV with gap funder earning equity share'],
-    ['4. HML PP Debt — Hard money loan on purchase price with gap funder earning interest'],
-    ['5. HML PP Equity — Hard money loan on purchase price with gap funder earning equity share'],
-    ['6. PL Debt — 100% private lender earning interest/points'],
-    ['7. PL Equity — 100% private lender earning equity share of profit'],
-    ['8. Rapid-Fire Offers — Quick offer pricing at various ROI targets'],
+    ['1. Instructions — This page'],
+    ['2. Summary — Property info, cost breakdown, 70% rule, rehab estimate, deal tracking'],
+    ['3-8. Financing Scenarios:'],
+    ['   • HML ARV Debt — Hard money on ARV + gap funder earning interest'],
+    ['   • HML ARV Equity — Hard money on ARV + gap funder earning equity share'],
+    ['   • HML PP Debt — Hard money on purchase price + gap funder earning interest'],
+    ['   • HML PP Equity — Hard money on purchase price + gap funder earning equity share'],
+    ['   • PL Debt — 100% private lender earning interest/points'],
+    ['   • PL Equity — 100% private lender earning equity share'],
+    ['9. Rapid-Fire Offers — Quick offer pricing at 20% down to 13% ROI targets'],
+    ['10. All-Cash & 50-50 — All-cash profit and 50-50 private lender split analysis'],
+    ["11. Developer's Profit — Gap funder rate analysis with project % and annualized % methods"],
     [''],
     ['HOW TO USE'],
     ['1. Review the Summary sheet for property details and cost breakdown'],
-    ['2. Compare all 6 financing scenarios to find the best structure for your deal'],
-    ['3. Look at the DEAL or NO DEAL indicator on each scenario'],
-    ['4. Use the Resale Sensitivity Table to see profit at different sale prices'],
-    ['5. Use the Rapid-Fire Offers sheet to determine your initial offer price'],
+    ['2. Check the 70% Rule — is your purchase price below the MAO?'],
+    ['3. Compare all 6 financing scenarios to find the best structure'],
+    ['4. Look at the DEAL or NO DEAL indicator on each scenario'],
+    ['5. Use the Resale Sensitivity Table to see profit at different sale prices'],
+    ['6. Use Rapid-Fire Offers to determine your initial offer price'],
+    ['7. Review All-Cash vs 50-50 to decide on financing structure'],
+    ["8. Use Developer's Profit to pitch gap funders with specific returns"],
     [''],
     ['KEY FORMULAS'],
     ['70% Rule: MAO = ARV × 70% − Rehab Cost'],
     ['Min Profit: MAX(ARV × 10%, $20,000)'],
-    ['Net Resale: Sale Price − (5% Realtor + 2% Closing)'],
+    ['Net Resale: Sale Price − (4% Realtor + 2% Closing)'],
     ['DEAL = Projected Profit ≥ Min Profit Required'],
+    ['Rapid-Fire: Solve for offer where profit/investment = target ROI'],
+    [''],
+    ['2026 DEFAULTS'],
+    ['HML LTV: 70% (ARV) / 85% (PP) | Points: 3% | Rate: 12% | Admin Fee: $2,500'],
+    ['Realtor Commission: 4% | Selling Closing: 2% | Purchase Closing: 2%'],
     [''],
     ['DISCLAIMER'],
     ['This calculator is for educational and estimation purposes only.'],
@@ -257,6 +337,10 @@ export function generateProfitCalcExcel(inputs: CalculatorInputs): void {
   // Add Rapid-Fire
   addRapidFireSheet(wb, result, inputs);
 
+  // Add 2012 sections
+  addAllCashSheet(wb, result, inputs);
+  addDeveloperProfitSheet(wb, result, inputs);
+
   // Generate and download
   const address = inputs.property.address || 'Property';
   const safeName = address.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30);
@@ -266,7 +350,6 @@ export function generateProfitCalcExcel(inputs: CalculatorInputs): void {
 // Export a blank template with default values
 export function generateBlankTemplate(): void {
   const defaults = getDefaultInputs();
-  // Set some example values so the template isn't empty
   defaults.property.address = 'Enter Property Address';
   defaults.property.askingPrice = 250000;
   defaults.property.purchasePrice = 200000;
@@ -276,6 +359,8 @@ export function generateBlankTemplate(): void {
   defaults.property.rehab = 45000;
   defaults.property.holdingCosts = 2500;
   defaults.property.monthsToHold = 6;
+  defaults.property.gapProjectPercent = 0.15;
+  defaults.property.gapAnnualizedPercent = 0.12;
 
   const result = calculateAll(defaults);
   const wb = XLSX.utils.book_new();
@@ -297,6 +382,8 @@ export function generateBlankTemplate(): void {
   });
 
   addRapidFireSheet(wb, result, defaults);
+  addAllCashSheet(wb, result, defaults);
+  addDeveloperProfitSheet(wb, result, defaults);
 
   XLSX.writeFile(wb, 'FreedomOne_ProfitCalc_Template.xlsx');
 }

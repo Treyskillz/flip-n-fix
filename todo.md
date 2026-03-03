@@ -297,4 +297,9 @@
 - [x] Rebuild Excel deliverable matching 2012 Profit Calculator style with all additions
 - [x] Update Excel defaults for 2026: LTV 70%, Points 3, Interest 12%, Junk Fees $2,500, Base Closing $25K, Commission 6%
 - [x] Update app profitCalculator.ts defaults to match 2026 Excel updates
-- [ ] Fix PDFs: truly white backgrounds, clean images without watermarks, logo color scheme
+- [x] Fix PDFs: truly white backgrounds, clean images without watermarks, logo color scheme
+
+## Next Steps (March 3, 2026)
+- [x] Test Profit Calculator with real deal numbers and verify all 6 scenarios, rapid-fire, and comparison tools
+- [x] Add Download Excel button to Profit Calculator page that exports current analysis as pre-filled Excel
+- [x] Update Course Ebook PDF with instructions on how to use the app's Profit Calculator page
