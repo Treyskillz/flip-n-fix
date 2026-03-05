@@ -220,12 +220,18 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
             <div className="flex items-center gap-3">
               <img src={MAIN_LOGO_URL} alt="Freedom One" className="h-12 w-auto object-contain" style={{ filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.7)) drop-shadow(0 0 4px rgba(255,255,255,0.9))' }} />
             </div>
-            <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-[oklch(0.6_0_0)]">
-              <Link href="/support" className="hover:text-[oklch(0.65_0.18_18)] transition-colors">Support</Link>
-              <Link href="/pricing" className="hover:text-[oklch(0.65_0.18_18)] transition-colors">Pricing</Link>
-              <Link href="/disclaimers" className="hover:text-[oklch(0.65_0.18_18)] transition-colors flex items-center gap-1">
-                <Shield className="w-3 h-3" /> Legal Disclaimers
-              </Link>
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-[oklch(0.6_0_0)]">
+                <Link href="/support" className="hover:text-[oklch(0.65_0.18_18)] transition-colors">Support</Link>
+                <Link href="/pricing" className="hover:text-[oklch(0.65_0.18_18)] transition-colors">Pricing</Link>
+                <Link href="/disclaimers" className="hover:text-[oklch(0.65_0.18_18)] transition-colors flex items-center gap-1">
+                  <Shield className="w-3 h-3" /> Legal Disclaimers
+                </Link>
+              </div>
+              <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[oklch(0.55_0_0)]">
+                <a href="mailto:trey@freedomoneproperties.com" className="hover:text-[oklch(0.65_0.18_18)] transition-colors">trey@freedomoneproperties.com</a>
+                <a href="tel:831-498-6237" className="hover:text-[oklch(0.65_0.18_18)] transition-colors">831-498-6237</a>
+              </div>
             </div>
           </div>
           <div className="mt-4 pt-4 border-t border-[oklch(0.35_0_0)]">

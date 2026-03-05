@@ -365,3 +365,19 @@
 - [x] Fix cover page - should NOT be brown, make it professional
 - [x] Use clean watermark-free property photos throughout
 - [x] Professional typesetting matching the original content
+
+## PDF Black Screen Fix (March 5, 2026)
+- [x] Diagnose why both PDFs open to black screen (file size too large)
+- [x] Fix 3-Option Brochure PDF rendering (compressed 14.5MB → 3.1MB)
+- [x] Fix Private Money Prospectus PDF rendering (compressed 22.3MB → 3.9MB)
+- [x] Verify both PDFs open correctly
+
+## PDF Contact & Layout Fixes (March 5, 2026)
+- [x] Update 3-Option Brochure contact to trey@freedomoneproperties.com and 831-498-6237
+- [x] Update Prospectus contact to trey@freedomoneproperties.com and 831-498-6237
+- [x] Fix prospectus cover: lighter red matching logo color, white filter on logo
+- [x] Fix prospectus pages 8,9,10,12: resize before/after images to be fully visible
+- [x] Fill all prospectus pages completely — no half-blank pages
+- [x] Resize text and images on every page to use full page space
+- [x] Update contact info on website to trey@freedomoneproperties.com and 831-498-6237
+- [x] Add Trey Hill signature image to 3-Option Brochure closing section (like original)

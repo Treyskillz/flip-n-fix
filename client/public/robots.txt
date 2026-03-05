@@ -8,4 +8,4 @@ Disallow: /saved-deals
 Disallow: /api/
 
 # Sitemap location
-Sitemap: https://freedom1realsystem.com/sitemap.xml
+Sitemap: https://freedomoneproperties.com/sitemap.xml

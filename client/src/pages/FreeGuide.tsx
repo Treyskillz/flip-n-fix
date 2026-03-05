@@ -165,7 +165,7 @@ export default function FreeGuide() {
             His mission is to give every investor the tools and knowledge to make data-driven decisions and maximize profit on every deal.
           </p>
           <p className="text-sm text-muted-foreground">
-            Freedom One Real Estate System | www.freedom1realsystem.com
+            Freedom One Real Estate System | trey@freedomoneproperties.com | 831-498-6237
           </p>
         </div>
       </section>

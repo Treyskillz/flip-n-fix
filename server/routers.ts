@@ -1889,7 +1889,7 @@ Provide 3-5 comparable RENOVATED properties that meet ALL of these criteria:
         // Auto-post to Facebook when newly published and not already shared
         let fbResult = null;
         if (isNewlyPublished && !existing?.facebookShared && isFacebookConfigured()) {
-          const origin = ctx.req?.headers?.origin || "https://www.freedom1realsystem.com";
+          const origin = ctx.req?.headers?.origin || "https://www.freedomoneproperties.com";
           const postUrl = `${origin}/blog/${input.slug}`;
           const message = `📰 New Article: ${input.title}\n\n${input.excerpt || "Read the full article on Freedom One Real Estate System."}\n\n#RealEstateInvesting #FixAndFlip #FreedomOne`;
           fbResult = await postToFacebook(message, postUrl);
@@ -1921,7 +1921,7 @@ Provide 3-5 comparable RENOVATED properties that meet ALL of these criteria:
         // Auto-post to Facebook for new posts published immediately
         let fbResult = null;
         if (input.status === "published" && isFacebookConfigured()) {
-          const origin = ctx.req?.headers?.origin || "https://www.freedom1realsystem.com";
+          const origin = ctx.req?.headers?.origin || "https://www.freedomoneproperties.com";
           const postUrl = `${origin}/blog/${input.slug}`;
           const message = `📰 New Article: ${input.title}\n\n${input.excerpt || "Read the full article on Freedom One Real Estate System."}\n\n#RealEstateInvesting #FixAndFlip #FreedomOne`;
           fbResult = await postToFacebook(message, postUrl);
@@ -2022,7 +2022,7 @@ Make it actionable, data-driven where possible, and written in a confident but a
         await db.update(blogPosts).set({ status: "published", publishedAt: now }).where(eq(blogPosts.id, post.id));
         // Auto-post to Facebook if configured and not already shared
         if (!post.facebookShared && isFacebookConfigured()) {
-          const postUrl = `https://www.freedom1realsystem.com/blog/${post.slug}`;
+          const postUrl = `https://www.freedomoneproperties.com/blog/${post.slug}`;
           const message = `📰 New Article: ${post.title}\n\n${post.excerpt || "Read the full article on Freedom One Real Estate System."}\n\n#RealEstateInvesting #FixAndFlip #FreedomOne`;
           const fbResult = await postToFacebook(message, postUrl);
           if (fbResult.success) {
@@ -2070,7 +2070,7 @@ Make it actionable, data-driven where possible, and written in a confident but a
       if (!post) throw new Error("Blog post not found");
       if (post.status !== "published") throw new Error("Can only share published posts");
 
-      const origin = ctx.req?.headers?.origin || "https://www.freedom1realsystem.com";
+      const origin = ctx.req?.headers?.origin || "https://www.freedomoneproperties.com";
       const postUrl = `${origin}/blog/${post.slug}`;
       const message = input.customMessage || `📰 New Article: ${post.title}\n\n${post.excerpt || "Read the full article on Freedom One Real Estate System."}\n\n#RealEstateInvesting #FixAndFlip #FreedomOne`;
 
@@ -2095,7 +2095,7 @@ Make it actionable, data-driven where possible, and written in a confident but a
     getShareUrl: publicProcedure.input(z.object({
       slug: z.string(),
     })).query(async ({ input, ctx }) => {
-      const origin = ctx.req?.headers?.origin || "https://www.freedom1realsystem.com";
+      const origin = ctx.req?.headers?.origin || "https://www.freedomoneproperties.com";
       const postUrl = `${origin}/blog/${input.slug}`;
       return { shareUrl: buildFacebookShareUrl(postUrl) };
     }),
