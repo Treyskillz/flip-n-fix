@@ -12,6 +12,7 @@ import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
 import { storagePut } from "./storage";
 import crypto from "crypto";
+import { postToFacebook, postPhotoToFacebook, verifyFacebookConnection, isFacebookConfigured, buildFacebookShareUrl } from "./facebook";
 
 export const appRouter = router({
   system: systemRouter,
@@ -1868,6 +1869,10 @@ Provide 3-5 comparable RENOVATED properties that meet ALL of these criteria:
       const db = (await getDb())!;
       const publishedAt = input.status === "published" ? new Date() : undefined;
       if (input.id) {
+        // Check if this is a status change to "published" (for auto-post)
+        const [existing] = await db.select().from(blogPosts).where(eq(blogPosts.id, input.id)).limit(1);
+        const isNewlyPublished = input.status === "published" && existing?.status !== "published";
+
         await db.update(blogPosts).set({
           title: input.title,
           slug: input.slug,
@@ -1880,7 +1885,23 @@ Provide 3-5 comparable RENOVATED properties that meet ALL of these criteria:
           scheduledAt: input.scheduledAt,
           ...(publishedAt ? { publishedAt } : {}),
         }).where(eq(blogPosts.id, input.id));
-        return { id: input.id };
+
+        // Auto-post to Facebook when newly published and not already shared
+        let fbResult = null;
+        if (isNewlyPublished && !existing?.facebookShared && isFacebookConfigured()) {
+          const origin = ctx.req?.headers?.origin || "https://www.freedom1realsystem.com";
+          const postUrl = `${origin}/blog/${input.slug}`;
+          const message = `📰 New Article: ${input.title}\n\n${input.excerpt || "Read the full article on Freedom One Real Estate System."}\n\n#RealEstateInvesting #FixAndFlip #FreedomOne`;
+          fbResult = await postToFacebook(message, postUrl);
+          if (fbResult.success) {
+            await db.update(blogPosts).set({
+              facebookShared: 1,
+              facebookPostId: fbResult.postId || null,
+            }).where(eq(blogPosts.id, input.id));
+          }
+        }
+
+        return { id: input.id, facebookResult: fbResult };
       } else {
         const [result] = await db.insert(blogPosts).values({
           title: input.title,
@@ -1896,7 +1917,23 @@ Provide 3-5 comparable RENOVATED properties that meet ALL of these criteria:
           aiGenerated: input.aiGenerated,
           authorId: ctx.user.id,
         });
-        return { id: result.insertId };
+
+        // Auto-post to Facebook for new posts published immediately
+        let fbResult = null;
+        if (input.status === "published" && isFacebookConfigured()) {
+          const origin = ctx.req?.headers?.origin || "https://www.freedom1realsystem.com";
+          const postUrl = `${origin}/blog/${input.slug}`;
+          const message = `📰 New Article: ${input.title}\n\n${input.excerpt || "Read the full article on Freedom One Real Estate System."}\n\n#RealEstateInvesting #FixAndFlip #FreedomOne`;
+          fbResult = await postToFacebook(message, postUrl);
+          if (fbResult.success) {
+            await db.update(blogPosts).set({
+              facebookShared: 1,
+              facebookPostId: fbResult.postId || null,
+            }).where(eq(blogPosts.id, result.insertId));
+          }
+        }
+
+        return { id: result.insertId, facebookResult: fbResult };
       }
     }),
 
@@ -1980,10 +2017,24 @@ Make it actionable, data-driven where possible, and written in a confident but a
       const now = new Date();
       const scheduled = await db.select().from(blogPosts)
         .where(and(eq(blogPosts.status, "scheduled"), sql`${blogPosts.scheduledAt} <= ${now}`));
+      const fbResults: Array<{ id: number; fb: any }> = [];
       for (const post of scheduled) {
         await db.update(blogPosts).set({ status: "published", publishedAt: now }).where(eq(blogPosts.id, post.id));
+        // Auto-post to Facebook if configured and not already shared
+        if (!post.facebookShared && isFacebookConfigured()) {
+          const postUrl = `https://www.freedom1realsystem.com/blog/${post.slug}`;
+          const message = `📰 New Article: ${post.title}\n\n${post.excerpt || "Read the full article on Freedom One Real Estate System."}\n\n#RealEstateInvesting #FixAndFlip #FreedomOne`;
+          const fbResult = await postToFacebook(message, postUrl);
+          if (fbResult.success) {
+            await db.update(blogPosts).set({
+              facebookShared: 1,
+              facebookPostId: fbResult.postId || null,
+            }).where(eq(blogPosts.id, post.id));
+          }
+          fbResults.push({ id: post.id, fb: fbResult });
+        }
       }
-      return { published: scheduled.length };
+      return { published: scheduled.length, facebookResults: fbResults };
     }),
 
     /** Public: get categories with post counts */
@@ -1994,6 +2045,67 @@ Make it actionable, data-driven where possible, and written in a confident but a
         count: sql<number>`count(*)`,
       }).from(blogPosts).where(eq(blogPosts.status, "published")).groupBy(blogPosts.category);
       return results;
+    }),
+  }),
+
+  // ─── Facebook Integration ──────────────────────────────────
+  facebook: router({
+    /** Admin: check Facebook connection status */
+    status: adminProcedure.query(async () => {
+      return await verifyFacebookConnection();
+    }),
+
+    /** Admin: check if Facebook is configured (lightweight, no API call) */
+    isConfigured: adminProcedure.query(async () => {
+      return { configured: isFacebookConfigured() };
+    }),
+
+    /** Admin: manually share a blog post to Facebook */
+    sharePost: adminProcedure.input(z.object({
+      postId: z.number(),
+      customMessage: z.string().optional(),
+    })).mutation(async ({ input, ctx }) => {
+      const db = (await getDb())!;
+      const [post] = await db.select().from(blogPosts).where(eq(blogPosts.id, input.postId)).limit(1);
+      if (!post) throw new Error("Blog post not found");
+      if (post.status !== "published") throw new Error("Can only share published posts");
+
+      const origin = ctx.req?.headers?.origin || "https://www.freedom1realsystem.com";
+      const postUrl = `${origin}/blog/${post.slug}`;
+      const message = input.customMessage || `📰 New Article: ${post.title}\n\n${post.excerpt || "Read the full article on Freedom One Real Estate System."}\n\n#RealEstateInvesting #FixAndFlip #FreedomOne`;
+
+      let result;
+      if (post.coverImageUrl) {
+        result = await postPhotoToFacebook(`${message}\n\n${postUrl}`, post.coverImageUrl);
+      } else {
+        result = await postToFacebook(message, postUrl);
+      }
+
+      if (result.success) {
+        await db.update(blogPosts).set({
+          facebookShared: 1,
+          facebookPostId: result.postId || null,
+        }).where(eq(blogPosts.id, post.id));
+      }
+
+      return result;
+    }),
+
+    /** Public: get a Facebook share URL for a blog post (no token needed) */
+    getShareUrl: publicProcedure.input(z.object({
+      slug: z.string(),
+    })).query(async ({ input, ctx }) => {
+      const origin = ctx.req?.headers?.origin || "https://www.freedom1realsystem.com";
+      const postUrl = `${origin}/blog/${input.slug}`;
+      return { shareUrl: buildFacebookShareUrl(postUrl) };
+    }),
+
+    /** Admin: test the Facebook connection by posting a test message */
+    testConnection: adminProcedure.mutation(async () => {
+      const result = await postToFacebook(
+        "🔧 Test post from Freedom One Real Estate System — Facebook integration is working! This post can be deleted.",
+      );
+      return result;
     }),
   }),
 });

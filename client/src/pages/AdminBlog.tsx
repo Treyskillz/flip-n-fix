@@ -10,7 +10,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { toast } from 'sonner';
 import {
   Newspaper, Plus, Pencil, Trash2, Eye, Sparkles, Loader2,
-  Calendar, ArrowLeft, Send, Clock, CheckCircle2, XCircle, FileText
+  Calendar, ArrowLeft, Send, Clock, CheckCircle2, XCircle, FileText,
+  Facebook, Share2, Wifi, WifiOff, ExternalLink, AlertCircle, Settings
 } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { Link } from 'wouter';
@@ -66,6 +67,101 @@ function slugify(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
+// ─── Facebook Connection Panel ────────────────────────────────
+function FacebookPanel() {
+  const { data: fbStatus, isLoading, refetch } = trpc.facebook.status.useQuery(undefined, {
+    retry: false,
+    staleTime: 60_000,
+  });
+  const testMutation = trpc.facebook.testConnection.useMutation({
+    onSuccess: (result) => {
+      if (result.success) {
+        toast.success('Test post sent to Facebook! Check your page.');
+      } else {
+        toast.error(`Test failed: ${result.error}`);
+      }
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  if (isLoading) {
+    return (
+      <Card className="border-blue-200/30 bg-blue-50/5">
+        <CardContent className="p-4 flex items-center gap-3">
+          <Loader2 className="w-5 h-5 animate-spin text-blue-500" />
+          <span className="text-sm text-muted-foreground">Checking Facebook connection...</span>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const connected = fbStatus?.connected;
+
+  return (
+    <Card className={`border ${connected ? 'border-green-500/30 bg-green-50/5' : 'border-orange-500/30 bg-orange-50/5'}`}>
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className={`p-2 rounded-lg ${connected ? 'bg-green-500/15' : 'bg-orange-500/15'}`}>
+              <Facebook className={`w-5 h-5 ${connected ? 'text-green-500' : 'text-orange-500'}`} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-sm">Facebook Auto-Posting</h3>
+                <Badge className={`text-[10px] ${connected ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}>
+                  {connected ? (
+                    <><Wifi className="w-3 h-3 mr-1" /> Connected</>
+                  ) : (
+                    <><WifiOff className="w-3 h-3 mr-1" /> Not Connected</>
+                  )}
+                </Badge>
+              </div>
+              {connected && fbStatus?.pageName && (
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Page: <strong>{fbStatus.pageName}</strong> &middot; Posts auto-share when published
+                </p>
+              )}
+              {!connected && (
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Add <code className="bg-secondary/60 px-1 rounded text-[10px]">FACEBOOK_PAGE_ID</code> and{' '}
+                  <code className="bg-secondary/60 px-1 rounded text-[10px]">FACEBOOK_PAGE_ACCESS_TOKEN</code> in Settings → Secrets
+                </p>
+              )}
+              {fbStatus?.error && !connected && (
+                <p className="text-xs text-red-500 mt-0.5 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" /> {fbStatus.error.substring(0, 120)}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="flex gap-2">
+            {connected && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5 text-xs"
+                disabled={testMutation.isPending}
+                onClick={() => testMutation.mutate()}
+              >
+                {testMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+                Test Post
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-1.5 text-xs"
+              onClick={() => refetch()}
+            >
+              <Settings className="w-3 h-3" /> Refresh
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function AdminBlog() {
   const { user, loading: authLoading } = useAuth();
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -74,6 +170,7 @@ export default function AdminBlog() {
   const [genTopic, setGenTopic] = useState('');
   const [genCategory, setGenCategory] = useState('general');
   const [page, setPage] = useState(0);
+  const [sharingPostId, setSharingPostId] = useState<number | null>(null);
   const limit = 20;
 
   const utils = trpc.useUtils();
@@ -85,8 +182,13 @@ export default function AdminBlog() {
   });
 
   const upsertMutation = trpc.blog.upsert.useMutation({
-    onSuccess: () => {
-      toast.success(editing?.id ? 'Post updated' : 'Post created');
+    onSuccess: (result) => {
+      const fbResult = (result as any)?.facebookResult;
+      if (fbResult?.success) {
+        toast.success(editing?.id ? 'Post updated & shared to Facebook!' : 'Post created & shared to Facebook!');
+      } else {
+        toast.success(editing?.id ? 'Post updated' : 'Post created');
+      }
       setEditing(null);
       utils.blog.adminList.invalidate();
     },
@@ -102,7 +204,7 @@ export default function AdminBlog() {
   });
 
   const generateMutation = trpc.blog.generate.useMutation({
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success('AI post generated as draft');
       setGenerating(false);
       setGenTopic('');
@@ -111,6 +213,24 @@ export default function AdminBlog() {
     onError: (err) => {
       toast.error('Generation failed: ' + err.message);
       setGenerating(false);
+    },
+  });
+
+  const shareMutation = trpc.facebook.sharePost.useMutation({
+    onSuccess: (result) => {
+      setSharingPostId(null);
+      if (result.success) {
+        toast.success('Shared to Facebook!');
+        utils.blog.adminList.invalidate();
+      } else if (result.status === 'not_configured') {
+        toast.error('Facebook not connected. Add credentials in Settings → Secrets.');
+      } else {
+        toast.error(`Share failed: ${result.error}`);
+      }
+    },
+    onError: (err) => {
+      setSharingPostId(null);
+      toast.error(err.message);
     },
   });
 
@@ -194,6 +314,15 @@ export default function AdminBlog() {
               </div>
             </div>
 
+            {editing.status === 'published' && (
+              <div className="flex items-center gap-2 p-3 rounded-lg bg-blue-50/10 border border-blue-200/30">
+                <Facebook className="w-4 h-4 text-blue-500" />
+                <span className="text-xs text-muted-foreground">
+                  This post will be automatically shared to Facebook when published (if connected).
+                </span>
+              </div>
+            )}
+
             <div>
               <label className="text-sm font-medium mb-1 block">Excerpt</label>
               <Textarea
@@ -275,7 +404,7 @@ export default function AdminBlog() {
               <div>
                 <h1 className="text-2xl font-bold text-white tracking-tight">Blog Manager</h1>
                 <p className="text-sm text-[oklch(0.55_0_0)]">
-                  {data ? `${data.total} total posts` : 'Loading...'}
+                  Create, manage, and auto-share blog posts to Facebook
                 </p>
               </div>
             </div>
@@ -291,6 +420,11 @@ export default function AdminBlog() {
       </section>
 
       <div className="container py-6">
+        {/* Facebook Connection Panel */}
+        <div className="mb-6">
+          <FacebookPanel />
+        </div>
+
         {/* Actions bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
           <div className="flex gap-2">
@@ -389,6 +523,9 @@ export default function AdminBlog() {
                     <th className="text-left p-3 font-medium">Title</th>
                     <th className="text-left p-3 font-medium hidden md:table-cell">Category</th>
                     <th className="text-left p-3 font-medium">Status</th>
+                    <th className="text-center p-3 font-medium hidden sm:table-cell w-10">
+                      <Facebook className="w-3.5 h-3.5 mx-auto text-blue-500" />
+                    </th>
                     <th className="text-left p-3 font-medium hidden md:table-cell">Views</th>
                     <th className="text-left p-3 font-medium hidden lg:table-cell">Date</th>
                     <th className="text-right p-3 font-medium">Actions</th>
@@ -397,6 +534,7 @@ export default function AdminBlog() {
                 <tbody>
                   {data.posts.map((post) => {
                     const StatusIcon = STATUS_ICONS[post.status] || FileText;
+                    const isSharing = sharingPostId === post.id;
                     return (
                       <tr key={post.id} className="border-t hover:bg-secondary/20">
                         <td className="p-3">
@@ -418,6 +556,31 @@ export default function AdminBlog() {
                             {post.status}
                           </Badge>
                         </td>
+                        <td className="p-3 hidden sm:table-cell text-center">
+                          {post.facebookShared === 1 ? (
+                            <span title={`Shared to Facebook${post.facebookPostId ? ` (${post.facebookPostId})` : ''}`}>
+                              <CheckCircle2 className="w-3.5 h-3.5 text-green-500 mx-auto" />
+                            </span>
+                          ) : post.status === 'published' ? (
+                            <button
+                              className="mx-auto block"
+                              title="Share to Facebook"
+                              disabled={isSharing}
+                              onClick={() => {
+                                setSharingPostId(post.id);
+                                shareMutation.mutate({ postId: post.id });
+                              }}
+                            >
+                              {isSharing ? (
+                                <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-500 mx-auto" />
+                              ) : (
+                                <Share2 className="w-3.5 h-3.5 text-muted-foreground hover:text-blue-500 mx-auto cursor-pointer" />
+                              )}
+                            </button>
+                          ) : (
+                            <span className="text-muted-foreground/30">—</span>
+                          )}
+                        </td>
                         <td className="p-3 hidden md:table-cell text-muted-foreground">
                           {post.viewCount}
                         </td>
@@ -432,6 +595,17 @@ export default function AdminBlog() {
                                   <Eye className="w-3.5 h-3.5" />
                                 </Button>
                               </Link>
+                            )}
+                            {post.status === 'published' && post.facebookPostId && (
+                              <a
+                                href={`https://www.facebook.com/${post.facebookPostId}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-blue-500">
+                                  <ExternalLink className="w-3.5 h-3.5" />
+                                </Button>
+                              </a>
                             )}
                             <Button
                               variant="ghost"

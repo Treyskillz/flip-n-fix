@@ -313,7 +313,7 @@
 - [x] Add robots.txt and sitemap.xml for SEO
 - [x] Add before/after pictures to 3-Option Brochure like original uploaded version
 - [x] Add before/after pictures to Private Money Prospectus like original uploaded version
-- [ ] Rebuild 3-Option Brochure to match original uploaded version exactly (all content, Trey Hill signature, layout)
+- [x] Rebuild 3-Option Brochure to match original uploaded version exactly (all content, Trey Hill signature, layout)
 - [x] Completely rewrite 3-Option Brochure to 8 pages matching original (Trey Hill signature, all content, black/burgundy/red scheme)
 - [x] Update Prospectus with before/after photos per property, truth-in-lending placeholders, bill of sale placeholders
 - [ ] Check/fix testimonial section on homepage
@@ -338,6 +338,30 @@
 - [x] Build AI blog content generator (weekly real estate investing articles)
 - [x] Build blog admin panel (review, edit, approve, reject, schedule posts)
 - [x] Build public blog page with SEO-friendly URLs
-- [ ] Auto-post approved blog content to Facebook page
+- [x] Auto-post approved blog content to Facebook page
 - [x] Add "Share to Facebook" button on each blog post
 - [ ] Set up automatic weekly/daily content generation schedule
+
+## Facebook Auto-Posting Integration
+- [x] Research Facebook Graph API for page posting requirements
+- [x] Build server-side Facebook posting utility (Graph API v25.0)
+- [x] Create tRPC endpoints for Facebook connection management (connect, disconnect, test, status)
+- [x] Add Facebook Page Access Token secret via webdev_request_secrets
+- [x] Build admin UI for Facebook connection settings and auto-post toggle
+- [x] Wire auto-posting into blog publish flow (auto-share on publish)
+- [x] Add manual "Share to Facebook" button in admin blog panel
+- [x] Add Facebook post status tracking (posted, failed, pending) to blog posts
+- [x] Write vitest tests for Facebook posting utility
+- [x] Update blog database schema with facebook_post_id and facebook_posted_at fields
+
+## Brochure Fixes (March 4, 2026)
+- [x] Fix page 4 photos in 3-Option Brochure to look better
+- [x] Move Before/After labels underneath the pictures (not on top)
+- [x] Remove "Bermuda Dunes" from the first page of the brochure
+
+## Prospectus Full Rebuild (March 4, 2026)
+- [x] Extract ALL content from original uploaded prospectus PDF
+- [x] Rebuild prospectus with ALL pages from original (not abbreviated)
+- [x] Fix cover page - should NOT be brown, make it professional
+- [x] Use clean watermark-free property photos throughout
+- [x] Professional typesetting matching the original content
