@@ -381,3 +381,9 @@
 - [x] Resize text and images on every page to use full page space
 - [x] Update contact info on website to trey@freedomoneproperties.com and 831-498-6237
 - [x] Add Trey Hill signature image to 3-Option Brochure closing section (like original)
+
+## PDF Fixes Round 2 (March 5, 2026)
+- [x] Fix prospectus page 11 — before/after images cutting off
+- [x] Fix prospectus page 14 — eliminated blank page, all content fits on 14 pages
+- [x] Unify prospectus interior page colors to match cover red (#b83232)
+- [x] Fix 3-Option Brochure last page — replaced with proper before/after images
