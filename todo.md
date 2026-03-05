@@ -393,4 +393,28 @@
 - [x] Update Prospectus page 2: $500,000 → $800,000 and $250,000 → $500,000
 - [x] Add testimonials section to homepage
 - [x] Set up automated blog post generation (weekly Monday 9 AM cron)
-- [ ] Push code to GitHub
+- [x] Push code to GitHub (Treyskillz/flip-n-fix)
+
+## White-Label Reports Feature (March 5, 2026)
+- [x] Add white_label_settings table to database schema
+- [x] Create tRPC procedures for saving/loading white-label settings (Team tier only)
+- [x] Build white-label settings page (upload logo, company name, phone, email, brand color)
+- [x] Gate white-label feature behind Team tier subscription check
+- [x] Write vitest tests for white-label procedures
+- [x] Add white-label settings route to App.tsx and navigation
+
+## Gantt Chart Export (March 5, 2026)
+- [x] Add Export PDF button to Gantt Chart component
+- [x] Build printable HTML-to-PDF Gantt chart with phase timeline, costs, and summary
+- [x] Include property address and date in exported Gantt PDF
+
+## Subscription Feature Audit (March 5, 2026)
+- [x] Audit all features listed in each subscription tier
+- [x] Realign Team tier features to remove unbuildable features (team members, shared pipeline, team analytics)
+- [x] Replace with realistic white-label branding features
+- [x] Verify Email Investor Reports already implemented (InvestorReport component)
+- [x] Verify Gantt Chart Export now functional
+- [x] Verify all Free tier features implemented
+- [x] Verify all Pro tier features implemented
+- [x] Verify all Elite tier features implemented
+- [x] Verify all Team tier features implemented

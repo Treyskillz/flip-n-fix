@@ -6,7 +6,7 @@ import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_
 import { PLANS, PlanKey } from "./stripe/products";
 import { createCheckoutSession, createPortalSession } from "./stripe/checkout";
 import { getDb } from "./db";
-import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments, pipelineDeals, pipelineContacts, pipelineActivities, giftedSubscriptions, emailLeads, blogPosts } from "../drizzle/schema";
+import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments, pipelineDeals, pipelineContacts, pipelineActivities, giftedSubscriptions, emailLeads, blogPosts, whiteLabelSettings } from "../drizzle/schema";
 import { eq, sql, desc, and, ne, inArray, asc, isNull } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
@@ -2107,6 +2107,185 @@ Make it actionable, data-driven where possible, and written in a confident but a
       );
       return result;
     }),
+  }),
+
+  // ─── White-Label Settings (Team Tier) ──────────────────────
+  whiteLabel: router({
+    /** Get current user's white-label settings */
+    get: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) return null;
+
+      const rows = await db
+        .select()
+        .from(whiteLabelSettings)
+        .where(eq(whiteLabelSettings.userId, ctx.user.id))
+        .limit(1);
+
+      return rows[0] || null;
+    }),
+
+    /** Save / update white-label settings (Team tier only) */
+    save: protectedProcedure
+      .input(
+        z.object({
+          companyName: z.string().max(255).optional(),
+          brandColor: z.string().max(32).optional(),
+          phone: z.string().max(64).optional(),
+          email: z.string().max(320).optional(),
+          website: z.string().max(512).optional(),
+          tagline: z.string().max(255).optional(),
+          enabled: z.boolean().optional(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        // Check subscription: must be Team tier
+        const userRow = await db
+          .select({ subscriptionPlan: users.subscriptionPlan })
+          .from(users)
+          .where(eq(users.id, ctx.user.id))
+          .limit(1);
+
+        const stripePlan = userRow[0]?.subscriptionPlan || "free";
+
+        // Also check gifted subs
+        const giftedRows = await db
+          .select()
+          .from(giftedSubscriptions)
+          .where(
+            and(
+              eq(giftedSubscriptions.userId, ctx.user.id),
+              isNull(giftedSubscriptions.revokedAt)
+            )
+          )
+          .orderBy(desc(giftedSubscriptions.createdAt))
+          .limit(1);
+
+        const now = new Date();
+        const activeGift = giftedRows[0] && (!giftedRows[0].expiresAt || giftedRows[0].expiresAt > now)
+          ? giftedRows[0]
+          : null;
+
+        const planRank: Record<string, number> = { free: 0, pro: 1, elite: 2, team: 3 };
+        let effectivePlan = stripePlan;
+        if (activeGift && (planRank[activeGift.plan] || 0) > (planRank[stripePlan] || 0)) {
+          effectivePlan = activeGift.plan;
+        }
+
+        if (effectivePlan !== "team") {
+          throw new Error("White-label branding is available on the Team plan only. Please upgrade.");
+        }
+
+        // Upsert
+        const existing = await db
+          .select({ id: whiteLabelSettings.id })
+          .from(whiteLabelSettings)
+          .where(eq(whiteLabelSettings.userId, ctx.user.id))
+          .limit(1);
+
+        const values: Record<string, any> = {};
+        if (input.companyName !== undefined) values.companyName = input.companyName;
+        if (input.brandColor !== undefined) values.brandColor = input.brandColor;
+        if (input.phone !== undefined) values.phone = input.phone;
+        if (input.email !== undefined) values.email = input.email;
+        if (input.website !== undefined) values.website = input.website;
+        if (input.tagline !== undefined) values.tagline = input.tagline;
+        if (input.enabled !== undefined) values.enabled = input.enabled ? 1 : 0;
+
+        if (existing[0]) {
+          await db
+            .update(whiteLabelSettings)
+            .set(values)
+            .where(eq(whiteLabelSettings.userId, ctx.user.id));
+        } else {
+          await db.insert(whiteLabelSettings).values({
+            userId: ctx.user.id,
+            ...values,
+          });
+        }
+
+        return { success: true };
+      }),
+
+    /** Upload a custom logo (Team tier only) */
+    uploadLogo: protectedProcedure
+      .input(
+        z.object({
+          fileName: z.string(),
+          base64Data: z.string(),
+          contentType: z.string().default("image/png"),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        // Check Team tier (same logic)
+        const userRow = await db
+          .select({ subscriptionPlan: users.subscriptionPlan })
+          .from(users)
+          .where(eq(users.id, ctx.user.id))
+          .limit(1);
+
+        const stripePlan = userRow[0]?.subscriptionPlan || "free";
+        const giftedRows = await db
+          .select()
+          .from(giftedSubscriptions)
+          .where(
+            and(
+              eq(giftedSubscriptions.userId, ctx.user.id),
+              isNull(giftedSubscriptions.revokedAt)
+            )
+          )
+          .orderBy(desc(giftedSubscriptions.createdAt))
+          .limit(1);
+
+        const now = new Date();
+        const activeGift = giftedRows[0] && (!giftedRows[0].expiresAt || giftedRows[0].expiresAt > now)
+          ? giftedRows[0]
+          : null;
+
+        const planRank: Record<string, number> = { free: 0, pro: 1, elite: 2, team: 3 };
+        let effectivePlan = stripePlan;
+        if (activeGift && (planRank[activeGift.plan] || 0) > (planRank[stripePlan] || 0)) {
+          effectivePlan = activeGift.plan;
+        }
+
+        if (effectivePlan !== "team") {
+          throw new Error("White-label branding is available on the Team plan only.");
+        }
+
+        // Upload to S3
+        const buffer = Buffer.from(input.base64Data, "base64");
+        const suffix = crypto.randomBytes(4).toString("hex");
+        const fileKey = `white-label/${ctx.user.id}/logo-${suffix}.${input.fileName.split(".").pop() || "png"}`;
+        const { url } = await storagePut(fileKey, buffer, input.contentType);
+
+        // Save to DB
+        const existing = await db
+          .select({ id: whiteLabelSettings.id })
+          .from(whiteLabelSettings)
+          .where(eq(whiteLabelSettings.userId, ctx.user.id))
+          .limit(1);
+
+        if (existing[0]) {
+          await db
+            .update(whiteLabelSettings)
+            .set({ logoUrl: url, logoFileKey: fileKey })
+            .where(eq(whiteLabelSettings.userId, ctx.user.id));
+        } else {
+          await db.insert(whiteLabelSettings).values({
+            userId: ctx.user.id,
+            logoUrl: url,
+            logoFileKey: fileKey,
+          });
+        }
+
+        return { success: true, logoUrl: url };
+      }),
   }),
 });
 export type AppRouter = typeof appRouter;

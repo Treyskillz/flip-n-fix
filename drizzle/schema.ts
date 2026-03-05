@@ -314,3 +314,23 @@ export const blogPosts = mysqlTable("blog_posts", {
 });
 export type BlogPost = typeof blogPosts.$inferSelect;
 export type InsertBlogPost = typeof blogPosts.$inferInsert;
+
+// ─── White-Label Settings (Team Tier) ─────────────────────
+export const whiteLabelSettings = mysqlTable("white_label_settings", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(), // references users.id — one per user
+  companyName: varchar("companyName", { length: 255 }),
+  logoUrl: text("logoUrl"), // S3 URL for custom logo
+  logoFileKey: varchar("logoFileKey", { length: 512 }), // S3 key
+  brandColor: varchar("brandColor", { length: 32 }).default("#c53030"), // hex color for headers/accents
+  phone: varchar("phone", { length: 64 }),
+  email: varchar("email", { length: 320 }),
+  website: varchar("website", { length: 512 }),
+  tagline: varchar("tagline", { length: 255 }), // e.g. "Your Trusted Investment Partner"
+  enabled: int("enabled").default(1).notNull(), // 1=use white-label, 0=use default Freedom One
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type WhiteLabelSetting = typeof whiteLabelSettings.$inferSelect;
+export type InsertWhiteLabelSetting = typeof whiteLabelSettings.$inferInsert;

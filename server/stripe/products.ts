@@ -42,12 +42,12 @@ export const PLANS = {
     features: [
       "Everything in Pro",
       "Profit Calculator (All 6 Scenarios)",
-      "Full Course Access (8 Modules)",
-      "Video Lessons",
+      "Full Course Access (8 Modules + Bonus)",
+      "Video Lesson Scripts & Guides",
       "Property Listings Page",
       "Email Investor Reports",
       "Priority Support",
-      "Gantt Chart Export",
+      "Gantt Chart Export (PDF)",
     ],
     priceMonthly: 17900, // $179/mo
     priceYearly: 179000, // $1790/yr
@@ -55,14 +55,14 @@ export const PLANS = {
   },
   team: {
     name: "Team",
-    description: "For investment groups and teams",
+    description: "White-label branding for your investment business",
     features: [
       "Everything in Elite",
-      "Up to 5 Team Members",
-      "Shared Deal Pipeline",
-      "Team Analytics Dashboard",
-      "White-Label Reports",
-      "Dedicated Account Manager",
+      "White-Label Reports (Your Logo & Branding)",
+      "Custom Branded Investor Reports",
+      "Custom Branded Portfolio PDFs",
+      "Branded Shared Deal Links",
+      "Dedicated Onboarding Support",
     ],
     priceMonthly: 28900, // $289/mo
     priceYearly: 289000, // $2890/yr
