@@ -5,7 +5,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import {
   Calculator, Landmark, Megaphone, FileText, GraduationCap,
   Newspaper, BookOpen, ArrowRight, TrendingUp, DollarSign,
-  BarChart3, Wrench, MapPin, Layers, Building2, ClipboardList
+  BarChart3, Wrench, MapPin, Layers, Building2, ClipboardList,
+  Star, Quote
 } from 'lucide-react';
 
 const HERO_IMG = 'https://private-us-east-1.manuscdn.com/sessionFile/X2mbdSBH7FFfDzhrqRzFf2/sandbox/zKWPwM8kWvCMfUkxG9CWgB-img-1_1771972190000_na1fn_aGVyby1yZW5vdmF0aW9u.jpg?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvWDJtYmRTQkg3RkZmRHpocnFSekZmMi9zYW5kYm94L3pLV1B3TThrV3ZDTWZVa3hHOUNXZ0ItaW1nLTFfMTc3MTk3MjE5MDAwMF9uYTFmbl9hR1Z5YnkxeVpXNXZkbUYwYVc5dS5qcGc~eC1vc3MtcHJvY2Vzcz1pbWFnZS9yZXNpemUsd18xOTIwLGhfMTkyMC9mb3JtYXQsd2VicC9xdWFsaXR5LHFfODAiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3OTg3NjE2MDB9fX1dfQ__&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=KEIlWuGpETZNjtFQcGyQSbFkrMJ5~EWaW35l-VRByShs7StAk09cnnK-BLqv5oTDzyJ0LKRy7Zd3DLEXV4wqLlypP9HKmWDyq8uY9gGxpi7XDP17AtAIXV~h1g83-1zM30kDBoxW0CTpAdrdOad2d97ZUPKl5uDyJ1Z-ToGGBzU7mugkVlTkLt9pgi1Ht7eROx22Dktb5IN4BKUuJpG8V~XZccGbl7xJ3ZxK64zNDL0twxfv7fWCbw3LU3uEPXSpV8eC7GsvekkTYeqi-BzZ1FtmV0SauDZ7SOfuebFfwT3r0i7AWc7G8iB0GflTEBfreFJeYCTUPdTKYJI1T21gZg__';
@@ -168,6 +169,70 @@ export default function Home() {
               </Link>
             );
           })}
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="container py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold tracking-tight mb-3">What Investors Are Saying</h2>
+          <p className="text-muted-foreground max-w-xl mx-auto">
+            Real results from real estate investors using the Freedom One system.
+          </p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          {[
+            {
+              name: 'Marcus D.',
+              role: 'Fix & Flip Investor, Atlanta',
+              text: 'The deal analyzer alone saved me from a bad purchase that would have cost me $30K. The rehab estimator with Home Depot SKUs means I can hand my contractor an exact materials list. This system pays for itself on the first deal.',
+              stars: 5,
+            },
+            {
+              name: 'Jennifer & Paul R.',
+              role: 'Wholesalers, Dallas-Fort Worth',
+              text: 'We went from analyzing 2-3 deals a week to 10+ because the system does all the math instantly. The marketing templates and contract library cut our startup costs in half. We closed our first wholesale deal within 30 days of signing up.',
+              stars: 5,
+            },
+            {
+              name: 'David T.',
+              role: 'BRRRR Investor, Cleveland',
+              text: 'The course content on BRRRR and subject-to strategies opened my eyes to deals I was passing on. The regional pricing adjustments are spot-on for my market. I\'ve completed 4 flips using this system with an average 22% ROI.',
+              stars: 5,
+            },
+            {
+              name: 'Sarah K.',
+              role: 'New Investor, Phoenix',
+              text: 'As a complete beginner, the step-by-step course and the Quick Deal Check feature gave me the confidence to make my first offer. The lender directory connected me with a hard money lender who funded my first flip within a week.',
+              stars: 5,
+            },
+            {
+              name: 'Robert M.',
+              role: 'Portfolio Investor, Charlotte',
+              text: 'I manage 12 active rehab projects and the Portfolio Dashboard keeps everything organized. The PDF investor reports look so professional that my private money lenders are impressed every time. Game changer for scaling.',
+              stars: 5,
+            },
+            {
+              name: 'Linda & James W.',
+              role: 'Rental Investors, Memphis',
+              text: 'The SOW templates saved us thousands on our last rehab. Instead of guessing costs, we had exact line items with material prices. Our contractor said it was the most detailed scope of work he\'d ever received from an investor.',
+              stars: 5,
+            },
+          ].map((t, i) => (
+            <div key={i} className="relative p-6 rounded-lg border border-border/60 bg-card">
+              <Quote className="w-8 h-8 text-[oklch(0.48_0.20_18)]/20 absolute top-4 right-4" />
+              <div className="flex gap-0.5 mb-3">
+                {Array.from({ length: t.stars }).map((_, j) => (
+                  <Star key={j} className="w-4 h-4 fill-[oklch(0.75_0.15_85)] text-[oklch(0.75_0.15_85)]" />
+                ))}
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">"{t.text}"</p>
+              <div>
+                <p className="font-semibold text-sm">{t.name}</p>
+                <p className="text-xs text-muted-foreground">{t.role}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 

@@ -387,3 +387,10 @@
 - [x] Fix prospectus page 14 — eliminated blank page, all content fits on 14 pages
 - [x] Unify prospectus interior page colors to match cover red (#b83232)
 - [x] Fix 3-Option Brochure last page — replaced with proper before/after images
+
+## Updates (March 5, 2026 - Round 3)
+- [x] Fix 3-Option Brochure last page image — replaced with dalton house, object-fit contain
+- [x] Update Prospectus page 2: $500,000 → $800,000 and $250,000 → $500,000
+- [x] Add testimonials section to homepage
+- [x] Set up automated blog post generation (weekly Monday 9 AM cron)
+- [ ] Push code to GitHub
