@@ -290,3 +290,27 @@ export const emailLeads = mysqlTable("email_leads", {
 
 export type EmailLead = typeof emailLeads.$inferSelect;
 export type InsertEmailLead = typeof emailLeads.$inferInsert;
+
+// ─── Blog Posts (AI-Generated Content) ──────────────────────
+export const blogPosts = mysqlTable("blog_posts", {
+  id: int("id").autoincrement().primaryKey(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  title: varchar("title", { length: 500 }).notNull(),
+  excerpt: text("excerpt"), // Short summary for cards/SEO
+  content: text("content").notNull(), // Full markdown content
+  category: varchar("category", { length: 128 }).default("general").notNull(),
+  tags: text("tags"), // JSON array of tags
+  coverImageUrl: text("coverImageUrl"), // Optional cover image
+  status: mysqlEnum("status", ["draft", "scheduled", "published", "rejected"]).default("draft").notNull(),
+  scheduledAt: timestamp("scheduledAt"), // When to auto-publish
+  publishedAt: timestamp("publishedAt"), // When actually published
+  facebookShared: int("facebookShared").default(0).notNull(), // 0=no, 1=yes
+  facebookPostId: varchar("facebookPostId", { length: 255 }), // FB post ID if shared
+  aiGenerated: int("aiGenerated").default(1).notNull(), // 1=AI, 0=manual
+  authorId: int("authorId"), // null for AI-generated
+  viewCount: int("viewCount").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type BlogPost = typeof blogPosts.$inferSelect;
+export type InsertBlogPost = typeof blogPosts.$inferInsert;

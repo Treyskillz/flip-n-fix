@@ -31,16 +31,17 @@ export const PLANS = {
       "Lender Directory",
       "Regional Cost Adjustments",
     ],
-    priceMonthly: 3900, // $39/mo
-    priceYearly: 39000, // $390/yr
+    priceMonthly: 9900, // $99/mo
+    priceYearly: 99000, // $990/yr
     priceId: "pro_monthly",
     highlighted: true,
   },
   elite: {
     name: "Elite",
-    description: "Complete system with course access",
+    description: "Complete system with course & Profit Calculator",
     features: [
       "Everything in Pro",
+      "Profit Calculator (All 6 Scenarios)",
       "Full Course Access (8 Modules)",
       "Video Lessons",
       "Property Listings Page",
@@ -48,8 +49,8 @@ export const PLANS = {
       "Priority Support",
       "Gantt Chart Export",
     ],
-    priceMonthly: 7900, // $79/mo
-    priceYearly: 79000, // $790/yr
+    priceMonthly: 17900, // $179/mo
+    priceYearly: 179000, // $1790/yr
     priceId: "elite_monthly",
   },
   team: {
@@ -63,8 +64,8 @@ export const PLANS = {
       "White-Label Reports",
       "Dedicated Account Manager",
     ],
-    priceMonthly: 14900, // $149/mo
-    priceYearly: 149000, // $1490/yr
+    priceMonthly: 28900, // $289/mo
+    priceYearly: 289000, // $2890/yr
     priceId: "team_monthly",
   },
 } as const;

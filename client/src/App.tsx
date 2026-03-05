@@ -40,6 +40,9 @@ const RehabBudget = lazy(() => import("./pages/RehabBudget"));
 const ProfitCalcGuide = lazy(() => import("./pages/ProfitCalcGuide"));
 const LocalPricing = lazy(() => import("./pages/LocalPricing"));
 const AdminGiftedSubs = lazy(() => import("./pages/AdminGiftedSubs"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const AdminBlog = lazy(() => import("./pages/AdminBlog"));
+const FreeGuide = lazy(() => import("./pages/FreeGuide"));
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -87,6 +90,9 @@ function Router() {
           <Route path={'/profit-calc-guide'} component={ProfitCalcGuide} />
           <Route path={'/local-pricing'} component={LocalPricing} />
           <Route path={'/admin/gifted-subs'} component={AdminGiftedSubs} />
+          <Route path={'/admin/blog'} component={AdminBlog} />
+          <Route path={'/blog/:slug'} component={BlogPost} />
+          <Route path={'/free-guide'} component={FreeGuide} />
           <Route path={"/support"} component={Support} />
           <Route path={"/disclaimers"} component={Disclaimers} />
           <Route path={"/404"} component={NotFound} />

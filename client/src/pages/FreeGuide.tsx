@@ -165,7 +165,7 @@ export default function FreeGuide() {
             His mission is to give every investor the tools and knowledge to make data-driven decisions and maximize profit on every deal.
           </p>
           <p className="text-sm text-muted-foreground">
-            Freedom One Real Estate System | www.freedom1realsystem.com | (800) 557-9809
+            Freedom One Real Estate System | www.freedom1realsystem.com
           </p>
         </div>
       </section>

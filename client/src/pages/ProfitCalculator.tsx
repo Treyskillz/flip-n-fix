@@ -1,4 +1,6 @@
 import { useState, useMemo } from 'react';
+import { useAuth } from '@/_core/hooks/useAuth';
+import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,13 +9,16 @@ import { Switch } from '@/components/ui/switch';
 import {
   Calculator, DollarSign, TrendingUp, ChevronDown, ChevronUp, Info,
   Download, Zap, CheckCircle2, XCircle, ArrowRight, HelpCircle, Printer,
-  Users, Banknote, Scale, FileText, CalendarDays, StickyNote
+  Users, Banknote, Scale, FileText, CalendarDays, StickyNote,
+  Lock, Crown, BarChart3, Layers, Target, Sparkles
 } from 'lucide-react';
 import {
   calculateAll, getDefaultInputs, estimateRehabFromYearBuilt,
   type CalculatorInputs, type ScenarioResult, type InterestType
 } from '@/lib/profitCalculator';
 import { generateProfitCalcExcel, generateBlankTemplate } from '@/lib/generateExcel';
+import { Link } from 'wouter';
+import { getLoginUrl } from '@/const';
 
 const fmt = (n: number) => n < 0
   ? `-$${Math.abs(n).toLocaleString()}`
@@ -228,7 +233,156 @@ function ScenarioCard({ scenario, index }: { scenario: ScenarioResult; index: nu
   );
 }
 
+function ProfitCalculatorOverview() {
+  const { isAuthenticated } = useAuth();
+  const FEATURES = [
+    { icon: BarChart3, title: '6 Financing Scenarios', desc: 'HML on ARV, HML on Purchase Price, 100% Private Lender — each with debt and equity options.' },
+    { icon: Target, title: 'Rapid-Fire Offer Pricing', desc: 'Instantly generate offer prices at 13%–20% ROI targets for any deal.' },
+    { icon: TrendingUp, title: 'Resale Sensitivity Analysis', desc: 'See how your profit changes if ARV shifts by -$20K to +$20K.' },
+    { icon: Scale, title: 'Deal / No-Deal Indicator', desc: 'Automatic viability check — profit must exceed 10% of ARV or $20,000.' },
+    { icon: Calculator, title: '70% Rule Calculator', desc: 'Maximum offer = (ARV × 70%) − Rehab Cost. Built into every analysis.' },
+    { icon: Layers, title: 'Year-Built Rehab Estimator', desc: 'Auto-estimate rehab costs based on year built, sq ft, pool, and rehab level.' },
+    { icon: DollarSign, title: 'All-Cash & 50-50 Split', desc: 'Compare all-cash profit vs. 50-50 private investor split scenarios.' },
+    { icon: Download, title: 'Excel Export', desc: 'Export any analysis as a pre-filled Excel spreadsheet for your records.' },
+  ];
+
+  return (
+    <div className="min-h-screen bg-background">
+      <section className="bg-[oklch(0.12_0_0)] border-b border-[oklch(0.25_0_0)]">
+        <div className="container py-12 text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[oklch(0.48_0.20_18)]/15 text-[oklch(0.65_0.18_18)] text-xs mb-4">
+            <Crown className="w-3.5 h-3.5" /> Elite & Team Feature
+          </div>
+          <h1 className="text-3xl lg:text-4xl font-bold text-white mb-3">
+            Deal Profit Calculator
+          </h1>
+          <p className="text-base text-[oklch(0.55_0_0)] max-w-2xl mx-auto mb-8">
+            The most comprehensive deal analysis tool for real estate investors. Analyze any deal across 
+            6 financing scenarios, generate rapid-fire offer prices, and get instant deal/no-deal indicators.
+          </p>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[oklch(0.48_0.20_18)]/10 border border-[oklch(0.48_0.20_18)]/30 text-[oklch(0.65_0.18_18)] text-sm mb-8">
+            <Lock className="w-4 h-4" />
+            Available with Elite ($179/mo) or Team ($289/mo) subscription
+          </div>
+        </div>
+      </section>
+
+      <section className="container py-12">
+        <h2 className="text-2xl font-bold text-white text-center mb-8">What You Get</h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+          {FEATURES.map((feat, i) => {
+            const Icon = feat.icon;
+            return (
+              <div key={i} className="p-5 rounded-lg bg-[oklch(0.15_0_0)] border border-[oklch(0.25_0_0)]">
+                <div className="p-2 rounded-lg w-fit mb-3 bg-[oklch(0.48_0.20_18)]/10">
+                  <Icon className="w-5 h-5 text-[oklch(0.48_0.20_18)]" />
+                </div>
+                <h3 className="font-bold text-sm text-white mb-1">{feat.title}</h3>
+                <p className="text-xs text-[oklch(0.55_0_0)] leading-relaxed">{feat.desc}</p>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Screenshot preview - blurred */}
+        <div className="relative rounded-xl overflow-hidden border border-[oklch(0.25_0_0)] mb-8">
+          <div className="bg-[oklch(0.15_0_0)] p-8 filter blur-sm opacity-60">
+            <div className="grid lg:grid-cols-2 gap-6">
+              <div className="p-5 rounded-lg bg-[oklch(0.18_0_0)] border border-[oklch(0.3_0_0)]">
+                <div className="flex items-center gap-2 mb-4">
+                  <DollarSign className="w-5 h-5 text-[oklch(0.65_0.18_18)]" />
+                  <span className="text-lg font-bold text-white">Property Details</span>
+                </div>
+                <div className="space-y-3">
+                  {['Address', 'Asking Price', 'Purchase Price', 'ARV', 'Year Built', 'Sq Ft', 'Rehab Cost'].map(label => (
+                    <div key={label} className="flex items-center gap-2">
+                      <span className="text-xs text-[oklch(0.5_0_0)] w-32">{label}</span>
+                      <div className="flex-1 h-8 rounded bg-[oklch(0.22_0_0)] border border-[oklch(0.3_0_0)]" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="p-5 rounded-lg bg-[oklch(0.18_0_0)] border border-[oklch(0.3_0_0)]">
+                <div className="flex items-center gap-2 mb-4">
+                  <TrendingUp className="w-5 h-5 text-[oklch(0.65_0.18_18)]" />
+                  <span className="text-lg font-bold text-white">Financing Terms</span>
+                </div>
+                <div className="space-y-3">
+                  {['LTV %', 'Points', 'Interest Rate', 'Junk Fees', 'Closing Costs', 'Commission'].map(label => (
+                    <div key={label} className="flex items-center gap-2">
+                      <span className="text-xs text-[oklch(0.5_0_0)] w-32">{label}</span>
+                      <div className="flex-1 h-8 rounded bg-[oklch(0.22_0_0)] border border-[oklch(0.3_0_0)]" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="absolute inset-0 flex items-center justify-center bg-[oklch(0.08_0_0)]/60">
+            <div className="text-center">
+              <Lock className="w-10 h-10 text-[oklch(0.65_0.18_18)] mx-auto mb-3" />
+              <p className="text-white font-bold text-lg mb-1">Upgrade to Unlock</p>
+              <p className="text-[oklch(0.55_0_0)] text-sm">Subscribe to Elite or Team to access the full Profit Calculator</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="text-center">
+          {isAuthenticated ? (
+            <Link href="/pricing">
+              <Button size="lg" className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white font-semibold px-8">
+                <Sparkles className="w-4.5 h-4.5" /> Upgrade Your Plan
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
+          ) : (
+            <a href={getLoginUrl()}>
+              <Button size="lg" className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white font-semibold px-8">
+                <Sparkles className="w-4.5 h-4.5" /> Sign Up & Upgrade
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </a>
+          )}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 export default function ProfitCalculator() {
+  const { isAuthenticated } = useAuth();
+  const { data: subStatus, isLoading: subLoading } = trpc.subscription.status.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
+
+  // Check if user has elite, team, or gifted access
+  const hasAccess = subStatus && (
+    subStatus.plan === 'elite' || 
+    subStatus.plan === 'team' || 
+    subStatus.isGifted
+  );
+
+  // Show loading while checking subscription
+  if (isAuthenticated && subLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Calculator className="w-8 h-8 text-[oklch(0.65_0.18_18)] mx-auto mb-3 animate-pulse" />
+          <p className="text-[oklch(0.55_0_0)] text-sm">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show overview if not authenticated or not on elite/team plan
+  if (!isAuthenticated || !hasAccess) {
+    return <ProfitCalculatorOverview />;
+  }
+
+  return <ProfitCalculatorFull />;
+}
+
+function ProfitCalculatorFull() {
   const [inputs, setInputs] = useState<CalculatorInputs>(getDefaultInputs);
   const [showGuide, setShowGuide] = useState(false);
 

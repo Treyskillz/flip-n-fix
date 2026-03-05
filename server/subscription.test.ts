@@ -76,8 +76,8 @@ describe("subscription.plans", () => {
     const proPlan = plans.find((p) => p.id === "pro");
 
     expect(proPlan).toBeDefined();
-    expect(proPlan!.priceMonthly).toBe(3900);
-    expect(proPlan!.priceYearly).toBe(39000);
+    expect(proPlan!.priceMonthly).toBe(9900);
+    expect(proPlan!.priceYearly).toBe(99000);
   });
 
   it("all paid plans have features", async () => {

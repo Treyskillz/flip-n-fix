@@ -317,9 +317,27 @@
 - [x] Completely rewrite 3-Option Brochure to 8 pages matching original (Trey Hill signature, all content, black/burgundy/red scheme)
 - [x] Update Prospectus with before/after photos per property, truth-in-lending placeholders, bill of sale placeholders
 - [ ] Check/fix testimonial section on homepage
-- [ ] Create "Top 5 Rehabbing Mistakes" standalone PDF lead magnet
-- [ ] Build database schema for email leads
-- [ ] Build backend API for lead capture and PDF delivery
-- [ ] Build lead capture section on homepage with "5 Biggest Mistakes" free download
-- [ ] Create dedicated landing page for the lead magnet (/free-guide)
-- [ ] Set up email collection that stores leads in database
+- [x] Create "Top 5 Rehabbing Mistakes" standalone PDF lead magnet
+- [x] Build database schema for email leads
+- [x] Build backend API for lead capture and PDF delivery
+- [x] Build lead capture section on homepage with "5 Biggest Mistakes" free download
+- [x] Create dedicated landing page for the lead magnet (/free-guide)
+- [x] Set up email collection that stores leads in database
+- [x] Fix Prospectus: add missing Hillcrest property image
+- [x] Fix Prospectus: remove all watermarks and Shutterstock attributions from property images
+- [x] Update pricing: Pro $99, Elite $179, Team $289
+- [x] Add Profit Calculator to Elite tier
+- [x] Check/fix 70% Rule Calculator feature (already built into Deal Analyzer)
+- [x] Fix 3-Option Brochure: professional typesetting, remove 800 number, fill blank spaces with images
+- [x] Fix Prospectus: remove watermarks/Shutterstock text, fix Hillcrest image, uniform image sizes
+- [x] Restrict Profit Calculator to Elite/Team subscribers and admin-granted free accounts
+- [x] Complete lead capture section on homepage with 5 Biggest Mistakes PDF
+- [ ] Add testimonial section to homepage
+- [x] Build auto-updating blog system with AI content generation
+- [x] Build blog database schema (posts, categories, scheduling)
+- [x] Build AI blog content generator (weekly real estate investing articles)
+- [x] Build blog admin panel (review, edit, approve, reject, schedule posts)
+- [x] Build public blog page with SEO-friendly URLs
+- [ ] Auto-post approved blog content to Facebook page
+- [x] Add "Share to Facebook" button on each blog post
+- [ ] Set up automatic weekly/daily content generation schedule

@@ -6,7 +6,7 @@ import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_
 import { PLANS, PlanKey } from "./stripe/products";
 import { createCheckoutSession, createPortalSession } from "./stripe/checkout";
 import { getDb } from "./db";
-import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments, pipelineDeals, pipelineContacts, pipelineActivities, giftedSubscriptions, emailLeads } from "../drizzle/schema";
+import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments, pipelineDeals, pipelineContacts, pipelineActivities, giftedSubscriptions, emailLeads, blogPosts } from "../drizzle/schema";
 import { eq, sql, desc, and, ne, inArray, asc, isNull } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
@@ -1796,6 +1796,204 @@ Provide 3-5 comparable RENOVATED properties that meet ALL of these criteria:
       const db = (await getDb())!;
       const result = await db.select({ count: sql<number>`count(*)` }).from(emailLeads);
       return { count: result[0]?.count || 0 };
+    }),
+  }),
+
+  // ─── Blog ──────────────────────────────────────────────────
+  blog: router({
+    /** Get published posts (public) */
+    list: publicProcedure.input(z.object({
+      limit: z.number().min(1).max(50).default(12),
+      offset: z.number().min(0).default(0),
+      category: z.string().optional(),
+    })).query(async ({ input }) => {
+      const db = (await getDb())!;
+      const conditions = [eq(blogPosts.status, "published")];
+      if (input.category) conditions.push(eq(blogPosts.category, input.category));
+      const posts = await db.select({
+        id: blogPosts.id,
+        slug: blogPosts.slug,
+        title: blogPosts.title,
+        excerpt: blogPosts.excerpt,
+        category: blogPosts.category,
+        tags: blogPosts.tags,
+        coverImageUrl: blogPosts.coverImageUrl,
+        publishedAt: blogPosts.publishedAt,
+        viewCount: blogPosts.viewCount,
+      }).from(blogPosts).where(and(...conditions)).orderBy(desc(blogPosts.publishedAt)).limit(input.limit).offset(input.offset);
+      const countResult = await db.select({ count: sql<number>`count(*)` }).from(blogPosts).where(and(...conditions));
+      return { posts, total: countResult[0]?.count || 0 };
+    }),
+
+    /** Get single post by slug (public) */
+    getBySlug: publicProcedure.input(z.object({ slug: z.string() })).query(async ({ input }) => {
+      const db = (await getDb())!;
+      const [post] = await db.select().from(blogPosts).where(eq(blogPosts.slug, input.slug)).limit(1);
+      if (!post) return null;
+      // Increment view count
+      await db.update(blogPosts).set({ viewCount: sql`${blogPosts.viewCount} + 1` }).where(eq(blogPosts.id, post.id));
+      return post;
+    }),
+
+    /** Admin: list all posts (any status) */
+    adminList: adminProcedure.input(z.object({
+      limit: z.number().min(1).max(100).default(50),
+      offset: z.number().min(0).default(0),
+      status: z.enum(["draft", "scheduled", "published", "rejected"]).optional(),
+    })).query(async ({ input }) => {
+      const db = (await getDb())!;
+      const conditions = input.status ? [eq(blogPosts.status, input.status)] : [];
+      const posts = await db.select().from(blogPosts)
+        .where(conditions.length ? and(...conditions) : undefined)
+        .orderBy(desc(blogPosts.createdAt)).limit(input.limit).offset(input.offset);
+      const countResult = await db.select({ count: sql<number>`count(*)` }).from(blogPosts)
+        .where(conditions.length ? and(...conditions) : undefined);
+      return { posts, total: countResult[0]?.count || 0 };
+    }),
+
+    /** Admin: create or update a blog post */
+    upsert: adminProcedure.input(z.object({
+      id: z.number().optional(),
+      title: z.string().min(1),
+      slug: z.string().min(1),
+      excerpt: z.string().optional(),
+      content: z.string().min(1),
+      category: z.string().default("general"),
+      tags: z.string().optional(),
+      coverImageUrl: z.string().optional(),
+      status: z.enum(["draft", "scheduled", "published", "rejected"]).default("draft"),
+      scheduledAt: z.date().optional(),
+      aiGenerated: z.number().default(0),
+    })).mutation(async ({ input, ctx }) => {
+      const db = (await getDb())!;
+      const publishedAt = input.status === "published" ? new Date() : undefined;
+      if (input.id) {
+        await db.update(blogPosts).set({
+          title: input.title,
+          slug: input.slug,
+          excerpt: input.excerpt,
+          content: input.content,
+          category: input.category,
+          tags: input.tags,
+          coverImageUrl: input.coverImageUrl,
+          status: input.status,
+          scheduledAt: input.scheduledAt,
+          ...(publishedAt ? { publishedAt } : {}),
+        }).where(eq(blogPosts.id, input.id));
+        return { id: input.id };
+      } else {
+        const [result] = await db.insert(blogPosts).values({
+          title: input.title,
+          slug: input.slug,
+          excerpt: input.excerpt,
+          content: input.content,
+          category: input.category,
+          tags: input.tags,
+          coverImageUrl: input.coverImageUrl,
+          status: input.status,
+          scheduledAt: input.scheduledAt,
+          publishedAt,
+          aiGenerated: input.aiGenerated,
+          authorId: ctx.user.id,
+        });
+        return { id: result.insertId };
+      }
+    }),
+
+    /** Admin: delete a blog post */
+    delete: adminProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
+      const db = (await getDb())!;
+      await db.delete(blogPosts).where(eq(blogPosts.id, input.id));
+      return { success: true };
+    }),
+
+    /** Admin: generate a blog post using AI */
+    generate: adminProcedure.input(z.object({
+      topic: z.string().optional(),
+      category: z.enum(["market-tips", "rehab-strategies", "deal-analysis", "financing", "wholesaling", "brrrr", "general"]).default("general"),
+    })).mutation(async ({ ctx, input }) => {
+      const categories = ["market-tips", "rehab-strategies", "deal-analysis", "financing", "wholesaling", "brrrr"];
+      const category = input.category || categories[Math.floor(Math.random() * categories.length)];
+      const topicHint = input.topic || "";
+
+      const prompt = `You are a real estate investing content writer for Freedom One Real Estate System, run by Trey Hill. Write a blog post about ${category.replace("-", " ")}${topicHint ? " focusing on: " + topicHint : ""}.
+
+The audience is real estate investors interested in fix & flip, wholesaling, BRRRR, and private money lending.
+
+Return a JSON object with these fields:
+- title: compelling blog post title (60-80 chars)
+- slug: URL-friendly slug (lowercase, hyphens)
+- excerpt: 1-2 sentence summary for preview cards (under 160 chars)
+- content: full article in Markdown format (800-1200 words), with headers, practical tips, and a call to action mentioning Freedom One Real Estate System
+- tags: comma-separated relevant tags
+
+Make it actionable, data-driven where possible, and written in a confident but approachable tone.`;
+
+      const response = await invokeLLM({
+        messages: [
+          { role: "system", content: "You are an expert real estate investing content writer. Always return valid JSON." },
+          { role: "user", content: prompt },
+        ],
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "blog_post",
+            strict: true,
+            schema: {
+              type: "object",
+              properties: {
+                title: { type: "string" },
+                slug: { type: "string" },
+                excerpt: { type: "string" },
+                content: { type: "string" },
+                tags: { type: "string" },
+              },
+              required: ["title", "slug", "excerpt", "content", "tags"],
+              additionalProperties: false,
+            },
+          },
+        },
+      });
+
+      const msgContent = response.choices[0].message.content;
+      const parsed = JSON.parse(typeof msgContent === 'string' ? msgContent : '{}');
+      const db = (await getDb())!;
+      // Ensure unique slug
+      const uniqueSlug = parsed.slug + "-" + Date.now().toString(36);
+      const [result] = await db.insert(blogPosts).values({
+        title: parsed.title,
+        slug: uniqueSlug,
+        excerpt: parsed.excerpt,
+        content: parsed.content,
+        category,
+        tags: parsed.tags,
+        status: "draft",
+        aiGenerated: 1,
+        authorId: ctx.user.id,
+      });
+      return { id: result.insertId, title: parsed.title, slug: uniqueSlug };
+    }),
+
+    /** Admin: publish scheduled posts (called by cron or manually) */
+    publishScheduled: adminProcedure.mutation(async () => {
+      const db = (await getDb())!;
+      const now = new Date();
+      const scheduled = await db.select().from(blogPosts)
+        .where(and(eq(blogPosts.status, "scheduled"), sql`${blogPosts.scheduledAt} <= ${now}`));
+      for (const post of scheduled) {
+        await db.update(blogPosts).set({ status: "published", publishedAt: now }).where(eq(blogPosts.id, post.id));
+      }
+      return { published: scheduled.length };
+    }),
+
+    /** Public: get categories with post counts */
+    categories: publicProcedure.query(async () => {
+      const db = (await getDb())!;
+      const results = await db.select({
+        category: blogPosts.category,
+        count: sql<number>`count(*)`,
+      }).from(blogPosts).where(eq(blogPosts.status, "published")).groupBy(blogPosts.category);
+      return results;
     }),
   }),
 });
