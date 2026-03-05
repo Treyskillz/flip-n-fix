@@ -10,7 +10,8 @@ import {
   CheckCircle2, XCircle, MinusCircle
 } from 'lucide-react';
 
-const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663030273730/c3pk6dbyVkhix88pdfEyoY/logo-transparent-black_1d2d479c.png";
+const DEFAULT_LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663030273730/c3pk6dbyVkhix88pdfEyoY/logo-transparent-black_1d2d479c.png";
+const COMPANY_NAME = "Freedom One";
 
 export default function SharedDealView() {
   const params = useParams<{ shareId: string }>();
@@ -93,7 +94,7 @@ export default function SharedDealView() {
       <div className="border-b border-border/60 bg-card">
         <div className="container py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src={LOGO_URL} alt="Freedom One" className="h-8 object-contain" />
+            <img src={DEFAULT_LOGO_URL} alt={COMPANY_NAME} className="h-8 object-contain" />
             <div>
               <p className="text-xs text-muted-foreground">Shared Deal Analysis</p>
               <h1 className="text-sm font-bold">{data.propertyAddress || 'Investment Analysis'}</h1>
@@ -340,7 +341,7 @@ export default function SharedDealView() {
 
         {/* Disclaimer */}
         <div className="text-center text-[10px] text-muted-foreground border-t pt-6 mt-8 space-y-1">
-          <p><strong>Freedom One Real Estate Investment System</strong></p>
+          <p><strong>{COMPANY_NAME} Real Estate Investment System</strong></p>
           <p>This report is for informational purposes only. All projections are estimates based on user-provided data and generalized assumptions. Actual results may vary. Always perform independent due diligence and consult with qualified professionals before making investment decisions.</p>
         </div>
 

@@ -3,13 +3,18 @@ import { formatCurrency } from '@/lib/calculations';
 import { Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCallback } from 'react';
+import { useBranding, type BrandingConfig } from '@/lib/branding';
 
 interface Props {
   phases: RehabPhase[];
   propertyAddress?: string;
+  branding?: BrandingConfig;
 }
 
-function buildGanttPdfHtml(enabledPhases: RehabPhase[], maxDay: number, totalWeeks: number, propertyAddress?: string): string {
+function buildGanttPdfHtml(enabledPhases: RehabPhase[], maxDay: number, totalWeeks: number, propertyAddress?: string, branding?: BrandingConfig): string {
+  const bc = branding?.brandColor || '#c53030';
+  const companyName = branding?.companyName || 'Freedom One Properties';
+  const footerText = branding?.footerText || 'Freedom One Properties — Real Estate Investment System';
   const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   const totalCost = enabledPhases.reduce((sum, p) => sum + p.materialsCost + p.laborCost, 0);
 
@@ -51,12 +56,12 @@ function buildGanttPdfHtml(enabledPhases: RehabPhase[], maxDay: number, totalWee
 <style>
   @page { size: landscape; margin: 0.5in; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; color: #1a1a1a; }
-  .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #c53030; padding-bottom: 12px; margin-bottom: 20px; }
-  .header h1 { font-size: 18px; margin: 0; color: #c53030; }
+  .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid ${bc}; padding-bottom: 12px; margin-bottom: 20px; }
+  .header h1 { font-size: 18px; margin: 0; color: ${bc}; }
   .header .meta { text-align: right; font-size: 11px; color: #666; }
   .summary { display: flex; gap: 30px; margin-bottom: 20px; }
   .summary-item { text-align: center; }
-  .summary-item .value { font-size: 20px; font-weight: 700; color: #c53030; }
+  .summary-item .value { font-size: 20px; font-weight: 700; color: ${bc}; }
   .summary-item .label { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
   table { width: 100%; border-collapse: collapse; }
   thead th { background: #f8f8f8; padding: 8px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #666; border-bottom: 2px solid #e5e5e5; text-align: left; }
@@ -67,13 +72,17 @@ function buildGanttPdfHtml(enabledPhases: RehabPhase[], maxDay: number, totalWee
 </head>
 <body>
   <div class="header">
-    <div>
-      <h1>Rehab Project Timeline</h1>
-      ${propertyAddress ? `<p style="margin:4px 0 0;font-size:12px;color:#444">${propertyAddress}</p>` : ''}
+    <div style="display:flex;align-items:center;gap:12px">
+      ${branding?.logoUrl ? `<img src="${branding.logoUrl}" alt="${companyName}" style="height:36px;object-fit:contain" onerror="this.style.display='none'" />` : ''}
+      <div>
+        <h1>Rehab Project Timeline</h1>
+        ${propertyAddress ? `<p style="margin:4px 0 0;font-size:12px;color:#444">${propertyAddress}</p>` : ''}
+      </div>
     </div>
     <div class="meta">
       <p style="margin:0">Generated: ${dateStr}</p>
-      <p style="margin:2px 0 0">Freedom One Properties</p>
+      <p style="margin:2px 0 0">${companyName}</p>
+      ${branding && (branding.phone || branding.email) ? `<p style="margin:2px 0 0;font-size:10px">${[branding.phone, branding.email].filter(Boolean).join(' | ')}</p>` : ''}
     </div>
   </div>
 
@@ -110,24 +119,25 @@ function buildGanttPdfHtml(enabledPhases: RehabPhase[], maxDay: number, totalWee
     </thead>
     <tbody>
       ${phaseRows}
-      <tr style="border-top:2px solid #c53030;font-weight:700">
+      <tr style="border-top:2px solid ${bc};font-weight:700">
         <td style="padding:8px" colspan="4">TOTAL</td>
         <td style="padding:8px;text-align:center">${maxDay}</td>
         <td style="padding:8px;text-align:center">W1-W${totalWeeks}</td>
-        <td style="padding:8px;text-align:right;color:#c53030">${formatCurrency(totalCost)}</td>
+        <td style="padding:8px;text-align:right;color:${bc}">${formatCurrency(totalCost)}</td>
       </tr>
     </tbody>
   </table>
 
   <div class="footer">
     <p>This timeline is an estimate based on user-provided data. Actual durations and costs may vary. Always consult with licensed contractors.</p>
-    <p>Freedom One Properties — Real Estate Investment System</p>
+    <p>${footerText}</p>
   </div>
 </body>
 </html>`;
 }
 
 export function GanttChart({ phases, propertyAddress }: Props) {
+  const { branding } = useBranding();
   const enabledPhases = phases.filter(p => p.enabled && p.durationDays > 0);
   if (enabledPhases.length === 0) return null;
 
@@ -138,13 +148,13 @@ export function GanttChart({ phases, propertyAddress }: Props) {
   const weekMarkers = Array.from({ length: totalWeeks + 1 }, (_, i) => i);
 
   const handleExportPdf = useCallback(() => {
-    const html = buildGanttPdfHtml(enabledPhases, maxDay, totalWeeks, propertyAddress);
+    const html = buildGanttPdfHtml(enabledPhases, maxDay, totalWeeks, propertyAddress, branding);
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
     printWindow.document.write(html);
     printWindow.document.close();
     setTimeout(() => printWindow.print(), 500);
-  }, [enabledPhases, maxDay, totalWeeks, propertyAddress]);
+  }, [enabledPhases, maxDay, totalWeeks, propertyAddress, branding]);
 
   return (
     <div className="space-y-2">

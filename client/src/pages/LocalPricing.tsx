@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { US_STATES, US_STATE_NAMES, STATE_COST_INDEX, METRO_COST_INDEX, getRegionalCostFactor } from '@/lib/regionalCosts';
 import { printDocument } from '@/lib/printDocument';
+import { useBranding } from '@/lib/branding';
 
 const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/RUvFlwFYmtbQizbR.png";
 
@@ -265,6 +266,7 @@ function CategorySection({ category, onUpdate }: { category: PriceCategory; onUp
 }
 
 export default function LocalPricing() {
+  const { branding } = useBranding();
   const [categories, setCategories] = useState<PriceCategory[]>(() => loadSavedPricing() || getDefaultCategories());
   const [selectedState, setSelectedState] = useState('TX');
   const [selectedMetro, setSelectedMetro] = useState('');
@@ -360,6 +362,7 @@ export default function LocalPricing() {
       title: 'Local Area Pricing Template',
       subtitle: `Region: ${selectedMetro ? METRO_COST_INDEX[selectedMetro]?.label : US_STATE_NAMES[selectedState]} | Material Factor: ${regionalFactor.materialsFactor}× | Labor Factor: ${regionalFactor.laborFactor}×`,
       sections,
+      branding,
     });
   };
 

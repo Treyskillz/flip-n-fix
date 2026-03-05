@@ -11,6 +11,7 @@ import { FileText, Mail, Download, Printer, Building2, TrendingUp, DollarSign, C
 import { useState, useRef } from 'react';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
+import { useBranding, type BrandingConfig, buildBrandedFooterHtml } from '@/lib/branding';
 
 interface Props {
   property: SubjectProperty;
@@ -29,11 +30,11 @@ interface Props {
   materialsFactor?: number;
   laborFactor?: number;
   photos?: { url: string; caption?: string | null }[];
+  branding?: BrandingConfig;
 }
 
-const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663030273730/c3pk6dbyVkhix88pdfEyoY/logo-transparent-black_1d2d479c.png";
-
 function buildPdfHtml(props: Props): string {
+  const b = props.branding;
   const { property, profit, financing, closing, holding, effectiveArv, rehabTotals, materialTier, targetROI, comps, roomScopes, regionalLabel, materialTierKey, materialsFactor, laborFactor } = props;
 
   const financingCost = financing.useHardMoney ? (financing.totalInterest + financing.totalPoints) : 0;
@@ -159,19 +160,19 @@ function buildPdfHtml(props: Props): string {
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a1a; padding: 40px; line-height: 1.5; max-width: 900px; margin: 0 auto; }
-    .report-header { display: flex; align-items: center; gap: 20px; border-bottom: 3px solid #c53030; padding-bottom: 20px; margin-bottom: 30px; }
+    .report-header { display: flex; align-items: center; gap: 20px; border-bottom: 3px solid ${b?.brandColor || '#c53030'}; padding-bottom: 20px; margin-bottom: 30px; }
     .report-header .logo { height: 50px; }
     .report-header .header-text { flex: 1; }
-    .report-header h1 { font-size: 24px; color: #c53030; margin-bottom: 2px; letter-spacing: 1px; }
+    .report-header h1 { font-size: 24px; color: ${b?.brandColor || '#c53030'}; margin-bottom: 2px; letter-spacing: 1px; }
     .report-header .subtitle { font-size: 16px; font-weight: 600; color: #333; }
     .report-header .meta { font-size: 12px; color: #888; margin-top: 4px; }
     .section { margin-bottom: 28px; page-break-inside: avoid; }
-    .section h2 { font-size: 16px; color: #c53030; border-bottom: 2px solid #e5e5e5; padding-bottom: 6px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .section h2 { font-size: 16px; color: ${b?.brandColor || '#c53030'}; border-bottom: 2px solid #e5e5e5; padding-bottom: 6px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
     .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
     .stat { padding: 12px; background: #f9f9f9; border-radius: 6px; border-left: 3px solid #e5e5e5; }
-    .stat-accent { border-left-color: #c53030; }
+    .stat-accent { border-left-color: ${b?.brandColor || '#c53030'}; }
     .stat-green { border-left-color: #16a34a; }
     .stat-label { font-size: 10px; text-transform: uppercase; color: #888; letter-spacing: 0.5px; font-weight: 600; }
     .stat-value { font-size: 18px; font-weight: 700; margin-top: 2px; }
@@ -201,12 +202,13 @@ function buildPdfHtml(props: Props): string {
 </head>
 <body>
   <div class="report-header">
-    <img src="${LOGO_URL}" alt="Freedom One" class="logo" onerror="this.style.display='none'" />
+    ${b?.logoUrl ? `<img src="${b.logoUrl}" alt="${b.companyName}" class="logo" onerror="this.style.display='none'" />` : ''}
     <div class="header-text">
       <h1>INVESTMENT ANALYSIS REPORT</h1>
       <div class="subtitle">${addr}</div>
       <div class="meta">Generated ${dateStr} | Material Tier: ${materialTier.charAt(0).toUpperCase() + materialTier.slice(1)} Grade${regionalLabel && regionalLabel !== 'National Average' ? ` | Market: ${regionalLabel}` : ''}</div>
     </div>
+    ${b && (b.phone || b.email || b.website) ? `<div style="text-align:right;font-size:10px;color:#888;line-height:1.6;">${[b.phone, b.email, b.website].filter(Boolean).join('<br/>')}</div>` : ''}
   </div>
 
   <!-- Executive Summary -->
@@ -316,8 +318,8 @@ function buildPdfHtml(props: Props): string {
   </div>
 
   <div class="footer">
-    <p><strong>Freedom One Real Estate Investment System</strong></p>
-    <p style="margin-top:4px">This report is for informational purposes only. All projections are estimates based on user-provided data and generalized assumptions. Actual results may vary. Always perform independent due diligence and consult with qualified professionals before making investment decisions.</p>
+    <p><strong>${b?.footerText || 'Real Estate Investment Analysis'}</strong></p>
+    <p style="margin-top:4px">${b?.disclaimerText || 'This report is for informational purposes only. All projections are estimates based on user-provided data and generalized assumptions. Actual results may vary. Always perform independent due diligence and consult with qualified professionals before making investment decisions.'}</p>
   </div>
 </body>
 </html>`;
@@ -329,6 +331,8 @@ export function InvestorReport(props: Props) {
     effectiveArv, rehabTotals, materialTier, targetROI,
     comps, roomScopes, regionalLabel,
   } = props;
+
+  const { branding } = useBranding();
 
   const [emailTo, setEmailTo] = useState('');
   const [emailSubject, setEmailSubject] = useState('');
@@ -428,7 +432,7 @@ Best regards`
   };
 
   const handlePrint = () => {
-    const html = buildPdfHtml(props);
+    const html = buildPdfHtml({ ...props, branding });
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
     printWindow.document.write(html);
@@ -437,7 +441,7 @@ Best regards`
   };
 
   const handleDownload = () => {
-    const html = buildPdfHtml(props);
+    const html = buildPdfHtml({ ...props, branding });
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
     printWindow.document.write(html);

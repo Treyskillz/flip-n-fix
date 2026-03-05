@@ -7,10 +7,12 @@ import { Megaphone, ChevronDown, ChevronRight, Copy, Check, Lightbulb, Download,
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import { printDocument } from '@/lib/printDocument';
+import { useBranding } from '@/lib/branding';
 import { useProfileReplacer } from '@/hooks/useProfileReplacer';
 import { Link } from 'wouter';
 
 export default function Marketing() {
+  const { branding } = useBranding();
   const [activeCategory, setActiveCategory] = useState<string>('letter');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -44,6 +46,7 @@ export default function Marketing() {
       footer: hasProfile
         ? `Marketing template from the Freedom One Real Estate Investment System. This is a template — not legal or financial advice.`
         : `Marketing template from the Freedom One Real Estate Investment System. Customize all bracketed fields with your business information before use. This is a template — not legal or financial advice.`,
+      branding,
     });
   }, [replaceInText, hasProfile]);
 

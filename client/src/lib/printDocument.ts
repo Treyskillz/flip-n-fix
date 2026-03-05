@@ -1,4 +1,6 @@
-const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/RUvFlwFYmtbQizbR.png";
+import type { BrandingConfig } from '@/lib/branding';
+
+const DEFAULT_LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/RUvFlwFYmtbQizbR.png";
 
 interface PrintDocumentOptions {
   title: string;
@@ -7,11 +9,16 @@ interface PrintDocumentOptions {
   sections: { heading: string; body: string }[];
   footer?: string;
   accentColor?: string;
+  branding?: BrandingConfig;
 }
 
 /**
  * Opens a clean, branded print window with a full document layout.
  * No UI chrome, no copy buttons, no card borders — just a professional document.
+ * Uses the centralized branding system:
+ *   - Admin: Freedom One logo + full contact info
+ *   - Subscribers: Freedom One logo, no contact info
+ *   - Team tier with white-label: Custom logo + custom contact info
  */
 export function printDocument(opts: PrintDocumentOptions) {
   const {
@@ -20,8 +27,17 @@ export function printDocument(opts: PrintDocumentOptions) {
     date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
     sections,
     footer,
-    accentColor = '#b91c1c',
+    accentColor: rawAccent,
+    branding: b,
   } = opts;
+
+  const accentColor = b?.brandColor || rawAccent || '#b91c1c';
+  const logoUrl = b?.logoUrl || DEFAULT_LOGO_URL;
+  const companyName = b?.companyName || 'Freedom One';
+  const footerText = b?.footerText || 'Freedom One Real Estate Investment System';
+  const contactLine = b && (b.phone || b.email || b.website)
+    ? `<div style="font-size:9pt;color:#888;margin-top:2px">${[b.phone, b.email, b.website].filter(Boolean).join(' | ')}</div>`
+    : '';
 
   const sectionsHtml = sections
     .map(
@@ -35,13 +51,13 @@ export function printDocument(opts: PrintDocumentOptions) {
 
   const footerHtml = footer
     ? `<div class="doc-footer">${footer}</div>`
-    : `<div class="doc-footer">This document was prepared using the Freedom One Real Estate Investment System.<br/>All information should be verified independently. This is not legal, financial, or investment advice.</div>`;
+    : `<div class="doc-footer">This document was prepared using the ${footerText}.<br/>All information should be verified independently. This is not legal, financial, or investment advice.</div>`;
 
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>${title} — Freedom One</title>
+  <title>${title} — ${companyName}</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -68,6 +84,11 @@ export function printDocument(opts: PrintDocumentOptions) {
       padding-bottom: 16px;
       border-bottom: 3px solid ${accentColor};
       margin-bottom: 24px;
+    }
+    .doc-header .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
     .doc-header img {
       height: 52px;
@@ -168,11 +189,14 @@ export function printDocument(opts: PrintDocumentOptions) {
 </head>
 <body>
   <div class="doc-header">
-    <img src="${LOGO_URL}" alt="Freedom One" />
+    <div class="header-left">
+      ${logoUrl ? `<img src="${logoUrl}" alt="${companyName}" onerror="this.style.display='none'" />` : ''}
+    </div>
     <div class="header-right">
       <div class="doc-title">${title}</div>
       ${subtitle ? `<div class="doc-subtitle">${subtitle}</div>` : ''}
       <div class="doc-date">${date}</div>
+      ${contactLine}
     </div>
   </div>
 

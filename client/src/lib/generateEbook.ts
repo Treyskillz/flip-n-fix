@@ -1,4 +1,5 @@
 import { COURSE_MODULES } from './course';
+import type { BrandingConfig } from '@/lib/branding';
 
 const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/RUvFlwFYmtbQizbR.png";
 
@@ -6,8 +7,10 @@ const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/
  * Generates a comprehensive ebook PDF from all course content.
  * Opens a print-ready window with professional book formatting.
  */
-export function generateCourseEbook(options?: { includePremium?: boolean }) {
-  const { includePremium = false } = options || {};
+export function generateCourseEbook(options?: { includePremium?: boolean; branding?: BrandingConfig }) {
+  const { includePremium = false, branding: b } = options || {};
+  const logoUrl = b?.logoUrl || LOGO_URL;
+  const companyName = b?.companyName || 'Freedom One';
 
   const modules = includePremium
     ? COURSE_MODULES
@@ -65,7 +68,7 @@ export function generateCourseEbook(options?: { includePremium?: boolean }) {
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Fix & Flip Mastery ${year} — Freedom One</title>
+  <title>Fix & Flip Mastery ${year} — ${companyName}</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -398,7 +401,7 @@ export function generateCourseEbook(options?: { includePremium?: boolean }) {
 <body>
   <!-- Cover Page -->
   <div class="cover">
-    <img class="logo" src="${LOGO_URL}" alt="Freedom One" />
+    <img class="logo" src="${logoUrl}" alt="${companyName}" />
     <div class="cover-title">Fix & Flip Mastery</div>
     <div class="cover-subtitle">The Complete Real Estate Investor's Guide</div>
     <div class="cover-edition">${year} Edition</div>
@@ -425,8 +428,8 @@ export function generateCourseEbook(options?: { includePremium?: boolean }) {
   <!-- Copyright Page -->
   <div class="copyright-page">
     <p class="copyright-title">Fix & Flip Mastery — ${year} Edition</p>
-    <p>Published by Freedom One Real Estate Investment System</p>
-    <p>&copy; ${year} Freedom One. All rights reserved.</p>
+    <p>Published by ${companyName} Real Estate Investment System</p>
+    <p>&copy; ${year} ${companyName}. All rights reserved.</p>
     <p>No part of this publication may be reproduced, distributed, or transmitted in any form without prior written permission of the publisher.</p>
     <p style="margin-top: 16px;"><strong>Disclaimer:</strong> This book is for educational purposes only. The information contained herein does not constitute legal, financial, tax, or investment advice. Real estate investing involves substantial risk, including the potential loss of capital. Always consult with qualified professionals before making investment decisions. Past performance does not guarantee future results. The author and publisher assume no liability for actions taken based on the information in this book.</p>
     <p style="margin-top: 16px;">ISBN: 979-8-XXXX-XXXX-X (placeholder — assign before distribution)</p>
@@ -446,11 +449,11 @@ export function generateCourseEbook(options?: { includePremium?: boolean }) {
   <!-- Back Page -->
   <div class="chapter" style="page-break-before: always;">
     <div class="chapter-header">
-      <div class="chapter-number">About Freedom One</div>
+      <div class="chapter-number">About ${companyName}</div>
       <h2 class="chapter-title">Your Real Estate Investment System</h2>
     </div>
     <div class="lesson-content">
-      <p>Freedom One is a comprehensive real estate investment platform designed to give investors every tool they need to analyze deals, estimate rehab costs, manage their portfolio, and grow their business.</p>
+      <p>${companyName} is a comprehensive real estate investment platform designed to give investors every tool they need to analyze deals, estimate rehab costs, manage their portfolio, and grow their business.</p>
       <h3>What's Included in the Platform</h3>
       <ul>
         <li><strong>Deal Analyzer</strong> — Full property analysis with comp search, rehab estimation, and deal scoring</li>

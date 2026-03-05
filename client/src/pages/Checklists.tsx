@@ -1,5 +1,6 @@
 import { ClipboardList, Download, CheckSquare, Home, Wrench, Building2, DollarSign, Search, FileText } from 'lucide-react';
 import { printDocument } from '@/lib/printDocument';
+import { useBranding } from '@/lib/branding';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
@@ -182,6 +183,7 @@ function ChecklistCard({ checklist, onSelect }: { checklist: Checklist; onSelect
 }
 
 function ChecklistDetail({ checklist, onBack }: { checklist: Checklist; onBack: () => void }) {
+  const { branding } = useBranding();
   const [checked, setChecked] = useState<Set<number>>(new Set());
   const Icon = checklist.icon;
 
@@ -204,6 +206,7 @@ function ChecklistDetail({ checklist, onBack }: { checklist: Checklist; onBack: 
       subtitle: checklist.description,
       sections,
       footer: 'Checklist from the Freedom One Real Estate Investment System. Use this as a guide — always consult with licensed professionals for your specific situation.',
+      branding,
     });
   };
 
@@ -275,6 +278,7 @@ function ChecklistDetail({ checklist, onBack }: { checklist: Checklist; onBack: 
 }
 
 export default function Checklists() {
+  const { branding } = useBranding();
   const [selected, setSelected] = useState<ChecklistCategory | null>(null);
   const selectedChecklist = CHECKLISTS.find(c => c.id === selected);
 

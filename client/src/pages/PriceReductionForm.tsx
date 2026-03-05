@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { printDocument } from '@/lib/printDocument';
+import { useBranding } from '@/lib/branding';
 import { useProfileReplacer } from '@/hooks/useProfileReplacer';
 import { Link } from 'wouter';
 
@@ -216,6 +217,7 @@ const DEFAULT_FIELDS: FormFields = {
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function PriceReductionForm() {
+  const { branding } = useBranding();
   const [fields, setFields] = useState<FormFields>(DEFAULT_FIELDS);
   const [expandedTraining, setExpandedTraining] = useState<string | null>('what-is');
   const [copied, setCopied] = useState(false);
@@ -303,6 +305,7 @@ ${yourCompany}${fields.additionalNotes ? `\n\nAdditional Notes:\n${fields.additi
         { heading: '', body: letterText },
       ],
       footer: 'This document was prepared using the Freedom One Real Estate Investment System. For educational purposes only. Consult a licensed real estate attorney before submitting.',
+      branding,
     });
   }, [letterText, fields.propertyAddress]);
 

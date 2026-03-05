@@ -5,6 +5,7 @@
 // ============================================================
 
 import * as XLSX from 'xlsx';
+import type { BrandingConfig } from '@/lib/branding';
 import {
   calculateAll,
   getDefaultInputs,
@@ -15,11 +16,10 @@ import {
   DEFAULTS,
 } from './profitCalculator';
 
-function addSummarySheet(wb: XLSX.WorkBook, inputs: CalculatorInputs, result: ProfitCalculatorResult) {
+function addSummarySheet(wb: XLSX.WorkBook, inputs: CalculatorInputs, result: ProfitCalculatorResult, branding?: BrandingConfig) {
   const prop = inputs.property;
   const data: (string | number | null)[][] = [
-    ['FREEDOM ONE — Fix & Flip Profit Calculator'],
-    [''],
+    [`${branding?.companyName || 'FREEDOM ONE'} \u2014 Fix & Flip Profit Calculator`],[''],
     ['PROPERTY INFORMATION'],
     ['Address', prop.address || 'N/A'],
     ['Asking Price', prop.askingPrice],
@@ -252,9 +252,9 @@ function addDeveloperProfitSheet(wb: XLSX.WorkBook, result: ProfitCalculatorResu
   XLSX.utils.book_append_sheet(wb, ws, "Developer's Profit");
 }
 
-function addInstructionsSheet(wb: XLSX.WorkBook) {
+function addInstructionsSheet(wb: XLSX.WorkBook, branding?: BrandingConfig) {
   const data: (string | number | null)[][] = [
-    ['FREEDOM ONE — Fix & Flip Profit Calculator'],
+    [`${branding?.companyName || 'FREEDOM ONE'} \u2014 Fix & Flip Profit Calculator`],
     ['Instructions & How to Use'],
     [''],
     ['OVERVIEW'],
@@ -300,9 +300,9 @@ function addInstructionsSheet(wb: XLSX.WorkBook) {
     ['This calculator is for educational and estimation purposes only.'],
     ['Always verify numbers with your lender, CPA, and real estate attorney.'],
     ['Past performance does not guarantee future results.'],
-    [''],
-    ['© Freedom One Real Estate Investment System'],
-    ['www.freedom1realsystem.com'],
+       [''],
+    [`© ${branding?.companyName || 'Freedom One'} Real Estate Investment System`],
+    [branding?.website || 'www.freedom1realsystem.com'],
   ];
 
   const ws = XLSX.utils.aoa_to_sheet(data);
@@ -310,15 +310,15 @@ function addInstructionsSheet(wb: XLSX.WorkBook) {
   XLSX.utils.book_append_sheet(wb, ws, 'Instructions');
 }
 
-export function generateProfitCalcExcel(inputs: CalculatorInputs): void {
+export function generateProfitCalcExcel(inputs: CalculatorInputs, branding?: BrandingConfig): void {
   const result = calculateAll(inputs);
   const wb = XLSX.utils.book_new();
 
   // Add Instructions first
-  addInstructionsSheet(wb);
+  addInstructionsSheet(wb, branding);
 
   // Add Summary
-  addSummarySheet(wb, inputs, result);
+  addSummarySheet(wb, inputs, result, branding);
 
   // Add each scenario as its own sheet
   const sheetNames = [
@@ -348,7 +348,7 @@ export function generateProfitCalcExcel(inputs: CalculatorInputs): void {
 }
 
 // Export a blank template with default values
-export function generateBlankTemplate(): void {
+export function generateBlankTemplate(branding?: BrandingConfig): void {
   const defaults = getDefaultInputs();
   defaults.property.address = 'Enter Property Address';
   defaults.property.askingPrice = 250000;
@@ -365,8 +365,8 @@ export function generateBlankTemplate(): void {
   const result = calculateAll(defaults);
   const wb = XLSX.utils.book_new();
 
-  addInstructionsSheet(wb);
-  addSummarySheet(wb, defaults, result);
+  addInstructionsSheet(wb, branding);
+  addSummarySheet(wb, defaults, result, branding);
 
   const sheetNames = [
     'HML ARV Debt',

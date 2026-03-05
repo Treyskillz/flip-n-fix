@@ -10,6 +10,7 @@ import {
   AlertTriangle, CheckCircle2, Plus, Trash2, FileSpreadsheet
 } from 'lucide-react';
 import { printDocument } from '@/lib/printDocument';
+import { useBranding } from '@/lib/branding';
 import * as XLSX from 'xlsx';
 
 // ── Budget Category Data ─────────────────────────────────────
@@ -317,6 +318,7 @@ function CategorySection({
 }
 
 export default function RehabBudget() {
+  const { branding } = useBranding();
   const [propertyAddress, setPropertyAddress] = useState('');
   const [categories, setCategories] = useState<BudgetCategory[]>(DEFAULT_CATEGORIES);
   const [contingencyPct, setContingencyPct] = useState(10);
@@ -402,6 +404,7 @@ export default function RehabBudget() {
           body: `• Materials Total: ${fmt(totals.totalMaterials)}\n• Labor Total: ${fmt(totals.totalLabor)}\n• Subtotal: ${fmt(totals.subtotal)}\n• Contingency (${contingencyPct}%): ${fmt(totals.contingency)}\n• GRAND TOTAL: ${fmt(totals.grandTotal)}`,
         },
       ]),
+      branding,
     });
   };
 

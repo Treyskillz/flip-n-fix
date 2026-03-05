@@ -17,6 +17,7 @@ import {
   type CalculatorInputs, type ScenarioResult, type InterestType
 } from '@/lib/profitCalculator';
 import { generateProfitCalcExcel, generateBlankTemplate } from '@/lib/generateExcel';
+import { useBranding } from '@/lib/branding';
 import { Link } from 'wouter';
 import { getLoginUrl } from '@/const';
 
@@ -383,6 +384,7 @@ export default function ProfitCalculator() {
 }
 
 function ProfitCalculatorFull() {
+  const { branding } = useBranding();
   const [inputs, setInputs] = useState<CalculatorInputs>(getDefaultInputs);
   const [showGuide, setShowGuide] = useState(false);
 
@@ -466,7 +468,7 @@ function ProfitCalculatorFull() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => generateProfitCalcExcel(inputs)}
+                onClick={() => generateProfitCalcExcel(inputs, branding)}
                 className="gap-1.5 border-[oklch(0.3_0_0)] text-[oklch(0.6_0_0)] hover:text-white"
               >
                 <Download className="w-3.5 h-3.5" /> Export Excel
@@ -474,7 +476,7 @@ function ProfitCalculatorFull() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => generateBlankTemplate()}
+                onClick={() => generateBlankTemplate(branding)}
                 className="gap-1.5 border-[oklch(0.3_0_0)] text-[oklch(0.6_0_0)] hover:text-white"
               >
                 <Download className="w-3.5 h-3.5" /> Blank Template

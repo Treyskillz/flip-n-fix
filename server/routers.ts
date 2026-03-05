@@ -2287,5 +2287,124 @@ Make it actionable, data-driven where possible, and written in a confident but a
         return { success: true, logoUrl: url };
       }),
   }),
+
+  // ─── Team Tier Exclusive Features ────────────────────────────
+  teamFeatures: router({
+    /** AI Deal Summary — generates a professional investor-ready text analysis */
+    aiDealSummary: protectedProcedure
+      .input(
+        z.object({
+          address: z.string(),
+          city: z.string(),
+          state: z.string(),
+          purchasePrice: z.number(),
+          arv: z.number(),
+          rehabCost: z.number(),
+          netProfit: z.number(),
+          roi: z.number(),
+          dealScore: z.number().optional(),
+          sqft: z.number(),
+          beds: z.number(),
+          baths: z.number(),
+          yearBuilt: z.number(),
+          market: z.string().optional(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        // Check Team tier
+        const userRow = await db.select({ subscriptionPlan: users.subscriptionPlan }).from(users).where(eq(users.id, ctx.user.id)).limit(1);
+        const stripePlan = userRow[0]?.subscriptionPlan || "free";
+        const giftedRows = await db.select().from(giftedSubscriptions).where(and(eq(giftedSubscriptions.userId, ctx.user.id), isNull(giftedSubscriptions.revokedAt))).orderBy(desc(giftedSubscriptions.createdAt)).limit(1);
+        const now = new Date();
+        const activeGift = giftedRows[0] && (!giftedRows[0].expiresAt || giftedRows[0].expiresAt > now) ? giftedRows[0] : null;
+        const planRank: Record<string, number> = { free: 0, pro: 1, elite: 2, team: 3 };
+        let effectivePlan = stripePlan;
+        if (activeGift && (planRank[activeGift.plan] || 0) > (planRank[stripePlan] || 0)) effectivePlan = activeGift.plan;
+
+        // Admin always has access
+        const isAdmin = ctx.user.role === 'admin';
+        if (!isAdmin && effectivePlan !== "team") {
+          throw new Error("AI Deal Summary is a Team plan exclusive feature. Please upgrade.");
+        }
+
+        const response = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: `You are a professional real estate investment analyst. Write a concise but comprehensive investor-ready deal summary. Include:
+1. Executive Summary (2-3 sentences)
+2. Key Metrics Analysis (ROI, profit margin, deal score assessment)
+3. Market Position (how this deal compares to typical deals in the area)
+4. Risk Assessment (potential risks and mitigating factors)
+5. Recommendation (clear buy/pass recommendation with reasoning)
+
+Keep the tone professional and data-driven. Use specific numbers from the deal. Format in clean markdown.`,
+            },
+            {
+              role: "user",
+              content: `Analyze this fix & flip deal:
+
+Property: ${input.address}, ${input.city}, ${input.state}
+Purchase Price: $${input.purchasePrice.toLocaleString()}
+ARV (After Repair Value): $${input.arv.toLocaleString()}
+Rehab Cost: $${input.rehabCost.toLocaleString()}
+Net Profit: $${input.netProfit.toLocaleString()}
+ROI: ${input.roi.toFixed(1)}%
+Deal Score: ${input.dealScore || 'N/A'}/100
+Sq Ft: ${input.sqft} | Beds: ${input.beds} | Baths: ${input.baths} | Year Built: ${input.yearBuilt}
+Market: ${input.market || 'Not specified'}`,
+            },
+          ],
+        });
+
+        const summary = response.choices[0]?.message?.content || "Unable to generate summary.";
+        return { summary: typeof summary === 'string' ? summary : '' };
+      }),
+
+    /** Bulk Export — export all saved deals as CSV (Team tier only) */
+    bulkExport: protectedProcedure.mutation(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Check Team tier
+      const userRow = await db.select({ subscriptionPlan: users.subscriptionPlan }).from(users).where(eq(users.id, ctx.user.id)).limit(1);
+      const stripePlan = userRow[0]?.subscriptionPlan || "free";
+      const giftedRows = await db.select().from(giftedSubscriptions).where(and(eq(giftedSubscriptions.userId, ctx.user.id), isNull(giftedSubscriptions.revokedAt))).orderBy(desc(giftedSubscriptions.createdAt)).limit(1);
+      const now = new Date();
+      const activeGift = giftedRows[0] && (!giftedRows[0].expiresAt || giftedRows[0].expiresAt > now) ? giftedRows[0] : null;
+      const planRank: Record<string, number> = { free: 0, pro: 1, elite: 2, team: 3 };
+      let effectivePlan = stripePlan;
+      if (activeGift && (planRank[activeGift.plan] || 0) > (planRank[stripePlan] || 0)) effectivePlan = activeGift.plan;
+
+      const isAdmin = ctx.user.role === 'admin';
+      if (!isAdmin && effectivePlan !== "team") {
+        throw new Error("Bulk export is a Team plan exclusive feature. Please upgrade.");
+      }
+
+      // Get all deals for this user (not archived)
+      const rows = await db.select().from(savedDeals).where(
+        and(
+          eq(savedDeals.userId, ctx.user.id),
+          ne(savedDeals.status, "archived")
+        )
+      ).orderBy(desc(savedDeals.createdAt));
+
+      // Build CSV
+      const headers = ["Address", "City", "State", "Zip", "Purchase Price", "ARV", "Rehab Cost", "Total Investment", "Net Profit", "ROI %", "Deal Score", "Deal Verdict", "Status", "Sq Ft", "Beds", "Baths", "Year Built", "Market", "Created"];
+      const csvRows = rows.map(r => [
+        `"${r.address}"`, `"${r.city}"`, `"${r.state}"`, `"${r.zip}"`,
+        r.purchasePrice, r.arv, r.rehabCost, r.totalInvestment, r.netProfit,
+        (r.roiBps / 100).toFixed(1), r.dealScore || '', `"${r.dealVerdict}"`,
+        `"${r.status}"`, r.sqft, r.beds, r.baths, r.yearBuilt,
+        `"${r.market || ''}"`, `"${r.createdAt.toISOString().split('T')[0]}"`
+      ]);
+
+      const csv = [headers.join(','), ...csvRows.map(r => r.join(','))].join('\n');
+      return { csv, count: rows.length };
+    }),
+  }),
 });
 export type AppRouter = typeof appRouter;

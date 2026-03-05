@@ -1,11 +1,14 @@
 const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/RUvFlwFYmtbQizbR.png";
 
+import type { BrandingConfig } from '@/lib/branding';
+
 interface CertificateOptions {
   recipientName: string;
   completionDate: string;
   totalLessons: number;
   totalModules: number;
   quizzesPassed: number;
+  branding?: BrandingConfig;
 }
 
 /**
@@ -19,13 +22,16 @@ export function generateCertificate(opts: CertificateOptions) {
     totalLessons,
     totalModules,
     quizzesPassed,
+    branding: b,
   } = opts;
+  const logoUrl = b?.logoUrl || LOGO_URL;
+  const companyName = b?.companyName || 'Freedom One';
 
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Certificate of Completion — Freedom One</title>
+  <title>Certificate of Completion — ${companyName}</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -242,7 +248,7 @@ export function generateCertificate(opts: CertificateOptions) {
     <div class="corner corner-br"></div>
 
     <div class="content">
-      <img src="${LOGO_URL}" alt="Freedom One" class="logo" />
+      <img src="${logoUrl}" alt="${companyName}" class="logo" />
       <div class="divider" style="margin-bottom: 20px;"></div>
 
       <p class="pre-title">Certificate of Completion</p>
@@ -278,8 +284,8 @@ export function generateCertificate(opts: CertificateOptions) {
           <div class="footer-label">Date of Completion</div>
         </div>
         <div class="footer-item">
-          <div class="footer-value">Freedom One</div>
-          <div class="footer-label">Real Estate Investment System</div>
+          <div class="footer-value">${companyName}</div>
+          <div class="footer-label">${b?.footerText || 'Real Estate Investment System'}</div>
         </div>
       </div>
     </div>

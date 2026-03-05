@@ -418,3 +418,38 @@
 - [x] Verify all Pro tier features implemented
 - [x] Verify all Elite tier features implemented
 - [x] Verify all Team tier features implemented
+
+## Team Tier Value-Add & Next Steps (March 5, 2026 - Round 2)
+- [x] Wire white-label branding into InvestorReport PDF (use custom logo, company name, brand color, contact info)
+- [x] Wire white-label branding into PortfolioPdf (use custom logo, company name, brand color, contact info)
+- [x] Wire white-label branding into shared deal pages
+- [x] Add Priority Support badge/indicator in site header and profile for Elite+ subscribers
+- [x] Build AI Deal Analysis Summary feature (Team tier) — LLM-powered deal narrative/recommendation
+- [ ] Build Advanced Analytics Dashboard (Team tier) — portfolio performance charts, ROI trends, deal velocity
+- [x] Build Custom Branded Shared Deal Pages (Team tier) — shared links show user's branding instead of Freedom One
+- [ ] Build Deal Comparison PDF Export (Team tier) — side-by-side comparison report for multiple deals
+- [x] Update products.ts with new Team tier features
+- [x] Update Pricing page to reflect new features
+- [x] Run all tests and verify everything works
+- [x] Save checkpoint
+
+## Centralized Branding System (March 5, 2026)
+- [x] Create shared branding config module (client/src/lib/branding.ts) with Freedom One defaults
+- [x] Wire branding into InvestorReport PDF
+- [x] Wire branding into portfolioPdf
+- [x] Wire branding into GanttChart PDF export
+- [x] Wire branding into ScopeOfWork print (both single room and template)
+- [x] Wire branding into printDocument utility (Contracts, Marketing, Checklists, Credibility, etc.)
+- [x] Wire branding into SharedDealView page
+- [x] Wire branding into generateCertificate
+- [x] Wire branding into documentDelivery
+- [x] Wire branding into generateEbook
+- [x] Wire branding into ProfitCalculator print
+- [x] Wire branding into PrivateMoneyProspectus print
+- [x] Wire branding into ThreeOptionBrochure print
+- [x] Wire branding into FreeGuide print
+- [x] White-label override: Team tier can replace branding, admin always gets Freedom One
+- [x] Add Priority Support badge for Elite+ subscribers
+- [x] Add Admin badge in site header
+- [x] Build Full Database Export (CSV) for Team tier
+- [x] Write vitest tests for Team features (183 tests passing across 17 files)

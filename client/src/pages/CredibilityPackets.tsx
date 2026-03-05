@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { useState, useRef, useCallback } from 'react';
 import { printDocument } from '@/lib/printDocument';
+import { useBranding } from '@/lib/branding';
 import { useProfileReplacer } from '@/hooks/useProfileReplacer';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
@@ -792,6 +793,7 @@ function PacketDetail({
   replaceInText: (text: string) => string;
   hasProfile: boolean;
 }) {
+  const { branding } = useBranding();
   const Icon = packet.icon;
 
   const handlePrint = () => {
@@ -805,6 +807,7 @@ function PacketDetail({
       footer: hasProfile
         ? `Prepared by ${replaceInText('[Your Company Name]')} using the Freedom One Real Estate Investment System. This document is a template — not legal, financial, or investment advice.`
         : `Prepared using the Freedom One Real Estate Investment System. All bracketed fields [like this] should be customized with your actual business information before distributing. This document is a template — not legal, financial, or investment advice.`,
+      branding,
     });
   };
 
@@ -889,6 +892,7 @@ function PacketDetail({
 // ─── Main Page ──────────────────────────────────────────────────
 
 export default function CredibilityPackets() {
+  const { branding } = useBranding();
   const [selected, setSelected] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>('packets');
   const selectedPacket = PACKETS.find(p => p.id === selected);

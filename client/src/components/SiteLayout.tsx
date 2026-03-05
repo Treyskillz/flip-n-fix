@@ -3,10 +3,12 @@ import {
   Calculator, Landmark, Megaphone, FileText, GraduationCap,
   Newspaper, BookOpen, Menu, X, Home, Building2, ClipboardList, Save, Shield, CreditCard,
   Wrench, MapPin, Award, CheckSquare, HelpCircle, ChevronDown, Zap, Paintbrush, BarChart3,
-  Kanban, TrendingUp, Briefcase, DollarSign, Hammer, Palette
+  Kanban, TrendingUp, Briefcase, DollarSign, Hammer, Palette, Crown, Headphones
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { useAuth } from '@/_core/hooks/useAuth';
+import { trpc } from '@/lib/trpc';
 
 // Main Freedom One logo (shield + red text, transparent background)
 const MAIN_LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663030273730/c3pk6dbyVkhix88pdfEyoY/logo-transparent-black_1d2d479c.png";
@@ -108,6 +110,44 @@ function ResourcesDropdown({ location }: { location: string }) {
   );
 }
 
+function UserBadges() {
+  const { user, isAuthenticated } = useAuth();
+  const subQuery = trpc.subscription.status.useQuery(undefined, {
+    enabled: isAuthenticated,
+    retry: false,
+  });
+
+  if (!isAuthenticated || !user) return null;
+
+  const isAdmin = user.role === 'admin';
+  const plan = subQuery.data?.plan || 'free';
+  const isEliteOrAbove = plan === 'elite' || plan === 'team';
+
+  return (
+    <div className="hidden lg:flex items-center gap-1.5">
+      {isAdmin && (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30">
+          <Crown className="w-3 h-3" /> Admin
+        </span>
+      )}
+      {isEliteOrAbove && !isAdmin && (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-500/20 text-purple-400 border border-purple-500/30">
+          <Headphones className="w-3 h-3" /> Priority Support
+        </span>
+      )}
+      {plan !== 'free' && (
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+          plan === 'team' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
+          plan === 'elite' ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' :
+          'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+        }`}>
+          {plan}
+        </span>
+      )}
+    </div>
+  );
+}
+
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -150,6 +190,11 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
             })}
             <ResourcesDropdown location={location} />
           </nav>
+
+          {/* User Badges */}
+          <div className="hidden lg:flex items-center ml-auto">
+            <UserBadges />
+          </div>
 
           {/* Mobile Menu Button */}
           <Button

@@ -8,6 +8,7 @@ import { FileText, ChevronDown, ChevronRight, Copy, Check, AlertTriangle, Downlo
 import { useState, useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
 import { printDocument } from '@/lib/printDocument';
+import { useBranding } from '@/lib/branding';
 import { useProfileReplacer } from '@/hooks/useProfileReplacer';
 import { Link } from 'wouter';
 
@@ -37,6 +38,7 @@ function getProfilePlaceholderValues(profile: Record<string, string | undefined>
 }
 
 export default function Contracts() {
+  const { branding } = useBranding();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const { profile, hasProfile, replaceInText } = useProfileReplacer();
@@ -84,6 +86,7 @@ export default function Contracts() {
       subtitle: contract.useCase,
       sections,
       footer: `LEGAL DISCLAIMER: This contract template is provided for educational and informational purposes only. It is NOT legal advice. Real estate laws vary by state and locality. You MUST have a licensed real estate attorney in your state review and customize this contract before use. Freedom One System of Real Estate Investing assumes no liability for any consequences arising from the use of this template.`,
+      branding,
     });
   }, []);
 

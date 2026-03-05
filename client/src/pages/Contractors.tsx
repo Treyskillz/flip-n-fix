@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import { printDocument } from '@/lib/printDocument';
+import { useBranding } from '@/lib/branding';
 
 /* ─── Types ─── */
 interface Contractor {
@@ -1086,6 +1087,7 @@ function StarRating({ rating, onChange }: { rating: number; onChange?: (r: numbe
 }
 
 function DocumentViewer({ doc }: { doc: { title: string; icon: any; description: string; content: string } }) {
+  const { branding } = useBranding();
   const [expanded, setExpanded] = useState(false);
   const Icon = doc.icon;
 
@@ -1106,6 +1108,7 @@ function DocumentViewer({ doc }: { doc: { title: string; icon: any; description:
       subtitle: doc.description,
       sections,
       footer: 'Document from the Freedom One Real Estate Investment System. Customize all bracketed fields with your business information. This is a template \u2014 not legal or financial advice.',
+      branding,
     });
   };
 
@@ -1295,6 +1298,7 @@ function ContractorRolodex() {
 
 /* ─── Main Page ─── */
 export default function Contractors() {
+  const { branding } = useBranding();
   const [activeTab, setActiveTab] = useState<'rolodex' | 'find' | 'documents' | 'vetting' | 'payment' | 'licenses'>('rolodex');
   const [selectedState, setSelectedState] = useState('');
 

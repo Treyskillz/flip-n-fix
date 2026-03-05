@@ -3,7 +3,7 @@
 // Generates a branded, print-ready HTML document for all saved deals
 // ============================================================
 
-const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663030273730/c3pk6dbyVkhix88pdfEyoY/logo-transparent-black_1d2d479c.png";
+import type { BrandingConfig } from '@/lib/branding';
 
 function fmt(n: number): string {
   return new Intl.NumberFormat('en-US', {
@@ -77,7 +77,8 @@ function verdictStyle(verdict: string) {
   return VERDICT_COLORS[verdict] || VERDICT_COLORS['poor'];
 }
 
-export function buildPortfolioPdfHtml(portfolio: PortfolioData): string {
+export function buildPortfolioPdfHtml(portfolio: PortfolioData, branding?: BrandingConfig): string {
+  const b = branding;
   const dateStr = new Date().toLocaleDateString('en-US', {
     year: 'numeric', month: 'long', day: 'numeric',
   });
@@ -163,17 +164,17 @@ export function buildPortfolioPdfHtml(portfolio: PortfolioData): string {
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Portfolio Summary — Freedom One</title>
+   <title>Portfolio Summary — ${b?.companyName || 'Freedom One'}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a1a; padding: 32px; max-width: 1100px; margin: 0 auto; }
-    .report-header { display: flex; align-items: center; gap: 16px; padding-bottom: 16px; border-bottom: 3px solid #c53030; margin-bottom: 24px; }
+    .report-header { display: flex; align-items: center; gap: 16px; padding-bottom: 16px; border-bottom: 3px solid ${b?.brandColor || '#c53030'}; margin-bottom: 24px; }
     .logo { height: 48px; width: auto; }
     .header-text h1 { font-size: 22px; font-weight: 800; letter-spacing: 1px; color: #1a1a1a; }
     .header-text .subtitle { font-size: 13px; color: #666; margin-top: 2px; }
     .header-text .meta { font-size: 11px; color: #999; margin-top: 2px; }
     .section { margin-bottom: 24px; page-break-inside: avoid; }
-    .section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #c53030; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #eee; }
+    .section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: ${b?.brandColor || '#c53030'}; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #eee; }
     .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
     .kpi-card { padding: 14px; background: #f9f9f9; border-radius: 8px; text-align: center; border: 1px solid #e5e5e5; }
     .kpi-label { font-size: 10px; text-transform: uppercase; color: #888; letter-spacing: 0.5px; font-weight: 600; }
@@ -181,7 +182,7 @@ export function buildPortfolioPdfHtml(portfolio: PortfolioData): string {
     .kpi-sub { font-size: 10px; color: #999; margin-top: 2px; }
     .summary-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
     .summary-item { padding: 10px; background: #f5f5f5; border-radius: 6px; border-left: 3px solid #e5e5e5; }
-    .summary-item.accent { border-left-color: #c53030; }
+    .summary-item.accent { border-left-color: ${b?.brandColor || '#c53030'}; }
     .summary-item.green { border-left-color: #16a34a; }
     .summary-item.blue { border-left-color: #3b82f6; }
     .summary-item .label { font-size: 10px; text-transform: uppercase; color: #888; font-weight: 600; }
@@ -205,12 +206,13 @@ export function buildPortfolioPdfHtml(portfolio: PortfolioData): string {
 <body>
   <!-- Header -->
   <div class="report-header">
-    <img src="${LOGO_URL}" alt="Freedom One" class="logo" onerror="this.style.display='none'" />
+    ${b?.logoUrl ? `<img src="${b.logoUrl}" alt="${b.companyName}" class="logo" onerror="this.style.display='none'" />` : ''}
     <div class="header-text">
       <h1>PORTFOLIO SUMMARY REPORT</h1>
       <div class="subtitle">${portfolio.totalDeals} Deal${portfolio.totalDeals !== 1 ? 's' : ''} — Complete Investment Overview</div>
-      <div class="meta">Generated ${dateStr} | Freedom One Real Estate Investment System</div>
+      <div class="meta">Generated ${dateStr} | ${b?.footerText || 'Real Estate Investment System'}</div>
     </div>
+    ${b && (b.phone || b.email || b.website) ? `<div style="text-align:right;font-size:10px;color:#888;line-height:1.6;">${[b.phone, b.email, b.website].filter(Boolean).join('<br/>')}</div>` : ''}
   </div>
 
   <!-- KPI Cards -->
@@ -330,17 +332,16 @@ export function buildPortfolioPdfHtml(portfolio: PortfolioData): string {
 
   <!-- Footer -->
   <div class="footer">
-    <p><strong>Freedom One Real Estate Investment System</strong></p>
-    <p style="margin-top:4px;">Portfolio metrics are projections based on user-provided data. Actual results may vary significantly based on market conditions, property condition, contractor pricing, and other factors.</p>
-    <p style="margin-top:4px;">Always perform independent due diligence and consult with licensed professionals before making investment decisions.</p>
+    <p><strong>${b?.footerText || 'Real Estate Investment System'}</strong></p>
+    <p style="margin-top:4px;">${b?.disclaimerText || 'Portfolio metrics are projections based on user-provided data. Actual results may vary significantly based on market conditions, property condition, contractor pricing, and other factors. Always perform independent due diligence and consult with licensed professionals before making investment decisions.'}</p>
     <p style="margin-top:8px;color:#bbb;">Report generated ${dateStr}</p>
   </div>
 </body>
 </html>`;
 }
 
-export function downloadPortfolioPdf(portfolio: PortfolioData): void {
-  const html = buildPortfolioPdfHtml(portfolio);
+export function downloadPortfolioPdf(portfolio: PortfolioData, branding?: BrandingConfig): void {
+  const html = buildPortfolioPdfHtml(portfolio, branding);
   const printWindow = window.open('', '_blank');
   if (!printWindow) return;
   printWindow.document.write(html);

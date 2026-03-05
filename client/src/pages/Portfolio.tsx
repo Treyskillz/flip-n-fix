@@ -8,6 +8,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { trpc } from '@/lib/trpc';
 import { formatCurrency } from '@/lib/calculations';
 import { downloadPortfolioPdf } from '@/lib/portfolioPdf';
+import { useBranding } from '@/lib/branding';
 import { Link } from 'wouter';
 import { toast } from 'sonner';
 import {
@@ -17,6 +18,7 @@ import {
   CalendarDays
 } from 'lucide-react';
 import { HelpTooltip, HELP_TIPS } from '@/components/HelpTooltip';
+
 
 type DateRange = 'all' | '7d' | '30d' | '90d' | 'quarter' | 'year' | 'custom';
 
@@ -152,6 +154,7 @@ function DonutChart({ segments, centerLabel, centerValue }: {
 
 export default function Portfolio() {
   const { data: portfolio, isLoading } = trpc.deals.portfolio.useQuery();
+  const { branding } = useBranding();
 
   const [sortBy, setSortBy] = useState<'roi' | 'netProfit' | 'dealScore' | 'purchasePrice'>('roi');
   const [dateRange, setDateRange] = useState<DateRange>('all');
@@ -289,7 +292,7 @@ export default function Portfolio() {
               className="gap-1.5"
               onClick={() => {
                 if (portfolio) {
-                  downloadPortfolioPdf(portfolio);
+                  downloadPortfolioPdf(portfolio, branding);
                   toast.success('Portfolio PDF opened — use your browser\'s Print dialog to save as PDF.');
                 }
               }}

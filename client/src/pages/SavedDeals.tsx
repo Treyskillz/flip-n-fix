@@ -13,8 +13,10 @@ import {
   Download, Printer, FileText, Archive, Star, StarOff,
   ChevronDown, ChevronUp, Eye, Filter, LayoutGrid, LayoutList,
   CheckCircle2, Clock, XCircle, Pause, Loader2, StickyNote, Database,
-  CheckSquare, Square, X
+  CheckSquare, Square, X, Sparkles, FileSpreadsheet, Crown
 } from 'lucide-react';
+import { useAuth } from '@/_core/hooks/useAuth';
+import { Streamdown } from 'streamdown';
 import { Link } from 'wouter';
 import { formatCurrency } from '@/lib/calculations';
 import { toast } from 'sonner';
@@ -292,13 +294,15 @@ function InlineNotes({ notes, onSave, isUpdating }: {
 }
 
 // ─── Deal Card (Grid View) ───────────────────────────────────
-function DealCard({ deal, onDelete, onUpdate, selected, onToggle, isUpdating }: {
+function DealCard({ deal, onDelete, onUpdate, selected, onToggle, isUpdating, onAiSummary, isTeamTier }: {
   deal: SavedDeal;
   onDelete: () => void;
   onUpdate: (updates: Partial<{ status: DealStatus; starred: boolean; notes: string }>) => void;
   selected: boolean;
   onToggle: () => void;
   isUpdating: boolean;
+  onAiSummary?: (deal: SavedDeal) => void;
+  isTeamTier?: boolean;
 }) {
   const isProfit = deal.netProfit > 0;
   const status = (deal.status || 'active') as DealStatus;
@@ -388,6 +392,11 @@ function DealCard({ deal, onDelete, onUpdate, selected, onToggle, isUpdating }: 
           <Button variant="outline" size="sm" className="text-xs gap-1 h-7" onClick={() => exportDealPdf(deal)}>
             <Download className="w-3 h-3" />
           </Button>
+          {isTeamTier && onAiSummary && (
+            <Button variant="outline" size="sm" className="text-xs gap-1 h-7 border-purple-500/30 text-purple-400 hover:bg-purple-500/10" onClick={() => onAiSummary(deal)} title="AI Deal Summary (Team)">
+              <Sparkles className="w-3 h-3" />
+            </Button>
+          )}
           <Select value={status} onValueChange={(v) => onUpdate({ status: v as DealStatus })}>
             <SelectTrigger className="h-7 text-xs w-auto min-w-[90px]">
               <SelectValue />
@@ -682,8 +691,36 @@ function ComparisonTable({ deals }: { deals: SavedDeal[] }) {
 // ─── Main Component ──────────────────────────────────────────
 export default function SavedDeals() {
   const utils = trpc.useUtils();
+  const { user, isAuthenticated } = useAuth();
   const { data: deals = [], isLoading, error } = trpc.deals.list.useQuery();
+  const { data: subStatus } = trpc.subscription.status.useQuery(undefined, { enabled: isAuthenticated, retry: false });
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [aiSummaryDeal, setAiSummaryDeal] = useState<SavedDeal | null>(null);
+  const [aiSummaryText, setAiSummaryText] = useState<string>('');
+
+  const isAdmin = user?.role === 'admin';
+  const isTeamTier = isAdmin || subStatus?.plan === 'team';
+
+  const aiSummary = trpc.teamFeatures.aiDealSummary.useMutation({
+    onSuccess: (data) => {
+      setAiSummaryText(data.summary);
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  const bulkExport = trpc.teamFeatures.bulkExport.useMutation({
+    onSuccess: (data) => {
+      const blob = new Blob([data.csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `freedom-one-deals-export-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success(`Exported ${data.count} deals to CSV.`);
+    },
+    onError: (err) => toast.error(err.message),
+  });
   const [search, setSearch] = useState('');
   const [sortField, setSortField] = useState<SortField>('savedAt');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
@@ -1194,6 +1231,21 @@ export default function SavedDeals() {
                 <Download className="w-3 h-3" /> Export CSV
               </Button>
 
+              {/* Team Tier: Full Database Export */}
+              {isTeamTier && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 text-xs gap-1 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10"
+                  onClick={() => bulkExport.mutate()}
+                  disabled={bulkExport.isPending}
+                >
+                  {bulkExport.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <FileSpreadsheet className="w-3 h-3" />}
+                  Full DB Export
+                  <Crown className="w-2.5 h-2.5 text-amber-400" />
+                </Button>
+              )}
+
               {/* View Toggle */}
               <div className="flex border border-border rounded-md overflow-hidden ml-auto">
                 <Button
@@ -1233,6 +1285,27 @@ export default function SavedDeals() {
                     selected={selectedIds.has(deal.id)}
                     onToggle={() => toggleSelect(deal.id)}
                     isUpdating={isUpdating}
+                    isTeamTier={isTeamTier}
+                    onAiSummary={(d) => {
+                      setAiSummaryDeal(d);
+                      setAiSummaryText('');
+                      aiSummary.mutate({
+                        address: d.address,
+                        city: d.city,
+                        state: d.state,
+                        purchasePrice: d.purchasePrice,
+                        arv: d.arv,
+                        rehabCost: d.rehabCost,
+                        netProfit: d.netProfit,
+                        roi: d.roi,
+                        dealScore: d.dealScore ?? undefined,
+                        sqft: d.sqft,
+                        beds: d.beds,
+                        baths: d.baths,
+                        yearBuilt: d.yearBuilt,
+                        market: d.market ?? undefined,
+                      });
+                    }}
                   />
                 ))}
               </div>
@@ -1283,6 +1356,66 @@ export default function SavedDeals() {
           </p>
         </div>
       </section>
+
+      {/* AI Deal Summary Dialog (Team Tier) */}
+      <Dialog open={!!aiSummaryDeal} onOpenChange={(open) => { if (!open) setAiSummaryDeal(null); }}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-purple-400" />
+              AI Deal Summary
+              <Badge className="bg-purple-100 text-purple-700 text-[10px]">Team Exclusive</Badge>
+            </DialogTitle>
+            <DialogDescription>
+              {aiSummaryDeal ? `${aiSummaryDeal.address}, ${aiSummaryDeal.city}, ${aiSummaryDeal.state}` : ''}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-2">
+            {aiSummary.isPending ? (
+              <div className="flex items-center justify-center py-12 gap-3">
+                <Loader2 className="w-6 h-6 animate-spin text-purple-400" />
+                <span className="text-sm text-muted-foreground">Generating AI analysis...</span>
+              </div>
+            ) : aiSummaryText ? (
+              <div className="prose prose-sm dark:prose-invert max-w-none">
+                <Streamdown>{aiSummaryText}</Streamdown>
+              </div>
+            ) : null}
+          </div>
+          {aiSummaryText && (
+            <div className="flex gap-2 mt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1"
+                onClick={() => {
+                  navigator.clipboard.writeText(aiSummaryText);
+                  toast.success('Summary copied to clipboard');
+                }}
+              >
+                <FileText className="w-3.5 h-3.5" /> Copy to Clipboard
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1"
+                onClick={() => {
+                  const blob = new Blob([aiSummaryText], { type: 'text/markdown' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `deal-summary-${aiSummaryDeal?.address?.replace(/\s+/g, '-').toLowerCase() || 'deal'}.md`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                  toast.success('Summary downloaded');
+                }}
+              >
+                <Download className="w-3.5 h-3.5" /> Download
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -25,6 +25,7 @@ import {
   BedDouble, Bath, Ruler, Grid3X3, List, Search, Filter,
   MapPin, TrendingUp, TrendingDown, Minus, Globe
 } from 'lucide-react';
+import { useBranding, type BrandingConfig } from '@/lib/branding';
 
 // ─── REGIONAL MARKET SELECTOR ─────────────────────────────────
 // Now uses shared hook and components from @/hooks/useMarketSelector and @/components/MarketSelector
@@ -81,7 +82,7 @@ function shouldIncludeItem(itemLevel: 'cosmetic' | 'moderate' | 'full', roomCond
   return false;
 }
 
-function RoomTemplate({ room, tier, market }: { room: RoomScope; tier: MaterialTier; market: MarketSelection }) {
+function RoomTemplate({ room, tier, market, branding }: { room: RoomScope; tier: MaterialTier; market: MarketSelection; branding?: BrandingConfig }) {
   const photoUrl = ROOM_PHOTOS[room.id];
   const [expanded, setExpanded] = useState(false);
   const [condition, setCondition] = useState<RoomCondition>('moderate');
@@ -130,7 +131,9 @@ function RoomTemplate({ room, tier, market }: { room: RoomScope; tier: MaterialT
         <tr class="total"><td colspan="3">TOTALS</td><td>$${totalMaterial.toLocaleString()}</td><td>$${totalLabor.toLocaleString()}</td><td>$${(totalMaterial + totalLabor).toLocaleString()}</td></tr>
       </table>
       <div class="footer">
-        <p>Freedom One System of Real Estate Investing</p>
+        <p>${branding?.footerText || 'Freedom One Real Estate Investment System'}</p>
+        ${branding?.logoUrl ? `<div style="margin-bottom:4px"><img src="${branding.logoUrl}" alt="${branding.companyName}" style="height:30px;object-fit:contain" onerror="this.style.display='none'" /></div>` : ''}
+        ${branding && (branding.phone || branding.email) ? `<p>${[branding.phone, branding.email].filter(Boolean).join(' | ')}</p>` : ''}
         <p>This scope of work is for estimation purposes only. Actual costs may vary based on market conditions, property condition, and contractor pricing.</p>
       </div>
       </body></html>
@@ -296,7 +299,7 @@ function RoomTemplate({ room, tier, market }: { room: RoomScope; tier: MaterialT
 
 // ─── TEMPLATE DETAIL MODAL ────────────────────────────────────
 
-function TemplateDetailModal({ template, market, onClose }: { template: SOWTemplate; market: MarketSelection; onClose: () => void }) {
+function TemplateDetailModal({ template, market, onClose, branding }: { template: SOWTemplate; market: MarketSelection; onClose: () => void; branding?: BrandingConfig }) {
   // Apply regional adjustment
   const adjusted = useMemo(() => applyRegionalToTemplate(template, market.materialsFactor, market.laborFactor), [template, market]);
   const isAdjusted = market.key !== 'national';
@@ -348,7 +351,9 @@ function TemplateDetailModal({ template, market, onClose }: { template: SOWTempl
         ${adjusted.keyMaterials.map(m => `<li>${m}</li>`).join('')}
       </ul>
       <div class="footer">
-        <p><strong>Freedom One System of Real Estate Investing</strong></p>
+        ${branding?.logoUrl ? `<div style="margin-bottom:4px"><img src="${branding.logoUrl}" alt="${branding.companyName}" style="height:30px;object-fit:contain" onerror="this.style.display='none'" /></div>` : ''}
+        <p><strong>${branding?.footerText || 'Freedom One Real Estate Investment System'}</strong></p>
+        ${branding && (branding.phone || branding.email) ? `<p>${[branding.phone, branding.email].filter(Boolean).join(' | ')}</p>` : ''}
         <p>This scope of work is for estimation purposes only. Actual costs may vary based on market conditions, property condition, and contractor pricing. Always obtain multiple bids from licensed contractors.</p>
       </div>
       </body></html>
@@ -545,6 +550,7 @@ function TemplateCard({ template, market, onClick }: { template: SOWTemplate; ma
 
 export default function ScopeOfWork() {
   const rooms = getDefaultRoomScopes();
+  const { branding } = useBranding();
   const [tier, setTier] = useState<MaterialTier>('standard');
   const [activeTab, setActiveTab] = useState<'library' | 'estimator'>('library');
   const [selectedRoom, setSelectedRoom] = useState<string>('all');
@@ -838,7 +844,7 @@ export default function ScopeOfWork() {
           <section className="container py-8">
             <div className="space-y-3">
               {rooms.map(room => (
-                <RoomTemplate key={room.id} room={room} tier={tier} market={market} />
+                <RoomTemplate key={room.id} room={room} tier={tier} market={market} branding={branding} />
               ))}
             </div>
           </section>
@@ -867,6 +873,7 @@ export default function ScopeOfWork() {
           template={selectedTemplate}
           market={market}
           onClose={() => setSelectedTemplate(null)}
+          branding={branding}
         />
       )}
     </div>

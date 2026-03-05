@@ -21,6 +21,7 @@ import {
   RotateCcw, Loader2, Lock, Trophy, Award, Download
 } from 'lucide-react';
 import { generateCertificate } from '@/lib/generateCertificate';
+import { useBranding } from '@/lib/branding';
 import { generateCourseEbook } from '@/lib/generateEbook';
 import { useState, useMemo, useCallback } from 'react';
 import { Streamdown } from 'streamdown';
@@ -198,6 +199,7 @@ function VideoPlaceholder({ lessonId, script }: { lessonId: string; script?: Vid
 }
 
 function CertificateSection({ totalLessons, totalModules }: { totalLessons: number; totalModules: number }) {
+  const { branding } = useBranding();
   const certQuery = trpc.certificate.eligibility.useQuery(undefined, { retry: false });
 
   if (certQuery.isLoading) return null;
@@ -214,6 +216,7 @@ function CertificateSection({ totalLessons, totalModules }: { totalLessons: numb
       totalLessons,
       totalModules,
       quizzesPassed,
+      branding,
     });
   };
 
@@ -265,6 +268,7 @@ function CertificateSection({ totalLessons, totalModules }: { totalLessons: numb
 }
 
 export default function Course() {
+  const { branding } = useBranding();
   const [expandedModule, setExpandedModule] = useState<string | null>('mod-1');
   const [activeLesson, setActiveLesson] = useState<string | null>('l-1-1');
   const [showScript, setShowScript] = useState(false);
@@ -462,7 +466,7 @@ export default function Course() {
             </div>
             <div className="flex gap-2">
               <Button
-                onClick={() => generateCourseEbook({ includePremium: false })}
+                onClick={() => generateCourseEbook({ includePremium: false, branding })}
                 variant="outline"
                 size="sm"
                 className="gap-1.5 border-[oklch(0.48_0.20_18)]/30 text-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.48_0.20_18)]/10"
@@ -471,7 +475,7 @@ export default function Course() {
                 Standard
               </Button>
               <Button
-                onClick={() => generateCourseEbook({ includePremium: true })}
+                onClick={() => generateCourseEbook({ includePremium: true, branding })}
                 size="sm"
                 className="gap-1.5 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white"
               >

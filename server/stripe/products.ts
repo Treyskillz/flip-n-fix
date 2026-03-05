@@ -55,12 +55,14 @@ export const PLANS = {
   },
   team: {
     name: "Team",
-    description: "White-label branding for your investment business",
+    description: "White-label branding & AI-powered tools for your investment business",
     features: [
       "Everything in Elite",
       "White-Label Reports (Your Logo & Branding)",
       "Custom Branded Investor Reports",
       "Custom Branded Portfolio PDFs",
+      "AI Deal Summary Generator",
+      "Full Database Export (CSV)",
       "Branded Shared Deal Links",
       "Dedicated Onboarding Support",
     ],
