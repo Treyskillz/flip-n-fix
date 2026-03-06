@@ -520,3 +520,28 @@
 - [x] Use notifyOwner helper for admin notifications on shared deal views
 - [x] Add shareDeal.listMine procedure for users to see their shared deals + view counts
 - [x] Write vitest tests for view tracking and notification logic
+
+## My Shared Links Section (March 6, 2026)
+- [x] Add "My Shared Links" collapsible section to Saved Deals page
+- [x] Display shared link URL, property address, view count, created date, expiration date
+- [x] Add copy-to-clipboard button for each shared link
+- [x] Add delete/revoke shared link functionality (server + UI)
+- [x] Show expired vs active status badge
+- [ ] Write vitest tests for shared links listing
+
+## Comprehensive Audit & Updates (March 6, 2026)
+- [x] Update Manual/Instructions with CSV Import feature documentation
+- [x] Update Manual/Instructions with My Shared Links section documentation
+- [x] Update Manual/Instructions with Shared Deal View Notifications documentation
+- [x] Update Manual/Instructions with Replay Feature Tour documentation
+- [x] Update Manual/Instructions with Deal Comparison feature documentation
+- [x] Update Manual/Instructions with Analytics Dashboard documentation
+- [x] Update Manual/Instructions with Pipeline/Deal Tracker documentation
+- [x] Update Manual with Pipeline, Deal Comparison, Analytics, Profit Calculator, Profile, White-Label, Free Guide, Blog Admin sections
+- [x] Verify all subscription tier features listed on Pricing page match actual features
+- [x] Add missing features to correct tiers on Pricing page (Pro, Elite, Team all updated)
+- [x] Fix outdated pricing in Support FAQ ($39/$79/$149 → $99/$179/$289)
+- [x] Full head-to-toe functionality check - fix TS errors, broken imports, missing pages
+- [x] DealComparison file exists and route works at /compare
+- [x] Ensure all routes work and all pages load correctly (41 pages, all routes verified)
+- [x] Run full test suite - 218 tests passing across 19 test files

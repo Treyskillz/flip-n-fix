@@ -31,6 +31,12 @@ The Fix & Flip Analyzer is a comprehensive real estate investment analysis syste
 - **Track all costs** — Holding costs, closing costs, and financing all factored in
 - **Profitability dashboard** — Real-time deal score, ROI, cash-on-cash return, and 70% rule analysis
 - **Save and compare deals** — Save unlimited deals and compare them side by side
+- **Import deals from CSV** — Bulk-import deals from spreadsheets (Team tier)
+- **My Shared Links** — Track all your shared deal links with view counts and expiration dates
+- **Pipeline Deal Tracker** — Kanban-style deal pipeline from lead to closing
+- **Deal Comparison** — Side-by-side comparison of 2–6 deals (Team tier)
+- **Analytics Dashboard** — Advanced portfolio performance metrics (Team tier)
+- **Profit Calculator** — Six exit strategy scenarios (Elite & Team tiers)
 - **SOW Templates** — 104 professional renovation templates with photos and cost breakdowns
 - **Lender Directory** — Curated hard money and private lender contacts
 - **Marketing Templates** — Direct mail, postcards, email sequences, and cold call scripts
@@ -41,6 +47,10 @@ The Fix & Flip Analyzer is a comprehensive real estate investment analysis syste
 - **Credibility Packets** — Professional investor credibility materials
 - **State Guide** — State-by-state real estate investing regulations
 - **Contractor Management** — Track and manage your contractor relationships
+- **Renovation Designer** — Visualize room designs and material choices
+- **White-Label Branding** — Custom logo and branding on all reports (Team tier)
+- **Blog & Auto-Publishing** — Content management with AI generation and Facebook auto-posting
+- **Free Guide & Lead Capture** — Lead generation with downloadable guide
 
 ### Quick Start Guide
 
@@ -382,12 +392,41 @@ Click the **trash icon** on any deal card or in the table actions column. A conf
 ### Migrating from Browser Storage
 If you previously saved deals before the cloud database was added, you will see a yellow **migration banner** at the top of the Saved Deals page. Click **Migrate to Cloud** to move all your local deals to the database. After migration, your deals are accessible from any device.
 
+### Bulk Actions (Team Tier)
+When you have a Team subscription, you can select multiple deals using the checkboxes and perform bulk operations:
+- **Compare Deals** — Select 2–6 deals and click "Compare Selected" to open a side-by-side comparison view
+- **Full Database Export** — Export all your saved deals as a CSV file for spreadsheet analysis
+- **AI Deal Summary** — Click the sparkle icon on any deal card to generate an AI-powered analysis summary
+
+### Import Deals from CSV (Team Tier)
+Team subscribers can bulk-import deals from a CSV file:
+1. Click the **Import CSV** button in the toolbar (upload icon)
+2. Download the **sample template** to see the expected column format
+3. Upload your CSV file — the app previews the first 5 rows for verification
+4. Click **Import Deals** to process the file
+5. The app maps columns automatically (supports 30+ header name variants like "Street Address", "Purchase Price", "After Repair Value", etc.)
+6. Each row is validated, profit/ROI/deal score are calculated automatically, and deals are saved to your database
+
+Supported columns: Address, City, State, Zip, Purchase Price, ARV, Rehab Cost, Sqft, Beds, Baths, Year Built, Market, Status, Notes.
+
+### My Shared Links
+Below the deal grid on the Saved Deals page, you will find the **My Shared Links** section (click to expand). This shows every deal link you have shared:
+- **Property address** and active/expired status badge
+- **View count** — how many times the link has been opened
+- **Created date** and **days remaining** before expiration (links expire after 30 days)
+- **Copy** — copy the share URL to your clipboard
+- **Open** — open the shared link in a new tab
+- **Revoke** — permanently delete the shared link so it can no longer be viewed
+
+You also receive a notification when someone views your shared link for the first time, and again every 5 views.
+
 ### Tips for Deal Management
 - Save every deal you analyze, even the ones you pass on — this builds your market knowledge over time
 - Use statuses to track your deal pipeline from analysis through closing
 - Add notes immediately after property visits or phone calls while details are fresh
 - Star your top 3-5 deals to keep them visible
-- Use the Portfolio Dashboard to see aggregate performance across all saved deals`,
+- Use the Portfolio Dashboard to see aggregate performance across all saved deals
+- Import deals from spreadsheets when transitioning from another system`,
   },
   {
     id: 'lenders',
@@ -763,20 +802,72 @@ The Blog page provides educational articles, market updates, and investing tips 
     icon: '💳',
     content: `## Pricing & Subscription Plans
 
-The app offers tiered subscription plans to match your investing activity level.
+The app offers four subscription tiers to match your investing activity level. All paid plans include a **7-day free trial** — no charge until day 8.
+
+### Free Tier
+Get started at no cost:
+- Basic Deal Analyzer (3 analyses per month)
+- 70% Rule Calculator
+- Blog & Educational Content
+- Marketing Templates (View Only)
+
+### Pro Tier ($99/month or $990/year)
+Full analysis suite for active investors:
+- Everything in Free
+- Unlimited Saved Deals
+- Full Rehab Estimator with Home Depot SKUs
+- SOW Templates (All 14 Rooms)
+- Investor Presentation Reports
+- Contract Templates (Download)
+- Marketing Templates (Download)
+- Lender Directory
+- Regional Cost Adjustments
+- Pipeline Deal Tracker
+- Renovation Designer
+- Quick Check Tool
+
+### Elite Tier ($179/month or $1,790/year)
+Complete system with course & advanced tools:
+- Everything in Pro
+- Profit Calculator (All 6 Scenarios)
+- Full Course Access (8 Modules + Bonus)
+- Video Lesson Scripts & Guides
+- Property Listings Page
+- Email Investor Reports
+- Priority Support
+- Gantt Chart Export (PDF)
+
+### Team Tier ($289/month or $2,890/year)
+White-label branding & AI-powered tools:
+- Everything in Elite
+- White-Label Reports (Your Logo & Branding)
+- Custom Branded Investor Reports & Portfolio PDFs
+- AI Deal Summary Generator
+- Full Database Export (CSV)
+- Import Deals from CSV
+- Deal Comparison (Side-by-Side)
+- Analytics Dashboard
+- Branded Shared Deal Links
+- Shared Link View Notifications
+- Dedicated Onboarding Support
 
 ### How Subscriptions Work
 1. Navigate to the **Pricing** page from the navigation menu
 2. Review the available plans and features
-3. Click **Subscribe** on your preferred plan
+3. Click **Start 7-Day Free Trial** on your preferred plan
 4. Complete payment through the secure Stripe checkout
-5. Your account is upgraded immediately
+5. Your account is upgraded immediately with full access
+6. You are not charged until day 8
 
 ### Managing Your Subscription
-- View your current plan in your account settings
-- Upgrade or downgrade at any time
+- View your current plan on the **Profile** page
+- Upgrade or downgrade at any time from the Pricing page
 - Cancel anytime — your access continues through the billing period
 - View payment history and download invoices
+- Use the **Replay Feature Tour** button on your Profile page to see the subscription features walkthrough again
+
+### Gifted Subscriptions
+The site owner can gift subscription access to specific users through the Admin panel. Gifted subscriptions provide full plan access without requiring payment.
 
 ### Testing Payments
 For testing purposes, use the card number **4242 4242 4242 4242** with any future expiration date and any CVC.`,
@@ -923,11 +1014,19 @@ The PDF report includes:
 ### Portfolio Summary PDF
 From the **Portfolio Dashboard**, click **Download PDF** to generate a summary of all your deals. See the Portfolio Dashboard section for details.
 
+### Shared Link View Notifications
+When someone opens your shared deal link, you receive a notification:
+- **First view** — Notified immediately when the link is first opened
+- **Every 5th view** — Notified at 5, 10, 15, 20 views, etc.
+- Notifications include the property address, total view count, and share ID
+- View all your shared links and their view counts in the **My Shared Links** section on the Saved Deals page
+
 ### Tips
 - Share deal links with your lender when applying for financing — it shows you do thorough analysis
 - Include the PDF in your credibility packet when meeting new partners
 - Email reports to your CPA for tax planning discussions
-- Use shared links to collaborate with partners on deal evaluation`,
+- Use shared links to collaborate with partners on deal evaluation
+- Check your shared link view counts to gauge investor interest`,
   },
   {
     id: 'quick-check',
@@ -984,6 +1083,216 @@ Design selections in the Renovation Designer can inform your rehab budget in the
 - Match your design choices to the neighborhood — don't over-improve for the area
 - Use Rental Grade for investment properties, Standard for typical neighborhoods, Luxury for upscale areas
 - Take screenshots of your design selections to share with contractors`,
+  },
+  {
+    id: 'pipeline',
+    title: 'Pipeline / Deal Tracker',
+    icon: '📊',
+    content: `## Pipeline / Deal Tracker
+
+The Pipeline is a Kanban-style deal tracker that lets you manage your deals through every stage of the investment process.
+
+### Accessing the Pipeline
+Click **Pipeline** in the top navigation bar. The Pipeline requires you to be logged in.
+
+### Pipeline Stages
+Deals move through these stages (columns):
+- **Lead** — New opportunities you are evaluating
+- **Analyzing** — Running numbers in the Deal Analyzer
+- **Offer Made** — You have submitted an offer
+- **Under Contract** — Offer accepted, in due diligence
+- **Rehab** — Renovation in progress
+- **Listed** — Property is on the market
+- **Closed** — Deal is complete
+- **Dead** — Deal fell through or you passed
+
+### Managing Deals
+- **Add a deal** — Click the "+" button in any column to create a new pipeline deal
+- **Move deals** — Drag and drop deals between columns, or use the stage dropdown
+- **Deal details** — Click any deal card to open the detail view with full property info, timeline, notes, documents, and contacts
+- **Timeline** — Every stage change and note is logged in the deal timeline
+- **Contacts** — Add contacts (agent, seller, contractor, lender) to each deal
+- **Documents** — Track documents sent and received
+
+### Deal Detail Page
+Click any deal in the Pipeline to open its detail page (/pipeline/:id). This page shows:
+- Property information and financial summary
+- Stage history timeline with dates
+- Notes and activity log
+- Associated contacts
+- Quick actions (change stage, add note, add contact)
+
+### Tips
+- Move deals to the correct stage as soon as status changes — this keeps your pipeline accurate
+- Add notes after every phone call or property visit
+- Use the Pipeline alongside the Deal Analyzer for a complete workflow`,
+  },
+  {
+    id: 'deal-comparison',
+    title: 'Deal Comparison',
+    icon: '⚖️',
+    content: `## Deal Comparison (Team Tier)
+
+The Deal Comparison tool lets you view 2–6 saved deals side by side to compare key metrics and make informed decisions.
+
+### How to Access
+1. Go to **Saved Deals**
+2. Select 2–6 deals using the checkboxes (Team tier required)
+3. Click **Compare Selected** in the bulk actions bar
+4. The app opens the comparison view at /compare
+
+### What’s Compared
+The comparison table shows these metrics for each deal:
+- Property address and location
+- Purchase price, ARV, and rehab cost
+- Net profit and ROI percentage
+- Deal score and verdict
+- Financing costs and holding costs
+- Square footage, beds, baths
+- Status and market area
+
+### Tips
+- Compare deals in the same market to identify the best opportunity
+- Use comparison before making final offer decisions
+- Export or screenshot the comparison for partner discussions`,
+  },
+  {
+    id: 'analytics-dashboard',
+    title: 'Analytics Dashboard',
+    icon: '📈',
+    content: `## Analytics Dashboard (Team Tier)
+
+The Analytics Dashboard provides advanced performance metrics and visualizations for your deal portfolio.
+
+### Accessing the Dashboard
+Navigate to **Analytics** from the navigation menu or your Profile page. Requires Team subscription or Admin access.
+
+### Dashboard Metrics
+- **Total deals** and deals by status
+- **Average ROI** and average deal score across your portfolio
+- **Profit trends** over time
+- **Market distribution** — see which markets you are most active in
+- **Performance charts** — visual breakdowns of your investment activity
+
+### Tips
+- Review the dashboard monthly to track your investing progress
+- Use the data to identify which markets and deal types perform best for you
+- Share dashboard insights with partners and lenders to demonstrate your track record`,
+  },
+  {
+    id: 'profit-calculator',
+    title: 'Profit Calculator',
+    icon: '💰',
+    content: `## Profit Calculator (Elite & Team Tiers)
+
+The Profit Calculator is an advanced tool that models six different exit strategy scenarios for any property.
+
+### Accessing the Calculator
+Click **Profit Calc** in the top navigation bar. Requires Elite or Team subscription.
+
+### Six Scenarios
+1. **Fix & Flip** — Buy, renovate, and sell for profit
+2. **Wholesale** — Assign the contract to another investor for a fee
+3. **BRRRR** — Buy, Rehab, Rent, Refinance, Repeat
+4. **Buy & Hold** — Long-term rental income analysis
+5. **Subject-To** — Take over existing financing
+6. **Short-Term Rental** — Airbnb/VRBO income projections
+
+### How to Use
+1. Enter the property details (address, purchase price, ARV, rehab cost)
+2. Configure scenario-specific inputs (rental income, refinance terms, wholesale fee, etc.)
+3. View the profitability analysis for each scenario
+4. Compare scenarios to determine the best exit strategy
+
+### Tips
+- Run all six scenarios on every deal to find the most profitable exit
+- The BRRRR calculator includes cash-out refinance modeling
+- Use the Profit Calc Guide page for detailed instructions on each scenario`,
+  },
+  {
+    id: 'profile-settings',
+    title: 'Profile & Settings',
+    icon: '⚙️',
+    content: `## Profile & Settings
+
+Your Profile page is your account hub for managing personal information, subscription status, and app preferences.
+
+### Accessing Your Profile
+Click your avatar or name in the top-right corner of the navigation bar, or navigate to **/profile**.
+
+### Profile Information
+- **Name and email** — Displayed on your account and used for certificates
+- **Current subscription plan** — Shows your active tier (Free, Pro, Elite, or Team)
+- **Subscription management** — Links to upgrade, manage, or cancel your plan
+
+### Replay Feature Tour
+If you want to see the subscription features walkthrough again:
+1. Go to your **Profile** page
+2. Click the **Replay Feature Tour** button
+3. The guided tour will restart, highlighting key features based on your subscription tier
+
+### White-Label Branding (Team Tier)
+Team subscribers can access **White-Label Settings** from their Profile to customize:
+- Company logo and name on all reports
+- Custom branding on investor presentations
+- Branded portfolio PDFs and shared deal links
+
+### Tips
+- Set up your name before completing the course — it appears on your completion certificate
+- Check your Profile page to verify your subscription status
+- Use the Replay Tour after upgrading to discover new features`,
+  },
+  {
+    id: 'free-guide',
+    title: 'Free Guide & Lead Capture',
+    icon: '📖',
+    content: `## Free Guide & Lead Capture
+
+The Free Guide page is a lead generation tool that offers visitors a downloadable guide in exchange for their email address.
+
+### How It Works
+1. Visitors land on the **/free-guide** page
+2. They see "5 Costly Mistakes Every New Flipper Makes" with compelling descriptions
+3. They enter their email address and click Download
+4. The guide is delivered and their email is captured for follow-up
+
+### For Site Owners
+- The Free Guide page is linked from the home page and can be shared on social media
+- Email addresses collected can be used for email marketing campaigns
+- The guide content establishes credibility and drives signups`,
+  },
+  {
+    id: 'blog-admin',
+    title: 'Blog & Auto-Publishing',
+    icon: '✍️',
+    content: `## Blog & Auto-Publishing (Admin)
+
+The Blog system includes a public-facing blog and an admin panel for content management.
+
+### Public Blog
+Accessible at **/blog**, the blog displays published articles with:
+- Featured images and excerpts
+- Full article view with markdown rendering
+- Category and tag organization
+
+### Admin Blog Panel
+Accessible at **/admin/blog** (admin only):
+- **Create posts** — Write articles with a rich markdown editor
+- **Schedule posts** — Set a future publish date for automatic publishing
+- **Draft management** — Save drafts and publish when ready
+- **AI Auto-Generate** — Generate blog posts automatically using AI
+- **Facebook Auto-Posting** — Connect your Facebook page to automatically share new blog posts
+
+### Facebook Integration
+In the Admin Blog panel, you can connect a Facebook page:
+1. Enter your Facebook Page ID and Access Token
+2. Test the connection
+3. When enabled, new blog posts are automatically shared to your Facebook page
+
+### Tips
+- Use scheduled posts to maintain a consistent publishing cadence
+- The AI auto-generate feature creates SEO-friendly real estate content
+- Blog posts help drive organic traffic to your site`,
   },
   {
     id: 'support',

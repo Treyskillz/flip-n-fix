@@ -10,7 +10,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'What subscription plans are available?',
-    a: 'We offer four tiers: Free (basic deal analysis), Pro ($39/mo - unlimited deals, full course access), Elite ($79/mo - everything in Pro plus investor reports and priority support), and Team ($149/mo - everything in Elite plus multi-user access and team collaboration).',
+    a: 'We offer four tiers: Free (basic deal analysis), Pro ($99/mo - unlimited deals, full rehab estimator, SOW templates, pipeline tracker, and more), Elite ($179/mo - everything in Pro plus Profit Calculator, full course access, property listings, and priority support), and Team ($289/mo - everything in Elite plus white-label branding, AI deal summaries, CSV import/export, deal comparison, and analytics dashboard). All paid plans include a 7-day free trial.',
   },
   {
     q: 'How accurate are the rehab cost estimates?',

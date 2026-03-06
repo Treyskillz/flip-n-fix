@@ -419,6 +419,29 @@ Provide 3-5 comparable RENOVATED properties that meet ALL of these criteria:
         expiresAt: r.expiresAt,
       }));
     }),
+
+    /** Delete/revoke a shared deal link */
+    revoke: protectedProcedure
+      .input(z.object({ shareId: z.string().min(1) }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        // Verify ownership
+        const row = await db.select({ userId: sharedDeals.userId })
+          .from(sharedDeals)
+          .where(eq(sharedDeals.shareId, input.shareId))
+          .limit(1);
+
+        if (!row[0]) throw new Error("Shared link not found.");
+        const isAdmin = ctx.user.role === 'admin';
+        if (!isAdmin && row[0].userId !== ctx.user.id) {
+          throw new Error("You can only revoke your own shared links.");
+        }
+
+        await db.delete(sharedDeals).where(eq(sharedDeals.shareId, input.shareId));
+        return { success: true };
+      }),
   }),
 
   // ─── Saved Deals (Server-side) ────────────────────────────────

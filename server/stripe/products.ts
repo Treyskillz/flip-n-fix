@@ -12,6 +12,7 @@ export const PLANS = {
       "70% Rule Calculator",
       "Blog & Educational Content",
       "Marketing Templates (View Only)",
+      "Free Guide Download",
     ],
     priceMonthly: 0, // cents
     priceYearly: 0,
@@ -30,6 +31,13 @@ export const PLANS = {
       "Marketing Templates (Download)",
       "Lender Directory",
       "Regional Cost Adjustments",
+      "Pipeline Deal Tracker",
+      "Renovation Designer",
+      "Quick Check Tool",
+      "Investor Checklists",
+      "Credibility Packets",
+      "Contractor Management",
+      "Share Deal Links",
     ],
     priceMonthly: 9900, // $99/mo
     priceYearly: 99000, // $990/yr
@@ -48,6 +56,8 @@ export const PLANS = {
       "Email Investor Reports",
       "Priority Support",
       "Gantt Chart Export (PDF)",
+      "Portfolio Dashboard & PDF Export",
+      "State Reference Guide",
     ],
     priceMonthly: 17900, // $179/mo
     priceYearly: 179000, // $1790/yr
@@ -63,7 +73,11 @@ export const PLANS = {
       "Custom Branded Portfolio PDFs",
       "AI Deal Summary Generator",
       "Full Database Export (CSV)",
+      "Import Deals from CSV",
+      "Deal Comparison (Side-by-Side)",
+      "Analytics Dashboard",
       "Branded Shared Deal Links",
+      "Shared Link View Notifications",
       "Dedicated Onboarding Support",
     ],
     priceMonthly: 28900, // $289/mo

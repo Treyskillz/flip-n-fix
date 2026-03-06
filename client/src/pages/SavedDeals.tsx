@@ -13,7 +13,8 @@ import {
   Download, Printer, FileText, Archive, Star, StarOff,
   ChevronDown, ChevronUp, Eye, Filter, LayoutGrid, LayoutList,
   CheckCircle2, Clock, XCircle, Pause, Loader2, StickyNote, Database,
-  CheckSquare, Square, X, Sparkles, FileSpreadsheet, Crown, Upload
+  CheckSquare, Square, X, Sparkles, FileSpreadsheet, Crown, Upload,
+  Link2, Copy, ExternalLink, Trash
 } from 'lucide-react';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { Streamdown } from 'streamdown';
@@ -801,6 +802,19 @@ export default function SavedDeals() {
     a.click();
     URL.revokeObjectURL(url);
   };
+  // ─── My Shared Links ───────────────────────────────────────
+  const [showSharedLinks, setShowSharedLinks] = useState(false);
+  const sharedLinksQuery = trpc.shareDeal.listMine.useQuery(undefined, {
+    enabled: isAuthenticated && showSharedLinks,
+  });
+  const revokeLink = trpc.shareDeal.revoke.useMutation({
+    onSuccess: () => {
+      sharedLinksQuery.refetch();
+      toast.success('Shared link revoked.');
+    },
+    onError: (err) => toast.error(`Failed to revoke: ${err.message}`),
+  });
+
   const [search, setSearch] = useState('');
   const [sortField, setSortField] = useState<SortField>('savedAt');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
@@ -1453,6 +1467,128 @@ export default function SavedDeals() {
           </>
         )}
       </section>
+
+      {/* My Shared Links Section */}
+      {isAuthenticated && (
+        <section className="container py-6">
+          <button
+            className="w-full flex items-center justify-between p-4 rounded-lg bg-secondary/40 hover:bg-secondary/60 transition-colors"
+            onClick={() => setShowSharedLinks(!showSharedLinks)}
+          >
+            <div className="flex items-center gap-2">
+              <Link2 className="w-4.5 h-4.5 text-[oklch(0.48_0.20_18)]" />
+              <span className="font-semibold text-sm">My Shared Links</span>
+              {sharedLinksQuery.data && sharedLinksQuery.data.length > 0 && (
+                <Badge variant="secondary" className="text-[10px]">{sharedLinksQuery.data.length}</Badge>
+              )}
+            </div>
+            {showSharedLinks ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+          </button>
+
+          {showSharedLinks && (
+            <div className="mt-3">
+              {sharedLinksQuery.isLoading ? (
+                <div className="flex items-center justify-center py-8 gap-2">
+                  <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Loading shared links...</span>
+                </div>
+              ) : !sharedLinksQuery.data || sharedLinksQuery.data.length === 0 ? (
+                <div className="text-center py-8">
+                  <Link2 className="w-8 h-8 mx-auto mb-2 text-muted-foreground/40" />
+                  <p className="text-sm text-muted-foreground">No shared links yet.</p>
+                  <p className="text-xs text-muted-foreground/70 mt-1">Share a deal from the Analyzer to create a shareable link.</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {sharedLinksQuery.data.map((link) => {
+                    const isExpired = link.expiresAt && new Date(link.expiresAt) < new Date();
+                    const shareUrl = `${window.location.origin}/shared/${link.shareId}`;
+                    const daysLeft = link.expiresAt
+                      ? Math.max(0, Math.ceil((new Date(link.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+                      : null;
+
+                    return (
+                      <Card key={link.shareId} className={`border ${isExpired ? 'border-red-500/20 opacity-60' : 'border-border/60'}`}>
+                        <CardContent className="p-3">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                            {/* Link Info */}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <p className="font-medium text-sm truncate">
+                                  {link.propertyAddress || 'Untitled Deal'}
+                                </p>
+                                {isExpired ? (
+                                  <Badge variant="destructive" className="text-[10px] shrink-0">Expired</Badge>
+                                ) : (
+                                  <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[10px] shrink-0">Active</Badge>
+                                )}
+                              </div>
+                              <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                                <span className="flex items-center gap-1">
+                                  <Eye className="w-3 h-3" />
+                                  {link.viewCount} view{link.viewCount !== 1 ? 's' : ''}
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <Clock className="w-3 h-3" />
+                                  Created {new Date(link.createdAt).toLocaleDateString()}
+                                </span>
+                                {daysLeft !== null && !isExpired && (
+                                  <span className={`flex items-center gap-1 ${daysLeft <= 5 ? 'text-amber-500' : ''}`}>
+                                    <AlertTriangle className="w-3 h-3" />
+                                    {daysLeft} day{daysLeft !== 1 ? 's' : ''} left
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-7 text-xs gap-1"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(shareUrl);
+                                  toast.success('Link copied to clipboard!');
+                                }}
+                                disabled={!!isExpired}
+                              >
+                                <Copy className="w-3 h-3" /> Copy
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-7 text-xs gap-1"
+                                onClick={() => window.open(shareUrl, '_blank')}
+                                disabled={!!isExpired}
+                              >
+                                <ExternalLink className="w-3 h-3" /> Open
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-7 text-xs gap-1 text-red-400 hover:text-red-300 hover:bg-red-500/10 border-red-500/20"
+                                onClick={() => {
+                                  if (confirm('Revoke this shared link? Anyone with the link will no longer be able to view it.')) {
+                                    revokeLink.mutate({ shareId: link.shareId });
+                                  }
+                                }}
+                                disabled={revokeLink.isPending}
+                              >
+                                <Trash className="w-3 h-3" /> Revoke
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Disclaimer */}
       <section className="bg-secondary/30 border-t border-border/50">
