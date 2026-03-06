@@ -3143,6 +3143,43 @@ Market: ${input.market || 'Not specified'}`,
           results.push({ sku: r.sku, status: r.status, reason: r.reason });
         }
 
+        // Price alert: notify owner if any product changed >10%
+        const bigChanges = results.filter(r => {
+          const prod = products.find(p => p.sku === r.sku);
+          if (!prod) return false;
+          const origNum = parseFloat(prod.originalPrice.replace(/[^0-9.]/g, ''));
+          const parsed2 = (parsed.results || []).find((x: any) => x.sku === r.sku);
+          if (!parsed2?.currentPrice) return false;
+          const currNum = parseFloat(parsed2.currentPrice.replace(/[^0-9.]/g, ''));
+          if (isNaN(origNum) || isNaN(currNum) || origNum === 0) return false;
+          return Math.abs(((currNum - origNum) / origNum) * 100) >= 10;
+        });
+
+        if (bigChanges.length > 0) {
+          const alertLines = bigChanges.map(r => {
+            const prod = products.find(p => p.sku === r.sku);
+            const parsed2 = (parsed.results || []).find((x: any) => x.sku === r.sku);
+            return `• ${prod?.name} (${r.sku}): ${prod?.originalPrice} → ${parsed2?.currentPrice} — ${r.reason}`;
+          }).join('\n');
+          await notifyOwner({
+            title: `⚠️ Price Alert: ${bigChanges.length} product(s) changed >10%`,
+            content: `The following Home Depot products have significant price changes:\n\n${alertLines}\n\nReview the Product Catalog admin page to update your rehab budgets.`,
+          });
+        }
+
+        // Also notify for discontinued products
+        const discontinued = results.filter(r => r.status === 'discontinued');
+        if (discontinued.length > 0) {
+          const discLines = discontinued.map(r => {
+            const prod = products.find(p => p.sku === r.sku);
+            return `• ${prod?.name} (${r.sku}) — ${r.reason}`;
+          }).join('\n');
+          await notifyOwner({
+            title: `❌ ${discontinued.length} product(s) discontinued`,
+            content: `The following Home Depot products appear to be discontinued:\n\n${discLines}\n\nCheck the Product Catalog admin page for suggested alternatives.`,
+          });
+        }
+
         return { results };
       }),
 

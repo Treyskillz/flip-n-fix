@@ -46,6 +46,7 @@ const FreeGuide = lazy(() => import("./pages/FreeGuide"));
 const WhiteLabelSettings = lazy(() => import("./pages/WhiteLabelSettings"));
 const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard"));
 const DealComparison = lazy(() => import("./pages/DealComparison"));
+const AdminProductCatalog = lazy(() => import("./pages/AdminProductCatalog"));
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -94,6 +95,7 @@ function Router() {
           <Route path={'/local-pricing'} component={LocalPricing} />
           <Route path={'/admin/gifted-subs'} component={AdminGiftedSubs} />
           <Route path={'/admin/blog'} component={AdminBlog} />
+          <Route path={'/admin/product-catalog'} component={AdminProductCatalog} />
           <Route path={'/blog/:slug'} component={BlogPost} />
           <Route path={'/free-guide'} component={FreeGuide} />
           <Route path={'/white-label'} component={WhiteLabelSettings} />

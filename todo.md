@@ -570,3 +570,27 @@
 - [x] Update Manual with product verification documentation (new Product Catalog section + updated Rehab, SOW, Designer sections)
 - [x] Update Pricing page tier lists - added Product Verification, Price Tracking, Alternative Suggestions to Pro tier
 - [x] Update Manual overview with product verification features
+
+## Seed Catalog, Admin Dashboard & Price Alerts (March 6, 2026)
+- [x] Create seed function to populate productCatalog from scopeOfWork.ts product data (client-side extraction)
+- [x] Seed inserts all 151 products into the database via tRPC seed procedure
+- [x] Build Admin Product Catalog dashboard page with table view of all products
+- [x] Add status filter (verified/discontinued/unavailable/unknown)
+- [x] Add search by product name or SKU
+- [x] Add "Seed Catalog" button for admin to populate from scopeOfWork data
+- [x] Add "Auto-Verify All" button to trigger LLM verification scan
+- [x] Add inline edit for product status, price, and alternative (edit dialog)
+- [x] Add "Set Alternative" dialog for discontinued products
+- [x] Add individual verify button per product row
+- [x] Add catalog stats summary (7 stat cards: total, verified, discontinued, unavailable, unknown, price alerts, with alternatives)
+- [x] Add CSV export of full catalog
+- [x] Add pagination (25 per page)
+- [x] Register Admin Product Catalog route in App.tsx (/admin/product-catalog)
+- [x] Add admin-only navigation (Admin dropdown in desktop nav, Admin section in mobile nav)
+- [x] Admin nav includes Product Catalog, Blog Manager, Gifted Subscriptions
+- [x] Admin nav only visible to users with role === 'admin'
+- [x] Add price alert notification system - notify owner when prices change >10%
+- [x] Integrate price alerts into the autoVerify procedure
+- [x] Update Manual with Admin Product Catalog page documentation (dashboard, table, actions, stats)
+- [x] Update Manual with price alert notification documentation and admin navigation section
+- [x] Write vitest tests (232 tests passing across 20 files)

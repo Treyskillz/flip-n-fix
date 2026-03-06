@@ -3,7 +3,7 @@ import {
   Calculator, Landmark, Megaphone, FileText, GraduationCap,
   Newspaper, BookOpen, Menu, X, Home, Building2, ClipboardList, Save, Shield, CreditCard,
   Wrench, MapPin, Award, CheckSquare, HelpCircle, ChevronDown, Zap, Paintbrush, BarChart3,
-  Kanban, TrendingUp, Briefcase, DollarSign, Hammer, Palette, Crown, Headphones
+  Kanban, TrendingUp, Briefcase, DollarSign, Hammer, Palette, Crown, Headphones, Package, Gift
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useCallback, useRef, useEffect, lazy, Suspense } from 'react';
@@ -54,6 +54,12 @@ const RESOURCES_NAV: NavItem[] = [
   { path: '/profile', label: 'My Profile', icon: Shield },
   { path: '/white-label', label: 'White-Label Branding', icon: Palette },
   { path: '/analytics', label: 'Analytics Dashboard', icon: BarChart3 },
+];
+
+const ADMIN_NAV: NavItem[] = [
+  { path: '/admin/product-catalog', label: 'Product Catalog', icon: Package },
+  { path: '/admin/blog', label: 'Blog Manager', icon: Newspaper },
+  { path: '/admin/gifted-subs', label: 'Gifted Subscriptions', icon: Gift },
 ];
 
 const ALL_NAV = [...PRIMARY_NAV, ...RESOURCES_NAV];
@@ -108,6 +114,92 @@ function ResourcesDropdown({ location }: { location: string }) {
         </div>
       )}
     </div>
+  );
+}
+
+function AdminDropdown({ location }: { location: string }) {
+  const { user, isAuthenticated } = useAuth();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  if (!isAuthenticated || !user || user.role !== 'admin') return null;
+
+  const isAdminActive = ADMIN_NAV.some(item => location === item.path || location.startsWith(item.path));
+
+  return (
+    <div ref={ref} className="relative hidden lg:block">
+      <button
+        onClick={() => setOpen(!open)}
+        className={`flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs transition-colors ${
+          isAdminActive
+            ? 'bg-amber-500/20 text-amber-400 font-medium'
+            : 'text-amber-400/70 hover:text-amber-400 hover:bg-amber-500/10'
+        }`}
+      >
+        <Crown className="w-3.5 h-3.5" />
+        Admin
+        <ChevronDown className={`w-3 h-3 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && (
+        <div className="absolute top-full right-0 mt-1 w-52 bg-[oklch(0.18_0_0)] border border-amber-500/30 rounded-lg shadow-xl py-1 z-50">
+          {ADMIN_NAV.map(item => {
+            const Icon = item.icon;
+            const isActive = location === item.path || location.startsWith(item.path);
+            return (
+              <Link key={item.path} href={item.path} onClick={() => setOpen(false)}>
+                <button
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs transition-colors ${
+                    isActive
+                      ? 'bg-amber-500/20 text-amber-400 font-medium'
+                      : 'text-[oklch(0.6_0_0)] hover:text-amber-400 hover:bg-amber-500/5'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  {item.label}
+                </button>
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AdminMobileNav({ closeMobile, location }: { closeMobile: () => void; location: string }) {
+  const { user, isAuthenticated } = useAuth();
+  if (!isAuthenticated || !user || user.role !== 'admin') return null;
+
+  return (
+    <>
+      <p className="text-[10px] uppercase tracking-wider text-amber-400/60 px-3 pt-3 pb-1">Admin</p>
+      {ADMIN_NAV.map(item => {
+        const Icon = item.icon;
+        const isActive = location === item.path || location.startsWith(item.path);
+        return (
+          <Link key={item.path} href={item.path} onClick={closeMobile}>
+            <button
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition-colors ${
+                isActive
+                  ? 'bg-amber-500/20 text-amber-400 font-medium'
+                  : 'text-amber-400/70 hover:text-amber-400 hover:bg-amber-500/10'
+              }`}
+            >
+              <Icon className="w-4 h-4" />
+              {item.label}
+            </button>
+          </Link>
+        );
+      })}
+    </>
   );
 }
 
@@ -194,6 +286,9 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
             <ResourcesDropdown location={location} />
           </nav>
 
+          {/* Admin Nav (desktop) */}
+          <AdminDropdown location={location} />
+
           {/* User Badges */}
           <div className="hidden lg:flex items-center ml-auto">
             <UserBadges />
@@ -233,6 +328,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
                   </Link>
                 );
               })}
+              <AdminMobileNav closeMobile={closeMobile} location={location} />
               <p className="text-[10px] uppercase tracking-wider text-[oklch(0.4_0_0)] px-3 pt-3 pb-1">Resources</p>
               {RESOURCES_NAV.map(item => {
                 const Icon = item.icon;

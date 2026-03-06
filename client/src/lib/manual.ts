@@ -1357,19 +1357,48 @@ Product verification badges appear in:
 2. **SOW Templates** — In the room template product columns
 3. **Renovation Designer** — In the material cost breakdown tables
 
-### Admin: Managing the Catalog
-Admins can manage the product catalog through the API:
-- **Seed Catalog** — Initialize the catalog from the scope of work database
-- **Auto-Verify** — Use AI to check product availability and suggest alternatives
-- **Manual Updates** — Update individual product statuses and prices
-- **Bulk Updates** — Update multiple products at once
-- **Set Alternatives** — Manually assign replacement products for discontinued items
+### Admin: Product Catalog Dashboard
+Admins have a dedicated **Admin Product Catalog** page (accessible from the Admin dropdown in the navigation bar) with full management capabilities:
+
+**Dashboard Stats** — Seven summary cards showing total products, verified count, discontinued count, unavailable count, unverified count, products with price alerts (>10% change), and products with alternatives assigned.
+
+**Product Table** — Full searchable, filterable table of all 151+ products with:
+- Status badge, product name, SKU, category, original price, current price, price change %, and last checked date
+- Filter by status (Verified, Discontinued, Unavailable, Unknown)
+- Filter by category (Kitchen, Bathroom, Flooring, etc.)
+- Search by product name or SKU number
+- Pagination (25 products per page)
+
+**Management Actions:**
+- **Seed Catalog** — One-click button to populate the database from the scope of work product data (151 products)
+- **Auto-Verify All** — Triggers AI-powered verification of all unverified products, checking availability, current pricing, and suggesting alternatives for discontinued items
+- **Verify Individual** — Verify a single product on demand
+- **Edit Product** — Update status, current price, and notes for any product
+- **Set Alternative** — Assign a replacement product (SKU, name, URL, price) for discontinued items
+- **Export CSV** — Download the full catalog as a CSV file for offline analysis
+
+### Price Alert Notifications
+When the auto-verify system detects a price change greater than 10%, the site owner receives an automatic notification with:
+- The product name and SKU
+- The original price and new price
+- The percentage change
+- A direct link to the Home Depot product page
+
+This ensures rehab budgets stay accurate without manual price checking.
+
+### Admin Navigation
+The Admin dropdown menu (gold crown icon) appears in the navigation bar only for users with the admin role. It provides quick access to:
+- **Product Catalog** — Product verification and management dashboard
+- **Blog Manager** — Blog post creation and management
+- **Gifted Subscriptions** — Gift subscription management
 
 ### Tips
 - Products are cached for 5 minutes to minimize API calls
 - Hover over any status badge for detailed information
 - When a product shows as discontinued, always check the suggested alternative before sourcing materials
-- Price changes are calculated as basis points for precision (530 = 5.30%)`,
+- Price changes are calculated as basis points for precision (530 = 5.30%)
+- Run Auto-Verify periodically (monthly recommended) to keep the catalog current
+- Seed the catalog first before running Auto-Verify — seeding creates the database entries that verification checks`,
   },
   {
     id: 'support',
