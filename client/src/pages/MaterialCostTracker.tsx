@@ -7,12 +7,37 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+} from 'chart.js';
+import { Line, Bar } from 'react-chartjs-2';
+import {
   LineChart, TrendingUp, TrendingDown, Search, ExternalLink,
   ArrowUpRight, ArrowDownRight, Minus, Package, AlertTriangle,
   CheckCircle, XCircle, HelpCircle, Filter, DollarSign, BarChart3,
-  Lock
+  Lock, Activity
 } from 'lucide-react';
 import { Link } from 'wouter';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
 
 const STATUS_CONFIG: Record<string, { icon: any; color: string; label: string }> = {
   verified: { icon: CheckCircle, color: 'text-emerald-500', label: 'Verified' },
@@ -71,6 +96,285 @@ function MiniSparkline({ data, color }: { data: number[]; color: string }) {
   return <canvas ref={canvasRef} width={80} height={24} className="inline-block" />;
 }
 
+/** Category Average Price Bar Chart */
+function CategoryPriceChart({ categories }: { categories: any[] }) {
+  const sortedCats = useMemo(() => [...categories].sort((a, b) => b.avgOriginalPrice - a.avgOriginalPrice), [categories]);
+
+  const data = {
+    labels: sortedCats.map(c => c.category),
+    datasets: [
+      {
+        label: 'Avg Product Price',
+        data: sortedCats.map(c => c.avgOriginalPrice),
+        backgroundColor: sortedCats.map(c => {
+          const hex = CATEGORY_COLORS[c.category] || '#6b7280';
+          return hex + '99'; // add alpha
+        }),
+        borderColor: sortedCats.map(c => CATEGORY_COLORS[c.category] || '#6b7280'),
+        borderWidth: 1,
+        borderRadius: 4,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: 'rgba(0,0,0,0.85)',
+        titleColor: '#fff',
+        bodyColor: '#ccc',
+        padding: 12,
+        callbacks: {
+          label: (ctx: any) => `$${ctx.parsed.y.toFixed(2)}`,
+        },
+      },
+    },
+    scales: {
+      x: {
+        ticks: { color: '#888', font: { size: 10 }, maxRotation: 45, minRotation: 30 },
+        grid: { display: false },
+      },
+      y: {
+        ticks: {
+          color: '#888',
+          callback: (value: any) => `$${value}`,
+        },
+        grid: { color: 'rgba(255,255,255,0.06)' },
+      },
+    },
+  };
+
+  return (
+    <div style={{ height: '280px' }}>
+      <Bar data={data} options={options} />
+    </div>
+  );
+}
+
+/** Price Change by Category Chart */
+function PriceChangeChart({ categories }: { categories: any[] }) {
+  const sortedCats = useMemo(() => [...categories].sort((a, b) => b.avgPriceChange - a.avgPriceChange), [categories]);
+
+  const data = {
+    labels: sortedCats.map(c => c.category),
+    datasets: [
+      {
+        label: 'Avg Price Change (%)',
+        data: sortedCats.map(c => c.avgPriceChange / 100),
+        backgroundColor: sortedCats.map(c => {
+          const change = c.avgPriceChange / 100;
+          if (change > 0) return 'rgba(239, 68, 68, 0.6)';
+          if (change < 0) return 'rgba(16, 185, 129, 0.6)';
+          return 'rgba(107, 114, 128, 0.4)';
+        }),
+        borderColor: sortedCats.map(c => {
+          const change = c.avgPriceChange / 100;
+          if (change > 0) return '#ef4444';
+          if (change < 0) return '#10b981';
+          return '#6b7280';
+        }),
+        borderWidth: 1,
+        borderRadius: 4,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y' as const,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: 'rgba(0,0,0,0.85)',
+        titleColor: '#fff',
+        bodyColor: '#ccc',
+        padding: 12,
+        callbacks: {
+          label: (ctx: any) => {
+            const val = ctx.parsed.x;
+            return `${val > 0 ? '+' : ''}${val.toFixed(1)}%`;
+          },
+        },
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: '#888',
+          callback: (value: any) => `${value > 0 ? '+' : ''}${value}%`,
+        },
+        grid: { color: 'rgba(255,255,255,0.06)' },
+      },
+      y: {
+        ticks: { color: '#888', font: { size: 11 } },
+        grid: { display: false },
+      },
+    },
+  };
+
+  return (
+    <div style={{ height: '320px' }}>
+      <Bar data={data} options={options} />
+    </div>
+  );
+}
+
+/** Category Price Trend Line Chart (over time) */
+function PriceTrendLineChart({ trendData, selectedCategory }: { trendData: any[]; selectedCategory: string }) {
+  const chartData = useMemo(() => {
+    if (!trendData || trendData.length === 0) return null;
+
+    const dates = trendData.map(t => t.date);
+    const allCategories = new Set<string>();
+    trendData.forEach(t => t.categories.forEach((c: any) => allCategories.add(c.category)));
+
+    const categoriesToShow = selectedCategory !== 'all'
+      ? [selectedCategory]
+      : Array.from(allCategories).slice(0, 6); // Show top 6 for readability
+
+    const datasets = categoriesToShow.map(cat => {
+      const color = CATEGORY_COLORS[cat] || '#6b7280';
+      return {
+        label: cat,
+        data: dates.map(d => {
+          const entry = trendData.find(t => t.date === d);
+          const catEntry = entry?.categories.find((c: any) => c.category === cat);
+          return catEntry?.avgPrice || null;
+        }),
+        borderColor: color,
+        backgroundColor: color + '20',
+        tension: 0.3,
+        fill: false,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        pointBackgroundColor: color,
+        borderWidth: 2,
+        spanGaps: true,
+      };
+    });
+
+    return {
+      labels: dates.map(d => {
+        const date = new Date(d);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }),
+      datasets,
+    };
+  }, [trendData, selectedCategory]);
+
+  if (!chartData || chartData.datasets.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-[280px] text-muted-foreground text-sm">
+        <div className="text-center">
+          <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
+          <p>Price trend data will appear after multiple verification runs.</p>
+          <p className="text-xs mt-1">Trends are tracked each time the catalog is verified.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: {
+      mode: 'index' as const,
+      intersect: false,
+    },
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+        labels: {
+          color: '#888',
+          usePointStyle: true,
+          pointStyle: 'circle',
+          padding: 16,
+          font: { size: 11 },
+        },
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0,0,0,0.85)',
+        titleColor: '#fff',
+        bodyColor: '#ccc',
+        padding: 12,
+        callbacks: {
+          label: (ctx: any) => `${ctx.dataset.label}: $${ctx.parsed.y?.toFixed(2) || 'N/A'}`,
+        },
+      },
+    },
+    scales: {
+      x: {
+        ticks: { color: '#888', font: { size: 10 } },
+        grid: { color: 'rgba(255,255,255,0.06)' },
+      },
+      y: {
+        ticks: {
+          color: '#888',
+          callback: (value: any) => `$${value}`,
+        },
+        grid: { color: 'rgba(255,255,255,0.06)' },
+      },
+    },
+  };
+
+  return (
+    <div style={{ height: '320px' }}>
+      <Line data={chartData} options={options} />
+    </div>
+  );
+}
+
+/** Status Distribution Doughnut-like horizontal bar */
+function StatusDistributionBar({ categories }: { categories: any[] }) {
+  const totals = useMemo(() => {
+    const t = { verified: 0, discontinued: 0, unavailable: 0, unknown: 0 };
+    categories.forEach(c => {
+      t.verified += c.verified;
+      t.discontinued += c.discontinued;
+      t.unavailable += c.unavailable;
+      t.unknown += c.unknown;
+    });
+    return t;
+  }, [categories]);
+
+  const total = totals.verified + totals.discontinued + totals.unavailable + totals.unknown;
+  if (total === 0) return null;
+
+  const segments = [
+    { label: 'Verified', count: totals.verified, color: '#10b981', pct: (totals.verified / total * 100) },
+    { label: 'Discontinued', count: totals.discontinued, color: '#ef4444', pct: (totals.discontinued / total * 100) },
+    { label: 'Unavailable', count: totals.unavailable, color: '#f59e0b', pct: (totals.unavailable / total * 100) },
+    { label: 'Unverified', count: totals.unknown, color: '#6b7280', pct: (totals.unknown / total * 100) },
+  ].filter(s => s.count > 0);
+
+  return (
+    <div>
+      <div className="flex rounded-full overflow-hidden h-4 mb-3">
+        {segments.map(s => (
+          <div
+            key={s.label}
+            style={{ width: `${s.pct}%`, backgroundColor: s.color }}
+            className="transition-all"
+            title={`${s.label}: ${s.count} (${s.pct.toFixed(1)}%)`}
+          />
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-4 justify-center">
+        {segments.map(s => (
+          <div key={s.label} className="flex items-center gap-1.5 text-xs">
+            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: s.color }} />
+            <span className="text-muted-foreground">{s.label}: <span className="font-medium text-foreground">{s.count}</span> ({s.pct.toFixed(0)}%)</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function MaterialCostTracker() {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -86,6 +390,7 @@ export default function MaterialCostTracker() {
   const { data: products, isLoading: prodLoading } = trpc.productCatalog.publicProducts.useQuery(
     selectedCategory !== 'all' ? { category: selectedCategory } : undefined
   );
+  const { data: trendData, isLoading: trendLoading } = trpc.productCatalog.categoryPriceTrends.useQuery();
 
   const categories = useMemo(() => {
     if (!categorySummary) return [];
@@ -219,6 +524,89 @@ export default function MaterialCostTracker() {
             </CardContent>
           </Card>
         </div>
+      </section>
+
+      {/* Charts Section */}
+      <section className="container pb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+          {/* Average Price by Category */}
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 text-muted-foreground" />
+                Average Product Price by Category
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              {catLoading ? (
+                <div className="h-[280px] bg-muted/30 rounded animate-pulse" />
+              ) : categories.length > 0 ? (
+                <CategoryPriceChart categories={categories} />
+              ) : (
+                <div className="h-[280px] flex items-center justify-center text-muted-foreground text-sm">No data available</div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Price Change by Category */}
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-muted-foreground" />
+                Price Change by Category (%)
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              {catLoading ? (
+                <div className="h-[320px] bg-muted/30 rounded animate-pulse" />
+              ) : categories.length > 0 ? (
+                <PriceChangeChart categories={categories} />
+              ) : (
+                <div className="h-[320px] flex items-center justify-center text-muted-foreground text-sm">No data available</div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Price Trend Over Time */}
+        <Card className="mb-4">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Activity className="w-4 h-4 text-muted-foreground" />
+              Price Trends Over Time
+              {selectedCategory !== 'all' && (
+                <Badge variant="secondary" className="text-xs ml-2">{selectedCategory}</Badge>
+              )}
+            </CardTitle>
+            <p className="text-xs text-muted-foreground mt-1">
+              Average product prices tracked across verification runs. {selectedCategory === 'all' ? 'Showing top 6 categories.' : `Filtered to ${selectedCategory}.`}
+            </p>
+          </CardHeader>
+          <CardContent className="pt-0">
+            {trendLoading ? (
+              <div className="h-[320px] bg-muted/30 rounded animate-pulse" />
+            ) : (
+              <PriceTrendLineChart trendData={trendData || []} selectedCategory={selectedCategory} />
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Verification Status Distribution */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-muted-foreground" />
+              Verification Status Distribution
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            {catLoading ? (
+              <div className="h-12 bg-muted/30 rounded animate-pulse" />
+            ) : (
+              <StatusDistributionBar categories={categories} />
+            )}
+          </CardContent>
+        </Card>
       </section>
 
       {/* Category Breakdown */}

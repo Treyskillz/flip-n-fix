@@ -10,6 +10,7 @@ export const PLANS = {
     features: [
       "Basic Deal Analyzer (3/month)",
       "70% Rule Calculator",
+      "Course Module 1: Investor Mindset (3 Lessons)",
       "Blog & Educational Content",
       "Marketing Templates (View Only)",
       "Free Guide Download",
@@ -41,6 +42,8 @@ export const PLANS = {
       "Product Verification Badges",
       "Price Change Tracking",
       "Alternative Product Suggestions",
+      "Full Course Access: Modules 1\u20139 (19 Lessons)",
+      "Video Lesson Scripts & Study Guides",
       "Material Cost Tracker Dashboard",
     ],
     priceMonthly: 9900, // $99/mo
@@ -54,8 +57,9 @@ export const PLANS = {
     features: [
       "Everything in Pro",
       "Profit Calculator (All 6 Scenarios)",
-      "Full Course Access (8 Modules + Bonus)",
-      "Video Lesson Scripts & Guides",
+      "All 11 Course Modules (24 Lessons)",
+      "Bonus: Asset Protection & Tax Strategy",
+      "Bonus: Creative Financing Mastery",
       "Property Listings Page",
       "Email Investor Reports",
       "Priority Support",

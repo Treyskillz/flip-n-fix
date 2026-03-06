@@ -562,50 +562,81 @@ A simplified agreement specifically designed for wholesale transactions. Include
     icon: '🎓',
     content: `## Real Estate Investor Course
 
-The course provides comprehensive education on real estate investing with a focus on five exit strategies.
+The course provides comprehensive education on real estate investing with **11 modules and 24 lessons** covering five exit strategies, deal sourcing, financing, platform mastery, and bonus advanced content. Course access is bundled with your subscription tier.
+
+### Course Access by Subscription Tier
+
+| Tier | Course Access |
+|------|---------------|
+| **Free** | Module 1 only (3 lessons) |
+| **Pro** | Modules 1\u20139 (19 lessons) |
+| **Elite** | All 11 Modules (24 lessons) |
+| **Team** | All 11 Modules (24 lessons) |
 
 ### Course Modules
 
-#### Module 1: Fix & Flip Fundamentals
-- Finding deals below market value
-- Analyzing properties for profit potential
-- Managing rehab projects
-- Selling for maximum profit
-- Common mistakes and how to avoid them
+#### Module 1: Foundation \u2014 The Real Estate Investor Mindset (Free)
+- Why Fix & Flip in 2026? Market Overview
+- Setting Up Your Business Entity & Power Team
+- Building Your Investment Criteria & Business Plan
 
-#### Module 2: Wholesaling
-- Understanding the wholesale process
-- Finding motivated sellers
-- Negotiating purchase contracts
-- Building a buyer's list
-- Assignment vs. double close
+#### Module 2: Finding Deals \u2014 Acquisition Strategies (Pro)
+- The 7 Best Lead Sources for 2026
+- Analyzing Deals: Running the Numbers
 
-#### Module 3: BRRRR Strategy
-- Buy, Rehab, Rent, Refinance, Repeat
-- Finding properties that cash flow
-- Managing the rehab for rental quality
-- Refinancing to pull out capital
-- Scaling your rental portfolio
+#### Module 3: Exit Strategy #1 \u2014 Fix & Flip (Pro)
+- Managing Your Rehab Like a Pro
+- Estimating Costs with the Rehab Estimator
+- Selling for Maximum Profit
 
-#### Module 4: Subject-To Financing
-- What is subject-to investing
-- Finding subject-to opportunities
-- Structuring the deal
-- Managing the existing mortgage
-- Legal considerations by state
+#### Module 4: Exit Strategy #2 \u2014 Wholesaling (Pro)
+- Wholesaling Fundamentals
 
-#### Module 5: Short-Term Rentals (Airbnb/VRBO)
-- Market analysis for STR profitability
-- Property selection criteria
-- Furnishing and setup
-- Listing optimization
-- Management and automation
+#### Module 5: Exit Strategy #3 \u2014 Fix & Rent / BRRRR (Pro)
+- The BRRRR Strategy Explained
+
+#### Module 6: Exit Strategy #4 \u2014 Subject-To (Pro)
+- Subject-To Financing Explained
+
+#### Module 7: Exit Strategy #5 \u2014 Short-Term Rentals (Pro)
+- The Short-Term Rental Opportunity
+
+#### Module 8: Financing Your Deals (Pro)
+- Financing Options for Every Strategy
+
+#### Module 9: Mastering the Freedom One Platform (Pro)
+- Deal Analyzer: Complete Walkthrough
+- SOW Templates: Creating Professional Scopes of Work
+- Lender Directory: Finding the Right Financing
+- Marketing Templates: Generating Leads
+- Contract Templates: Closing Deals
+- Property Listings: Showcasing Your Properties
+
+#### Module 10: Bonus \u2014 Asset Protection (Elite)
+- Entity Structures: LLCs, Series LLCs & Corporations
+- Tax Strategy for Real Estate Investors
+
+#### Module 11: Bonus \u2014 Creative Financing Mastery (Elite)
+- Seller Financing: Structuring Win-Win Deals
+- Lease Options & Zero-Down Techniques
+- Advanced Multi-Layer Strategies
+
+### Course Features
+- **Video Scripts** \u2014 Professional scripts for each lesson with visual cues and talking points
+- **Progress Tracking** \u2014 Mark lessons complete and track your progress per module
+- **Module Quizzes** \u2014 Test your knowledge after each module
+- **Completion Certificate** \u2014 Downloadable PDF certificate when you finish all modules
+- **Course Ebook** \u2014 Download the complete course as a professional PDF book
+- **Chart.js Trend Charts** \u2014 Material Cost Tracker with visual price trend analysis (Pro+)
 
 ### How to Use the Course
 - Work through modules sequentially for the best learning experience
-- Each module includes practical exercises
-- Apply concepts immediately using the Deal Analyzer
-- Revisit modules as you encounter real-world situations`,
+- Each lesson includes written content plus a video script with visual cues
+- Toggle the \"View Script\" button to see the video production script for each lesson
+- Apply concepts immediately using the Deal Analyzer and other platform tools
+- Complete quizzes to test your understanding before moving on
+- Mark lessons and modules complete to track your progress
+- Download your completion certificate from the course page when finished`,
   },
   {
     id: 'listings',
@@ -825,6 +856,7 @@ The app offers four subscription tiers to match your investing activity level. A
 Get started at no cost:
 - Basic Deal Analyzer (3 analyses per month)
 - 70% Rule Calculator
+- **Course Module 1: Investor Mindset** (3 lessons)
 - Blog & Educational Content
 - Marketing Templates (View Only)
 
@@ -844,17 +876,23 @@ Full analysis suite for active investors:
 - Quick Check Tool
 - Product Verification Badges & Price Tracking
 - Alternative Product Suggestions for Discontinued Items
+- **Full Course Access: Modules 1\u20139** (19 lessons covering all 5 exit strategies, deal sourcing, financing, and platform mastery)
+- Video Lesson Scripts & Study Guides
+- Material Cost Tracker Dashboard with Chart.js Trend Charts
 
 ### Elite Tier ($179/month or $1,790/year)
-Complete system with course & advanced tools:
+Complete system with all course modules & advanced tools:
 - Everything in Pro
 - Profit Calculator (All 6 Scenarios)
-- Full Course Access (8 Modules + Bonus)
-- Video Lesson Scripts & Guides
+- **All 11 Course Modules** (24 lessons — everything in Pro plus bonus modules)
+- **Bonus Module 10:** Asset Protection & Tax Strategy for Real Estate Investors
+- **Bonus Module 11:** Creative Financing Mastery (seller financing, lease options, zero-down techniques)
 - Property Listings Page
 - Email Investor Reports
 - Priority Support
 - Gantt Chart Export (PDF)
+- Portfolio Dashboard & PDF Export
+- State Reference Guide
 
 ### Team Tier ($289/month or $2,890/year)
 White-label branding & AI-powered tools:
@@ -1446,8 +1484,19 @@ The top of the page shows four summary cards:
 - **Avg Price Change** — Average price change across all products (green = decrease, red = increase)
 - **Price Alerts** — Number of categories with significant price movements
 
+### Interactive Charts
+The dashboard includes four interactive Chart.js visualizations:
+
+1. **Average Product Price by Category** — Vertical bar chart showing the average product price across all 11 categories, sorted from highest to lowest. Hover over any bar to see the exact dollar amount.
+
+2. **Price Change by Category (%)** — Horizontal bar chart showing the average price change percentage for each category. Red bars indicate price increases, green bars indicate decreases.
+
+3. **Price Trends Over Time** — Multi-line chart tracking average prices across verification runs. When viewing all categories, the top 6 are shown for readability. Click a category card to filter the chart to a single category.
+
+4. **Verification Status Distribution** — Horizontal progress bar showing the breakdown of product statuses (Verified, Discontinued, Unavailable, Unverified) with color-coded segments and percentage labels.
+
 ### Category Breakdown
-Below the summary cards, you'll find a grid of category cards covering:
+Below the charts, you'll find a grid of category cards covering:
 - Kitchen, Bathroom, Bedroom, Living Room
 - Electrical, HVAC, Plumbing
 - Roof & Gutter, Structural & Windows

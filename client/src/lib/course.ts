@@ -3,6 +3,8 @@
 // Comprehensive course on fix & flip with all exit strategies
 // ============================================================
 
+export type CourseTier = 'free' | 'pro' | 'elite';
+
 export interface CourseModule {
   id: string;
   number: number;
@@ -11,6 +13,8 @@ export interface CourseModule {
   lessons: CourseLesson[];
   icon: string;
   premium?: boolean;
+  /** Minimum subscription tier required to access this module */
+  requiredTier: CourseTier;
 }
 
 export interface CourseLesson {
@@ -27,6 +31,7 @@ export const COURSE_MODULES: CourseModule[] = [
     title: 'Foundation: The Real Estate Investor Mindset',
     description: 'Build the mental framework and business foundation for successful real estate investing in 2026.',
     icon: '🧠',
+    requiredTier: 'free',
     lessons: [
       {
         id: 'l-1-1',
@@ -208,6 +213,7 @@ No successful investor works alone. Here's who you need on your team and how to 
     title: 'Finding Deals: Acquisition Strategies',
     description: 'Master the art of finding profitable properties before anyone else.',
     icon: '🔍',
+    requiredTier: 'pro',
     lessons: [
       {
         id: 'l-2-1',
@@ -385,6 +391,7 @@ Use the scope of work approach in this app for accurate estimates:
     title: 'Exit Strategy #1: Fix & Flip',
     description: 'The classic strategy — buy, renovate, and sell for profit.',
     icon: '🔨',
+    requiredTier: 'pro',
     lessons: [
       {
         id: 'l-3-1',
@@ -627,6 +634,7 @@ Navigate to **Resources → Price Reduction Form** to access it.
     title: 'Exit Strategy #2: Wholesaling',
     description: 'Profit from deals without ever owning the property. The lowest-risk entry into real estate investing.',
     icon: '🤝',
+    requiredTier: 'pro',
     lessons: [
       {
         id: 'l-4-1',
@@ -721,6 +729,7 @@ Use the contract templates in this app — they already include proper assignmen
     title: 'Exit Strategy #3: Fix & Rent (BRRRR)',
     description: 'Buy, Rehab, Rent, Refinance, Repeat — build long-term wealth through rental properties.',
     icon: '🏘️',
+    requiredTier: 'pro',
     lessons: [
       {
         id: 'l-5-1',
@@ -807,6 +816,7 @@ DSCR (Debt Service Coverage Ratio) loans qualify based on rental income, not you
     title: 'Exit Strategy #4: Subject-To',
     description: 'Take over existing mortgages for creative, low-money-down acquisitions.',
     icon: '📋',
+    requiredTier: 'pro',
     lessons: [
       {
         id: 'l-6-1',
@@ -897,6 +907,7 @@ DSCR (Debt Service Coverage Ratio) loans qualify based on rental income, not you
     title: 'Exit Strategy #5: Short-Term Rentals (Airbnb/VRBO)',
     description: 'Maximize cash flow with vacation and short-term rental properties.',
     icon: '🏖️',
+    requiredTier: 'pro',
     lessons: [
       {
         id: 'l-7-1',
@@ -1007,6 +1018,7 @@ Short-term rentals (STR) through platforms like Airbnb and VRBO can generate 2-3
     title: 'Financing Your Deals',
     description: 'Master every financing option available to real estate investors in 2026.',
     icon: '💰',
+    requiredTier: 'pro',
     lessons: [
       {
         id: 'l-8-1',
@@ -1082,6 +1094,7 @@ Short-term rentals (STR) through platforms like Airbnb and VRBO can generate 2-3
     title: 'Mastering the Freedom One Platform',
     description: 'Complete hands-on tutorials for every tool in the Freedom One Fix & Flip Analyzer — from deal analysis to portfolio management.',
     icon: '💻',
+    requiredTier: 'pro',
     lessons: [
       {
         id: 'l-9-1',
@@ -1464,9 +1477,10 @@ Navigate to **Blog** from the navigation for:
     id: 'mod-10',
     number: 10,
     title: 'Bonus: Asset Protection for Real Estate Investors',
-    description: 'Protect your wealth with proper entity structures, trusts, and tax-advantaged accounts. Premium content for Pro subscribers.',
+    description: 'Protect your wealth with proper entity structures, trusts, and tax-advantaged accounts. Elite exclusive content.',
     icon: '🛡️',
     premium: true,
+    requiredTier: 'elite',
     lessons: [
       {
         id: 'l-10-1',
@@ -1750,9 +1764,10 @@ If your IRA uses debt financing (mortgage) to buy property, a portion of the inc
     id: 'mod-11',
     number: 11,
     title: 'Bonus: Creative Financing Mastery',
-    description: 'Advanced deal structures that let you buy properties with little to no money down. Premium content for Pro subscribers.',
+    description: 'Advanced deal structures that let you buy properties with little to no money down. Elite exclusive content.',
     icon: '🎯',
     premium: true,
+    requiredTier: 'elite',
     lessons: [
       {
         id: 'l-11-1',

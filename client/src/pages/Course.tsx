@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Progress } from '@/components/ui/progress';
 import { COURSE_MODULES } from '@/lib/course';
-import type { CourseModule, CourseLesson } from '@/lib/course';
+import type { CourseModule, CourseLesson, CourseTier } from '@/lib/course';
 import { VIDEO_SCRIPTS } from '@/lib/videoScripts';
 import type { VideoScript, VideoSegment } from '@/lib/videoScripts';
 import { MODULE_QUIZZES } from '@/lib/quizData';
@@ -276,6 +276,26 @@ export default function Course() {
 
   const { user, isAuthenticated, loading: authLoading } = useAuth();
 
+  // Subscription status for tier gating
+  const { data: subStatus } = trpc.subscription.status.useQuery(undefined, {
+    enabled: isAuthenticated,
+    retry: false,
+  });
+
+  const userPlan = subStatus?.plan || 'free';
+  const tierRank: Record<string, number> = { free: 0, pro: 1, elite: 2, team: 3 };
+
+  const canAccessModule = useCallback((mod: CourseModule): boolean => {
+    if (!isAuthenticated) return mod.requiredTier === 'free';
+    return (tierRank[userPlan] || 0) >= (tierRank[mod.requiredTier] || 0);
+  }, [isAuthenticated, userPlan]);
+
+  const getTierLabel = (tier: CourseTier): string => {
+    if (tier === 'free') return 'Free';
+    if (tier === 'pro') return 'Pro';
+    return 'Elite';
+  };
+
   // Fetch progress from database (only if authenticated)
   const progressQuery = trpc.courseProgress.list.useQuery(undefined, {
     enabled: isAuthenticated,
@@ -514,11 +534,16 @@ export default function Course() {
               const modProgress = getModuleProgress(mod);
               const isModuleComplete = modProgress.completed === modProgress.total;
               const isPremium = mod.premium === true;
+              const hasAccess = canAccessModule(mod);
               return (
                 <Collapsible key={mod.id} open={isExpanded}>
-                  <Card className={`transition-all ${isExpanded ? 'border-primary shadow-sm' : ''} ${isPremium ? 'border-amber-500/30 bg-amber-500/5' : ''}`}>
+                  <Card className={`transition-all ${isExpanded ? 'border-primary shadow-sm' : ''} ${!hasAccess ? 'opacity-75 border-border/40' : ''} ${isPremium ? 'border-amber-500/30 bg-amber-500/5' : ''}`}>
                     <CollapsibleTrigger
                       onClick={() => {
+                        if (!hasAccess) {
+                          toast.error(`This module requires a ${getTierLabel(mod.requiredTier)} subscription or higher.`);
+                          return;
+                        }
                         setExpandedModule(isExpanded ? null : mod.id);
                         if (!isExpanded && mod.lessons.length > 0) {
                           setActiveLesson(mod.lessons[0].id);
@@ -533,12 +558,15 @@ export default function Course() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
                               <p className="text-xs text-muted-foreground">{isPremium ? 'Bonus' : `Module ${mod.number}`}</p>
-                              {isPremium && (
-                                <Badge className="text-[10px] px-1.5 py-0 bg-amber-500/20 text-amber-600 border-amber-500/30 hover:bg-amber-500/20">
-                                  PRO
+                              {mod.requiredTier !== 'free' && (
+                                <Badge className={`text-[10px] px-1.5 py-0 ${mod.requiredTier === 'elite' ? 'bg-amber-500/20 text-amber-600 border-amber-500/30 hover:bg-amber-500/20' : 'bg-primary/15 text-primary border-primary/30 hover:bg-primary/15'}`}>
+                                  {getTierLabel(mod.requiredTier).toUpperCase()}
                                 </Badge>
                               )}
-                              {isAuthenticated && isModuleComplete && (
+                              {!hasAccess && (
+                                <Lock className="w-3 h-3 text-muted-foreground shrink-0" />
+                              )}
+                              {isAuthenticated && hasAccess && isModuleComplete && (
                                 <CheckCircle2 className="w-3.5 h-3.5 text-green-500 shrink-0" />
                               )}
                             </div>
@@ -648,7 +676,23 @@ export default function Course() {
 
           {/* Main Content: Active Lesson */}
           <div>
-            {currentLesson ? (
+            {currentLesson && currentModule && !canAccessModule(currentModule) ? (
+              <Card>
+                <CardContent className="py-16 text-center">
+                  <Lock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-lg font-medium mb-2">Module Locked</p>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    <strong>{currentModule.title}</strong> requires a <strong>{getTierLabel(currentModule.requiredTier)}</strong> subscription or higher.
+                  </p>
+                  <p className="text-sm text-muted-foreground mb-6">
+                    Upgrade your plan to unlock {currentModule.requiredTier === 'elite' ? 'all 11 modules including bonus content' : 'Modules 2–11 with full course access'}.
+                  </p>
+                  <Button asChild className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white">
+                    <a href="/pricing">View Plans</a>
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : currentLesson ? (
               <Card>
                 <CardHeader>
                   <div className="flex items-center justify-between flex-wrap gap-2">

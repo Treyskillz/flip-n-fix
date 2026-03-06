@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { COURSE_MODULES } from '../client/src/lib/course';
+import type { CourseTier } from '../client/src/lib/course';
 import { MODULE_QUIZZES } from '../client/src/lib/quizData';
 import { VIDEO_SCRIPTS } from '../client/src/lib/videoScripts';
 
@@ -116,5 +117,56 @@ describe('Course Content Integrity', () => {
     const allContent = mod11!.lessons.map(l => l.content).join(' ');
     expect(allContent.toLowerCase()).toContain('seller financing');
     expect(allContent.toLowerCase()).toContain('lease option');
+  });
+
+  // Tier Gating Tests
+  it('every module should have a requiredTier field', () => {
+    const validTiers: CourseTier[] = ['free', 'pro', 'elite'];
+    for (const mod of COURSE_MODULES) {
+      expect(validTiers).toContain(mod.requiredTier);
+    }
+  });
+
+  it('Module 1 should be free tier', () => {
+    const mod1 = COURSE_MODULES.find(m => m.id === 'mod-1');
+    expect(mod1?.requiredTier).toBe('free');
+  });
+
+  it('Modules 2-9 should be pro tier', () => {
+    for (let i = 2; i <= 9; i++) {
+      const mod = COURSE_MODULES.find(m => m.id === `mod-${i}`);
+      expect(mod?.requiredTier).toBe('pro');
+    }
+  });
+
+  it('Modules 10-11 (bonus) should be elite tier', () => {
+    const mod10 = COURSE_MODULES.find(m => m.id === 'mod-10');
+    const mod11 = COURSE_MODULES.find(m => m.id === 'mod-11');
+    expect(mod10?.requiredTier).toBe('elite');
+    expect(mod11?.requiredTier).toBe('elite');
+  });
+
+  it('free tier should have exactly 1 module (3 lessons)', () => {
+    const freeModules = COURSE_MODULES.filter(m => m.requiredTier === 'free');
+    expect(freeModules.length).toBe(1);
+    const totalFreeLessons = freeModules.reduce((sum, m) => sum + m.lessons.length, 0);
+    expect(totalFreeLessons).toBe(3);
+  });
+
+  it('pro tier should unlock 8 additional modules (16 more lessons)', () => {
+    const proModules = COURSE_MODULES.filter(m => m.requiredTier === 'pro');
+    expect(proModules.length).toBe(8);
+  });
+
+  it('elite tier should unlock 2 bonus modules (5 more lessons)', () => {
+    const eliteModules = COURSE_MODULES.filter(m => m.requiredTier === 'elite');
+    expect(eliteModules.length).toBe(2);
+    const totalEliteLessons = eliteModules.reduce((sum, m) => sum + m.lessons.length, 0);
+    expect(totalEliteLessons).toBe(5);
+  });
+
+  it('total course should have 24 lessons across all tiers', () => {
+    const totalLessons = COURSE_MODULES.reduce((sum, m) => sum + m.lessons.length, 0);
+    expect(totalLessons).toBe(24);
   });
 });

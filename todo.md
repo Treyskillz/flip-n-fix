@@ -615,3 +615,29 @@
 - [x] Update Manual with Material Cost Tracker documentation
 - [x] Update Pricing page with Material Cost Tracker in Pro tier features
 - [x] Run tests and save checkpoint (248 tests passing across 21 files)
+
+## Full Verification, Chart.js Trends & Comprehensive Audit (March 6, 2026)
+- [x] Run first full product verification on all 100 seeded products (92 verified, 1 discontinued, 7 unavailable, 1 price alert)
+- [x] Add Chart.js trend charts to Material Cost Tracker page (4 charts: avg price by category, price change %, trend over time, status distribution)
+- [x] Comprehensive site audit — all features, manual, pricing, navigation verified working
+- [x] No issues found during audit
+- [x] Run all tests and verify TypeScript compiles cleanly (256 tests passing, 21 files)
+- [ ] Push to GitHub repository
+- [ ] Re-deliver all updated deliverables
+
+## Video Scripts & Deliverables (March 6, 2026)
+- [x] Review full course structure and catalog all modules/lessons (11 modules, 24 lessons)
+- [x] Write labeled video scripts for every course module and lesson (24 scripts)
+- [x] Write marketing video script to promote the app
+- [x] Create inventory sheet mapping each script to its course placement
+- [x] Bundle all scripts and inventory into deliverable package (zip)
+- [x] Complete comprehensive site audit and fix any issues
+- [x] Run all tests and verify TypeScript compiles cleanly (256 tests passing)
+- [ ] Push to GitHub repository
+- [ ] Deliver all updated deliverables
+
+## Course Tier Bundling Updates (March 6, 2026)
+- [x] Update course gating logic: Free=Module 1, Pro=Modules 1-9, Elite/Team=All 11
+- [x] Update pricing page to show course access per tier
+- [x] Update manual to reflect bundled course access
+- [x] Update course page UI to show tier-based access badges and lock icons
