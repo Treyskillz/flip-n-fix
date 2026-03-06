@@ -499,3 +499,24 @@
 - [x] Verified proper auth gating, loading states, error handling
 - [x] Verified 6 Chart.js charts, KPI cards, and data tables all coded correctly
 - [x] All 195 tests passing across 18 test files
+
+## Replay Tour Button (March 6, 2026)
+- [x] Add "Replay Tour" button to user profile page
+- [x] Clear localStorage tour state to re-trigger SubscriptionTour
+- [x] Test that clicking replay tour shows the tour again
+
+## Deal Import from CSV (March 6, 2026)
+- [x] Create server-side tRPC procedure for CSV deal import (Team tier gated)
+- [x] Parse CSV with columns: address, purchasePrice, arv, rehabCost, holdingMonths, etc.
+- [x] Validate and insert deals into savedDeals table
+- [x] Build CSV import UI dialog in SavedDeals page with file upload
+- [x] Show import preview with validation errors before confirming
+- [x] Add sample CSV template download
+- [x] Write vitest tests for CSV import procedure
+
+## Email Notifications for Shared Deal Views (March 6, 2026)
+- [x] Track views on shared deal links (view count already in sharedDeals table)
+- [x] Send notification to deal owner when their shared link is viewed (1st view + every 5th)
+- [x] Use notifyOwner helper for admin notifications on shared deal views
+- [x] Add shareDeal.listMine procedure for users to see their shared deals + view counts
+- [x] Write vitest tests for view tracking and notification logic

@@ -13,7 +13,7 @@ import {
   Download, Printer, FileText, Archive, Star, StarOff,
   ChevronDown, ChevronUp, Eye, Filter, LayoutGrid, LayoutList,
   CheckCircle2, Clock, XCircle, Pause, Loader2, StickyNote, Database,
-  CheckSquare, Square, X, Sparkles, FileSpreadsheet, Crown
+  CheckSquare, Square, X, Sparkles, FileSpreadsheet, Crown, Upload
 } from 'lucide-react';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { Streamdown } from 'streamdown';
@@ -721,6 +721,86 @@ export default function SavedDeals() {
     },
     onError: (err) => toast.error(err.message),
   });
+
+  // ─── CSV Import (Team Tier) ─────────────────────────────────
+  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [importCsvContent, setImportCsvContent] = useState('');
+  const [importPreview, setImportPreview] = useState<string[][]>([]);
+  const [importFileName, setImportFileName] = useState('');
+  const csvFileRef = useRef<HTMLInputElement>(null);
+
+  const csvImport = trpc.teamFeatures.csvImport.useMutation({
+    onSuccess: (data) => {
+      utils.deals.list.invalidate();
+      utils.deals.portfolio.invalidate();
+      setShowImportDialog(false);
+      setImportCsvContent('');
+      setImportPreview([]);
+      setImportFileName('');
+      const failed = data.results.filter(r => !r.success);
+      if (failed.length > 0) {
+        toast.success(`Imported ${data.imported} of ${data.total} deals. ${failed.length} failed.`);
+      } else {
+        toast.success(`Successfully imported ${data.imported} deals!`);
+      }
+    },
+    onError: (err) => toast.error(`Import failed: ${err.message}`),
+  });
+
+  const csvTemplate = trpc.teamFeatures.csvTemplate.useQuery(undefined, {
+    enabled: showImportDialog,
+  });
+
+  const handleCsvFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.name.endsWith('.csv') && !file.name.endsWith('.txt')) {
+      toast.error('Please select a CSV file.');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File too large. Maximum 5MB.');
+      return;
+    }
+    setImportFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const text = ev.target?.result as string;
+      setImportCsvContent(text);
+      // Parse preview (first 6 rows)
+      const lines = text.split('\n').filter(l => l.trim()).slice(0, 6);
+      const preview = lines.map(line => {
+        const cols: string[] = [];
+        let current = '';
+        let inQ = false;
+        for (const ch of line) {
+          if (inQ) {
+            if (ch === '"') inQ = false;
+            else current += ch;
+          } else {
+            if (ch === '"') inQ = true;
+            else if (ch === ',') { cols.push(current.trim()); current = ''; }
+            else current += ch;
+          }
+        }
+        cols.push(current.trim());
+        return cols;
+      });
+      setImportPreview(preview);
+    };
+    reader.readAsText(file);
+  };
+
+  const handleDownloadTemplate = () => {
+    if (!csvTemplate.data) return;
+    const blob = new Blob([csvTemplate.data.csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'freedom-one-deal-import-template.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
   const [search, setSearch] = useState('');
   const [sortField, setSortField] = useState<SortField>('savedAt');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
@@ -1260,6 +1340,20 @@ export default function SavedDeals() {
                 </Button>
               )}
 
+              {/* Team Tier: CSV Import */}
+              {isTeamTier && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 text-xs gap-1 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10"
+                  onClick={() => setShowImportDialog(true)}
+                >
+                  <Upload className="w-3 h-3" />
+                  Import CSV
+                  <Crown className="w-2.5 h-2.5 text-amber-400" />
+                </Button>
+              )}
+
               {/* View Toggle */}
               <div className="flex border border-border rounded-md overflow-hidden ml-auto">
                 <Button
@@ -1428,6 +1522,131 @@ export default function SavedDeals() {
               </Button>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* CSV Import Dialog */}
+      <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Upload className="w-5 h-5 text-emerald-500" />
+              Import Deals from CSV
+              <Crown className="w-4 h-4 text-amber-400" />
+            </DialogTitle>
+            <DialogDescription>
+              Upload a CSV file to bulk-import deals into your portfolio. Each row becomes a saved deal with automatic profit calculations.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            {/* Template Download */}
+            <div className="p-3 bg-blue-500/5 border border-blue-500/20 rounded-lg">
+              <p className="text-sm font-medium mb-1">Need a template?</p>
+              <p className="text-xs text-muted-foreground mb-2">
+                Download our CSV template with the correct column headers and sample data.
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1 text-xs"
+                onClick={handleDownloadTemplate}
+                disabled={!csvTemplate.data}
+              >
+                <Download className="w-3 h-3" /> Download Template
+              </Button>
+            </div>
+
+            {/* Required Columns Info */}
+            <div className="p-3 bg-secondary/50 rounded-lg">
+              <p className="text-xs font-semibold mb-1">Required Columns</p>
+              <p className="text-xs text-muted-foreground">
+                Address, City, State, Zip, Purchase Price, ARV, Rehab Cost
+              </p>
+              <p className="text-xs font-semibold mt-2 mb-1">Optional Columns</p>
+              <p className="text-xs text-muted-foreground">
+                Sqft, Beds, Baths, Year Built, Market, Status, Notes
+              </p>
+            </div>
+
+            {/* File Upload */}
+            <div>
+              <input
+                ref={csvFileRef}
+                type="file"
+                accept=".csv,.txt"
+                className="hidden"
+                onChange={handleCsvFileSelect}
+              />
+              <Button
+                variant="outline"
+                className="w-full h-24 border-dashed border-2 gap-2 text-muted-foreground hover:text-foreground hover:border-emerald-500/50"
+                onClick={() => csvFileRef.current?.click()}
+              >
+                <Upload className="w-5 h-5" />
+                <div className="text-center">
+                  <p className="font-medium">{importFileName || 'Click to select CSV file'}</p>
+                  <p className="text-xs">Maximum 5MB, .csv or .txt format</p>
+                </div>
+              </Button>
+            </div>
+
+            {/* Preview Table */}
+            {importPreview.length > 0 && (
+              <div>
+                <p className="text-sm font-semibold mb-2">Preview (first {Math.min(importPreview.length - 1, 5)} rows)</p>
+                <div className="overflow-x-auto border rounded-lg">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="bg-secondary/50">
+                        {importPreview[0]?.map((h, i) => (
+                          <th key={i} className="px-2 py-1.5 text-left font-semibold whitespace-nowrap">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {importPreview.slice(1).map((row, ri) => (
+                        <tr key={ri} className="border-t border-border/50">
+                          {row.map((cell, ci) => (
+                            <td key={ci} className="px-2 py-1 whitespace-nowrap max-w-[150px] truncate">{cell}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {importCsvContent.split('\n').filter(l => l.trim()).length - 1} total data rows detected
+                </p>
+              </div>
+            )}
+
+            {/* Import Button */}
+            <div className="flex gap-2 justify-end">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowImportDialog(false);
+                  setImportCsvContent('');
+                  setImportPreview([]);
+                  setImportFileName('');
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="gap-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+                disabled={!importCsvContent || csvImport.isPending}
+                onClick={() => csvImport.mutate({ csvContent: importCsvContent })}
+              >
+                {csvImport.isPending ? (
+                  <><Loader2 className="w-4 h-4 animate-spin" /> Importing...</>
+                ) : (
+                  <><Upload className="w-4 h-4" /> Import Deals</>
+                )}
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

@@ -8,8 +8,9 @@ import { getLoginUrl } from '@/const';
 import { toast } from 'sonner';
 import {
   User, Building2, Phone, Mail, MapPin, Globe, Shield, Briefcase, Save,
-  Loader2, Lock, CheckCircle2, Info
+  Loader2, Lock, CheckCircle2, Info, RotateCcw, CreditCard, Crown, Headphones
 } from 'lucide-react';
+import { useSubscriptionTourTrigger } from '@/components/SubscriptionTour';
 import { useState, useEffect, useCallback } from 'react';
 
 interface ProfileForm {
@@ -46,6 +47,11 @@ export default function Profile() {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const [form, setForm] = useState<ProfileForm>(EMPTY_FORM);
   const [hasChanges, setHasChanges] = useState(false);
+  const { resetTour } = useSubscriptionTourTrigger();
+  const subQuery = trpc.subscription.status.useQuery(undefined, {
+    enabled: isAuthenticated,
+    retry: false,
+  });
 
   const profileQuery = trpc.profile.get.useQuery(undefined, {
     enabled: isAuthenticated,
@@ -142,6 +148,55 @@ export default function Profile() {
       </section>
 
       <section className="container py-8 max-w-3xl">
+        {/* Subscription & Tour Card */}
+        <Card className="mb-6">
+          <CardContent className="pt-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-lg bg-[oklch(0.48_0.20_18)]/10">
+                  <CreditCard className="w-5 h-5 text-[oklch(0.48_0.20_18)]" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <p className="font-semibold">Subscription</p>
+                    {user?.role === 'admin' && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                        <Crown className="w-3 h-3" /> Admin
+                      </span>
+                    )}
+                    {(subQuery.data?.plan === 'elite' || subQuery.data?.plan === 'team') && user?.role !== 'admin' && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                        <Headphones className="w-3 h-3" /> Priority Support
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {subQuery.data?.plan ? (
+                      <span className="capitalize">{subQuery.data.plan} Plan</span>
+                    ) : (
+                      'Free Plan'
+                    )}
+                    {subQuery.data?.plan && subQuery.data.plan !== 'free' && (
+                      <span className="ml-2 text-green-500 text-xs">Active</span>
+                    )}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 text-xs"
+                  onClick={() => resetTour(subQuery.data?.plan || 'free')}
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  Replay Feature Tour
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Info Banner */}
         <div className="mb-6 p-4 bg-[oklch(0.48_0.20_18)]/5 border border-[oklch(0.48_0.20_18)]/20 rounded-lg flex items-start gap-3">
           <Info className="w-5 h-5 text-[oklch(0.48_0.20_18)] shrink-0 mt-0.5" />

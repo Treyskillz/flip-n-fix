@@ -13,6 +13,40 @@ import { generateImage } from "./_core/imageGeneration";
 import { storagePut } from "./storage";
 import crypto from "crypto";
 import { postToFacebook, postPhotoToFacebook, verifyFacebookConnection, isFacebookConfigured, buildFacebookShareUrl } from "./facebook";
+import { notifyOwner } from "./_core/notification";
+
+/** Parse a single CSV line handling quoted fields */
+function parseCSVLine(line: string): string[] {
+  const result: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (i + 1 < line.length && line[i + 1] === '"') {
+          current += '"';
+          i++; // skip escaped quote
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        current += ch;
+      }
+    } else {
+      if (ch === '"') {
+        inQuotes = true;
+      } else if (ch === ',') {
+        result.push(current);
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+  }
+  result.push(current);
+  return result;
+}
 
 export const appRouter = router({
   system: systemRouter,
@@ -337,14 +371,54 @@ Provide 3-5 comparable RENOVATED properties that meet ALL of these criteria:
           .set({ viewCount: sql`${sharedDeals.viewCount} + 1` })
           .where(eq(sharedDeals.shareId, input.shareId));
 
+        const newViewCount = deal.viewCount + 1;
+
+        // Send notification to deal owner on first view and every 5th view
+        if (deal.userId && (newViewCount === 1 || newViewCount % 5 === 0)) {
+          try {
+            // Look up the deal owner
+            const ownerRow = await db.select({ name: users.name, email: users.email, role: users.role })
+              .from(users).where(eq(users.id, deal.userId)).limit(1);
+            const owner = ownerRow[0];
+            const addr = deal.propertyAddress || 'a shared deal';
+
+            // Notify the project owner (admin) about the view
+            await notifyOwner({
+              title: `Shared Deal Viewed: ${addr}`,
+              content: `Your shared deal link for "${addr}" has been viewed ${newViewCount} time${newViewCount !== 1 ? 's' : ''}.${owner ? ` (Shared by: ${owner.name || owner.email || 'User #' + deal.userId})` : ''} Share ID: ${deal.shareId}`,
+            }).catch(() => {}); // non-blocking
+          } catch (_) {
+            // notification is non-critical, don't fail the request
+          }
+        }
+
         return {
           shareId: deal.shareId,
           dealData: deal.dealData,
           propertyAddress: deal.propertyAddress,
           createdAt: deal.createdAt,
-          viewCount: deal.viewCount + 1,
+          viewCount: newViewCount,
         };
       }),
+
+    /** List all shared deals for the current user with view counts */
+    listMine: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      const rows = await db.select()
+        .from(sharedDeals)
+        .where(eq(sharedDeals.userId, ctx.user.id))
+        .orderBy(desc(sharedDeals.createdAt));
+
+      return rows.map(r => ({
+        shareId: r.shareId,
+        propertyAddress: r.propertyAddress,
+        viewCount: r.viewCount,
+        createdAt: r.createdAt,
+        expiresAt: r.expiresAt,
+      }));
+    }),
   }),
 
   // ─── Saved Deals (Server-side) ────────────────────────────────
@@ -2404,6 +2478,201 @@ Market: ${input.market || 'Not specified'}`,
 
       const csv = [headers.join(','), ...csvRows.map(r => r.join(','))].join('\n');
       return { csv, count: rows.length };
+    }),
+
+    /** CSV Import — import deals from CSV file (Team tier only) */
+    csvImport: protectedProcedure
+      .input(z.object({
+        csvContent: z.string().min(1),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        // Check Team tier
+        const userRow = await db.select({ subscriptionPlan: users.subscriptionPlan }).from(users).where(eq(users.id, ctx.user.id)).limit(1);
+        const stripePlan = userRow[0]?.subscriptionPlan || "free";
+        const giftedRows = await db.select().from(giftedSubscriptions).where(and(eq(giftedSubscriptions.userId, ctx.user.id), isNull(giftedSubscriptions.revokedAt))).orderBy(desc(giftedSubscriptions.createdAt)).limit(1);
+        const now = new Date();
+        const activeGift = giftedRows[0] && (!giftedRows[0].expiresAt || giftedRows[0].expiresAt > now) ? giftedRows[0] : null;
+        const planRank: Record<string, number> = { free: 0, pro: 1, elite: 2, team: 3 };
+        let effectivePlan = stripePlan;
+        if (activeGift && (planRank[activeGift.plan] || 0) > (planRank[stripePlan] || 0)) effectivePlan = activeGift.plan;
+        const isAdmin = ctx.user.role === 'admin';
+        if (!isAdmin && effectivePlan !== "team") {
+          throw new Error("CSV Import is a Team plan exclusive feature. Please upgrade.");
+        }
+
+        // Parse CSV
+        const lines = input.csvContent.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        if (lines.length < 2) throw new Error("CSV must have a header row and at least one data row.");
+
+        // Parse header
+        const headerLine = lines[0];
+        const headers = parseCSVLine(headerLine).map(h => h.toLowerCase().trim());
+
+        // Map headers to fields
+        const fieldMap: Record<string, string> = {
+          'address': 'address',
+          'street': 'address',
+          'street address': 'address',
+          'property address': 'address',
+          'city': 'city',
+          'state': 'state',
+          'zip': 'zip',
+          'zip code': 'zip',
+          'zipcode': 'zip',
+          'purchase price': 'purchasePrice',
+          'purchaseprice': 'purchasePrice',
+          'purchase_price': 'purchasePrice',
+          'price': 'purchasePrice',
+          'arv': 'arv',
+          'after repair value': 'arv',
+          'after_repair_value': 'arv',
+          'rehab cost': 'rehabCost',
+          'rehabcost': 'rehabCost',
+          'rehab_cost': 'rehabCost',
+          'repair cost': 'rehabCost',
+          'repairs': 'rehabCost',
+          'sqft': 'sqft',
+          'sq ft': 'sqft',
+          'square feet': 'sqft',
+          'square footage': 'sqft',
+          'beds': 'beds',
+          'bedrooms': 'beds',
+          'baths': 'baths',
+          'bathrooms': 'baths',
+          'year built': 'yearBuilt',
+          'yearbuilt': 'yearBuilt',
+          'year_built': 'yearBuilt',
+          'market': 'market',
+          'notes': 'notes',
+          'status': 'status',
+        };
+
+        const colMapping: Record<string, number> = {};
+        headers.forEach((h, i) => {
+          const mapped = fieldMap[h];
+          if (mapped) colMapping[mapped] = i;
+        });
+
+        // Validate required columns
+        const requiredCols = ['address', 'city', 'state', 'zip', 'purchasePrice', 'arv', 'rehabCost'];
+        const missingCols = requiredCols.filter(c => colMapping[c] === undefined);
+        if (missingCols.length > 0) {
+          throw new Error(`Missing required columns: ${missingCols.join(', ')}. Required: Address, City, State, Zip, Purchase Price, ARV, Rehab Cost`);
+        }
+
+        const results: { row: number; address: string; success: boolean; error?: string }[] = [];
+        let imported = 0;
+
+        for (let i = 1; i < lines.length; i++) {
+          const cols = parseCSVLine(lines[i]);
+          const getCol = (field: string) => {
+            const idx = colMapping[field];
+            return idx !== undefined && idx < cols.length ? cols[idx].trim() : '';
+          };
+          const getNum = (field: string) => {
+            const val = getCol(field).replace(/[\$,]/g, '');
+            const num = parseFloat(val);
+            return isNaN(num) ? 0 : Math.round(num);
+          };
+
+          const address = getCol('address');
+          if (!address) {
+            results.push({ row: i + 1, address: '(empty)', success: false, error: 'Missing address' });
+            continue;
+          }
+
+          try {
+            const purchasePrice = getNum('purchasePrice');
+            const arv = getNum('arv');
+            const rehabCost = getNum('rehabCost');
+            const sqft = getNum('sqft') || 1500;
+            const beds = getNum('beds') || 3;
+            const baths = getNum('baths') || 2;
+            const yearBuilt = getNum('yearBuilt') || 2000;
+
+            if (purchasePrice <= 0) {
+              results.push({ row: i + 1, address, success: false, error: 'Purchase price must be > 0' });
+              continue;
+            }
+            if (arv <= 0) {
+              results.push({ row: i + 1, address, success: false, error: 'ARV must be > 0' });
+              continue;
+            }
+
+            // Calculate derived fields
+            const totalInvestment = purchasePrice + rehabCost;
+            const netProfit = arv - totalInvestment;
+            const roi = totalInvestment > 0 ? (netProfit / totalInvestment) * 100 : 0;
+            const maxAllowableOffer = Math.round(arv * 0.7 - rehabCost);
+            const recommendedMaxPrice = Math.round(arv * 0.65 - rehabCost);
+
+            // Deal verdict
+            let dealVerdict = 'Risky';
+            if (roi >= 20) dealVerdict = 'Strong Buy';
+            else if (roi >= 10) dealVerdict = 'Good Deal';
+            else if (roi >= 0) dealVerdict = 'Marginal';
+
+            // Deal score (simplified)
+            let dealScore = 50;
+            if (roi >= 30) dealScore = 90;
+            else if (roi >= 20) dealScore = 80;
+            else if (roi >= 15) dealScore = 70;
+            else if (roi >= 10) dealScore = 60;
+            else if (roi >= 5) dealScore = 50;
+            else if (roi >= 0) dealScore = 35;
+            else dealScore = 20;
+
+            const uniqueId = crypto.randomBytes(16).toString('hex');
+            const statusVal = getCol('status');
+            const validStatuses = ['active', 'under_contract', 'closed', 'passed', 'archived'];
+            const status = validStatuses.includes(statusVal) ? statusVal as any : 'active';
+
+            await db.insert(savedDeals).values({
+              uniqueId,
+              userId: ctx.user.id,
+              address,
+              city: getCol('city') || 'Unknown',
+              state: getCol('state') || 'XX',
+              zip: getCol('zip') || '00000',
+              purchasePrice,
+              arv,
+              rehabCost,
+              totalInvestment,
+              netProfit,
+              roiBps: Math.round(roi * 100),
+              dealVerdict,
+              maxAllowableOffer,
+              recommendedMaxPrice,
+              targetROI: 15,
+              sqft,
+              beds,
+              baths,
+              yearBuilt,
+              market: getCol('market') || null,
+              dealScore,
+              status,
+              notes: getCol('notes') || null,
+            });
+
+            imported++;
+            results.push({ row: i + 1, address, success: true });
+          } catch (err: any) {
+            results.push({ row: i + 1, address, success: false, error: err.message || 'Unknown error' });
+          }
+        }
+
+        return { imported, total: lines.length - 1, results };
+      }),
+
+    /** Get a sample CSV template for deal import */
+    csvTemplate: protectedProcedure.query(() => {
+      const headers = 'Address,City,State,Zip,Purchase Price,ARV,Rehab Cost,Sqft,Beds,Baths,Year Built,Market,Status,Notes';
+      const sample1 = '"123 Main St","Phoenix","AZ","85001",150000,250000,45000,1500,3,2,1985,"Phoenix Metro","active","Great flip opportunity"';
+      const sample2 = '"456 Oak Ave","Scottsdale","AZ","85251",200000,320000,55000,1800,4,2,1992,"Scottsdale","active","Needs full rehab"';
+      return { csv: [headers, sample1, sample2].join('\n') };
     }),
   }),
 
