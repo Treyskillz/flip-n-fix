@@ -478,3 +478,24 @@
 - [x] Test the dialog UI renders correctly (SavedDeals has sparkle button + dialog)
 - [x] Ensure copy/download buttons work (dialog has copy + download actions)
 - [x] Write vitest tests for analytics, comparison, and team features (195 tests passing across 18 files)
+
+## Wire White-Label into InvestorReport PDF (March 6, 2026)
+- [x] Update InvestorReport buildPdfHtml to pull white-label settings from branding hook
+- [x] Replace hardcoded header/footer with dynamic branding (logo, company name, contact info)
+- [x] Ensure admin gets Freedom One branding, subscribers get logo-only, Team gets full white-label
+- [x] Test PDF output renders correctly with all 3 branding tiers
+
+## Onboarding Tour for New Subscribers (March 6, 2026)
+- [x] Create SubscriptionTour component with step-by-step feature highlights
+- [x] Show tier-specific features (what's unlocked at their plan level)
+- [x] Trigger on first login or after subscription upgrade
+- [x] Store tour completion state in localStorage per plan
+- [x] Include dismiss/skip option and "Go There" navigation buttons
+- [x] Add tour for Free, Pro, Elite, and Team tiers
+- [x] Integrate into SiteLayout so it renders on every page
+
+## Test Analytics Dashboard (March 6, 2026)
+- [x] Navigate to /analytics in browser and verify page loads
+- [x] Verified proper auth gating, loading states, error handling
+- [x] Verified 6 Chart.js charts, KPI cards, and data tables all coded correctly
+- [x] All 195 tests passing across 18 test files

@@ -6,7 +6,7 @@ import {
   Kanban, TrendingUp, Briefcase, DollarSign, Hammer, Palette, Crown, Headphones
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, lazy, Suspense } from 'react';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
 
@@ -149,6 +149,8 @@ function UserBadges() {
   );
 }
 
+const SubscriptionTour = lazy(() => import('./SubscriptionTour'));
+
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -259,6 +261,11 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <main className="flex-1">
         {children}
       </main>
+
+      {/* Subscription Onboarding Tour */}
+      <Suspense fallback={null}>
+        <SubscriptionTour />
+      </Suspense>
 
       {/* Footer - Freedom One branded */}
       <footer className="border-t border-[oklch(0.4_0_0)] bg-[oklch(0.25_0_0)]">
