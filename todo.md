@@ -545,3 +545,9 @@
 - [x] DealComparison file exists and route works at /compare
 - [x] Ensure all routes work and all pages load correctly (41 pages, all routes verified)
 - [x] Run full test suite - 218 tests passing across 19 test files
+
+## Home Depot SKU Audit (March 6, 2026)
+- [x] Find all files containing Home Depot SKU numbers (scopeOfWork.ts is the single source)
+- [x] Verify each SKU link goes to the correct product on homedepot.com (URLs confirmed valid via search)
+- [x] Fix all 55 incorrect SKU numbers - updated sku field to match URL Internet # (was showing Store SKU #)
+- [x] Ensure all links use the correct URL format (151 product entries, 0 mismatches remaining)
