@@ -3407,6 +3407,95 @@ Market: ${input.market || 'Not specified'}`,
         priceChanges: all.filter(p => p.priceChangePct && p.priceChangePct !== 0).length,
       };
     }),
+
+    /** Public: Get product catalog summary by category for Material Cost Tracker */
+    categorySummary: publicProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      const all = await db.select().from(productCatalog);
+      const categoryMap: Record<string, { category: string; products: number; avgOriginalPrice: number; avgCurrentPrice: number; avgPriceChange: number; verified: number; discontinued: number; unavailable: number; unknown: number; lastChecked: Date | null }> = {};
+      for (const p of all) {
+        const cat = p.category || 'Uncategorized';
+        if (!categoryMap[cat]) {
+          categoryMap[cat] = { category: cat, products: 0, avgOriginalPrice: 0, avgCurrentPrice: 0, avgPriceChange: 0, verified: 0, discontinued: 0, unavailable: 0, unknown: 0, lastChecked: null };
+        }
+        const entry = categoryMap[cat];
+        entry.products++;
+        const origPrice = parseFloat(p.originalPrice.replace(/[^0-9.]/g, '')) || 0;
+        const currPrice = p.currentPrice ? parseFloat(p.currentPrice.replace(/[^0-9.]/g, '')) || origPrice : origPrice;
+        entry.avgOriginalPrice += origPrice;
+        entry.avgCurrentPrice += currPrice;
+        if (p.priceChangePct) entry.avgPriceChange += p.priceChangePct;
+        if (p.status === 'verified') entry.verified++;
+        if (p.status === 'discontinued') entry.discontinued++;
+        if (p.status === 'unavailable') entry.unavailable++;
+        if (p.status === 'unknown') entry.unknown++;
+        if (p.lastCheckedAt && (!entry.lastChecked || p.lastCheckedAt > entry.lastChecked)) entry.lastChecked = p.lastCheckedAt;
+      }
+      return Object.values(categoryMap).map(c => ({
+        ...c,
+        avgOriginalPrice: c.products > 0 ? Math.round((c.avgOriginalPrice / c.products) * 100) / 100 : 0,
+        avgCurrentPrice: c.products > 0 ? Math.round((c.avgCurrentPrice / c.products) * 100) / 100 : 0,
+        avgPriceChange: c.products > 0 ? Math.round(c.avgPriceChange / c.products) : 0,
+      })).sort((a, b) => b.products - a.products);
+    }),
+
+    /** Public: Get price history grouped by category for trend charts */
+    categoryPriceTrends: publicProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      const history = await db.select().from(priceHistory).orderBy(asc(priceHistory.checkedAt));
+      const products = await db.select().from(productCatalog);
+      const skuToCategory: Record<string, string> = {};
+      for (const p of products) {
+        skuToCategory[p.sku] = p.category || 'Uncategorized';
+      }
+      // Group by date (day) and category
+      const trends: Record<string, Record<string, { total: number; count: number }>> = {};
+      for (const h of history) {
+        const dateKey = new Date(h.checkedAt).toISOString().split('T')[0];
+        const cat = skuToCategory[h.sku] || 'Uncategorized';
+        if (!trends[dateKey]) trends[dateKey] = {};
+        if (!trends[dateKey][cat]) trends[dateKey][cat] = { total: 0, count: 0 };
+        const price = parseFloat(h.price.replace(/[^0-9.]/g, '')) || 0;
+        trends[dateKey][cat].total += price;
+        trends[dateKey][cat].count++;
+      }
+      return Object.entries(trends).map(([date, cats]) => ({
+        date,
+        categories: Object.entries(cats).map(([cat, data]) => ({
+          category: cat,
+          avgPrice: Math.round((data.total / data.count) * 100) / 100,
+          productCount: data.count,
+        })),
+      })).sort((a, b) => a.date.localeCompare(b.date));
+    }),
+
+    /** Public: Get all products with prices for the Material Cost Tracker */
+    publicProducts: publicProcedure
+      .input(z.object({ category: z.string().optional() }).optional())
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return [];
+        let query = db.select({
+          sku: productCatalog.sku,
+          name: productCatalog.name,
+          url: productCatalog.url,
+          originalPrice: productCatalog.originalPrice,
+          currentPrice: productCatalog.currentPrice,
+          priceChangePct: productCatalog.priceChangePct,
+          status: productCatalog.status,
+          category: productCatalog.category,
+          lastCheckedAt: productCatalog.lastCheckedAt,
+          alternativeName: productCatalog.alternativeName,
+          alternativeUrl: productCatalog.alternativeUrl,
+          alternativePrice: productCatalog.alternativePrice,
+        }).from(productCatalog);
+        if (input?.category) {
+          return query.where(eq(productCatalog.category, input.category)).orderBy(asc(productCatalog.name));
+        }
+        return query.orderBy(asc(productCatalog.name));
+      }),
   }),
 });
 export type AppRouter = typeof appRouter;

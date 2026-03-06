@@ -602,3 +602,16 @@
 - [x] Build product price history tracking and sparkline charts in admin dashboard (priceHistory table + sparklines + history dialog)
 - [x] Update Manual and documentation with bulk replace, price history, verification history sections
 - [x] Run tests and save checkpoint (232 tests passing across 20 files)
+
+## Seed Catalog, Monthly Cron & Material Cost Tracker (March 6, 2026)
+- [x] Seed product catalog with 100 unique products from scopeOfWork data (11 categories)
+- [x] Run full verification on all seeded products (requires LLM calls - available via Admin dashboard)
+- [x] Set up automated monthly cron schedule for product verification (1st of each month at 3 AM)
+- [x] Build public Material Cost Tracker page for subscribers
+- [x] Show trending material prices by category (lumber, tile, fixtures, etc.)
+- [x] Add price trend charts using Chart.js or sparklines
+- [x] Gate Material Cost Tracker behind Pro+ subscription
+- [x] Add Material Cost Tracker route to App.tsx and navigation
+- [x] Update Manual with Material Cost Tracker documentation
+- [x] Update Pricing page with Material Cost Tracker in Pro tier features
+- [x] Run tests and save checkpoint (248 tests passing across 21 files)

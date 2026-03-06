@@ -3,7 +3,7 @@ import {
   Calculator, Landmark, Megaphone, FileText, GraduationCap,
   Newspaper, BookOpen, Menu, X, Home, Building2, ClipboardList, Save, Shield, CreditCard,
   Wrench, MapPin, Award, CheckSquare, HelpCircle, ChevronDown, Zap, Paintbrush, BarChart3,
-  Kanban, TrendingUp, Briefcase, DollarSign, Hammer, Palette, Crown, Headphones, Package, Gift
+  Kanban, TrendingUp, Briefcase, DollarSign, Hammer, Palette, Crown, Headphones, Package, Gift, LineChart
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useCallback, useRef, useEffect, lazy, Suspense } from 'react';
@@ -53,6 +53,7 @@ const RESOURCES_NAV: NavItem[] = [
   { path: '/support', label: 'Support', icon: HelpCircle },
   { path: '/profile', label: 'My Profile', icon: Shield },
   { path: '/white-label', label: 'White-Label Branding', icon: Palette },
+  { path: '/material-costs', label: 'Material Cost Tracker', icon: LineChart },
   { path: '/analytics', label: 'Analytics Dashboard', icon: BarChart3 },
 ];
 

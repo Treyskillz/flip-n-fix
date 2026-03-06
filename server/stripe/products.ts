@@ -41,6 +41,7 @@ export const PLANS = {
       "Product Verification Badges",
       "Price Change Tracking",
       "Alternative Product Suggestions",
+      "Material Cost Tracker Dashboard",
     ],
     priceMonthly: 9900, // $99/mo
     priceYearly: 99000, // $990/yr

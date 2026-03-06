@@ -5,6 +5,7 @@ import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { registerAutoBlogRoute } from "../autoBlog";
+import { registerProductVerifyRoute } from "../productVerifyCron";
 import { registerStripeWebhook } from "../stripe/webhook";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
@@ -41,6 +42,8 @@ async function startServer() {
   registerOAuthRoutes(app);
   // Auto-blog cron endpoint
   registerAutoBlogRoute(app);
+  // Product verification cron endpoint
+  registerProductVerifyRoute(app);
   // tRPC API
   app.use(
     "/api/trpc",

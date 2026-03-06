@@ -50,6 +50,7 @@ The Fix & Flip Analyzer is a comprehensive real estate investment analysis syste
 - **Renovation Designer** — Visualize room designs and material choices
 - **Product Verification** — Verified Home Depot product links with price tracking and discontinued product alerts
 - **Alternative Product Suggestions** — Automatic replacement recommendations for discontinued materials
+- **Material Cost Tracker** — Subscriber dashboard showing pricing trends across 11 rehab material categories with automated monthly updates
 - **White-Label Branding** — Custom logo and branding on all reports (Team tier)
 - **Blog & Auto-Publishing** — Content management with AI generation and Facebook auto-posting
 - **Free Guide & Lead Capture** — Lead generation with downloadable guide
@@ -1426,6 +1427,71 @@ The Admin dropdown menu (gold crown icon) appears in the navigation bar only for
 - Price changes are calculated as basis points for precision (530 = 5.30%)
 - Run Auto-Verify periodically (monthly recommended) to keep the catalog current
 - Seed the catalog first before running Auto-Verify — seeding creates the database entries that verification checks`,
+  },
+  {
+    id: 'material-cost-tracker',
+    title: 'Material Cost Tracker',
+    icon: '📈',
+    content: `## Material Cost Tracker
+
+The Material Cost Tracker is a subscriber-facing dashboard that displays real-time pricing trends for rehab materials across 11 categories. It helps investors anticipate budget changes by monitoring Home Depot product prices over time.
+
+### Accessing the Tracker
+Navigate to **Material Cost Tracker** from the main navigation bar (the chart icon). This feature is available on **Pro**, **Elite**, and **Team** subscription plans.
+
+### Dashboard Overview
+The top of the page shows four summary cards:
+- **Total Products** — Number of products tracked in the catalog
+- **Categories** — Number of material categories (11 total)
+- **Avg Price Change** — Average price change across all products (green = decrease, red = increase)
+- **Price Alerts** — Number of categories with significant price movements
+
+### Category Breakdown
+Below the summary cards, you'll find a grid of category cards covering:
+- Kitchen, Bathroom, Bedroom, Living Room
+- Electrical, HVAC, Plumbing
+- Roof & Gutter, Structural & Windows
+- Landscaping & Exterior, Garage
+
+Each card shows:
+- Number of products in the category
+- Average product price
+- Average price change percentage
+- Verification status counts (verified, discontinued, unavailable)
+
+**Click any category card** to filter the product table below to show only products in that category.
+
+### Product Table
+The full product table displays:
+- **Product Name** and SKU number
+- **Category** with color-coded indicator
+- **Original Price** — The price when the product was first cataloged
+- **Current Price** — The latest verified price
+- **Change** — Price change indicator (red up arrow for increases, green down arrow for decreases)
+- **Status** — Verification status badge (Verified, Discontinued, Unavailable, Not Verified)
+- **Link** — Direct link to the Home Depot product page
+
+Use the **search bar** to find specific products by name or SKU, and the **sort dropdown** to sort by name, price change, or price.
+
+### Discontinued Product Alternatives
+When products are discontinued, the tracker shows a dedicated section at the bottom with:
+- The original product name (with strikethrough)
+- The suggested alternative product with name, price, and a direct link
+
+### Automated Monthly Verification
+The product catalog is automatically verified on the 1st of every month at 3:00 AM. This scheduled process:
+1. Checks all 100+ products for availability
+2. Updates current prices
+3. Flags discontinued or unavailable items
+4. Records price history for trend tracking
+5. Sends notifications for price changes greater than 10%
+
+### Tips
+- Check the tracker before creating rehab budgets to use the most current pricing
+- Watch for red price increase indicators — they may signal supply chain issues or seasonal demand
+- Green price decreases can indicate good buying opportunities
+- Discontinued products will have suggested alternatives — click through to verify the replacement fits your project
+- The tracker updates automatically each month, but admins can trigger manual verification at any time from the Admin Product Catalog page`,
   },
   {
     id: 'support',
