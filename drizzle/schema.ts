@@ -357,3 +357,29 @@ export const productCatalog = mysqlTable("product_catalog", {
 
 export type ProductCatalogRow = typeof productCatalog.$inferSelect;
 export type InsertProductCatalog = typeof productCatalog.$inferInsert;
+
+// ─── Product Price History ──────────────────────
+export const priceHistory = mysqlTable("price_history", {
+  id: int("id").autoincrement().primaryKey(),
+  sku: varchar("sku", { length: 64 }).notNull(),
+  price: varchar("price", { length: 64 }).notNull(),
+  priceChangePct: int("priceChangePct"), // basis points vs original
+  status: mysqlEnum("status", ["verified", "discontinued", "unavailable", "unknown"]).default("unknown").notNull(),
+  checkedAt: timestamp("checkedAt").defaultNow().notNull(),
+});
+export type PriceHistoryRow = typeof priceHistory.$inferSelect;
+export type InsertPriceHistory = typeof priceHistory.$inferInsert;
+
+// ─── Scheduled Verification Log ──────────────────────
+export const verificationLog = mysqlTable("verification_log", {
+  id: int("id").autoincrement().primaryKey(),
+  triggeredBy: varchar("triggeredBy", { length: 64 }).notNull(), // "scheduled" | "manual" | "admin"
+  totalProducts: int("totalProducts").default(0).notNull(),
+  verified: int("verified").default(0).notNull(),
+  discontinued: int("discontinued").default(0).notNull(),
+  unavailable: int("unavailable").default(0).notNull(),
+  priceAlerts: int("priceAlerts").default(0).notNull(),
+  duration: int("duration"), // ms
+  completedAt: timestamp("completedAt").defaultNow().notNull(),
+});
+export type VerificationLogRow = typeof verificationLog.$inferSelect;

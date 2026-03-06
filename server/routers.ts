@@ -6,7 +6,7 @@ import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_
 import { PLANS, PlanKey } from "./stripe/products";
 import { createCheckoutSession, createPortalSession } from "./stripe/checkout";
 import { getDb } from "./db";
-import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments, pipelineDeals, pipelineContacts, pipelineActivities, giftedSubscriptions, emailLeads, blogPosts, whiteLabelSettings, productCatalog } from "../drizzle/schema";
+import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments, pipelineDeals, pipelineContacts, pipelineActivities, giftedSubscriptions, emailLeads, blogPosts, whiteLabelSettings, productCatalog, priceHistory, verificationLog } from "../drizzle/schema";
 import { eq, sql, desc, and, ne, inArray, asc, isNull } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
@@ -3140,6 +3140,13 @@ Market: ${input.market || 'Not specified'}`,
           }
 
           await db.update(productCatalog).set(updates).where(eq(productCatalog.sku, r.sku));
+          // Record price history
+          await db.insert(priceHistory).values({
+            sku: r.sku,
+            price: r.currentPrice || products.find(p => p.sku === r.sku)?.originalPrice || '0',
+            priceChangePct: updates.priceChangePct || null,
+            status: r.status,
+          });
           results.push({ sku: r.sku, status: r.status, reason: r.reason });
         }
 
@@ -3181,6 +3188,208 @@ Market: ${input.market || 'Not specified'}`,
         }
 
         return { results };
+      }),
+
+    /** Admin: Scheduled full catalog verification - processes all products in batches */
+    scheduledVerify: adminProcedure.mutation(async () => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+      const startTime = Date.now();
+      const allProducts = await db.select().from(productCatalog);
+      if (allProducts.length === 0) return { message: 'No products to verify', results: [] };
+
+      const allResults: Array<{ sku: string; status: string; reason: string }> = [];
+      let priceAlertCount = 0;
+      let discontinuedCount = 0;
+      let verifiedCount = 0;
+      let unavailableCount = 0;
+
+      // Process in batches of 10
+      for (let i = 0; i < allProducts.length; i += 10) {
+        const batch = allProducts.slice(i, i + 10);
+        const productList = batch.map(p => `SKU: ${p.sku}, Name: ${p.name}, Price: ${p.originalPrice}, URL: ${p.url}`).join('\n');
+
+        try {
+          const response = await invokeLLM({
+            messages: [
+              { role: "system", content: `You are a Home Depot product verification assistant. For each product, determine if it is likely still available. Return JSON only.` },
+              { role: "user", content: `Verify these products:\n\n${productList}\n\nReturn JSON: { "results": [{ "sku": string, "status": "verified"|"discontinued"|"unavailable", "currentPrice": string|null, "alternativeName": string|null, "alternativeSku": string|null, "alternativeUrl": string|null, "alternativePrice": string|null, "reason": string }] }` },
+            ],
+            response_format: {
+              type: "json_schema",
+              json_schema: {
+                name: "product_verification",
+                strict: true,
+                schema: {
+                  type: "object",
+                  properties: {
+                    results: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          sku: { type: "string" },
+                          status: { type: "string", enum: ["verified", "discontinued", "unavailable"] },
+                          currentPrice: { type: ["string", "null"] },
+                          alternativeName: { type: ["string", "null"] },
+                          alternativeSku: { type: ["string", "null"] },
+                          alternativeUrl: { type: ["string", "null"] },
+                          alternativePrice: { type: ["string", "null"] },
+                          reason: { type: "string" },
+                        },
+                        required: ["sku", "status", "currentPrice", "alternativeName", "alternativeSku", "alternativeUrl", "alternativePrice", "reason"],
+                        additionalProperties: false,
+                      },
+                    },
+                  },
+                  required: ["results"],
+                  additionalProperties: false,
+                },
+              },
+            },
+          });
+
+          const parsed = JSON.parse((response.choices[0].message.content as string) || '{}');
+          for (const r of (parsed.results || [])) {
+            const updates: Record<string, any> = { status: r.status, lastCheckedAt: new Date() };
+            if (r.currentPrice) updates.currentPrice = r.currentPrice;
+            if (r.alternativeName) updates.alternativeName = r.alternativeName;
+            if (r.alternativeSku) updates.alternativeSku = r.alternativeSku;
+            if (r.alternativeUrl) updates.alternativeUrl = r.alternativeUrl;
+            if (r.alternativePrice) updates.alternativePrice = r.alternativePrice;
+
+            if (r.currentPrice) {
+              const existing = batch.find(p => p.sku === r.sku);
+              if (existing) {
+                const origNum = parseFloat(existing.originalPrice.replace(/[^0-9.]/g, ''));
+                const currNum = parseFloat(r.currentPrice.replace(/[^0-9.]/g, ''));
+                if (!isNaN(origNum) && !isNaN(currNum) && origNum > 0) {
+                  updates.priceChangePct = Math.round(((currNum - origNum) / origNum) * 10000);
+                  if (Math.abs(((currNum - origNum) / origNum) * 100) >= 10) priceAlertCount++;
+                }
+              }
+            }
+
+            await db.update(productCatalog).set(updates).where(eq(productCatalog.sku, r.sku));
+            await db.insert(priceHistory).values({
+              sku: r.sku,
+              price: r.currentPrice || batch.find(p => p.sku === r.sku)?.originalPrice || '0',
+              priceChangePct: updates.priceChangePct || null,
+              status: r.status,
+            });
+
+            if (r.status === 'verified') verifiedCount++;
+            if (r.status === 'discontinued') discontinuedCount++;
+            if (r.status === 'unavailable') unavailableCount++;
+            allResults.push({ sku: r.sku, status: r.status, reason: r.reason });
+          }
+        } catch (err) {
+          console.error(`[ScheduledVerify] Batch ${i}-${i+10} failed:`, err);
+        }
+      }
+
+      const duration = Date.now() - startTime;
+      // Log the verification run
+      await db.insert(verificationLog).values({
+        triggeredBy: 'scheduled',
+        totalProducts: allProducts.length,
+        verified: verifiedCount,
+        discontinued: discontinuedCount,
+        unavailable: unavailableCount,
+        priceAlerts: priceAlertCount,
+        duration,
+      });
+
+      // Notify owner with summary
+      await notifyOwner({
+        title: `📊 Monthly Product Verification Complete`,
+        content: `Verified ${allProducts.length} products in ${Math.round(duration / 1000)}s.\n\n✅ Verified: ${verifiedCount}\n❌ Discontinued: ${discontinuedCount}\n⚠️ Unavailable: ${unavailableCount}\n💰 Price Alerts (>10%): ${priceAlertCount}\n\nReview the Product Catalog admin page for details.`,
+      });
+
+      return { total: allProducts.length, verified: verifiedCount, discontinued: discontinuedCount, unavailable: unavailableCount, priceAlerts: priceAlertCount, duration };
+    }),
+
+    /** Admin: Get price history for a product */
+    priceHistoryBySku: adminProcedure
+      .input(z.object({ sku: z.string() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return [];
+        return db.select().from(priceHistory).where(eq(priceHistory.sku, input.sku)).orderBy(asc(priceHistory.checkedAt));
+      }),
+
+    /** Admin: Get price history for all products (for sparklines) */
+    priceHistoryAll: adminProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      return db.select().from(priceHistory).orderBy(asc(priceHistory.checkedAt));
+    }),
+
+    /** Admin: Get verification run logs */
+    verificationLogs: adminProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      return db.select().from(verificationLog).orderBy(desc(verificationLog.completedAt)).limit(20);
+    }),
+
+    /** Admin: Bulk replace a discontinued product across all SOW references */
+    bulkReplace: adminProcedure
+      .input(z.object({
+        oldSku: z.string(),
+        newSku: z.string(),
+        newName: z.string(),
+        newUrl: z.string(),
+        newPrice: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+        // Update the product catalog entry with the alternative
+        await db.update(productCatalog).set({
+          alternativeSku: input.newSku,
+          alternativeName: input.newName,
+          alternativeUrl: input.newUrl,
+          alternativePrice: input.newPrice,
+          status: 'discontinued',
+        }).where(eq(productCatalog.sku, input.oldSku));
+
+        // Also update any saved deals that reference this product in their dealData JSON
+        const deals = await db.select().from(savedDeals);
+        let updatedDeals = 0;
+        for (const deal of deals) {
+          if (!deal.dealData) continue;
+          try {
+            const data = JSON.parse(deal.dealData);
+            let changed = false;
+            // Check rehabItems inside dealData
+            if (data.rehabItems && Array.isArray(data.rehabItems)) {
+              for (const item of data.rehabItems) {
+                if (item.sku === input.oldSku) {
+                  item.sku = input.newSku;
+                  item.name = input.newName;
+                  item.url = input.newUrl;
+                  item.unitCost = input.newPrice;
+                  item.replaced = true;
+                  item.replacedFrom = input.oldSku;
+                  changed = true;
+                }
+              }
+            }
+            if (changed) {
+              await db.update(savedDeals).set({ dealData: JSON.stringify(data) }).where(eq(savedDeals.id, deal.id));
+              updatedDeals++;
+            }
+          } catch {
+            // Skip deals with invalid JSON
+          }
+        }
+
+        await notifyOwner({
+          title: `🔄 Bulk Product Replacement Complete`,
+          content: `Replaced ${input.oldSku} with ${input.newSku} (${input.newName}).\n\nUpdated ${updatedDeals} saved deal(s) with the new product reference.`,
+        });
+
+        return { success: true, updatedDeals };
       }),
 
     /** Admin: Get catalog statistics */

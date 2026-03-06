@@ -1371,11 +1371,28 @@ Admins have a dedicated **Admin Product Catalog** page (accessible from the Admi
 
 **Management Actions:**
 - **Seed Catalog** — One-click button to populate the database from the scope of work product data (151 products)
-- **Auto-Verify All** — Triggers AI-powered verification of all unverified products, checking availability, current pricing, and suggesting alternatives for discontinued items
-- **Verify Individual** — Verify a single product on demand
-- **Edit Product** — Update status, current price, and notes for any product
+- **Auto-Verify Unknown** — Triggers AI-powered verification of all unverified products, checking availability, current pricing, and suggesting alternatives for discontinued items
+- **Full Verify All** — Runs a complete scheduled verification of every product in the catalog (not just unknowns), records results in the verification log, and sends price alert notifications
+- **Verify Individual** — Verify a single product on demand by clicking the refresh icon
+- **Edit Product** — Update status, current price, and alternative product for any item
 - **Set Alternative** — Assign a replacement product (SKU, name, URL, price) for discontinued items
+- **Bulk Replace** — For discontinued products, replace the product across all saved deals in one click (arrow icon). This updates the dealData JSON in every saved deal that references the old SKU
+- **Price History** — Click the chart icon or sparkline to view the full price history for any product, showing every recorded price point with dates and percentage changes
 - **Export CSV** — Download the full catalog as a CSV file for offline analysis
+
+### Price History Tracking
+Every time a product is verified, its price is recorded in the price history database. This creates a timeline of price changes for each product:
+- **Sparkline Charts** — The Trend column in the product table shows a mini sparkline chart of recent prices. Red = price increasing, green = price decreasing, gray = stable
+- **Detailed History** — Click any sparkline or the chart icon to open the full price history dialog showing every recorded price point with date, price, change percentage, and verification status
+- **Trend Analysis** — Spot pricing trends across your rehab materials to anticipate budget impacts
+
+### Verification History
+The **Verification History** tab in the Admin Product Catalog shows a log of all verification runs:
+- Date and time of each run
+- Whether it was triggered manually or by scheduled automation
+- Total products scanned, verified count, discontinued count, unavailable count
+- Number of price alerts triggered
+- Duration of the verification run
 
 ### Price Alert Notifications
 When the auto-verify system detects a price change greater than 10%, the site owner receives an automatic notification with:
@@ -1385,6 +1402,16 @@ When the auto-verify system detects a price change greater than 10%, the site ow
 - A direct link to the Home Depot product page
 
 This ensures rehab budgets stay accurate without manual price checking.
+
+### Bulk Product Replacement
+When a product is discontinued, admins can bulk-replace it across all saved deals:
+1. Find the discontinued product in the catalog table
+2. Click the swap icon (↔) in the Actions column
+3. Enter the replacement product details (name, SKU, URL, price) — these auto-fill from the alternative if one is set
+4. Click "Replace in All Deals" to update every saved deal that references the old SKU
+5. The owner receives a notification confirming how many deals were updated
+
+This prevents stale product references in saved deal analyses.
 
 ### Admin Navigation
 The Admin dropdown menu (gold crown icon) appears in the navigation bar only for users with the admin role. It provides quick access to:

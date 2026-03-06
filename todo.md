@@ -594,3 +594,11 @@
 - [x] Update Manual with Admin Product Catalog page documentation (dashboard, table, actions, stats)
 - [x] Update Manual with price alert notification documentation and admin navigation section
 - [x] Write vitest tests (232 tests passing across 20 files)
+
+## Admin PDF Guide & New Features (March 6, 2026)
+- [x] Create Administrator Navigation PDF guide with step-by-step instructions (8 pages)
+- [x] Build scheduled monthly auto-verification (scheduledVerify procedure + verificationLog table)
+- [x] Build bulk product replacement across saved deals (bulkReplace procedure + UI dialog)
+- [x] Build product price history tracking and sparkline charts in admin dashboard (priceHistory table + sparklines + history dialog)
+- [x] Update Manual and documentation with bulk replace, price history, verification history sections
+- [x] Run tests and save checkpoint (232 tests passing across 20 files)
