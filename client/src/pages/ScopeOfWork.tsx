@@ -26,6 +26,8 @@ import {
   MapPin, TrendingUp, TrendingDown, Minus, Globe
 } from 'lucide-react';
 import { useBranding, type BrandingConfig } from '@/lib/branding';
+import { ProductStatusBadge } from '@/components/ProductStatusBadge';
+import { useProductCatalog } from '@/hooks/useProductCatalog';
 
 // ─── REGIONAL MARKET SELECTOR ─────────────────────────────────
 // Now uses shared hook and components from @/hooks/useMarketSelector and @/components/MarketSelector
@@ -82,7 +84,7 @@ function shouldIncludeItem(itemLevel: 'cosmetic' | 'moderate' | 'full', roomCond
   return false;
 }
 
-function RoomTemplate({ room, tier, market, branding }: { room: RoomScope; tier: MaterialTier; market: MarketSelection; branding?: BrandingConfig }) {
+function RoomTemplate({ room, tier, market, branding, catalogMap }: { room: RoomScope; tier: MaterialTier; market: MarketSelection; branding?: BrandingConfig; catalogMap?: Map<string, any> }) {
   const photoUrl = ROOM_PHOTOS[room.id];
   const [expanded, setExpanded] = useState(false);
   const [condition, setCondition] = useState<RoomCondition>('moderate');
@@ -257,15 +259,11 @@ function RoomTemplate({ room, tier, market, branding }: { room: RoomScope; tier:
                       <td className="p-2 text-xs">{material}</td>
                       <td className="p-2 hidden md:table-cell">
                         {product && (
-                          <a
-                            href={product.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[10px] text-[oklch(0.48_0.20_18)] hover:underline"
-                          >
-                            <ExternalLink className="w-3 h-3" />
-                            SKU: {product.sku} ({product.price})
-                          </a>
+                          <ProductStatusBadge
+                            product={product}
+                            catalogEntry={catalogMap?.get(product.sku)}
+                            compact
+                          />
                         )}
                       </td>
                       <td className="p-2 text-right text-xs tabular-nums">{item.quantity} {item.unit}</td>
@@ -551,6 +549,7 @@ function TemplateCard({ template, market, onClick }: { template: SOWTemplate; ma
 export default function ScopeOfWork() {
   const rooms = getDefaultRoomScopes();
   const { branding } = useBranding();
+  const { catalogMap } = useProductCatalog();
   const [tier, setTier] = useState<MaterialTier>('standard');
   const [activeTab, setActiveTab] = useState<'library' | 'estimator'>('library');
   const [selectedRoom, setSelectedRoom] = useState<string>('all');
@@ -844,7 +843,7 @@ export default function ScopeOfWork() {
           <section className="container py-8">
             <div className="space-y-3">
               {rooms.map(room => (
-                <RoomTemplate key={room.id} room={room} tier={tier} market={market} branding={branding} />
+                <RoomTemplate key={room.id} room={room} tier={tier} market={market} branding={branding} catalogMap={catalogMap} />
               ))}
             </div>
           </section>

@@ -7,9 +7,11 @@ import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
 import { useLocation } from 'wouter';
 import {
-  Camera, Upload, Paintbrush, Loader2, ExternalLink, DollarSign,
+  Camera, Upload, Paintbrush, Loader2, DollarSign,
   Hammer, Sparkles, Crown, ChevronRight, ArrowRight, ImageIcon, Info, Calculator
 } from 'lucide-react';
+import { ProductStatusBadge } from '@/components/ProductStatusBadge';
+import { useProductCatalog } from '@/hooks/useProductCatalog';
 import {
   getDefaultRoomScopes,
   calculateRoomCost,
@@ -85,6 +87,7 @@ export default function RenovationDesigner() {
 
   const uploadMutation = trpc.renovation.uploadRoomPhoto.useMutation();
   const generateMutation = trpc.renovation.generateDesign.useMutation();
+  const { catalogMap } = useProductCatalog();
 
   // Get materials for each tier from the SOW database
   const roomMaterials = useMemo(() => {
@@ -458,8 +461,12 @@ export default function RenovationDesigner() {
                           <td className="py-2.5 text-muted-foreground">
                             <div>{mat.material}</div>
                             {mat.product && (
-                              <div className="text-xs text-muted-foreground/70 mt-0.5">
-                                {mat.product.name} — {mat.product.price}
+                              <div className="mt-0.5">
+                                <ProductStatusBadge
+                                  product={mat.product}
+                                  catalogEntry={catalogMap.get(mat.product.sku)}
+                                  compact
+                                />
                               </div>
                             )}
                           </td>
@@ -469,15 +476,9 @@ export default function RenovationDesigner() {
                           <td className="py-2.5 text-right font-medium">{formatCurrency(mat.materialCost + mat.laborCost)}</td>
                           <td className="py-2.5 text-center">
                             {mat.product ? (
-                              <a
-                                href={mat.product.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-xs text-[oklch(0.48_0.20_18)] hover:underline"
-                              >
-                                {mat.product.sku}
-                                <ExternalLink className="w-3 h-3" />
-                              </a>
+                              <span className="text-xs text-muted-foreground">
+                                #{mat.product.sku}
+                              </span>
                             ) : (
                               <span className="text-xs text-muted-foreground">—</span>
                             )}

@@ -334,3 +334,26 @@ export const whiteLabelSettings = mysqlTable("white_label_settings", {
 
 export type WhiteLabelSetting = typeof whiteLabelSettings.$inferSelect;
 export type InsertWhiteLabelSetting = typeof whiteLabelSettings.$inferInsert;
+
+// ─── Product Catalog (HD Product Verification & Pricing) ────
+export const productCatalog = mysqlTable("product_catalog", {
+  id: int("id").autoincrement().primaryKey(),
+  sku: varchar("sku", { length: 64 }).notNull().unique(), // Home Depot Internet #
+  name: varchar("name", { length: 512 }).notNull(),
+  url: text("url").notNull(),
+  originalPrice: varchar("originalPrice", { length: 64 }).notNull(), // price from scopeOfWork.ts
+  currentPrice: varchar("currentPrice", { length: 64 }), // last verified price from HD
+  priceChangePct: int("priceChangePct"), // stored as basis points (5.3% = 530)
+  status: mysqlEnum("status", ["verified", "discontinued", "unavailable", "unknown"]).default("unknown").notNull(),
+  lastCheckedAt: timestamp("lastCheckedAt"),
+  alternativeSku: varchar("alternativeSku", { length: 64 }), // SKU of suggested replacement
+  alternativeName: varchar("alternativeName", { length: 512 }),
+  alternativeUrl: text("alternativeUrl"),
+  alternativePrice: varchar("alternativePrice", { length: 64 }),
+  category: varchar("category", { length: 128 }), // e.g. "flooring", "countertop", "faucet"
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ProductCatalogRow = typeof productCatalog.$inferSelect;
+export type InsertProductCatalog = typeof productCatalog.$inferInsert;

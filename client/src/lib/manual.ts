@@ -48,6 +48,8 @@ The Fix & Flip Analyzer is a comprehensive real estate investment analysis syste
 - **State Guide** — State-by-state real estate investing regulations
 - **Contractor Management** — Track and manage your contractor relationships
 - **Renovation Designer** — Visualize room designs and material choices
+- **Product Verification** — Verified Home Depot product links with price tracking and discontinued product alerts
+- **Alternative Product Suggestions** — Automatic replacement recommendations for discontinued materials
 - **White-Label Branding** — Custom logo and branding on all reports (Team tier)
 - **Blog & Auto-Publishing** — Content management with AI generation and Facebook auto-posting
 - **Free Guide & Lead Capture** — Lead generation with downloadable guide
@@ -207,8 +209,22 @@ Choose the tier that matches the neighborhood:
 - **Standard** — Mid-range materials for typical homebuyer neighborhoods
 - **Luxury** — High-end finishes for upscale neighborhoods
 
-### Home Depot Product Links
-Every line item includes direct links to Home Depot products with real SKU numbers and current pricing. Click any product name to open the Home Depot product page in a new tab. This makes it easy to verify pricing and order materials.
+### Home Depot Product Links & Product Verification
+Every line item includes direct links to Home Depot products with real SKU numbers and pricing. Click any product link to open the Home Depot product page in a new tab.
+
+**Product Verification Badges** — Each product displays a status badge:
+- ✅ **Verified** — Product confirmed available on Home Depot with current pricing
+- ❌ **Discontinued** — Product no longer available; an alternative is suggested when possible
+- ⚠️ **Unavailable** — Product temporarily out of stock or region-restricted
+- ❓ **Unverified** — Product has not yet been checked
+
+**Price Change Indicators** — When a product's price has changed since it was originally listed:
+- 📈 Red arrow with percentage = price increased
+- 📉 Green arrow with percentage = price decreased
+
+**Alternative Product Suggestions** — When a product is discontinued, the system suggests a comparable replacement with a direct link and updated pricing. Look for the arrow (→) indicator below the product badge.
+
+Hover over any product badge to see detailed information including the last verification date, original vs. current price, and alternative product details.
 
 ### Regional Cost Adjustments
 All rehab costs automatically adjust based on your selected metro market. The regional indicator bar shows the specific material and labor multipliers being applied. For example, in San Francisco, a $10,000 kitchen rehab becomes approximately $13,500 after regional adjustments.
@@ -825,6 +841,8 @@ Full analysis suite for active investors:
 - Pipeline Deal Tracker
 - Renovation Designer
 - Quick Check Tool
+- Product Verification Badges & Price Tracking
+- Alternative Product Suggestions for Discontinued Items
 
 ### Elite Tier ($179/month or $1,790/year)
 Complete system with course & advanced tools:
@@ -1076,12 +1094,16 @@ The Renovation Designer helps you visualize and plan your rehab by selecting des
 - **Living Areas** — Flooring types, paint palettes, trim and molding options
 - **Exterior** — Siding, landscaping, curb appeal improvements
 
+### Product Verification
+All materials in the Renovation Designer display product verification badges showing whether each Home Depot product is verified, discontinued, or unavailable. Price change indicators show if costs have gone up or down since the original listing. Discontinued products display suggested alternatives with links and pricing.
+
 ### Integration with Deal Analyzer
 Design selections in the Renovation Designer can inform your rehab budget in the Deal Analyzer. Use the designer to explore options and costs before committing to a material tier in your scope of work.
 
 ### Tips
 - Match your design choices to the neighborhood — don't over-improve for the area
 - Use Rental Grade for investment properties, Standard for typical neighborhoods, Luxury for upscale areas
+- Check product verification badges before ordering materials — discontinued items may need substitution
 - Take screenshots of your design selections to share with contractors`,
   },
   {
@@ -1293,6 +1315,61 @@ In the Admin Blog panel, you can connect a Facebook page:
 - Use scheduled posts to maintain a consistent publishing cadence
 - The AI auto-generate feature creates SEO-friendly real estate content
 - Blog posts help drive organic traffic to your site`,
+  },
+  {
+    id: 'product-catalog',
+    title: 'Product Catalog & Verification',
+    icon: '📦',
+    content: `## Product Catalog & Verification System
+
+The Product Catalog system tracks the availability and pricing of all 100+ Home Depot products referenced throughout the app (Rehab Estimator, SOW Templates, Renovation Designer). It ensures you always have accurate, up-to-date product information.
+
+### How It Works
+Every product in the system is tracked with:
+- **Verification Status** — Whether the product is currently available on Home Depot
+- **Current Price** — The latest verified price (compared to the original listed price)
+- **Price Change Tracking** — Percentage increase or decrease since original listing
+- **Alternative Suggestions** — Replacement products for discontinued items
+
+### Status Badges
+You'll see status badges next to every Home Depot product link:
+- **Verified** (green checkmark) — Product confirmed available with current pricing
+- **Discontinued** (red X) — Product no longer available; check for suggested alternative below
+- **Unavailable** (yellow warning) — Temporarily out of stock or region-restricted
+- **Unverified** (gray question mark) — Not yet checked
+
+### Price Change Indicators
+When a product's price has changed:
+- **Red up arrow** with percentage — Price has increased (e.g., +5.3%)
+- **Green down arrow** with percentage — Price has decreased (e.g., -2.1%)
+
+This helps you adjust your rehab budgets to reflect current market pricing.
+
+### Alternative Products
+When a product is discontinued, the system suggests a comparable replacement:
+- The alternative appears below the discontinued badge with an arrow (→)
+- Click the alternative name to open its Home Depot product page
+- The alternative price is shown for budget comparison
+
+### Where You'll See It
+Product verification badges appear in:
+1. **Rehab Estimator** — In the detailed scope of work line items
+2. **SOW Templates** — In the room template product columns
+3. **Renovation Designer** — In the material cost breakdown tables
+
+### Admin: Managing the Catalog
+Admins can manage the product catalog through the API:
+- **Seed Catalog** — Initialize the catalog from the scope of work database
+- **Auto-Verify** — Use AI to check product availability and suggest alternatives
+- **Manual Updates** — Update individual product statuses and prices
+- **Bulk Updates** — Update multiple products at once
+- **Set Alternatives** — Manually assign replacement products for discontinued items
+
+### Tips
+- Products are cached for 5 minutes to minimize API calls
+- Hover over any status badge for detailed information
+- When a product shows as discontinued, always check the suggested alternative before sourcing materials
+- Price changes are calculated as basis points for precision (530 = 5.30%)`,
   },
   {
     id: 'support',

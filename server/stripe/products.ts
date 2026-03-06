@@ -38,6 +38,9 @@ export const PLANS = {
       "Credibility Packets",
       "Contractor Management",
       "Share Deal Links",
+      "Product Verification Badges",
+      "Price Change Tracking",
+      "Alternative Product Suggestions",
     ],
     priceMonthly: 9900, // $99/mo
     priceYearly: 99000, // $990/yr

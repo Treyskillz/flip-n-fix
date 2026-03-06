@@ -1,0 +1,20 @@
+CREATE TABLE `product_catalog` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`sku` varchar(64) NOT NULL,
+	`name` varchar(512) NOT NULL,
+	`url` text NOT NULL,
+	`originalPrice` varchar(64) NOT NULL,
+	`currentPrice` varchar(64),
+	`priceChangePct` int,
+	`status` enum('verified','discontinued','unavailable','unknown') NOT NULL DEFAULT 'unknown',
+	`lastCheckedAt` timestamp,
+	`alternativeSku` varchar(64),
+	`alternativeName` varchar(512),
+	`alternativeUrl` text,
+	`alternativePrice` varchar(64),
+	`category` varchar(128),
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `product_catalog_id` PRIMARY KEY(`id`),
+	CONSTRAINT `product_catalog_sku_unique` UNIQUE(`sku`)
+);

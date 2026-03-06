@@ -7,6 +7,7 @@ import { InvestorReport } from '@/components/InvestorReport';
 import { PropertyPhotoGallery } from '@/components/PropertyPhotoGallery';
 import { OnboardingTour, ReplayTourButton } from '@/components/OnboardingTour';
 import { useFlipAnalyzer } from '@/hooks/useFlipAnalyzer';
+import { useProductCatalog } from '@/hooks/useProductCatalog';
 import { useEffect, useState, useMemo } from 'react';
 import { trpc } from '@/lib/trpc';
 import { Calculator, Save, AlertTriangle, Shield } from 'lucide-react';
@@ -17,6 +18,7 @@ import { nanoid } from 'nanoid';
 
 export default function Analyzer() {
   const analyzer = useFlipAnalyzer();
+  const productCatalog = useProductCatalog();
   const [dealUniqueId] = useState(() => {
     // Use a stable unique ID per analyzer session for photo uploads
     const stored = sessionStorage.getItem('analyzer-deal-uid');
@@ -186,6 +188,7 @@ export default function Analyzer() {
               setRehabMode={analyzer.setRehabMode}
               rehabLevel={analyzer.rehabLevel}
               setRehabLevel={analyzer.setRehabLevel}
+              productCatalogMap={productCatalog.catalogMap}
               materialTier={analyzer.materialTier}
               setMaterialTier={analyzer.setMaterialTier}
               roomScopes={analyzer.roomScopes}

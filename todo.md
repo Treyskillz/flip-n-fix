@@ -551,3 +551,22 @@
 - [x] Verify each SKU link goes to the correct product on homedepot.com (URLs confirmed valid via search)
 - [x] Fix all 55 incorrect SKU numbers - updated sku field to match URL Internet # (was showing Store SKU #)
 - [x] Ensure all links use the correct URL format (151 product entries, 0 mismatches remaining)
+
+## Product Verification & Price Refresh & Alternatives (March 6, 2026)
+- [x] Create product verification system - productCatalog table with status tracking
+- [x] Store product verification status in database (productCatalog table)
+- [x] Build admin tRPC procedures: seed, autoVerify, update, bulkUpdate, setAlternative, stats
+- [x] Build price auto-refresh system - currentPrice, priceChangePct tracking
+- [x] Store updated prices in database with lastCheckedAt timestamp
+- [x] Create on-demand price refresh via autoVerify procedure (admin-only, LLM-powered)
+- [x] Build alternative product suggestions for discontinued/unavailable items
+- [x] Store alternative product mappings in database (alternativeSku, alternativeName, alternativeUrl, alternativePrice)
+- [x] Update RehabEstimator UI to show ProductStatusBadge (verified/discontinued/unavailable/unknown)
+- [x] Update RenovationDesigner UI to show ProductStatusBadge
+- [x] Update ScopeOfWork UI to show ProductStatusBadge
+- [x] Show price update timestamps and price change indicators (up/down arrows with %)
+- [x] Show alternative product suggestions when a product is discontinued
+- [x] Write vitest tests for product verification, price refresh, and alternatives (14 tests)
+- [x] Update Manual with product verification documentation (new Product Catalog section + updated Rehab, SOW, Designer sections)
+- [x] Update Pricing page tier lists - added Product Verification, Price Tracking, Alternative Suggestions to Pro tier
+- [x] Update Manual overview with product verification features

@@ -6,7 +6,7 @@ import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_
 import { PLANS, PlanKey } from "./stripe/products";
 import { createCheckoutSession, createPortalSession } from "./stripe/checkout";
 import { getDb } from "./db";
-import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments, pipelineDeals, pipelineContacts, pipelineActivities, giftedSubscriptions, emailLeads, blogPosts, whiteLabelSettings } from "../drizzle/schema";
+import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments, pipelineDeals, pipelineContacts, pipelineActivities, giftedSubscriptions, emailLeads, blogPosts, whiteLabelSettings, productCatalog } from "../drizzle/schema";
 import { eq, sql, desc, and, ne, inArray, asc, isNull } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
@@ -2895,6 +2895,272 @@ Market: ${input.market || 'Not specified'}`,
           cashOnCash: d.cashOnCashBps ? d.cashOnCashBps / 100 : undefined,
         }));
       }),
+  }),
+
+  // ─── Product Catalog (Verification, Pricing, Alternatives) ─────
+  productCatalog: router({
+    /** Get all product statuses for the UI */
+    list: publicProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      return db.select().from(productCatalog).orderBy(asc(productCatalog.name));
+    }),
+
+    /** Get product status by SKU */
+    getBySku: publicProcedure
+      .input(z.object({ sku: z.string() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return null;
+        const rows = await db.select().from(productCatalog).where(eq(productCatalog.sku, input.sku)).limit(1);
+        return rows[0] || null;
+      }),
+
+    /** Get product statuses for multiple SKUs */
+    getBySkus: publicProcedure
+      .input(z.object({ skus: z.array(z.string()) }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return [];
+        if (input.skus.length === 0) return [];
+        return db.select().from(productCatalog).where(inArray(productCatalog.sku, input.skus));
+      }),
+
+    /** Admin: Seed the product catalog from scopeOfWork data */
+    seedFromScopeOfWork: adminProcedure
+      .input(z.object({
+        products: z.array(z.object({
+          sku: z.string(),
+          name: z.string(),
+          url: z.string(),
+          price: z.string(),
+          category: z.string().optional(),
+        })),
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+        let inserted = 0;
+        let updated = 0;
+        for (const p of input.products) {
+          const existing = await db.select().from(productCatalog).where(eq(productCatalog.sku, p.sku)).limit(1);
+          if (existing.length > 0) {
+            await db.update(productCatalog).set({
+              name: p.name,
+              url: p.url,
+              originalPrice: p.price,
+              category: p.category || null,
+            }).where(eq(productCatalog.sku, p.sku));
+            updated++;
+          } else {
+            await db.insert(productCatalog).values({
+              sku: p.sku,
+              name: p.name,
+              url: p.url,
+              originalPrice: p.price,
+              status: "unknown",
+              category: p.category || null,
+            });
+            inserted++;
+          }
+        }
+        return { inserted, updated, total: input.products.length };
+      }),
+
+    /** Admin: Update product verification status */
+    updateStatus: adminProcedure
+      .input(z.object({
+        sku: z.string(),
+        status: z.enum(["verified", "discontinued", "unavailable", "unknown"]),
+        currentPrice: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+        const existing = await db.select().from(productCatalog).where(eq(productCatalog.sku, input.sku)).limit(1);
+        if (!existing[0]) throw new Error(`Product SKU ${input.sku} not found in catalog`);
+
+        const updates: Record<string, any> = {
+          status: input.status,
+          lastCheckedAt: new Date(),
+        };
+        if (input.currentPrice) {
+          updates.currentPrice = input.currentPrice;
+          // Calculate price change percentage
+          const origNum = parseFloat(existing[0].originalPrice.replace(/[^0-9.]/g, ''));
+          const currNum = parseFloat(input.currentPrice.replace(/[^0-9.]/g, ''));
+          if (!isNaN(origNum) && !isNaN(currNum) && origNum > 0) {
+            updates.priceChangePct = Math.round(((currNum - origNum) / origNum) * 10000);
+          }
+        }
+        await db.update(productCatalog).set(updates).where(eq(productCatalog.sku, input.sku));
+        return { success: true };
+      }),
+
+    /** Admin: Bulk update product statuses */
+    bulkUpdateStatus: adminProcedure
+      .input(z.object({
+        updates: z.array(z.object({
+          sku: z.string(),
+          status: z.enum(["verified", "discontinued", "unavailable", "unknown"]),
+          currentPrice: z.string().optional(),
+        })),
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+        let success = 0;
+        let failed = 0;
+        for (const u of input.updates) {
+          try {
+            const existing = await db.select().from(productCatalog).where(eq(productCatalog.sku, u.sku)).limit(1);
+            if (!existing[0]) { failed++; continue; }
+            const updates: Record<string, any> = {
+              status: u.status,
+              lastCheckedAt: new Date(),
+            };
+            if (u.currentPrice) {
+              updates.currentPrice = u.currentPrice;
+              const origNum = parseFloat(existing[0].originalPrice.replace(/[^0-9.]/g, ''));
+              const currNum = parseFloat(u.currentPrice.replace(/[^0-9.]/g, ''));
+              if (!isNaN(origNum) && !isNaN(currNum) && origNum > 0) {
+                updates.priceChangePct = Math.round(((currNum - origNum) / origNum) * 10000);
+              }
+            }
+            await db.update(productCatalog).set(updates).where(eq(productCatalog.sku, u.sku));
+            success++;
+          } catch { failed++; }
+        }
+        return { success, failed, total: input.updates.length };
+      }),
+
+    /** Admin: Set alternative product for a discontinued item */
+    setAlternative: adminProcedure
+      .input(z.object({
+        sku: z.string(),
+        alternativeSku: z.string(),
+        alternativeName: z.string(),
+        alternativeUrl: z.string(),
+        alternativePrice: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+        await db.update(productCatalog).set({
+          alternativeSku: input.alternativeSku,
+          alternativeName: input.alternativeName,
+          alternativeUrl: input.alternativeUrl,
+          alternativePrice: input.alternativePrice,
+        }).where(eq(productCatalog.sku, input.sku));
+        return { success: true };
+      }),
+
+    /** Admin: Auto-verify products using LLM to check URLs and suggest alternatives */
+    autoVerify: adminProcedure
+      .input(z.object({
+        skus: z.array(z.string()).max(10), // limit to 10 at a time
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+        const products = await db.select().from(productCatalog).where(inArray(productCatalog.sku, input.skus));
+        if (products.length === 0) return { results: [] };
+
+        const productList = products.map(p => `SKU: ${p.sku}, Name: ${p.name}, Price: ${p.originalPrice}, URL: ${p.url}`).join('\n');
+
+        const response = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: `You are a Home Depot product verification assistant. For each product, determine if it is likely still available on homedepot.com based on the product name and URL pattern. If a product appears discontinued (very old model, known to be replaced), suggest an alternative Home Depot product. Return JSON only.`,
+            },
+            {
+              role: "user",
+              content: `Verify these Home Depot products and suggest alternatives for any that appear discontinued:\n\n${productList}\n\nReturn a JSON array with objects: { "sku": string, "status": "verified" | "discontinued" | "unavailable", "currentPrice": string | null, "alternativeName": string | null, "alternativeSku": string | null, "alternativeUrl": string | null, "alternativePrice": string | null, "reason": string }`,
+            },
+          ],
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "product_verification",
+              strict: true,
+              schema: {
+                type: "object",
+                properties: {
+                  results: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        sku: { type: "string" },
+                        status: { type: "string", enum: ["verified", "discontinued", "unavailable"] },
+                        currentPrice: { type: ["string", "null"] },
+                        alternativeName: { type: ["string", "null"] },
+                        alternativeSku: { type: ["string", "null"] },
+                        alternativeUrl: { type: ["string", "null"] },
+                        alternativePrice: { type: ["string", "null"] },
+                        reason: { type: "string" },
+                      },
+                      required: ["sku", "status", "currentPrice", "alternativeName", "alternativeSku", "alternativeUrl", "alternativePrice", "reason"],
+                      additionalProperties: false,
+                    },
+                  },
+                },
+                required: ["results"],
+                additionalProperties: false,
+              },
+            },
+          },
+        });
+
+        const parsed = JSON.parse((response.choices[0].message.content as string) || '{}');
+        const results: Array<{ sku: string; status: string; reason: string }> = [];
+
+        for (const r of (parsed.results || [])) {
+          const updates: Record<string, any> = {
+            status: r.status,
+            lastCheckedAt: new Date(),
+          };
+          if (r.currentPrice) updates.currentPrice = r.currentPrice;
+          if (r.alternativeName) updates.alternativeName = r.alternativeName;
+          if (r.alternativeSku) updates.alternativeSku = r.alternativeSku;
+          if (r.alternativeUrl) updates.alternativeUrl = r.alternativeUrl;
+          if (r.alternativePrice) updates.alternativePrice = r.alternativePrice;
+
+          // Calculate price change if we have a current price
+          if (r.currentPrice) {
+            const existing = products.find(p => p.sku === r.sku);
+            if (existing) {
+              const origNum = parseFloat(existing.originalPrice.replace(/[^0-9.]/g, ''));
+              const currNum = parseFloat(r.currentPrice.replace(/[^0-9.]/g, ''));
+              if (!isNaN(origNum) && !isNaN(currNum) && origNum > 0) {
+                updates.priceChangePct = Math.round(((currNum - origNum) / origNum) * 10000);
+              }
+            }
+          }
+
+          await db.update(productCatalog).set(updates).where(eq(productCatalog.sku, r.sku));
+          results.push({ sku: r.sku, status: r.status, reason: r.reason });
+        }
+
+        return { results };
+      }),
+
+    /** Admin: Get catalog statistics */
+    stats: adminProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return { total: 0, verified: 0, discontinued: 0, unavailable: 0, unknown: 0, withAlternatives: 0, priceChanges: 0 };
+      const all = await db.select().from(productCatalog);
+      return {
+        total: all.length,
+        verified: all.filter(p => p.status === 'verified').length,
+        discontinued: all.filter(p => p.status === 'discontinued').length,
+        unavailable: all.filter(p => p.status === 'unavailable').length,
+        unknown: all.filter(p => p.status === 'unknown').length,
+        withAlternatives: all.filter(p => p.alternativeSku).length,
+        priceChanges: all.filter(p => p.priceChangePct && p.priceChangePct !== 0).length,
+      };
+    }),
   }),
 });
 export type AppRouter = typeof appRouter;

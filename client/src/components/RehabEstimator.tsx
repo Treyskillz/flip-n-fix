@@ -9,7 +9,8 @@ import { formatCurrency } from '@/lib/calculations';
 import type { RehabPhase } from '@/lib/types';
 import type { MaterialTier, RoomScope, RoomCondition, HomeDepotProduct } from '@/lib/scopeOfWork';
 import type { RehabMode } from '@/hooks/useFlipAnalyzer';
-import { Hammer, ChevronDown, ChevronRight, Package, Wrench, ExternalLink, FileText } from 'lucide-react';
+import { Hammer, ChevronDown, ChevronRight, Package, Wrench, FileText } from 'lucide-react';
+import { ProductStatusBadge, type ProductCatalogEntry } from '@/components/ProductStatusBadge';
 import { HelpTooltip, HELP_TIPS } from '@/components/HelpTooltip';
 import { useState } from 'react';
 
@@ -18,6 +19,7 @@ interface Props {
   setRehabMode: (m: RehabMode) => void;
   rehabLevel: 'light' | 'moderate' | 'heavy';
   setRehabLevel: (l: 'light' | 'moderate' | 'heavy') => void;
+  productCatalogMap?: Map<string, ProductCatalogEntry>;
   materialTier: MaterialTier;
   setMaterialTier: (t: MaterialTier) => void;
   roomScopes: RoomScope[];
@@ -45,6 +47,7 @@ const conditionLabels: Record<RoomCondition, { label: string; desc: string; colo
 export function RehabEstimator({
   rehabMode, setRehabMode,
   rehabLevel, setRehabLevel,
+  productCatalogMap,
   materialTier, setMaterialTier,
   roomScopes, toggleRoom, setRoomCondition,
   scopeTotals, activePhases, rehabTotals,
@@ -229,15 +232,11 @@ export function RehabEstimator({
                                   <td className="py-1.5 max-w-[220px]">
                                     <div className="truncate text-muted-foreground" title={item.material}>{item.material}</div>
                                     {item.product && (
-                                      <a
-                                        href={item.product.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline mt-0.5"
-                                      >
-                                        <ExternalLink className="w-2.5 h-2.5" />
-                                        HD #{item.product.sku} — {item.product.price}
-                                      </a>
+                                      <ProductStatusBadge
+                                        product={item.product}
+                                        catalogEntry={productCatalogMap?.get(item.product.sku)}
+                                        compact
+                                      />
                                     )}
                                   </td>
                                   <td className="py-1.5 text-right tabular-nums">{item.qty}</td>
