@@ -44,6 +44,8 @@ const BlogPost = lazy(() => import("./pages/BlogPost"));
 const AdminBlog = lazy(() => import("./pages/AdminBlog"));
 const FreeGuide = lazy(() => import("./pages/FreeGuide"));
 const WhiteLabelSettings = lazy(() => import("./pages/WhiteLabelSettings"));
+const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard"));
+const DealComparison = lazy(() => import("./pages/DealComparison"));
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -95,6 +97,8 @@ function Router() {
           <Route path={'/blog/:slug'} component={BlogPost} />
           <Route path={'/free-guide'} component={FreeGuide} />
           <Route path={'/white-label'} component={WhiteLabelSettings} />
+          <Route path={'/analytics'} component={AnalyticsDashboard} />
+          <Route path={'/compare'} component={DealComparison} />
           <Route path={"/support"} component={Support} />
           <Route path={"/disclaimers"} component={Disclaimers} />
           <Route path={"/404"} component={NotFound} />

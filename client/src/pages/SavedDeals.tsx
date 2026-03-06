@@ -1094,6 +1094,20 @@ export default function SavedDeals() {
                   </SelectContent>
                 </Select>
 
+                {/* Compare Selected (Team tier) */}
+                {isTeamTier && selectedIds.size >= 2 && selectedIds.size <= 6 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-7 text-xs gap-1 bg-background text-[oklch(0.48_0.20_18)] border-[oklch(0.48_0.20_18)]/40 hover:bg-[oklch(0.48_0.20_18)]/10"
+                    onClick={() => {
+                      const ids = Array.from(selectedIds).join(',');
+                      window.location.href = `/compare?ids=${ids}`;
+                    }}
+                  >
+                    <BarChart3 className="w-3 h-3" /> Compare ({selectedIds.size})
+                  </Button>
+                )}
                 {/* CSV Export */}
                 <Button
                   variant="outline"

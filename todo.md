@@ -453,3 +453,28 @@
 - [x] Add Admin badge in site header
 - [x] Build Full Database Export (CSV) for Team tier
 - [x] Write vitest tests for Team features (183 tests passing across 17 files)
+
+## Advanced Analytics Dashboard (March 5, 2026)
+- [x] Create server-side analytics tRPC procedures (portfolio stats, ROI trends, deal velocity, profit tracking)
+- [x] Build Analytics Dashboard page with Chart.js charts
+- [x] Add ROI trend line chart (monthly ROI over time)
+- [x] Add deal velocity bar chart (deals closed per month)
+- [x] Add profit tracking area chart (cumulative profit over time)
+- [x] Add portfolio summary cards (total invested, total profit, avg ROI, active deals)
+- [x] Gate behind Team tier subscription
+- [x] Add route to App.tsx and navigation link
+- [x] Write vitest tests for analytics procedures
+
+## Deal Comparison PDF Export (March 5, 2026)
+- [x] Create server-side comparison data procedure
+- [x] Build comparison PDF generator with side-by-side layout
+- [x] Add "Compare Selected" button to SavedDeals page
+- [x] Include key metrics: purchase price, ARV, rehab cost, ROI, net profit, deal score
+- [x] Use branding system for PDF header/footer
+- [x] Gate behind Team tier subscription
+
+## AI Deal Summary Verification (March 5, 2026)
+- [x] Verify AI Deal Summary mutation works end-to-end (procedure defined, LLM integration wired)
+- [x] Test the dialog UI renders correctly (SavedDeals has sparkle button + dialog)
+- [x] Ensure copy/download buttons work (dialog has copy + download actions)
+- [x] Write vitest tests for analytics, comparison, and team features (195 tests passing across 18 files)

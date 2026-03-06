@@ -53,6 +53,7 @@ const RESOURCES_NAV: NavItem[] = [
   { path: '/support', label: 'Support', icon: HelpCircle },
   { path: '/profile', label: 'My Profile', icon: Shield },
   { path: '/white-label', label: 'White-Label Branding', icon: Palette },
+  { path: '/analytics', label: 'Analytics Dashboard', icon: BarChart3 },
 ];
 
 const ALL_NAV = [...PRIMARY_NAV, ...RESOURCES_NAV];

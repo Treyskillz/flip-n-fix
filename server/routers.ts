@@ -2406,5 +2406,203 @@ Market: ${input.market || 'Not specified'}`,
       return { csv, count: rows.length };
     }),
   }),
+
+  // ─── Advanced Analytics (Team Tier) ──────────────────────────
+  analytics: router({
+    /** Portfolio analytics — ROI trends, deal velocity, profit tracking */
+    dashboard: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Check Team tier
+      const userRow = await db.select({ subscriptionPlan: users.subscriptionPlan, role: users.role }).from(users).where(eq(users.id, ctx.user.id)).limit(1);
+      const stripePlan = userRow[0]?.subscriptionPlan || "free";
+      const giftedRows = await db.select().from(giftedSubscriptions).where(and(eq(giftedSubscriptions.userId, ctx.user.id), isNull(giftedSubscriptions.revokedAt))).orderBy(desc(giftedSubscriptions.createdAt)).limit(1);
+      const now = new Date();
+      const activeGift = giftedRows[0] && (!giftedRows[0].expiresAt || giftedRows[0].expiresAt > now) ? giftedRows[0] : null;
+      const planRank: Record<string, number> = { free: 0, pro: 1, elite: 2, team: 3 };
+      let effectivePlan = stripePlan;
+      if (activeGift && (planRank[activeGift.plan] || 0) > (planRank[stripePlan] || 0)) effectivePlan = activeGift.plan;
+      const isAdmin = userRow[0]?.role === 'admin';
+      if (!isAdmin && effectivePlan !== "team") {
+        throw new Error("Analytics Dashboard is a Team plan exclusive feature. Please upgrade.");
+      }
+
+      // Get all deals for this user
+      const allDeals = await db.select().from(savedDeals).where(
+        eq(savedDeals.userId, ctx.user.id)
+      ).orderBy(asc(savedDeals.createdAt));
+
+      // Get pipeline deals for velocity tracking
+      const allPipelineDeals = await db.select().from(pipelineDeals).where(
+        eq(pipelineDeals.userId, ctx.user.id)
+      ).orderBy(asc(pipelineDeals.createdAt));
+
+      // ── Summary Cards ──
+      const activeDeals = allDeals.filter(d => d.status !== 'archived');
+      const closedDeals = allDeals.filter(d => d.status === 'closed');
+      const totalInvested = activeDeals.reduce((sum, d) => sum + d.totalInvestment, 0);
+      const totalProfit = closedDeals.reduce((sum, d) => sum + d.netProfit, 0);
+      const avgRoi = closedDeals.length > 0 ? closedDeals.reduce((sum, d) => sum + d.roiBps, 0) / closedDeals.length / 100 : 0;
+      const avgDealScore = activeDeals.filter(d => d.dealScore).length > 0
+        ? activeDeals.filter(d => d.dealScore).reduce((sum, d) => sum + (d.dealScore || 0), 0) / activeDeals.filter(d => d.dealScore).length
+        : 0;
+
+      // ── Monthly ROI Trend (last 12 months) ──
+      const monthlyData: Record<string, { totalRoi: number; count: number; profit: number; invested: number }> = {};
+      const twelveMonthsAgo = new Date();
+      twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+
+      for (const deal of allDeals) {
+        const d = deal.createdAt;
+        if (d < twelveMonthsAgo) continue;
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        if (!monthlyData[key]) monthlyData[key] = { totalRoi: 0, count: 0, profit: 0, invested: 0 };
+        monthlyData[key].totalRoi += deal.roiBps / 100;
+        monthlyData[key].count += 1;
+        monthlyData[key].profit += deal.netProfit;
+        monthlyData[key].invested += deal.totalInvestment;
+      }
+
+      // Fill in missing months
+      const months: string[] = [];
+      for (let i = 11; i >= 0; i--) {
+        const d = new Date();
+        d.setMonth(d.getMonth() - i);
+        months.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+      }
+
+      const roiTrend = months.map(m => ({
+        month: m,
+        avgRoi: monthlyData[m] ? +(monthlyData[m].totalRoi / monthlyData[m].count).toFixed(1) : 0,
+        dealCount: monthlyData[m]?.count || 0,
+      }));
+
+      // ── Cumulative Profit Tracking ──
+      let cumProfit = 0;
+      const profitTracking = months.map(m => {
+        cumProfit += monthlyData[m]?.profit || 0;
+        return { month: m, profit: monthlyData[m]?.profit || 0, cumulative: cumProfit };
+      });
+
+      // ── Deal Velocity (deals added per month) ──
+      const dealVelocity = months.map(m => ({
+        month: m,
+        newDeals: monthlyData[m]?.count || 0,
+      }));
+
+      // ── Deal Status Breakdown ──
+      const statusBreakdown = {
+        active: allDeals.filter(d => d.status === 'active').length,
+        under_contract: allDeals.filter(d => d.status === 'under_contract').length,
+        closed: closedDeals.length,
+        passed: allDeals.filter(d => d.status === 'passed').length,
+        archived: allDeals.filter(d => d.status === 'archived').length,
+      };
+
+      // ── Deal Score Distribution ──
+      const scoreDistribution = {
+        excellent: allDeals.filter(d => (d.dealScore || 0) >= 80).length,
+        good: allDeals.filter(d => (d.dealScore || 0) >= 60 && (d.dealScore || 0) < 80).length,
+        fair: allDeals.filter(d => (d.dealScore || 0) >= 40 && (d.dealScore || 0) < 60).length,
+        poor: allDeals.filter(d => (d.dealScore || 0) > 0 && (d.dealScore || 0) < 40).length,
+      };
+
+      // ── Pipeline Stage Breakdown ──
+      const pipelineStages: Record<string, number> = {};
+      for (const pd of allPipelineDeals) {
+        pipelineStages[pd.stage] = (pipelineStages[pd.stage] || 0) + 1;
+      }
+
+      // ── Top Markets ──
+      const marketCounts: Record<string, { count: number; totalProfit: number }> = {};
+      for (const deal of allDeals) {
+        const market = deal.market || `${deal.city}, ${deal.state}`;
+        if (!marketCounts[market]) marketCounts[market] = { count: 0, totalProfit: 0 };
+        marketCounts[market].count += 1;
+        marketCounts[market].totalProfit += deal.netProfit;
+      }
+      const topMarkets = Object.entries(marketCounts)
+        .sort((a, b) => b[1].count - a[1].count)
+        .slice(0, 5)
+        .map(([market, data]) => ({ market, ...data }));
+
+      return {
+        summary: {
+          totalDeals: allDeals.length,
+          activeDeals: activeDeals.length,
+          closedDeals: closedDeals.length,
+          totalInvested,
+          totalProfit,
+          avgRoi: +avgRoi.toFixed(1),
+          avgDealScore: Math.round(avgDealScore),
+          pipelineDeals: allPipelineDeals.length,
+        },
+        roiTrend,
+        profitTracking,
+        dealVelocity,
+        statusBreakdown,
+        scoreDistribution,
+        pipelineStages,
+        topMarkets,
+      };
+    }),
+  }),
+
+  // ─── Deal Comparison (Team Tier) ─────────────────────────────
+  comparison: router({
+    /** Get multiple deals by IDs for comparison */
+    getDeals: protectedProcedure
+      .input(z.object({ dealIds: z.array(z.number()).min(2).max(6) }))
+      .query(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        // Check Team tier
+        const userRow = await db.select({ subscriptionPlan: users.subscriptionPlan, role: users.role }).from(users).where(eq(users.id, ctx.user.id)).limit(1);
+        const stripePlan = userRow[0]?.subscriptionPlan || "free";
+        const giftedRows = await db.select().from(giftedSubscriptions).where(and(eq(giftedSubscriptions.userId, ctx.user.id), isNull(giftedSubscriptions.revokedAt))).orderBy(desc(giftedSubscriptions.createdAt)).limit(1);
+        const now = new Date();
+        const activeGift = giftedRows[0] && (!giftedRows[0].expiresAt || giftedRows[0].expiresAt > now) ? giftedRows[0] : null;
+        const planRank: Record<string, number> = { free: 0, pro: 1, elite: 2, team: 3 };
+        let effectivePlan = stripePlan;
+        if (activeGift && (planRank[activeGift.plan] || 0) > (planRank[stripePlan] || 0)) effectivePlan = activeGift.plan;
+        const isAdmin = userRow[0]?.role === 'admin';
+        if (!isAdmin && effectivePlan !== "team") {
+          throw new Error("Deal Comparison is a Team plan exclusive feature. Please upgrade.");
+        }
+
+        const deals = await db.select().from(savedDeals).where(
+          and(
+            eq(savedDeals.userId, ctx.user.id),
+            inArray(savedDeals.id, input.dealIds)
+          )
+        );
+
+        return deals.map(d => ({
+          id: d.id,
+          address: d.address,
+          city: d.city,
+          state: d.state,
+          zip: d.zip,
+          purchasePrice: d.purchasePrice,
+          arv: d.arv,
+          rehabCost: d.rehabCost,
+          totalInvestment: d.totalInvestment,
+          netProfit: d.netProfit,
+          roi: d.roiBps / 100,
+          dealScore: d.dealScore,
+          dealVerdict: d.dealVerdict,
+          maxAllowableOffer: d.maxAllowableOffer,
+          sqft: d.sqft,
+          beds: d.beds,
+          baths: d.baths,
+          yearBuilt: d.yearBuilt,
+          market: d.market,
+          status: d.status,
+          cashOnCash: d.cashOnCashBps ? d.cashOnCashBps / 100 : undefined,
+        }));
+      }),
+  }),
 });
 export type AppRouter = typeof appRouter;
