@@ -672,3 +672,13 @@
 - [x] Add savings callout showing exact dollar amount saved per year ($198/$398/$698)
 - [x] Highlight annual as recommended/best value with crossed-out monthly price, savings badges, comparison table, and summary box
 - [x] Verify pricing page renders correctly with new discount messaging (both monthly and annual views verified)
+
+## Video Scripts Fix & Ad Campaigns (March 8, 2026)
+- [x] Fix videoScripts.ts — add all 41 missing micro-lesson script entries (now 65 of 65)
+- [x] Verify white-label features are fully implemented and working (page, router, schema all present)
+- [x] Create professional Instagram ad campaign (5 images + copy with correct shield logo)
+- [x] Create professional X (Twitter) ad campaign (4 images + copy with correct shield logo)
+- [x] Create professional Facebook ad campaign (5 images + copy with correct shield logo)
+- [x] Bundle all ad campaigns into deliverable document (FREEDOM-ONE-AD-CAMPAIGNS.md)
+- [x] Run full test suite and verify everything passes (258 tests, 21 files, 0 failures)
+- [x] Save checkpoint and publish site

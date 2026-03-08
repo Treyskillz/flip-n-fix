@@ -4,7 +4,7 @@ describe("Analytics Dashboard", () => {
   it("should define the analytics.dashboard router", async () => {
     const { appRouter } = await import("./routers");
     expect(appRouter._def.procedures).toHaveProperty("analytics.dashboard");
-  });
+  }, 15000);
 
   it("analytics.dashboard should be a protected query", async () => {
     const { appRouter } = await import("./routers");

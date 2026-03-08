@@ -1283,242 +1283,6 @@ In the next lesson, I'll cover Property Photos, Sharing, and PDF Reports — how
     ],
   },
 
-  'l-9-4': {
-    lessonId: 'l-9-4',
-    estimatedRuntime: '20:00',
-    equipment: 'Screen recording software, camera (talking head for intro/outro)',
-    openingHook: `"A picture is worth a thousand words — especially in real estate. In this lesson, I'll show you how to upload property photos, share deal analyses, and generate professional PDF reports that impress lenders and partners."`,
-    segments: [
-      {
-        title: 'Uploading Property Photos',
-        type: 'screen-recording',
-        duration: '6:00',
-        script: `Open the Deal Analyzer and scroll down past the Investor Report to the Property Photos section.
-
-Click the upload area or drag and drop your photos. You can upload JPEG, PNG, or WebP files up to 10 MB each. Upload multiple photos at once — they process in parallel.
-
-Once uploaded, you'll see thumbnails of each photo. Click the pencil icon to add a caption — "Kitchen before renovation" or "Master bath water damage." Captions help you and your partners understand what each photo shows.
-
-Click any photo to open the full-screen lightbox. Use the arrow keys or navigation arrows to browse through all photos. Click the X to close.
-
-To delete a photo, click the trash icon. A confirmation dialog prevents accidental deletion.
-
-All photos are stored securely in the cloud. They're associated with the deal and persist across devices and sessions.`,
-        directions: 'Screen recording. Demonstrate uploading multiple photos, adding captions, opening the lightbox, and deleting a photo.',
-      },
-      {
-        title: 'Sharing Deals',
-        type: 'screen-recording',
-        duration: '5:00',
-        script: `Now let me show you the three ways to share your deal analysis.
-
-First — Share Link. In the Investor Report section, click the Share button. The app generates a unique URL and copies it to your clipboard. Send this link to anyone — they can view the full analysis including property details, comps, rehab costs, financing, profitability metrics, and all your uploaded photos. No login required.
-
-Second — Download PDF. Click the Download PDF button. A new tab opens with a professionally formatted investor report. It includes everything: property overview, financial summary, comparable sales table, rehab breakdown, property photos with captions, and the deal score. Use Ctrl+P or Cmd+P to save as PDF.
-
-Third — Email. Click the Email button and enter the recipient's email address. The app sends a branded email with key metrics and a link to the full analysis.
-
-Each method serves a different purpose. Share links are great for partners and co-investors who want to interact with the data. PDFs are perfect for lenders and formal presentations. Emails are ideal for quick updates to team members.`,
-        directions: 'Screen recording. Demonstrate each sharing method: click Share and show the URL copied, click Download PDF and show the report, click Email and show the dialog.',
-      },
-      {
-        title: 'When to Use Each Method',
-        type: 'talking-head',
-        duration: '5:00',
-        script: `Let me give you some practical guidance on when to use each sharing method.
-
-When you're talking to a potential lender, send them the PDF. It's professional, it's comprehensive, and it shows you do thorough analysis. Include it in your loan application package.
-
-When you're collaborating with a partner on a deal, send them the share link. They can see the full analysis in their browser, zoom into the photos, and review every number.
-
-When you're giving a quick update to your team or mentor, use the email. It sends a summary with the key metrics and a link to dig deeper if they want.
-
-And for investor meetings or presentations, use the Portfolio Summary PDF from the Portfolio Dashboard. It aggregates all your deals into one document that showcases your track record.
-
-Pro tip: upload photos immediately after every property visit. Take photos of every room, every issue, and every feature. These photos become invaluable when you're discussing the deal with contractors, partners, or lenders later.`,
-        directions: 'Presenter on camera, practical and advisory tone.',
-      },
-      {
-        title: 'Closing',
-        type: 'talking-head',
-        duration: '2:00',
-        script: `You now know how to document properties with photos, share analyses with anyone, and generate professional reports. These tools set you apart from investors who show up with a napkin and a handshake.
-
-In the next lesson, I'll walk you through the Marketing Templates, Contract Templates, and Lender Directory. See you there.`,
-        directions: 'Presenter on camera, encouraging.',
-      },
-    ],
-    closingCTA: 'Upload photos for one deal and share it with a partner. Next: Marketing & Contracts.',
-    bRollSuggestions: [
-      'Screen recording of photo upload and lightbox',
-      'Screen recording of share link, PDF, and email features',
-      'Investor showing a PDF report to a lender',
-      'Phone screen showing a shared deal link',
-    ],
-  },
-
-  'l-9-5': {
-    lessonId: 'l-9-5',
-    estimatedRuntime: '25:00',
-    equipment: 'Screen recording software, camera (talking head for intro/outro)',
-    openingHook: `"Finding deals is only half the battle — you also need marketing to attract sellers, contracts to lock up deals, and lenders to fund them. In this lesson, I'll walk you through all three tools in the Freedom One platform."`,
-    segments: [
-      {
-        title: 'Marketing Templates',
-        type: 'screen-recording',
-        duration: '8:00',
-        script: `Navigate to Marketing from the top navigation. You'll find ready-to-use templates organized by category.
-
-Direct Mail — here are handwritten-style letters for absentee owners, postcards for probate and pre-foreclosure leads, yellow letters, and professional investor letters. Each template is customizable — replace the placeholder text with your business name, phone number, and address.
-
-Email Sequences — these are multi-email drip campaigns. The 5-email cold lead sequence starts with an introduction, follows up with value, and closes with urgency. Copy these into your email marketing platform and customize.
-
-Cold Call Scripts — these are word-for-word scripts for different seller situations. Initial contact, objection handling, and follow-up calls. Print these and keep them by your phone.
-
-The key to marketing success is consistency. Pick one or two channels, customize the templates with your branding, and commit to a regular schedule. Direct mail works best when you send at least 1,000 pieces per month. Email works best with weekly follow-ups. Cold calling works best with 20 to 30 calls per day.`,
-        directions: 'Screen recording of Marketing page. Browse each category, show template content, demonstrate customization areas.',
-      },
-      {
-        title: 'Contract Templates',
-        type: 'screen-recording',
-        duration: '6:00',
-        script: `Navigate to Contracts from the top navigation. Here are the essential contract templates.
-
-The Assignable Purchase Agreement — this is your standard purchase contract with "and/or assigns" language. Use this for every wholesale deal and any purchase where you might want to assign the contract.
-
-The Wholesale Assignment Contract — use this to assign your purchase rights to an end buyer. It specifies the assignment fee and terms.
-
-The Joint Venture Agreement — for partnering with another investor on a deal. It defines each party's responsibilities, capital contributions, and profit splits.
-
-The Contractor Agreement — a scope of work contract for hiring contractors. It specifies the work to be done, timeline, payment schedule, and penalties for non-performance.
-
-Important — I need to emphasize this — all contract templates must be reviewed by a licensed real estate attorney in your state before use. Laws vary significantly by state, and these templates are starting points, not legal advice. Have your attorney customize them for your jurisdiction.`,
-        directions: 'Screen recording of Contracts page. Show each template, scroll through key sections, highlight the "and/or assigns" language in the purchase agreement.',
-      },
-      {
-        title: 'Lender Directory & Credibility Packets',
-        type: 'screen-recording',
-        duration: '6:00',
-        script: `Navigate to Lenders from the top navigation. The directory includes hard money lenders, private lenders, and DSCR loan providers.
-
-Each listing shows the company name, loan types, rate range, LTV range, points, term length, geographic coverage, and contact information. Filter by loan type or state to find lenders in your market.
-
-My recommendation: contact 2 to 3 lenders and compare terms before committing. Even small differences in rates and points add up over multiple deals.
-
-Now let me show you the Credibility Packets. Navigate to Credibility Packets from the navigation. These are professional documents you can customize and present to lenders, sellers, and partners.
-
-A credibility packet typically includes your company overview, your team, your track record (use the Portfolio Summary PDF for this), testimonials, and your process. It shows that you're a serious, professional investor — not someone who just watched a YouTube video.
-
-When you're meeting a new lender or partner for the first time, bring your credibility packet. It makes a powerful first impression.`,
-        directions: 'Screen recording of Lender Directory and Credibility Packets pages. Show filtering, browsing, and the credibility packet content.',
-      },
-      {
-        title: 'Closing',
-        type: 'talking-head',
-        duration: '3:00',
-        script: `You now have a complete marketing, contracts, and financing toolkit. These tools work together — use the marketing templates to find deals, the contract templates to lock them up, and the lender directory to fund them.
-
-In the final lesson, I'll cover the remaining tools: State Guide, Contractor Management, Quick Check, Renovation Designer, Property Listings, and the Blog. See you there.`,
-        directions: 'Presenter on camera, organized and forward-looking.',
-      },
-    ],
-    closingCTA: 'Customize one marketing template and contact one lender. Next: Final tools walkthrough.',
-    bRollSuggestions: [
-      'Screen recording of Marketing Templates page',
-      'Direct mail pieces being prepared',
-      'Screen recording of Contracts page with key clauses highlighted',
-      'Screen recording of Lender Directory with filtering',
-      'Investor presenting a credibility packet',
-    ],
-  },
-
-  'l-9-6': {
-    lessonId: 'l-9-6',
-    estimatedRuntime: '20:00',
-    equipment: 'Screen recording software, camera (talking head for intro/outro)',
-    openingHook: `"In this final lesson, I'm going to walk you through every remaining tool in the Freedom One platform — and then I'll give you your complete action plan for getting started."`,
-    segments: [
-      {
-        title: 'State Guide & Checklists',
-        type: 'screen-recording',
-        duration: '5:00',
-        script: `Navigate to State Guide from the navigation. Select your state from the dropdown.
-
-You'll see comprehensive information on real estate investing regulations, licensing requirements for wholesaling and flipping, disclosure requirements, foreclosure processes, transfer taxes, and landlord-tenant laws.
-
-This is essential reading before you invest in any state. Laws vary dramatically — what's legal in Texas might be restricted in New York. Check this guide before entering a new market.
-
-Now navigate to Checklists. You'll find four essential checklists: Due Diligence, Closing, Rehab, and Selling. Each one is a step-by-step guide that ensures you don't miss anything critical.
-
-Print the Due Diligence checklist and bring it to every property walkthrough. Print the Closing checklist and review it with your title company. These checklists are based on what professional investors use on every deal.`,
-        directions: 'Screen recording. Show State Guide with a state selected, scroll through the content. Then show the Checklists page with each checklist category.',
-      },
-      {
-        title: 'Contractor Management & Quick Check',
-        type: 'screen-recording',
-        duration: '5:00',
-        script: `Navigate to Contractors from the navigation. This is your contractor database.
-
-Add contractors with their name, specialty, phone, email, and notes. Rate them after each project. Organize by trade — general contractors, electricians, plumbers, HVAC, roofers.
-
-Over time, you'll build a roster of reliable professionals. When you need a plumber for your next project, you don't have to start from scratch — just check your database.
-
-Now let me show you Quick Check. Navigate to Quick Check from the navigation. This is your rapid deal screening tool.
-
-Enter basic details: address, purchase price, estimated ARV, and estimated rehab cost. The tool instantly calculates the 70% Rule, Maximum Allowable Offer, estimated profit, and ROI.
-
-Use Quick Check to screen 10 to 20 leads per day. If a deal passes the quick screen, click Full Analysis to open it in the Deal Analyzer with all details pre-filled.
-
-Quick Check is your first filter. The Deal Analyzer is your deep dive. Use both together for an efficient deal evaluation workflow.`,
-        directions: 'Screen recording. Show adding a contractor, then demonstrate Quick Check with a sample property. Show the transition from Quick Check to full Deal Analyzer.',
-      },
-      {
-        title: 'Renovation Designer, Listings & Blog',
-        type: 'screen-recording',
-        duration: '5:00',
-        script: `Navigate to Renovation Designer. This visual tool helps you browse design styles for each room type, compare material finishes and costs, and plan your rehab aesthetic. Use it to ensure your design choices match the neighborhood and price point.
-
-Navigate to Listings. This is where you list your properties for sale. Create a listing with photo galleries, property features, pricing, and status tracking. Share the listing link with potential buyers.
-
-Finally, navigate to Blog. Here you'll find educational articles on market analysis, deal breakdowns, rehab tips, financing strategies, and legal updates. Check back regularly for new content.`,
-        directions: 'Screen recording. Brief walkthrough of each page — Renovation Designer, Listings, and Blog. Show the key features of each.',
-      },
-      {
-        title: 'Your Complete Action Plan',
-        type: 'talking-head',
-        duration: '5:00',
-        script: `Congratulations — you've completed the entire Fix and Flip Mastery 2026 course. You now have the knowledge and tools to analyze, fund, rehab, and sell investment properties.
-
-Let me leave you with your complete action plan.
-
-Week 1: Set up your business. Form your LLC, get your EIN, open your business bank account. Complete the first three modules of this course.
-
-Week 2: Build your team. Attend a networking event. Contact a real estate attorney and CPA. Get pre-approved with a hard money lender from the Lender Directory.
-
-Week 3: Start your deal flow. Launch one marketing campaign using the Marketing Templates. Set up MLS alerts with an investor-friendly agent. Connect with 3 wholesalers.
-
-Week 4: Analyze deals. Use Quick Check to screen 20 leads. Do full analysis on your top 5 using the Deal Analyzer. Save every deal to the Portfolio Dashboard.
-
-Month 2: Make offers. Submit your first 3 to 5 offers. Use the Contract Templates. Continue marketing and analyzing deals daily.
-
-Month 3: Close your first deal. Build your SOW using the Templates. Hire your contractor. Upload property photos. Share the deal analysis with your lender.
-
-The Freedom One platform has every tool you need. The knowledge is here. The templates are here. The calculators are here. Now it's up to you to take action.
-
-I believe in you. Go make it happen.`,
-        directions: 'Presenter on camera, motivational and empowering tone. This is the final lesson — end on a high note. Consider showing the action plan as a graphic overlay with weekly milestones.',
-      },
-    ],
-    closingCTA: 'Start your Week 1 action items today. You have everything you need. Go make it happen.',
-    bRollSuggestions: [
-      'Screen recording of State Guide, Contractors, Quick Check, Renovation Designer, Listings, and Blog',
-      'Montage of all Freedom One platform features',
-      'Investor walking through a property with confidence',
-      'Before/after renovation transformation',
-      'Closing table celebration',
-    ],
-  },
-
   // ─────────────────────────────────────────────────────────
   // MODULE 3 LESSON 3: Price Reduction Strategy
   // ─────────────────────────────────────────────────────────
@@ -1907,6 +1671,1634 @@ Congratulations on completing the bonus modules. You now have knowledge that 99 
       'Deal stacking spreadsheet on screen',
       'Closing table celebration',
       'Freedom One platform montage',
+    ],
+  },
+
+  'l-2-3': {
+    lessonId: 'l-2-3',
+    estimatedRuntime: '5:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into your first deal roadmap — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Your First Deal Roadmap. This is part of Module 2: Foundation: Building Your Business. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 2 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '3:00',
+        script: `Step-by-step getting started guide. From analyzing your first deal to closing. Timeline expectations and common first-deal mistakes to avoid.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on your first deal roadmap. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-2-4': {
+    lessonId: 'l-2-4',
+    estimatedRuntime: '5:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into why you need an llc — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Why You Need an LLC. This is part of Module 2: Foundation: Building Your Business. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 2 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '3:00',
+        script: `Legal protection basics, personal asset protection, pass-through taxation, and why every investor needs an entity before their first deal.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on why you need an llc. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-2-5': {
+    lessonId: 'l-2-5',
+    estimatedRuntime: '7:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into choosing your entity structure — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Choosing Your Entity Structure. This is part of Module 2: Foundation: Building Your Business. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 2 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '5:00',
+        script: `LLC vs S-Corp vs sole proprietor comparison. Series LLCs, the 2-entity strategy. Which structure fits your investment strategy.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on choosing your entity structure. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-2-6': {
+    lessonId: 'l-2-6',
+    estimatedRuntime: '8:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into setting up your business — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Setting Up Your Business. This is part of Module 2: Foundation: Building Your Business. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 2 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '6:00',
+        script: `Getting your EIN, opening business bank accounts, setting up bookkeeping, business insurance, CRM setup, and creating your brand.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on setting up your business. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-2-7': {
+    lessonId: 'l-2-7',
+    estimatedRuntime: '7:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into the 8 people you need on your team — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering The 8 People You Need on Your Team. This is part of Module 2: Foundation: Building Your Business. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 2 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '5:00',
+        script: `Real estate attorney, CPA, general contractor, investor-friendly agent, title company, hard money lender, property inspector, insurance agent. What each does and why you need them.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on the 8 people you need on your team. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-2-8': {
+    lessonId: 'l-2-8',
+    estimatedRuntime: '6:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into finding and vetting your team — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Finding and Vetting Your Team. This is part of Module 2: Foundation: Building Your Business. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 2 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '4:00',
+        script: `Where to find team members (REIA, BiggerPockets, Facebook groups, courthouse steps). Interview questions, red flags, and building your B-team backup.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on finding and vetting your team. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-3-4': {
+    lessonId: 'l-3-4',
+    estimatedRuntime: '6:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into online lead generation — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Online Lead Generation. This is part of Module 3: Finding Deals: Acquisition Strategies. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 3 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '4:00',
+        script: `Digital marketing for deal flow: SEO, social media marketing, Facebook ads for motivated sellers, Craigslist, and online lead platforms.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on online lead generation. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-3-5': {
+    lessonId: 'l-3-5',
+    estimatedRuntime: '7:00',
+    equipment: 'Camera (talking head), whiteboard or digital whiteboard, markers',
+    openingHook: `"In this lesson, we're diving into arv and the 70% rule — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'whiteboard',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering ARV and the 70% Rule. This is part of Module 3: Finding Deals: Acquisition Strategies. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 3 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'whiteboard',
+        duration: '5:00',
+        script: `Core formulas every investor must know: After Repair Value calculation, the 70% rule, Maximum Allowable Offer formula, and when to adjust the percentages.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'whiteboard',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on arv and the 70% rule. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-3-6': {
+    lessonId: 'l-3-6',
+    estimatedRuntime: '7:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into running your comps — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Running Your Comps. This is part of Module 3: Finding Deals: Acquisition Strategies. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 3 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '5:00',
+        script: `How to pull and analyze comparable sales: selecting comps, adjusting for differences, using MLS data, Zillow, Redfin, and county records. Common comp mistakes.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on running your comps. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-3-7': {
+    lessonId: 'l-3-7',
+    estimatedRuntime: '6:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into making your offer — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Making Your Offer. This is part of Module 3: Finding Deals: Acquisition Strategies. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 3 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '4:00',
+        script: `MAO calculation in practice, crafting your offer letter, negotiation basics, contingencies to include, and how to present your offer to sellers.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on making your offer. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-4-2': {
+    lessonId: 'l-4-2',
+    estimatedRuntime: '7:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into hiring and managing contractors — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Hiring and Managing Contractors. This is part of Module 4: Fix & Flip Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 4 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '5:00',
+        script: `Getting competitive bids, contractor contracts, draw schedules, daily oversight, managing subcontractors, and handling contractor disputes.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on hiring and managing contractors. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-4-3': {
+    lessonId: 'l-4-3',
+    estimatedRuntime: '6:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into budget control and timeline management — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Budget Control and Timeline Management. This is part of Module 4: Fix & Flip Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 4 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '4:00',
+        script: `Tracking rehab costs in real-time, contingency budgets, timeline milestones, handling change orders, and preventing scope creep.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on budget control and timeline management. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-4-4': {
+    lessonId: 'l-4-4',
+    estimatedRuntime: '7:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into pricing and listing strategy — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Pricing and Listing Strategy. This is part of Module 4: Fix & Flip Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 4 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '5:00',
+        script: `How to price your flip for maximum profit, staging strategies, professional photography, listing descriptions, and choosing the right listing agent.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on pricing and listing strategy. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-4-5': {
+    lessonId: 'l-4-5',
+    estimatedRuntime: '6:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into closing the sale — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Closing the Sale. This is part of Module 4: Fix & Flip Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 4 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '4:00',
+        script: `Handling offers, negotiation strategies with buyers, multiple offer situations, closing process, and calculating your final profit.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on closing the sale. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-4-6': {
+    lessonId: 'l-4-6',
+    estimatedRuntime: '7:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into the post-inspection playbook — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering The Post-Inspection Playbook. This is part of Module 4: Fix & Flip Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 4 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '5:00',
+        script: `Common inspection findings, how to prepare for inspections, pre-listing inspections, and understanding what buyers will flag.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on the post-inspection playbook. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-4-7': {
+    lessonId: 'l-4-7',
+    estimatedRuntime: '7:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into negotiating repair credits — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Negotiating Repair Credits. This is part of Module 4: Fix & Flip Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 4 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '5:00',
+        script: `Counter-offer strategies after inspection, repair credit vs. price reduction, which repairs to concede, and protecting your bottom line.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on negotiating repair credits. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-4-8': {
+    lessonId: 'l-4-8',
+    estimatedRuntime: '6:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into protecting your profit margin — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Protecting Your Profit Margin. This is part of Module 4: Fix & Flip Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 4 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '4:00',
+        script: `When to concede vs. walk away, deal-killing inspection items, renegotiation tactics, and ensuring profitability through the closing table.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on protecting your profit margin. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-5-2': {
+    lessonId: 'l-5-2',
+    estimatedRuntime: '7:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into finding buyers and building your list — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Finding Buyers and Building Your List. This is part of Module 5: Wholesaling Fundamentals. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 5 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '5:00',
+        script: `Cash buyer strategies: building your buyers list, qualifying buyers, marketing your deals, and creating a reliable disposition system.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on finding buyers and building your list. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-5-3': {
+    lessonId: 'l-5-3',
+    estimatedRuntime: '6:00',
+    equipment: 'Camera (talking head), whiteboard or digital whiteboard, markers',
+    openingHook: `"In this lesson, we're diving into contracts and closing your first wholesale deal — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'whiteboard',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Contracts and Closing Your First Wholesale Deal. This is part of Module 5: Wholesaling Fundamentals. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 5 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'whiteboard',
+        duration: '4:00',
+        script: `Assignment contracts, 'and/or assigns' language, double close mechanics, title company coordination, and step-by-step first deal walkthrough.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'whiteboard',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on contracts and closing your first wholesale deal. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-6-2': {
+    lessonId: 'l-6-2',
+    estimatedRuntime: '6:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into refinance — pulling your cash out — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Refinance — Pulling Your Cash Out. This is part of Module 6: The BRRRR Strategy. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 6 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '4:00',
+        script: `Cash-out refinance process, seasoning requirements, LTV ratios, DSCR loans, working with lenders, and maximizing your cash-out amount.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on refinance — pulling your cash out. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-6-3': {
+    lessonId: 'l-6-3',
+    estimatedRuntime: '6:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into repeat — scaling your portfolio — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Repeat — Scaling Your Portfolio. This is part of Module 6: The BRRRR Strategy. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 6 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '4:00',
+        script: `Reinvesting proceeds, portfolio growth strategies, when to BRRRR vs. flip, building passive income, and the path to financial freedom through rentals.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on repeat — scaling your portfolio. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-7-2': {
+    lessonId: 'l-7-2',
+    estimatedRuntime: '7:00',
+    equipment: 'Camera (talking head), whiteboard or digital whiteboard, markers',
+    openingHook: `"In this lesson, we're diving into finding subject-to deals — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'whiteboard',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Finding Subject-To Deals. This is part of Module 7: Subject-To Financing. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 7 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'whiteboard',
+        duration: '5:00',
+        script: `Identifying motivated sellers, conversation scripts, pre-foreclosure targeting, marketing for subject-to deals, and qualifying opportunities.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'whiteboard',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on finding subject-to deals. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-7-3': {
+    lessonId: 'l-7-3',
+    estimatedRuntime: '8:00',
+    equipment: 'Camera (talking head), whiteboard or digital whiteboard, markers',
+    openingHook: `"In this lesson, we're diving into structuring and closing subject-to deals — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'whiteboard',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Structuring and Closing Subject-To Deals. This is part of Module 7: Subject-To Financing. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 7 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'whiteboard',
+        duration: '6:00',
+        script: `Legal documents required, due-on-sale clause risks and mitigation, insurance considerations, closing process, and ongoing management.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'whiteboard',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on structuring and closing subject-to deals. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-8-2': {
+    lessonId: 'l-8-2',
+    estimatedRuntime: '7:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into setting up your str property — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Setting Up Your STR Property. This is part of Module 8: Short-Term Rentals (Airbnb/VRBO). Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 8 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '5:00',
+        script: `Furnishing and design for maximum bookings, professional photography, writing compelling listings, dynamic pricing strategies, and guest amenities that drive 5-star reviews.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on setting up your str property. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-8-3': {
+    lessonId: 'l-8-3',
+    estimatedRuntime: '6:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into managing and scaling your str business — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Managing and Scaling Your STR Business. This is part of Module 8: Short-Term Rentals (Airbnb/VRBO). Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 8 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '4:00',
+        script: `Automation tools (Hospitable, Guesty), cleaning team management, guest communication, review management, scaling to multiple properties, and co-hosting.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on managing and scaling your str business. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-10-4': {
+    lessonId: 'l-10-4',
+    estimatedRuntime: '7:00',
+    equipment: 'Screen recording software, microphone, Freedom One platform access',
+    openingHook: `"In this lesson, we're diving into room-by-room condition assessment — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'screen-recording',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Room-by-Room Condition Assessment. This is part of Module 10: Freedom One Platform Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 10 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'screen-recording',
+        duration: '5:00',
+        script: `Using the rehab estimator to assess each room's condition, selecting material tiers, and generating accurate rehab cost estimates.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'screen-recording',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on room-by-room condition assessment. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-10-5': {
+    lessonId: 'l-10-5',
+    estimatedRuntime: '6:00',
+    equipment: 'Screen recording software, microphone, Freedom One platform access',
+    openingHook: `"In this lesson, we're diving into material tiers and regional pricing — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'screen-recording',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Material Tiers and Regional Pricing. This is part of Module 10: Freedom One Platform Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 10 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'screen-recording',
+        duration: '4:00',
+        script: `Understanding Rental, Standard, and Luxury material tiers. How regional pricing adjusts costs based on your metro market location.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'screen-recording',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on material tiers and regional pricing. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-10-6': {
+    lessonId: 'l-10-6',
+    estimatedRuntime: '6:00',
+    equipment: 'Screen recording software, microphone, Freedom One platform access',
+    openingHook: `"In this lesson, we're diving into pipeline kanban board — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'screen-recording',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Pipeline Kanban Board. This is part of Module 10: Freedom One Platform Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 10 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'screen-recording',
+        duration: '4:00',
+        script: `Tracking deals through stages using the Kanban board: Lead, Analyzing, Offer Made, Under Contract, Rehab, Listed, Sold. Managing your deal pipeline.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'screen-recording',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on pipeline kanban board. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-10-7': {
+    lessonId: 'l-10-7',
+    estimatedRuntime: '6:00',
+    equipment: 'Screen recording software, microphone, Freedom One platform access',
+    openingHook: `"In this lesson, we're diving into portfolio dashboard and pdf reports — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'screen-recording',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Portfolio Dashboard and PDF Reports. This is part of Module 10: Freedom One Platform Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 10 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'screen-recording',
+        duration: '4:00',
+        script: `Viewing portfolio analytics, generating professional PDF reports for lenders and partners, and tracking your overall investment performance.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'screen-recording',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on portfolio dashboard and pdf reports. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-10-8': {
+    lessonId: 'l-10-8',
+    estimatedRuntime: '6:00',
+    equipment: 'Screen recording software, microphone, Freedom One platform access',
+    openingHook: `"In this lesson, we're diving into uploading photos and property details — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'screen-recording',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Uploading Photos and Property Details. This is part of Module 10: Freedom One Platform Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 10 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'screen-recording',
+        duration: '4:00',
+        script: `Adding property photos, managing before/after galleries, entering detailed property features, and organizing your deal documentation.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'screen-recording',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on uploading photos and property details. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-10-9': {
+    lessonId: 'l-10-9',
+    estimatedRuntime: '5:00',
+    equipment: 'Screen recording software, microphone, Freedom One platform access',
+    openingHook: `"In this lesson, we're diving into sharing deals and exporting reports — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'screen-recording',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Sharing Deals and Exporting Reports. This is part of Module 10: Freedom One Platform Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 10 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'screen-recording',
+        duration: '3:00',
+        script: `Creating shareable deal links, exporting PDF reports, sharing with partners and lenders, and managing deal visibility settings.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'screen-recording',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on sharing deals and exporting reports. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-10-10': {
+    lessonId: 'l-10-10',
+    estimatedRuntime: '7:00',
+    equipment: 'Screen recording software, microphone, Freedom One platform access',
+    openingHook: `"In this lesson, we're diving into marketing and contract templates — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'screen-recording',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Marketing and Contract Templates. This is part of Module 10: Freedom One Platform Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 10 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'screen-recording',
+        duration: '5:00',
+        script: `Using the built-in marketing templates (direct mail, postcards, emails, cold call scripts) and contract templates (purchase agreements, wholesale contracts).`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'screen-recording',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on marketing and contract templates. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-10-11': {
+    lessonId: 'l-10-11',
+    estimatedRuntime: '5:00',
+    equipment: 'Screen recording software, microphone, Freedom One platform access',
+    openingHook: `"In this lesson, we're diving into using the lender directory — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'screen-recording',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Using the Lender Directory. This is part of Module 10: Freedom One Platform Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 10 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'screen-recording',
+        duration: '3:00',
+        script: `Browsing the curated lender directory, comparing rates and terms, filtering by loan type and location, and contacting lenders directly.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'screen-recording',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on using the lender directory. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-10-12': {
+    lessonId: 'l-10-12',
+    estimatedRuntime: '7:00',
+    equipment: 'Screen recording software, microphone, Freedom One platform access',
+    openingHook: `"In this lesson, we're diving into state guide and additional tools — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'screen-recording',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering State Guide and Additional Tools. This is part of Module 10: Freedom One Platform Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 10 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'screen-recording',
+        duration: '5:00',
+        script: `Using the state-by-state guide, contractor directory, Material Cost Tracker, property listings, and other platform tools.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'screen-recording',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on state guide and additional tools. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-11-3': {
+    lessonId: 'l-11-3',
+    estimatedRuntime: '6:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into choosing the right entity for your strategy — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Choosing the Right Entity for Your Strategy. This is part of Module 11: Asset Protection & Tax Strategy. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 11 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '4:00',
+        script: `Decision framework for entity selection based on your investment strategy, number of properties, income level, and long-term goals.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on choosing the right entity for your strategy. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-11-4': {
+    lessonId: 'l-11-4',
+    estimatedRuntime: '7:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into land trusts for privacy and protection — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Land Trusts for Privacy and Protection. This is part of Module 11: Asset Protection & Tax Strategy. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 11 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '5:00',
+        script: `How land trusts work, privacy benefits, asset protection advantages, setting up a land trust, and combining trusts with LLCs.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on land trusts for privacy and protection. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-11-5': {
+    lessonId: 'l-11-5',
+    estimatedRuntime: '7:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into living trusts and estate planning — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Living Trusts and Estate Planning. This is part of Module 11: Asset Protection & Tax Strategy. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 11 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '5:00',
+        script: `Revocable vs irrevocable trusts, estate planning for real estate investors, avoiding probate, and protecting your legacy.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on living trusts and estate planning. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-11-6': {
+    lessonId: 'l-11-6',
+    estimatedRuntime: '8:00',
+    equipment: 'Camera (talking head), whiteboard or digital whiteboard, markers',
+    openingHook: `"In this lesson, we're diving into investing with your ira — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'whiteboard',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Investing with Your IRA. This is part of Module 11: Asset Protection & Tax Strategy. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 11 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'whiteboard',
+        duration: '6:00',
+        script: `Self-Directed IRA rules, prohibited transactions, UBIT considerations, custodian selection, and step-by-step process for buying real estate with your IRA.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'whiteboard',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on investing with your ira. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-11-7': {
+    lessonId: 'l-11-7',
+    estimatedRuntime: '7:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into solo 401(k) and checkbook control — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Solo 401(k) and Checkbook Control. This is part of Module 11: Asset Protection & Tax Strategy. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 11 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '5:00',
+        script: `Solo 401(k) advantages over SDIRA, checkbook control, contribution limits, Roth conversions, and advanced retirement investing strategies.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on solo 401(k) and checkbook control. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-12-1': {
+    lessonId: 'l-12-1',
+    estimatedRuntime: '7:00',
+    equipment: 'Camera (talking head), whiteboard or digital whiteboard, markers',
+    openingHook: `"In this lesson, we're diving into structuring seller finance deals — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'whiteboard',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Structuring Seller Finance Deals. This is part of Module 12: Creative Financing Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 12 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'whiteboard',
+        duration: '5:00',
+        script: `Seller financing terms, interest rates, balloon payments, amortization schedules, promissory notes, and deed of trust/mortgage documents.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'whiteboard',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on structuring seller finance deals. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-12-2': {
+    lessonId: 'l-12-2',
+    estimatedRuntime: '7:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into negotiating with sellers — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Negotiating with Sellers. This is part of Module 12: Creative Financing Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 12 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '5:00',
+        script: `Scripts for seller financing conversations, handling objections, presenting win-win structures, and closing seller finance deals.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on negotiating with sellers. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-12-3': {
+    lessonId: 'l-12-3',
+    estimatedRuntime: '7:00',
+    equipment: 'Camera (talking head), whiteboard or digital whiteboard, markers',
+    openingHook: `"In this lesson, we're diving into lease options explained — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'whiteboard',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Lease Options Explained. This is part of Module 12: Creative Financing Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 12 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'whiteboard',
+        duration: '5:00',
+        script: `How lease-options work, option consideration, monthly credits, exercise price, sandwich lease options, and legal considerations.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'whiteboard',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on lease options explained. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-12-4': {
+    lessonId: 'l-12-4',
+    estimatedRuntime: '7:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into private money and syndication — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Private Money and Syndication. This is part of Module 12: Creative Financing Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 12 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '5:00',
+        script: `Raising private capital, SEC regulations, syndication structures, investor presentations, preferred returns, and building a track record.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on private money and syndication. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
+    ],
+  },
+
+  'l-12-5': {
+    lessonId: 'l-12-5',
+    estimatedRuntime: '7:00',
+    equipment: 'Camera (talking head), teleprompter, professional backdrop',
+    openingHook: `"In this lesson, we're diving into stacking strategies for maximum returns — and by the end, you'll have the practical knowledge to apply this immediately to your investing business."`,
+    segments: [
+      {
+        title: 'Introduction',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Welcome back to the Freedom One course. In this micro-lesson, we're covering Stacking Strategies for Maximum Returns. This is part of Module 12: Creative Financing Mastery. Let's get right into it.`,
+        directions: 'Presenter on camera, energetic and focused. Module 12 branding on screen.',
+      },
+      {
+        title: 'Core Content',
+        type: 'talking-head',
+        duration: '5:00',
+        script: `Multi-layer deal structures, combining financing methods, case studies of creative deals, course wrap-up, and your action plan going forward.`,
+        directions: 'Main teaching segment. Use on-screen graphics, bullet points, and examples to illustrate key concepts.',
+      },
+      {
+        title: 'Action Steps & Wrap-Up',
+        type: 'talking-head',
+        duration: '1:30',
+        script: `Let's recap what we covered in this lesson on stacking strategies for maximum returns. Take a moment to review the key concepts, then apply what you learned to a real or practice scenario. When you've completed all lessons in this module, take the quiz to test your knowledge. See you in the next lesson.`,
+        directions: 'Presenter on camera for closing. Show action step checklist on screen.',
+      },
+    ],
+    closingCTA: 'Review the key concepts, apply them to your next deal, and continue to the next lesson.',
+    bRollSuggestions: [
+      'Relevant property footage or renovation clips',
+      'Freedom One platform screenshots',
+      'On-screen text highlighting key terms',
+      'Professional real estate investing imagery',
     ],
   },
 };

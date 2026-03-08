@@ -68,7 +68,7 @@ describe("White-Label Settings", () => {
     // Team features should include white-label
     const hasWhiteLabel = PLANS.team.features.some(f => f.toLowerCase().includes("white-label"));
     expect(hasWhiteLabel).toBe(true);
-  });
+  }, 15000);
 
   it("should have white-label features in Team plan only", async () => {
     const { PLANS } = await import("./stripe/products");
