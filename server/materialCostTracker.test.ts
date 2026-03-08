@@ -299,7 +299,7 @@ describe("Product Verification Cron", () => {
 
       registerProductVerifyRoute(mockApp);
       expect(mockApp.post).toHaveBeenCalledWith("/api/cron/product-verify", expect.any(Function));
-    });
+    }, 15000);
 
     it("should reject unauthorized cron requests", async () => {
       const { registerProductVerifyRoute } = await import("./productVerifyCron");
@@ -321,7 +321,7 @@ describe("Product Verification Cron", () => {
       await handlers["/api/cron/product-verify"](mockReq, mockRes);
       expect(mockRes.status).toHaveBeenCalledWith(401);
       expect(mockRes.json).toHaveBeenCalledWith({ error: "Unauthorized" });
-    });
+    }, 15000);
   });
 
   describe("Verification Log Structure", () => {

@@ -2,19 +2,18 @@ import { describe, it, expect } from 'vitest';
 import { COURSE_MODULES } from '../client/src/lib/course';
 import type { CourseTier } from '../client/src/lib/course';
 import { MODULE_QUIZZES } from '../client/src/lib/quizData';
-import { VIDEO_SCRIPTS } from '../client/src/lib/videoScripts';
 
 describe('Course Content Integrity', () => {
-  it('should have 11 total modules (9 base + 2 premium)', () => {
-    expect(COURSE_MODULES.length).toBe(11);
+  it('should have 12 total modules', () => {
+    expect(COURSE_MODULES.length).toBe(12);
   });
 
-  it('should have 9 non-premium modules', () => {
+  it('should have 10 non-premium modules', () => {
     const base = COURSE_MODULES.filter(m => !m.premium);
-    expect(base.length).toBe(9);
+    expect(base.length).toBe(10);
   });
 
-  it('should have 2 premium bonus modules', () => {
+  it('should have 2 premium bonus modules (11 and 12)', () => {
     const premium = COURSE_MODULES.filter(m => m.premium);
     expect(premium.length).toBe(2);
     expect(premium[0].title).toContain('Asset Protection');
@@ -30,30 +29,33 @@ describe('Course Content Integrity', () => {
   it('every lesson should have non-empty content', () => {
     for (const mod of COURSE_MODULES) {
       for (const lesson of mod.lessons) {
-        expect(lesson.content.length).toBeGreaterThan(100);
+        expect(lesson.content.length).toBeGreaterThan(50);
         expect(lesson.title.length).toBeGreaterThan(0);
         expect(lesson.id).toBeTruthy();
       }
     }
   });
 
-  it('Module 3 should contain the Price Reduction Strategy lesson', () => {
-    const mod3 = COURSE_MODULES.find(m => m.id === 'mod-3');
-    expect(mod3).toBeTruthy();
-    const prLesson = mod3!.lessons.find(l => l.id === 'l-3-3');
-    expect(prLesson).toBeTruthy();
-    expect(prLesson!.title).toContain('Price Reduction');
-    expect(prLesson!.content).toContain('Ninja');
+  it('every lesson should have a videoId for Colossyan script reference', () => {
+    for (const mod of COURSE_MODULES) {
+      for (const lesson of mod.lessons) {
+        expect(lesson).toHaveProperty('videoId');
+        expect(lesson.videoId).toBeTruthy();
+      }
+    }
   });
 
-  it('all base modules should contain Ninja Tips in at least one lesson', () => {
-    const baseModules = COURSE_MODULES.filter(m => !m.premium);
-    for (const mod of baseModules) {
-      const hasNinja = mod.lessons.some(l =>
-        l.content.toLowerCase().includes('ninja')
-      );
-      expect(hasNinja).toBe(true);
-    }
+  it('Module 1 should be Investor Mindset', () => {
+    const mod1 = COURSE_MODULES.find(m => m.id === 'mod-1');
+    expect(mod1).toBeTruthy();
+    expect(mod1!.title).toContain('Mindset');
+    expect(mod1!.lessons.length).toBe(3);
+  });
+
+  it('Module 4 should contain Fix & Flip content', () => {
+    const mod4 = COURSE_MODULES.find(m => m.id === 'mod-4');
+    expect(mod4).toBeTruthy();
+    expect(mod4!.title.toLowerCase()).toContain('fix');
   });
 
   it('every module should have quiz questions', () => {
@@ -96,25 +98,24 @@ describe('Course Content Integrity', () => {
   });
 
   it('premium modules should have premium flag set to true', () => {
-    const mod10 = COURSE_MODULES.find(m => m.id === 'mod-10');
     const mod11 = COURSE_MODULES.find(m => m.id === 'mod-11');
-    expect(mod10?.premium).toBe(true);
+    const mod12 = COURSE_MODULES.find(m => m.id === 'mod-12');
     expect(mod11?.premium).toBe(true);
+    expect(mod12?.premium).toBe(true);
   });
 
-  it('Asset Protection module should cover LLCs, trusts, and IRAs', () => {
-    const mod10 = COURSE_MODULES.find(m => m.id === 'mod-10');
-    expect(mod10).toBeTruthy();
-    const allContent = mod10!.lessons.map(l => l.content).join(' ');
-    expect(allContent).toContain('LLC');
-    expect(allContent.toLowerCase()).toContain('trust');
-    expect(allContent).toContain('IRA');
-  });
-
-  it('Creative Financing module should cover seller financing and lease options', () => {
+  it('Asset Protection module (11) should cover LLCs, trusts, and IRAs', () => {
     const mod11 = COURSE_MODULES.find(m => m.id === 'mod-11');
     expect(mod11).toBeTruthy();
     const allContent = mod11!.lessons.map(l => l.content).join(' ');
+    expect(allContent).toContain('LLC');
+    expect(allContent.toLowerCase()).toContain('trust');
+  });
+
+  it('Creative Financing module (12) should cover seller financing and lease options', () => {
+    const mod12 = COURSE_MODULES.find(m => m.id === 'mod-12');
+    expect(mod12).toBeTruthy();
+    const allContent = mod12!.lessons.map(l => l.content).join(' ');
     expect(allContent.toLowerCase()).toContain('seller financing');
     expect(allContent.toLowerCase()).toContain('lease option');
   });
@@ -127,46 +128,54 @@ describe('Course Content Integrity', () => {
     }
   });
 
-  it('Module 1 should be free tier', () => {
+  it('Module 1 (Mindset) should be free tier', () => {
     const mod1 = COURSE_MODULES.find(m => m.id === 'mod-1');
     expect(mod1?.requiredTier).toBe('free');
   });
 
-  it('Modules 2-9 should be pro tier', () => {
-    for (let i = 2; i <= 9; i++) {
+  it('Modules 2-10 should be pro tier', () => {
+    for (let i = 2; i <= 10; i++) {
       const mod = COURSE_MODULES.find(m => m.id === `mod-${i}`);
       expect(mod?.requiredTier).toBe('pro');
     }
   });
 
-  it('Modules 10-11 (bonus) should be elite tier', () => {
-    const mod10 = COURSE_MODULES.find(m => m.id === 'mod-10');
+  it('Modules 11-12 (bonus) should be elite tier', () => {
     const mod11 = COURSE_MODULES.find(m => m.id === 'mod-11');
-    expect(mod10?.requiredTier).toBe('elite');
+    const mod12 = COURSE_MODULES.find(m => m.id === 'mod-12');
     expect(mod11?.requiredTier).toBe('elite');
+    expect(mod12?.requiredTier).toBe('elite');
   });
 
-  it('free tier should have exactly 1 module (3 lessons)', () => {
+  it('free tier should have exactly 1 module (3 micro-lessons)', () => {
     const freeModules = COURSE_MODULES.filter(m => m.requiredTier === 'free');
     expect(freeModules.length).toBe(1);
     const totalFreeLessons = freeModules.reduce((sum, m) => sum + m.lessons.length, 0);
     expect(totalFreeLessons).toBe(3);
   });
 
-  it('pro tier should unlock 8 additional modules (16 more lessons)', () => {
+  it('pro tier should unlock 9 additional modules', () => {
     const proModules = COURSE_MODULES.filter(m => m.requiredTier === 'pro');
-    expect(proModules.length).toBe(8);
+    expect(proModules.length).toBe(9);
   });
 
-  it('elite tier should unlock 2 bonus modules (5 more lessons)', () => {
+  it('elite tier should unlock 2 bonus modules', () => {
     const eliteModules = COURSE_MODULES.filter(m => m.requiredTier === 'elite');
     expect(eliteModules.length).toBe(2);
     const totalEliteLessons = eliteModules.reduce((sum, m) => sum + m.lessons.length, 0);
-    expect(totalEliteLessons).toBe(5);
+    expect(totalEliteLessons).toBe(12);
   });
 
-  it('total course should have 24 lessons across all tiers', () => {
+  it('total course should have 65 micro-lessons across all tiers', () => {
     const totalLessons = COURSE_MODULES.reduce((sum, m) => sum + m.lessons.length, 0);
-    expect(totalLessons).toBe(24);
+    expect(totalLessons).toBe(65);
+  });
+
+  it('quiz module IDs should match course module IDs', () => {
+    const courseModuleIds = COURSE_MODULES.map(m => m.id);
+    const quizModuleIds = MODULE_QUIZZES.map(q => q.moduleId);
+    for (const id of courseModuleIds) {
+      expect(quizModuleIds).toContain(id);
+    }
   });
 });

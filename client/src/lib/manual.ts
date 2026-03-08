@@ -562,77 +562,120 @@ A simplified agreement specifically designed for wholesale transactions. Include
     icon: '🎓',
     content: `## Real Estate Investor Course
 
-The course provides comprehensive education on real estate investing with **11 modules and 24 lessons** covering five exit strategies, deal sourcing, financing, platform mastery, and bonus advanced content. Course access is bundled with your subscription tier.
+The course provides comprehensive education on real estate investing with **12 modules and 65 micro-lessons** covering investor mindset, five exit strategies, deal sourcing, financing, platform mastery, and bonus advanced content. Each lesson is a focused 5\u20138 minute video designed for maximum retention. Course access is bundled with your subscription tier.
 
 ### Course Access by Subscription Tier
 
 | Tier | Course Access |
 |------|---------------|
-| **Free** | Module 1 only (3 lessons) |
-| **Pro** | Modules 1\u20139 (19 lessons) |
-| **Elite** | All 11 Modules (24 lessons) |
-| **Team** | All 11 Modules (24 lessons) |
+| **Free** | Module 1: Investor Mindset (3 lessons) |
+| **Pro** | Modules 1\u201310 (53 lessons \u2014 all core content + platform mastery) |
+| **Elite** | All 12 Modules (65 lessons \u2014 includes bonus advanced modules) |
+| **Team** | All 12 Modules (65 lessons \u2014 includes bonus advanced modules) |
 
 ### Course Modules
 
-#### Module 1: Foundation \u2014 The Real Estate Investor Mindset (Free)
-- Why Fix & Flip in 2026? Market Overview
-- Setting Up Your Business Entity & Power Team
-- Building Your Investment Criteria & Business Plan
+#### Module 1: Investor Mindset & Success Psychology (Free \u2014 3 lessons)
+- The Investor Mindset \u2014 Why 90% Fail
+- Building Investor Resilience
+- The Psychology of Negotiation & Deal-Making
 
-#### Module 2: Finding Deals \u2014 Acquisition Strategies (Pro)
-- The 7 Best Lead Sources for 2026
-- Analyzing Deals: Running the Numbers
+#### Module 2: Foundation \u2014 Building Your Business (Pro \u2014 8 lessons)
+- Why Fix & Flip in 2026
+- The Housing Deficit Opportunity
+- Setting Up Your Business Entity
+- Building Your Power Team (Part 1)
+- Building Your Power Team (Part 2)
+- Investment Criteria & Business Plan (Part 1)
+- Investment Criteria & Business Plan (Part 2)
+- Your First 30 Days Action Plan
 
-#### Module 3: Exit Strategy #1 \u2014 Fix & Flip (Pro)
-- Managing Your Rehab Like a Pro
-- Estimating Costs with the Rehab Estimator
+#### Module 3: Finding Deals \u2014 Acquisition Strategies (Pro \u2014 7 lessons)
+- The 7 Best Lead Sources for 2026 (Part 1)
+- The 7 Best Lead Sources for 2026 (Part 2)
+- Driving for Dollars & Direct Mail
+- Analyzing Deals: Running the Numbers (Part 1)
+- Analyzing Deals: Running the Numbers (Part 2)
+- Comp Analysis & ARV Calculation
+- Making Offers & Negotiation Tactics
+
+#### Module 4: Fix & Flip Mastery (Pro \u2014 8 lessons)
+- Managing Your Rehab Like a Pro (Part 1)
+- Managing Your Rehab Like a Pro (Part 2)
+- Contractor Management & Scheduling
+- Estimating Costs: Room-by-Room Breakdown
+- Material Tiers & Regional Pricing
+- The 70% Rule & Deal Scoring
 - Selling for Maximum Profit
+- Price Reduction Requests & Ninja Negotiation
 
-#### Module 4: Exit Strategy #2 \u2014 Wholesaling (Pro)
-- Wholesaling Fundamentals
+#### Module 5: Wholesaling Fundamentals (Pro \u2014 3 lessons)
+- What Is Wholesaling & How It Works
+- Finding Deals & Building a Buyers List
+- Assignment Contracts & Closing the Deal
 
-#### Module 5: Exit Strategy #3 \u2014 Fix & Rent / BRRRR (Pro)
-- The BRRRR Strategy Explained
+#### Module 6: The BRRRR Strategy (Pro \u2014 3 lessons)
+- BRRRR Explained: Buy, Renovate, Rent, Refinance, Repeat
+- Running BRRRR Numbers & Seasoning Periods
+- Scaling with BRRRR: Building a Portfolio
 
-#### Module 6: Exit Strategy #4 \u2014 Subject-To (Pro)
-- Subject-To Financing Explained
+#### Module 7: Subject-To Financing (Pro \u2014 3 lessons)
+- What Is Subject-To & When to Use It
+- Due-on-Sale Clause & Risk Management
+- Structuring Subject-To Deals Step by Step
 
-#### Module 7: Exit Strategy #5 \u2014 Short-Term Rentals (Pro)
+#### Module 8: Short-Term Rentals (Pro \u2014 3 lessons)
 - The Short-Term Rental Opportunity
+- Regulations, Permits & Market Research
+- Rental Arbitrage & Scaling STR Income
 
-#### Module 8: Financing Your Deals (Pro)
-- Financing Options for Every Strategy
+#### Module 9: Financing Your Deals (Pro \u2014 3 lessons)
+- Hard Money Lenders: Terms, Rates & How to Qualify
+- Private Money & Gap Funding Strategies
+- Blended Financing & Creative Stacking
 
-#### Module 9: Mastering the Freedom One Platform (Pro)
-- Deal Analyzer: Complete Walkthrough
-- SOW Templates: Creating Professional Scopes of Work
-- Lender Directory: Finding the Right Financing
-- Marketing Templates: Generating Leads
-- Contract Templates: Closing Deals
-- Property Listings: Showcasing Your Properties
+#### Module 10: Freedom One Platform Mastery (Pro \u2014 12 lessons)
+- Deal Analyzer: Property Setup & Comps
+- Deal Analyzer: Rehab Estimation & Deal Scoring
+- SOW Templates: Library & Line-Item Estimator
+- SOW Templates: Regional Pricing & PDF Export
+- Lender Directory: Searching & Filtering
+- Lender Directory: Comparing Terms & Contacting
+- Marketing Templates: Direct Mail & Postcards
+- Marketing Templates: Email Sequences & Cold Calls
+- Contract Templates: Purchase Agreements
+- Contract Templates: Wholesale & Assignment
+- Property Listings: Creating & Managing
+- Property Listings: Photo Gallery & Status Tracking
 
-#### Module 10: Bonus \u2014 Asset Protection (Elite)
-- Entity Structures: LLCs, Series LLCs & Corporations
-- Tax Strategy for Real Estate Investors
+#### Module 11: Bonus \u2014 Asset Protection & Tax Strategy (Elite \u2014 7 lessons)
+- Entity Structures: LLCs & Series LLCs
+- Land Trusts & Privacy Protection
+- Insurance Strategies for Investors
+- Self-Directed IRAs for Real Estate
+- Tax Strategy: Deductions & Depreciation
+- 1031 Exchanges & Tax Deferral
+- Building Your Asset Protection Plan
 
-#### Module 11: Bonus \u2014 Creative Financing Mastery (Elite)
+#### Module 12: Bonus \u2014 Creative Financing Mastery (Elite \u2014 5 lessons)
 - Seller Financing: Structuring Win-Win Deals
+- Wrap-Around Mortgages Explained
 - Lease Options & Zero-Down Techniques
-- Advanced Multi-Layer Strategies
+- Sandwich Lease Options & Advanced Structures
+- Multi-Layer Strategies & Course Graduation
 
 ### Course Features
-- **Video Scripts** \u2014 Professional scripts for each lesson with visual cues and talking points
+- **65 Micro-Lessons** \u2014 Focused 5\u20138 minute videos designed for short attention spans and maximum retention
+- **Colossyan AI Videos** \u2014 Professional AI-generated video lessons with on-screen text and visual aids
 - **Progress Tracking** \u2014 Mark lessons complete and track your progress per module
-- **Module Quizzes** \u2014 Test your knowledge after each module
+- **Module Quizzes** \u2014 Test your knowledge after each module (12 quizzes total)
 - **Completion Certificate** \u2014 Downloadable PDF certificate when you finish all modules
 - **Course Ebook** \u2014 Download the complete course as a professional PDF book
 - **Chart.js Trend Charts** \u2014 Material Cost Tracker with visual price trend analysis (Pro+)
 
 ### How to Use the Course
 - Work through modules sequentially for the best learning experience
-- Each lesson includes written content plus a video script with visual cues
-- Toggle the \"View Script\" button to see the video production script for each lesson
+- Each micro-lesson is 5\u20138 minutes \u2014 designed to fit into any schedule
 - Apply concepts immediately using the Deal Analyzer and other platform tools
 - Complete quizzes to test your understanding before moving on
 - Mark lessons and modules complete to track your progress
@@ -856,11 +899,11 @@ The app offers four subscription tiers to match your investing activity level. A
 Get started at no cost:
 - Basic Deal Analyzer (3 analyses per month)
 - 70% Rule Calculator
-- **Course Module 1: Investor Mindset** (3 lessons)
+- **Course Module 1: Investor Mindset** (3 micro-lessons)
 - Blog & Educational Content
 - Marketing Templates (View Only)
 
-### Pro Tier ($99/month or $990/year)
+### Pro Tier ($99/month or $990/year — 2 months free)
 Full analysis suite for active investors:
 - Everything in Free
 - Unlimited Saved Deals
@@ -876,17 +919,17 @@ Full analysis suite for active investors:
 - Quick Check Tool
 - Product Verification Badges & Price Tracking
 - Alternative Product Suggestions for Discontinued Items
-- **Full Course Access: Modules 1\u20139** (19 lessons covering all 5 exit strategies, deal sourcing, financing, and platform mastery)
+- **Full Course Access: Modules 1\u201310** (53 micro-lessons covering investor mindset, all 5 exit strategies, deal sourcing, financing, and platform mastery)
 - Video Lesson Scripts & Study Guides
 - Material Cost Tracker Dashboard with Chart.js Trend Charts
 
-### Elite Tier ($179/month or $1,790/year)
+### Elite Tier ($199/month or $1,990/year — 2 months free)
 Complete system with all course modules & advanced tools:
 - Everything in Pro
 - Profit Calculator (All 6 Scenarios)
-- **All 11 Course Modules** (24 lessons — everything in Pro plus bonus modules)
-- **Bonus Module 10:** Asset Protection & Tax Strategy for Real Estate Investors
-- **Bonus Module 11:** Creative Financing Mastery (seller financing, lease options, zero-down techniques)
+- **All 12 Course Modules** (65 micro-lessons \u2014 everything in Pro plus bonus modules)
+- **Bonus Module 11:** Asset Protection & Tax Strategy for Real Estate Investors (7 lessons)
+- **Bonus Module 12:** Creative Financing Mastery (seller financing, lease options, zero-down techniques) (5 lessons)
 - Property Listings Page
 - Email Investor Reports
 - Priority Support
@@ -894,7 +937,7 @@ Complete system with all course modules & advanced tools:
 - Portfolio Dashboard & PDF Export
 - State Reference Guide
 
-### Team Tier ($289/month or $2,890/year)
+### Team Tier ($349/month or $3,490/year — 2 months free)
 White-label branding & AI-powered tools:
 - Everything in Elite
 - White-Label Reports (Your Logo & Branding)

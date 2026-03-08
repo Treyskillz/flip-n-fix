@@ -10,7 +10,7 @@ export const PLANS = {
     features: [
       "Basic Deal Analyzer (3/month)",
       "70% Rule Calculator",
-      "Course Module 1: Investor Mindset (3 Lessons)",
+      "Course Module 1: Investor Mindset (3 Micro-Lessons)",
       "Blog & Educational Content",
       "Marketing Templates (View Only)",
       "Free Guide Download",
@@ -42,12 +42,12 @@ export const PLANS = {
       "Product Verification Badges",
       "Price Change Tracking",
       "Alternative Product Suggestions",
-      "Full Course Access: Modules 1\u20139 (19 Lessons)",
+      "Full Course Access: Modules 1-10 (53 Micro-Lessons)",
       "Video Lesson Scripts & Study Guides",
       "Material Cost Tracker Dashboard",
     ],
     priceMonthly: 9900, // $99/mo
-    priceYearly: 99000, // $990/yr
+    priceYearly: 99000, // $990/yr (2 months free)
     priceId: "pro_monthly",
     highlighted: true,
   },
@@ -57,7 +57,7 @@ export const PLANS = {
     features: [
       "Everything in Pro",
       "Profit Calculator (All 6 Scenarios)",
-      "All 11 Course Modules (24 Lessons)",
+      "All 12 Course Modules (65 Micro-Lessons)",
       "Bonus: Asset Protection & Tax Strategy",
       "Bonus: Creative Financing Mastery",
       "Property Listings Page",
@@ -67,8 +67,8 @@ export const PLANS = {
       "Portfolio Dashboard & PDF Export",
       "State Reference Guide",
     ],
-    priceMonthly: 17900, // $179/mo
-    priceYearly: 179000, // $1790/yr
+    priceMonthly: 19900, // $199/mo
+    priceYearly: 199000, // $1,990/yr (2 months free)
     priceId: "elite_monthly",
   },
   team: {
@@ -88,8 +88,8 @@ export const PLANS = {
       "Shared Link View Notifications",
       "Dedicated Onboarding Support",
     ],
-    priceMonthly: 28900, // $289/mo
-    priceYearly: 289000, // $2890/yr
+    priceMonthly: 34900, // $349/mo
+    priceYearly: 349000, // $3,490/yr (2 months free)
     priceId: "team_monthly",
   },
 } as const;

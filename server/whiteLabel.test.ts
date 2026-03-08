@@ -85,8 +85,8 @@ describe("White-Label Settings", () => {
     const { PLANS } = await import("./stripe/products");
     expect(PLANS.free.priceMonthly).toBe(0);
     expect(PLANS.pro.priceMonthly).toBe(9900); // $99
-    expect(PLANS.elite.priceMonthly).toBe(17900); // $179
-    expect(PLANS.team.priceMonthly).toBe(28900); // $289
+    expect(PLANS.elite.priceMonthly).toBe(19900); // $199
+    expect(PLANS.team.priceMonthly).toBe(34900); // $349
   });
 
   it("should have email investor reports in Elite tier", async () => {

@@ -11,7 +11,7 @@
 - [x] Lighten footer background so logo is clearly visible
 - [x] Add success/cancel handling on Pricing page after Stripe checkout redirect (already built in)
 - [x] Add favicon with Freedom One logo
-- [ ] Update page title and meta tags
+- [x] Update page title and meta tags
 - [x] Create comprehensive setup and hosting guide document
 - [x] Add Support/Contact page with email, hours, FAQ
 - [x] Add Investor Checklists page with downloadable checklists for acquisitions, rehabs, rentals, sales
@@ -527,7 +527,7 @@
 - [x] Add copy-to-clipboard button for each shared link
 - [x] Add delete/revoke shared link functionality (server + UI)
 - [x] Show expired vs active status badge
-- [ ] Write vitest tests for shared links listing
+- [x] Write vitest tests for shared links listing
 
 ## Comprehensive Audit & Updates (March 6, 2026)
 - [x] Update Manual/Instructions with CSV Import feature documentation
@@ -622,8 +622,8 @@
 - [x] Comprehensive site audit — all features, manual, pricing, navigation verified working
 - [x] No issues found during audit
 - [x] Run all tests and verify TypeScript compiles cleanly (256 tests passing, 21 files)
-- [ ] Push to GitHub repository
-- [ ] Re-deliver all updated deliverables
+- [x] Push to GitHub repository (both flip-n-fix and Flip-magix)
+- [x] Re-deliver all updated deliverables
 
 ## Video Scripts & Deliverables (March 6, 2026)
 - [x] Review full course structure and catalog all modules/lessons (11 modules, 24 lessons)
@@ -633,11 +633,42 @@
 - [x] Bundle all scripts and inventory into deliverable package (zip)
 - [x] Complete comprehensive site audit and fix any issues
 - [x] Run all tests and verify TypeScript compiles cleanly (256 tests passing)
-- [ ] Push to GitHub repository
-- [ ] Deliver all updated deliverables
+- [x] Push to GitHub repository (both flip-n-fix and Flip-magix)
+- [x] Deliver all updated deliverables
 
 ## Course Tier Bundling Updates (March 6, 2026)
 - [x] Update course gating logic: Free=Module 1, Pro=Modules 1-9, Elite/Team=All 11
 - [x] Update pricing page to show course access per tier
 - [x] Update manual to reflect bundled course access
 - [x] Update course page UI to show tier-based access badges and lock icons
+
+## Colossyan Micro-Lesson Scripts & Course Restructure (March 8, 2026)
+- [x] Write 66 Colossyan-formatted micro-lesson scripts (65 course + 1 marketing)
+- [x] Ensure all scripts have complete educational content (not just outlines)
+- [x] Update course.ts to new 65 micro-lesson structure with videoUrl placeholders
+- [x] Update Course.tsx to handle new micro-lesson structure
+- [x] Update manual and pricing to reflect new course structure
+- [x] Create inventory sheet mapping every video to exact course placement
+- [x] Bundle all Colossyan scripts into deliverable package
+- [x] Run tests and verify TypeScript compiles (258 tests passing, 21 files)
+- [x] Save checkpoint and push to GitHub
+
+## Mindset Module & Quiz Updates (March 8, 2026)
+- [x] Check if mindset content exists in current course (Module 1 has brief mindset tips but no dedicated module)
+- [x] Add dedicated Investor Mindset module as new Module 1 (3 micro-lessons)
+- [x] Write Colossyan-formatted mindset video scripts (M1-V01, M1-V02, M1-V03)
+- [x] Update all course quizzes to match new micro-lesson structure (12 modules, mod-1 through mod-12)
+- [x] Add mindset quiz for new Module 1 (4 questions: analysis paralysis, learning ratio, anchoring, abundance mindset)
+- [x] Renumber all quiz module IDs to match new 12-module structure
+- [x] Ensure quiz questions reference correct lesson content
+
+## Pricing Update (March 8, 2026)
+- [x] Update Stripe products.ts: Elite $179→$199/mo, Team $289→$349/mo, annual = 2 months free
+- [x] Update manual pricing section to match new prices
+- [x] Verify pricing page renders correctly with new prices (dynamic from PLANS, auto-updates)
+
+## Pricing Page Annual Discount Update (March 8, 2026)
+- [x] Update pricing page toggle to show "2 FREE" badge on annual option
+- [x] Add savings callout showing exact dollar amount saved per year ($198/$398/$698)
+- [x] Highlight annual as recommended/best value with crossed-out monthly price, savings badges, comparison table, and summary box
+- [x] Verify pricing page renders correctly with new discount messaging (both monthly and annual views verified)
