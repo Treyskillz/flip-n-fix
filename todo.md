@@ -689,3 +689,12 @@
 - [x] Create 6-month email marketing campaign sequences (47 emails across 6 campaigns: welcome, nurture, conversion, course engagement, win-back, referral)
 - [x] Create email marketing campaign sequences (welcome, nurture, conversion, re-engagement)
 - [x] Bundle all marketing materials and deliver with ad campaigns
+
+## Script Rewrite (March 22, 2026)
+- [ ] Rewrite all 65 micro-lesson scripts with humanized conversational tone
+- [ ] Focus scripts on fix-and-flip strategies and exit strategies (not generic real estate)
+- [ ] Fix all grammar issues throughout scripts
+- [ ] Ensure natural flow between lessons within each module
+- [ ] Update videoScripts.ts in the app with rewritten scripts
+- [ ] Update Colossyan script files with rewritten versions
+- [ ] Save checkpoint and deliver
