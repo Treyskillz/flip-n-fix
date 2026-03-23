@@ -6,7 +6,7 @@ import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_
 import { PLANS, PlanKey } from "./stripe/products";
 import { createCheckoutSession, createPortalSession } from "./stripe/checkout";
 import { getDb } from "./db";
-import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments, pipelineDeals, pipelineContacts, pipelineActivities, giftedSubscriptions, emailLeads, blogPosts, whiteLabelSettings, productCatalog, priceHistory, verificationLog } from "../drizzle/schema";
+import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments, pipelineDeals, pipelineContacts, pipelineActivities, giftedSubscriptions, emailLeads, blogPosts, whiteLabelSettings, productCatalog, priceHistory, verificationLog, videoProgress } from "../drizzle/schema";
 import { eq, sql, desc, and, ne, inArray, asc, isNull } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
@@ -989,6 +989,107 @@ Provide 3-5 comparable RENOVATED properties that meet ALL of these criteria:
 
       return { success: true };
     }),
+  }),
+
+  // ─── Video Progress (Playback Position Tracking) ──────────────
+  videoProgress: router({
+    // Get playback position for a specific lesson
+    get: protectedProcedure
+      .input(z.object({ lessonId: z.string().min(1) }))
+      .query(async ({ input, ctx }) => {
+        const db = await getDb();
+        if (!db) return null;
+
+        const rows = await db
+          .select()
+          .from(videoProgress)
+          .where(
+            and(
+              eq(videoProgress.userId, ctx.user.id),
+              eq(videoProgress.lessonId, input.lessonId)
+            )
+          )
+          .limit(1);
+
+        return rows[0] || null;
+      }),
+
+    // Get all video progress for the current user
+    getAll: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      const rows = await db
+        .select({
+          lessonId: videoProgress.lessonId,
+          positionSeconds: videoProgress.positionSeconds,
+          durationSeconds: videoProgress.durationSeconds,
+          watchedPercent: videoProgress.watchedPercent,
+        })
+        .from(videoProgress)
+        .where(eq(videoProgress.userId, ctx.user.id));
+
+      return rows;
+    }),
+
+    // Save/update playback position for a lesson
+    save: protectedProcedure
+      .input(z.object({
+        lessonId: z.string().min(1),
+        positionSeconds: z.number().min(0),
+        durationSeconds: z.number().min(0),
+        watchedPercent: z.number().min(0).max(100),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        // Check if record exists
+        const existing = await db
+          .select()
+          .from(videoProgress)
+          .where(
+            and(
+              eq(videoProgress.userId, ctx.user.id),
+              eq(videoProgress.lessonId, input.lessonId)
+            )
+          )
+          .limit(1);
+
+        if (existing.length > 0) {
+          // Only update if new position is further or watchedPercent is higher
+          const current = existing[0];
+          const shouldUpdate =
+            input.watchedPercent > (current.watchedPercent ?? 0) ||
+            input.positionSeconds > (current.positionSeconds ?? 0);
+
+          if (shouldUpdate) {
+            await db
+              .update(videoProgress)
+              .set({
+                positionSeconds: input.positionSeconds,
+                durationSeconds: input.durationSeconds,
+                watchedPercent: Math.max(input.watchedPercent, current.watchedPercent ?? 0),
+              })
+              .where(
+                and(
+                  eq(videoProgress.userId, ctx.user.id),
+                  eq(videoProgress.lessonId, input.lessonId)
+                )
+              );
+          }
+        } else {
+          await db.insert(videoProgress).values({
+            userId: ctx.user.id,
+            lessonId: input.lessonId,
+            positionSeconds: input.positionSeconds,
+            durationSeconds: input.durationSeconds,
+            watchedPercent: input.watchedPercent,
+          });
+        }
+
+        return { success: true };
+      }),
   }),
 
   // ─── Certificate ──────────────────────────────────────────────

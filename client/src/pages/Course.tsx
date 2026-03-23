@@ -24,7 +24,7 @@ import {
 import { generateCertificate } from '@/lib/generateCertificate';
 import { useBranding } from '@/lib/branding';
 import { generateCourseEbook } from '@/lib/generateEbook';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { Streamdown } from 'streamdown';
 
 // Segment type icons
@@ -150,12 +150,108 @@ function VideoScriptViewer({ script }: { script: VideoScript }) {
   );
 }
 
-function VideoPlayer({ lessonId, script }: { lessonId: string; script?: VideoScript }) {
+function VideoPlayer({ lessonId, script, isAuthenticated, onVideoComplete }: {
+  lessonId: string;
+  script?: VideoScript;
+  isAuthenticated: boolean;
+  onVideoComplete?: (lessonId: string) => void;
+}) {
   const videoInfo = COURSE_VIDEOS[lessonId];
   const duration = script?.estimatedRuntime || '—';
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const saveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const hasAutoCompletedRef = useRef(false);
+
+  // Fetch saved progress for this lesson
+  const progressQuery = trpc.videoProgress.get.useQuery(
+    { lessonId },
+    { enabled: isAuthenticated && !!videoInfo?.publicUrl, retry: false }
+  );
+
+  const saveMutation = trpc.videoProgress.save.useMutation();
+
+  // Resume from saved position when video loads
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !progressQuery.data) return;
+
+    const savedPos = progressQuery.data.positionSeconds;
+    const savedPercent = progressQuery.data.watchedPercent;
+
+    // Only resume if not already near the end (>95% means they finished)
+    if (savedPos > 0 && savedPercent < 95) {
+      const handleCanPlay = () => {
+        video.currentTime = savedPos;
+        video.removeEventListener('canplay', handleCanPlay);
+      };
+      video.addEventListener('canplay', handleCanPlay);
+      return () => video.removeEventListener('canplay', handleCanPlay);
+    }
+  }, [progressQuery.data, lessonId]);
+
+  // Reset auto-complete flag when lesson changes
+  useEffect(() => {
+    hasAutoCompletedRef.current = false;
+  }, [lessonId]);
+
+  // Save progress periodically and on video events
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !isAuthenticated) return;
+
+    const saveProgress = () => {
+      if (!video || video.paused && video.currentTime === 0) return;
+      const pos = Math.floor(video.currentTime);
+      const dur = Math.floor(video.duration || 0);
+      const pct = dur > 0 ? Math.min(100, Math.round((pos / dur) * 100)) : 0;
+
+      saveMutation.mutate({
+        lessonId,
+        positionSeconds: pos,
+        durationSeconds: dur,
+        watchedPercent: pct,
+      });
+    };
+
+    const handleEnded = () => {
+      const dur = Math.floor(video.duration || 0);
+      saveMutation.mutate({
+        lessonId,
+        positionSeconds: dur,
+        durationSeconds: dur,
+        watchedPercent: 100,
+      });
+
+      // Auto-mark lesson as complete
+      if (!hasAutoCompletedRef.current && onVideoComplete) {
+        hasAutoCompletedRef.current = true;
+        onVideoComplete(lessonId);
+      }
+    };
+
+    const handlePause = () => saveProgress();
+    const handleSeeked = () => saveProgress();
+
+    video.addEventListener('ended', handleEnded);
+    video.addEventListener('pause', handlePause);
+    video.addEventListener('seeked', handleSeeked);
+
+    // Save every 15 seconds while playing
+    saveTimerRef.current = setInterval(() => {
+      if (!video.paused && !video.ended) {
+        saveProgress();
+      }
+    }, 15000);
+
+    return () => {
+      video.removeEventListener('ended', handleEnded);
+      video.removeEventListener('pause', handlePause);
+      video.removeEventListener('seeked', handleSeeked);
+      if (saveTimerRef.current) clearInterval(saveTimerRef.current);
+    };
+  }, [lessonId, isAuthenticated, saveMutation, onVideoComplete]);
 
   if (!videoInfo?.publicUrl) {
-    // Fallback placeholder for any lesson without a video
     return (
       <div className="mb-6">
         <div className="relative bg-[oklch(0.15_0.01_25)] overflow-hidden" style={{ aspectRatio: '16/9' }}>
@@ -176,10 +272,13 @@ function VideoPlayer({ lessonId, script }: { lessonId: string; script?: VideoScr
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
+  const savedPercent = progressQuery.data?.watchedPercent ?? 0;
+
   return (
     <div className="mb-6">
       <div className="relative bg-black overflow-hidden" style={{ aspectRatio: '16/9' }}>
         <video
+          ref={videoRef}
           key={videoInfo.publicUrl}
           controls
           preload="metadata"
@@ -196,11 +295,36 @@ function VideoPlayer({ lessonId, script }: { lessonId: string; script?: VideoScr
           <Clock className="w-3 h-3" />
           {videoInfo.durationSeconds ? formatDuration(videoInfo.durationSeconds) : duration}
         </p>
-        <p className="text-xs text-muted-foreground flex items-center gap-1">
-          <Video className="w-3 h-3" />
-          AI Instructor: Jason
-        </p>
+        <div className="flex items-center gap-3">
+          {isAuthenticated && savedPercent > 0 && savedPercent < 100 && (
+            <p className="text-xs text-[oklch(0.50_0.18_25)] flex items-center gap-1">
+              <PlayCircle className="w-3 h-3" />
+              {savedPercent}% watched
+            </p>
+          )}
+          {isAuthenticated && savedPercent >= 100 && (
+            <p className="text-xs text-green-500 flex items-center gap-1">
+              <CheckCircle2 className="w-3 h-3" />
+              Watched
+            </p>
+          )}
+          <p className="text-xs text-muted-foreground flex items-center gap-1">
+            <Video className="w-3 h-3" />
+            AI Instructor: Jason
+          </p>
+        </div>
       </div>
+      {/* Video progress bar */}
+      {isAuthenticated && savedPercent > 0 && (
+        <div className="mt-1 h-1 bg-[oklch(0.25_0.01_25)] rounded-full overflow-hidden">
+          <div
+            className={`h-full transition-all duration-300 rounded-full ${
+              savedPercent >= 100 ? 'bg-green-500' : 'bg-[oklch(0.50_0.18_25)]'
+            }`}
+            style={{ width: `${Math.min(100, savedPercent)}%` }}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -337,6 +461,23 @@ export default function Course() {
       toast.error('Failed to reset progress');
     },
   });
+
+  // Fetch video watch progress for sidebar indicators
+  const videoProgressQuery = trpc.videoProgress.getAll.useQuery(undefined, {
+    enabled: isAuthenticated,
+    retry: false,
+  });
+
+  // Build a map of lessonId -> watchedPercent for sidebar
+  const videoWatchMap = useMemo(() => {
+    const map = new Map<string, number>();
+    if (videoProgressQuery.data) {
+      for (const row of videoProgressQuery.data) {
+        map.set(row.lessonId, row.watchedPercent);
+      }
+    }
+    return map;
+  }, [videoProgressQuery.data]);
 
   // Build completed set
   const completedLessons = useMemo(() => {
@@ -625,7 +766,29 @@ export default function Course() {
                                 <div className="flex items-center gap-1 ml-5.5 mt-0.5">
                                   <Clock className="w-3 h-3" />
                                   <span className="text-xs">{lesson.duration}</span>
+                                  {isAuthenticated && (videoWatchMap.get(lesson.id) ?? 0) > 0 && (
+                                    <span className={`text-[10px] ml-auto tabular-nums ${
+                                      (videoWatchMap.get(lesson.id) ?? 0) >= 100
+                                        ? 'text-green-500'
+                                        : 'text-[oklch(0.50_0.18_25)]'
+                                    }`}>
+                                      {videoWatchMap.get(lesson.id)}%
+                                    </span>
+                                  )}
                                 </div>
+                                {/* Video watch progress bar */}
+                                {isAuthenticated && (videoWatchMap.get(lesson.id) ?? 0) > 0 && (
+                                  <div className="ml-5.5 mt-1 h-0.5 bg-[oklch(0.25_0.01_25)] rounded-full overflow-hidden">
+                                    <div
+                                      className={`h-full rounded-full ${
+                                        (videoWatchMap.get(lesson.id) ?? 0) >= 100
+                                          ? 'bg-green-500'
+                                          : 'bg-[oklch(0.50_0.18_25)]'
+                                      }`}
+                                      style={{ width: `${Math.min(100, videoWatchMap.get(lesson.id) ?? 0)}%` }}
+                                    />
+                                  </div>
+                                )}
                               </button>
                             );
                           })}
@@ -753,7 +916,17 @@ export default function Course() {
                 </CardHeader>
                 <CardContent>
                   {/* Video Player */}
-                  <VideoPlayer lessonId={currentLesson.id} script={currentScript} />
+                  <VideoPlayer
+                    lessonId={currentLesson.id}
+                    script={currentScript}
+                    isAuthenticated={isAuthenticated}
+                    onVideoComplete={(id) => {
+                      if (!completedLessons.has(id)) {
+                        handleToggleLesson(id);
+                        toast.success('Lesson auto-marked as complete!');
+                      }
+                    }}
+                  />
 
                   {/* Video Script Viewer (toggled) */}
                   {showScript && currentScript && (

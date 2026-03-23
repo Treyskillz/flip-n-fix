@@ -383,3 +383,17 @@ export const verificationLog = mysqlTable("verification_log", {
   completedAt: timestamp("completedAt").defaultNow().notNull(),
 });
 export type VerificationLogRow = typeof verificationLog.$inferSelect;
+
+// ─── Video Progress (Playback Position Tracking) ────────────
+export const videoProgress = mysqlTable("video_progress", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  lessonId: varchar("lessonId", { length: 64 }).notNull(), // matches lesson id from course.ts
+  positionSeconds: int("positionSeconds").default(0).notNull(), // last playback position in seconds
+  durationSeconds: int("durationSeconds").default(0).notNull(), // total video duration in seconds
+  watchedPercent: int("watchedPercent").default(0).notNull(), // 0-100 percentage watched
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type VideoProgressRow = typeof videoProgress.$inferSelect;
+export type InsertVideoProgress = typeof videoProgress.$inferInsert;

@@ -329,7 +329,7 @@ So, you run your numbers. You offer them $230,000 for a quick, cash close, and t
     openingHook: `What if I told you that one simple business structure could be the only thing standing between a lawsuit over a loose floorboard and your family’s home? It sounds dramatic, I know, but in the fast-paced world of fix-and-flip investing, it’s a reality you absolutely cannot afford to ignore.`,
     segments: [
       {
-        title: 'The "What If" Shield: Protecting Your Personal Assets',
+        title: `The "What If" Shield: Protecting Your Personal Assets`,
         type: 'talking-head',
         duration: '1:30',
         script: `In our last lesson, we mapped out the exciting journey of your first fix-and-flip deal, and you’re probably chomping at the bit to start finding properties. But hold on. Before you even think about making an offer, we need to build the most critical piece of your business’s foundation: the Limited Liability Company, or LLC. Think of it as a financial suit of armor for everything you own. Without it, you’re operating as a sole proprietor, which means you and your business are the same legal entity. If something goes wrong on your project, you are personally on the hook. Let’s walk through a real-world scenario I’ve seen happen more than once. An investor, we'll call him Mike, was on his third flip. He was getting good at it, but was still operating under his own name. A contractor he hired left a pile of old flooring with some nails sticking up near the sidewalk. A jogger tripped, fell, and ended up with a nasty injury requiring surgery. The lawsuit came, and because Mike didn’t have an LLC, it didn’t just target his business assets. It came after his personal savings, his car, and even the equity in his family’s home. Everything he had worked for was suddenly at risk over a simple, preventable accident. Now, let's rewind. Imagine that same scenario, but this time Mike had formed "Mike’s Property Solutions, LLC." The lawsuit would be directed at the LLC, not at him personally. The liability is limited to the assets owned by the business—the flip property itself and the business bank account. His personal home, his savings, his kids' college fund? They’re all protected, sitting safely behind that corporate veil. This isn't just boring legal jargon; it's the fundamental protection that lets you sleep at night as a real estate investor.`,
@@ -1118,7 +1118,7 @@ Use on-screen text to summarize the strategy: 'List on a Thursday/Friday to capt
         directions: `Start with a close-up on the presenter, who looks calm and reassuring. When mentioning the inspection report, show a B-roll shot of an email notification or a PDF opening on a laptop screen, with the title "Inspection Report" clearly visible.`,
       },
       {
-        title: 'The "Big Three" Deal-Breakers',
+        title: `The "Big Three" Deal-Breakers`,
         type: 'talking-head',
         duration: '2 min',
         script: `Okay, so while most inspection items are minor, there are a few that can make your heart skip a beat. I call them the "Big Three": the roof, the HVAC system, and the foundation. These are the areas where repair requests can quickly escalate into thousands, or even tens of thousands, of dollars. Let's say you bought a property for $150,000, put $40,000 into the rehab, and you're listed at $250,000, expecting a solid profit. The buyer's inspector says the 15-year-old HVAC system is "nearing the end of its functional life" and the buyer comes back with a quote for $12,000 to replace the entire system. This is a classic negotiation tactic. First, don't just accept their number. An inspector's opinion is just that—an opinion. Is the system actually broken, or is it just old? If it's working fine, you are not obligated to replace it. If it does need a repair, get your own licensed HVAC technician out there immediately to give you a real-world quote. It's amazing how often a buyer's $12,000 replacement quote turns into a $750 repair from your own trusted contractor. The same logic applies to the roof and foundation. Don't let a scary-sounding report bully you into giving up your profit. Always get a second, or even third, opinion from your own experts before you even think about agreeing to a major credit or repair.`,
@@ -1153,7 +1153,7 @@ Use on-screen text to summarize the strategy: 'List on a Thursday/Friday to capt
     openingHook: `Have you ever gotten that post-inspection email from the buyer's agent and your stomach just drops? It's a list of 20, 30, even 40 things they want you to fix. Don't panic — this is where the real negotiation begins, and we're going to show you how to win.`,
     segments: [
       {
-        title: 'Understanding the Buyer\'s Playbook',
+        title: `Understanding the Buyer's Playbook`,
         type: 'talking-head',
         duration: '2 min',
         script: `In the last lesson, we covered how to develop your post-inspection strategy. Now, we're diving deeper into one of the most critical parts of that process: negotiating repair credits. The first thing you have to understand is the buyer's mindset. They've just spent hundreds of dollars on an inspection, and that inspector's job is to find every single flaw, no matter how small. So, when you get that long list of requests, it's not necessarily a personal attack; it's often just the buyer's agent trying to show their client they're fighting for them. They'll typically ask for everything from a loose doorknob to a full roof replacement. I once had a buyer for a $250,000 flip ask for a $15,000 credit because the inspector noted the driveway had 'minor, age-related cracking.' It was a 20-year-old driveway! We countered, and I'll tell you how that played out in a bit. Your job is to separate the reasonable requests from the ridiculous ones. We're not in the business of building brand-new houses; we're in the business of renovating existing ones to a high standard. That means we focus on the big three categories: health and safety issues, major mechanical failures, and anything that wasn't functioning as it should have been. A leaky faucet? Yes, we'll fix that. A GFI outlet that's not working? Absolutely. But cosmetic issues or minor things noted on a 30-year-old house? That's where we draw the line.`,
@@ -1419,7 +1419,7 @@ Use on-screen text to spell out "Buy, Rehab, Rent, Refinance, Repeat" as the pre
 Animate the "fish farm" analogy with simple graphics.`,
       },
       {
-        title: 'The "Buy" — Hunting for Deep Discount Deals',
+        title: `The "Buy" — Hunting for Deep Discount Deals`,
         type: 'whiteboard',
         duration: '2.5 min',
         script: `Alright, let’s get into the most important step: the 'Buy.' This is where your deal-finding skills from Module 3 really come into play, but with a critical twist. For a standard fix-and-flip, you're primarily focused on the After Repair Value (ARV) and ensuring there's a healthy profit margin after all your costs. For a BRRRR, you need to be even more aggressive on the purchase price. Why? Because the entire strategy hinges on the new, post-rehab appraised value being high enough that a bank will let you refinance and pull out all of your initial investment, plus your rehab funds. The magic number we're always aiming for is buying at 70-75% of the ARV, minus your estimated rehab costs. Let's walk through a real-world scenario on the whiteboard. Say you find a distressed 3-bedroom, 2-bath house. You run your comps and find that similar updated homes in the neighborhood are consistently selling for $200,000 — that’s our ARV. Now, a bank will typically lend you 75% of the ARV on a cash-out refinance, which is $150,000. Let's say you walk the property and estimate the rehab will cost a solid $30,000. To get all your money back out on the refinance, you need to buy this property for no more than $120,000. That’s the math: $150,000 from the bank minus the $30,000 you put in for repairs leaves $120,000 for the purchase. If the seller is asking $140,000, it might be a decent flip, but it's not a great BRRRR candidate because you'd be leaving $20,000 of your own cash in the deal, defeating the purpose. You have to buy that deep discount from the start.`,
@@ -1437,7 +1437,7 @@ Show side-by-side images: a high-end flip kitchen vs. a clean, durable rental ki
 B-roll of a distressed property (peeling paint, overgrown yard) that looks intimidating but has good bones.`,
       },
       {
-        title: '"Rehab" and "Rent" — Forcing Appreciation and Proving Income',
+        title: `"Rehab" and "Rent" — Forcing Appreciation and Proving Income`,
         type: 'talking-head',
         duration: '2 min',
         script: `Once you’ve secured that perfect BRRRR candidate, it’s time for the ‘Rehab.’ This part should feel very familiar. All the skills you learned back in Module 4 about creating a scope of work, managing contractors, and controlling your budget are 100% applicable here. The key difference is your mindset and material choices. For a flip, you might add expensive quartz countertops or trendy light fixtures to maximize the sale price. For a rental, your mantra should be: durable, cost-effective, and attractive. You want materials that will appeal to a broad range of tenants and, most importantly, withstand wear and tear. Think luxury vinyl plank flooring instead of easily scratched hardwood, and quality laminate countertops instead of granite that can chip. You’re still forcing appreciation, but with longevity and maintenance costs in mind. After the rehab is complete, you must move immediately to the ‘Rent’ phase. You can’t just tell the bank it will rent for a certain amount; you have to prove it. This means marketing the property, thoroughly screening applicants, and signing a one-year lease with a qualified tenant. Going back to our $200,000 ARV house, let's say it rents for $1,800 a month. Once you have that signed lease and a security deposit in hand, you have a performing asset. That lease is the golden ticket—it’s the proof of income the lender needs to see. It validates your ARV and shows that the property can support the new loan you’re about to ask for. Without a tenant in place, the refinance becomes much, much harder.`,
@@ -1499,7 +1499,7 @@ Display on-screen text: "The Lease = Your Golden Ticket for the Bank."`,
         directions: `Simple side-by-side comparison on screen. Left side: "Fix & Flip" with bullet points like "Active Income," "Lump Sum Profit," "Tax Implications." Right side: "BRRRR" with bullet points like "Passive Income," "Long-Term Wealth," "Portfolio Growth."`,
       },
       {
-        title: 'Don\'t Forget Property Management',
+        title: `Don't Forget Property Management`,
         type: 'talking-head',
         duration: '1:00',
         script: `As you start repeating the BRRRR process and your portfolio grows past two or three properties, a new, critical challenge emerges: management. It’s one thing to manage a single rental yourself, but when you have five, ten, or more, it becomes a serious business. At this point, you have a crucial decision to make: will you self-manage, or will you hire a professional property manager? On the surface, self-management seems tempting because it saves you money—typically 8-10% of the monthly rent. But what it saves you in dollars, it costs you dearly in time and sanity. You become the one fielding calls about leaky faucets at 2 a.m., the one chasing down late rent payments, and the one navigating the complex legal waters of tenant screening and evictions. If your goal is truly passive income, hiring a professional is almost always the right move as you scale. Think of a great property manager as the CEO of your rental business. They are a system, not just a person. They handle the day-to-day operations, find and vet high-quality tenants, manage repairs, and ensure you’re in compliance with all local and state laws. This frees you up to focus on your highest-value activity: finding the next great deal. I always tell my students to bake the property management fee into their numbers from the very beginning. If a deal doesn’t cash flow with a 10% management fee factored in, it’s not a good enough deal. Plan for professional management from the start, and you’ll build a scalable system that generates wealth without creating a second full-time job for yourself.`,
@@ -1700,7 +1700,7 @@ Think about durability and turnover. That beautiful white linen sofa you'd use f
         directions: `Presenter at a high-top table, as if having a coffee with the viewer. Casual, friendly demeanor. Use hand gestures to emphasize points.`,
       },
       {
-        title: 'Crafting a \'Book Now\' Listing',
+        title: `Crafting a 'Book Now' Listing`,
         type: 'screen-recording',
         duration: '2 min',
         script: `Once your property looks amazing, you have to translate that into a listing that screams 'book me now!' This starts with professional photography. I can't stress this enough. It's the single most important investment you'll make in your listing. For a typical 2-bedroom property, a professional shoot might cost you between $300 and $500. That might sound like a lot, but listings with professional photos can earn up to 40% more and get booked 24% more often. It pays for itself in the first month. Your iPhone photos, no matter how good you think they are, just can't compete with a pro's wide-angle lens and expert lighting.
@@ -1842,7 +1842,7 @@ Now, the trade-off for that stability is a stricter approval process. The bank i
         directions: `Presenter at a desk, speaking directly to the camera in a friendly, mentoring tone. Use hand gestures to emphasize points like interest rate differences.`,
       },
       {
-        title: 'The Investor\'s Secret Weapon: DSCR Loans',
+        title: `The Investor's Secret Weapon: DSCR Loans`,
         type: 'talking-head',
         duration: '2 min',
         script: `But what if your personal income is tied up, or you're a full-time investor without a W-2, or you already have several mortgages and the banks are getting skittish about your DTI? This is where one of the most powerful tools for a real estate investor comes into play: the DSCR loan. DSCR stands for Debt Service Coverage Ratio, and it's a game-changer because the loan qualification isn't based on your personal income. Instead, it's based entirely on the investment property's ability to generate enough income to cover its own debt. The lender is underwriting the asset, not you.
@@ -1881,7 +1881,7 @@ When you work with a portfolio lender, they have the discretion to look at your 
     openingHook: `What if I told you that you could buy, renovate, and flip a house without using a single dollar of your own money? It sounds like a fantasy, but it’s a strategy that savvy investors use every single day to build their portfolios and scale their businesses much faster than they ever could alone.`,
     segments: [
       {
-        title: 'The Power of OPM — Other People\'s Money',
+        title: `The Power of OPM — Other People's Money`,
         type: 'talking-head',
         duration: '1:30',
         script: `In our last lesson, we covered the more traditional routes for financing your deals, like conventional and DSCR loans. Those are fantastic tools, but they often require significant down payments and have strict qualification rules. Today, we're diving into the world of creative financing, which is where you can really start to scale your fix-and-flip business. The core concept here is using OPM, or Other People's Money. This isn't about being broke; it's about leverage. It’s about doing more deals by using the resources of others.
@@ -2322,7 +2322,7 @@ Zoom in on the numbers to show the level of detail.`,
     openingHook: `What if you could have a proven, "done-for-you" marketing system and ironclad, attorney-vetted contracts ready to go from day one? That's exactly what we're diving into, so you can spend less time on paperwork and more time closing profitable deals.`,
     segments: [
       {
-        title: 'The "Easy Button" for Off-Market Leads',
+        title: `The "Easy Button" for Off-Market Leads`,
         type: 'screen-recording',
         duration: '2 min',
         script: `In our last lesson, we covered the power of sharing deals within the Freedom One network. But how do you find those deals to begin with? The answer is marketing, and honestly, this is the number one place new investors get stuck. They spend weeks agonizing over what to say in a letter, or they drop five thousand dollars on a marketing guru who gives them generic, ineffective templates. It’s a surefire way to burn through your starting capital with nothing to show for it. We’ve seen it happen too many times. That’s why we’ve built a complete, field-tested marketing library right into the platform. This is your “easy button” for generating off-market leads. Forget the guesswork and the expensive copywriters; you have everything you need right here.
@@ -2429,7 +2429,7 @@ Carolina Capital is showing an interest rate of 10.5% and they charge 2 originat
         directions: `Start with a talking-head shot, then transition to a screen recording of the Freedom One platform. Navigate to the "State Guide" section. Click on a state like Ohio or Florida to show the detailed information available. Hover over key data points like "Foreclosure Timeline" and "Property Tax Rate" as they are mentioned.`,
       },
       {
-        title: 'Unlocking the Platform\'s Hidden Gems',
+        title: `Unlocking the Platform's Hidden Gems`,
         type: 'screen-recording',
         duration: '3 min',
         script: `The State Guide is a showstopper, but it's not the only other tool here designed to protect your profits. Let's explore a couple of other features that separate amateur investors from serious professionals. First up is our advanced Deal Analyzer. You’ve seen basic calculators, but this is different. Let's use that New York property as our example again. We plug in the $250,000 purchase price, our estimated $60,000 in rehab costs, and the $425,000 ARV. The analyzer instantly calculates our potential gross profit of $115,000. But here’s where it gets powerful. It allows us to 'stress-test' the deal. What if the rehab takes two months longer than expected? We can adjust the holding period, and it automatically recalculates our carrying costs. What if interest rates tick up by half a percent? We can model that, too. It gives you a best-case, worst-case, and most-likely profit scenario, along with a 'Deal Score' that assesses the overall risk. Another tool I want you to master is the 'Scope of Work' template generator. Instead of starting from a blank page when planning your rehab, you can select 'Moderate Kitchen Remodel' or 'Full Cosmetic Flip,' and it generates a pre-populated checklist of every likely task, from demolition to final punch-out. You can then customize it, add local labor costs, and export it directly to your contractor. It ensures you don't forget crucial items, which is one of the fastest ways to blow your budget.`,
@@ -2817,7 +2817,7 @@ Use green checkmarks and red X's to highlight the key advantages of the Solo 401
     openingHook: `What if I told you that you could buy a fix-and-flip property without ever stepping foot in a bank or talking to a hard money lender? Welcome to the world of creative financing — we're kicking off our advanced strategies module with one of the most powerful tools in your toolbox: seller financing.`,
     segments: [
       {
-        title: 'The "Why" Behind Seller Financing',
+        title: `The "Why" Behind Seller Financing`,
         type: 'talking-head',
         duration: '2:00',
         script: `Hey everyone, welcome to Module 12. We've covered a ton of ground so far, from finding deals to managing renovations. Now, we're diving into the really exciting stuff: creative financing strategies that can help you close more deals with less of your own cash. And we're starting with a big one: seller financing, sometimes called 'owner financing.' So, what is it? Simply put, it's when the owner of the property acts as the bank. Instead of you getting a loan from a traditional lender, the seller finances the purchase for you. You make monthly payments directly to them, based on terms you both agree on. Now, the first question I always get is, 'Why on earth would a seller agree to that?' It seems counterintuitive, right? They want their money now. But there are several key reasons a seller might be highly motivated to offer financing. First, they might own the property free and clear, meaning they don't have an underlying mortgage to pay off. This is common with older landlords or people who inherited a property. For them, receiving monthly payments can be a fantastic source of steady income, often at a much higher interest rate than a CD or savings account. Second, it can be a great tax strategy for them. Instead of taking a huge lump-sum payment and facing a massive capital gains tax bill, they can spread that tax liability out over many years. And finally, sometimes it's the only way to get the deal done. If a property is in rough shape—the kind of distressed property we love for a fix-and-flip—it might not qualify for traditional financing. By offering to carry the note, the seller opens up their property to a much wider pool of buyers, like us, who can see the potential and have a plan to bring it back to life.`,
@@ -2926,7 +2926,7 @@ Next is the monthly rent. You'll charge a fair market rent, maybe even slightly 
         directions: `Switch to the presenter at a whiteboard. Write down the three components: "Option Fee," "Monthly Rent/Credits," and "Purchase Price." As the presenter explains each one, write down the corresponding numbers from the example ($180,000 ARV, 4% Fee = $7,200, $1,750 Rent, $250 Credit). Use arrows to show how the credits accumulate over time.`,
       },
       {
-        title: 'The Legal Framework: Dotting Your I\'s',
+        title: `The Legal Framework: Dotting Your I's`,
         type: 'talking-head',
         duration: '1.5 min',
         script: `Alright, this is the part where I have to be very clear: I am an investor, not an attorney, and you absolutely must have a qualified real estate attorney draft your agreements. Do not download a generic form from the internet. State and local laws regarding lease options can be very specific, and getting this wrong can lead to huge headaches. For example, some jurisdictions might reclassify the agreement as an installment sale rather than a lease, which has significant legal and tax implications. You need two separate, ironclad documents: a detailed Lease Agreement and a rock-solid Option to Purchase Agreement. The lease should cover all the standard landlord-tenant rules, while the option agreement specifies the purchase price, the option period, the option fee amount, and what happens if the tenant decides not to exercise their option to buy—remember, that option fee is non-refundable.
@@ -2961,7 +2961,7 @@ So, where do you find these people? You start with your inner circle. Think abou
 Use on-screen text to highlight key terms like "Private Money," "8% Interest-Only," and "First Lien Position."`,
       },
       {
-        title: 'Structuring Deals with Other People\'s Money (OPM)',
+        title: `Structuring Deals with Other People's Money (OPM)`,
         type: 'whiteboard',
         duration: '2 min',
         script: `Once you've found a potential private lender, the next step is structuring the deal in a way that’s a win-win for everyone. The most common structure is a simple debt agreement. Your lender provides the capital, and you give them a promissory note and a mortgage or deed of trust, which secures their investment against the property. This is exactly what a bank does, but you have the flexibility to negotiate the terms. Let's walk through a real-world scenario. 
@@ -3011,7 +3011,7 @@ Show examples of good property photos and a clear financial breakdown.`,
     openingHook: `What if you could build a real estate business that generates cash for you today *and* builds wealth for you tomorrow, all at the same time? Well, you can, and that’s exactly what we’re going to map out in this final lesson of the course.`,
     segments: [
       {
-        title: 'The \'Wholesale to Flip\' Catapult',
+        title: `The 'Wholesale to Flip' Catapult`,
         type: 'talking-head',
         duration: '2 min',
         script: `We’ve made it. The final lesson. For the last 64 lessons, we've been methodically adding tools to your investor toolbelt. We've covered the mindset, the business setup, finding deals, and five powerful exit strategies. Now, it's time to put it all together. The biggest hurdle for new investors isn't a lack of knowledge—it's a lack of capital. You see the deals, you know the process, but the down payment feels like a mountain you can't climb. This is where stacking strategies becomes your superpower, and it starts with the 'Wholesale to Flip' catapult.
@@ -3020,7 +3020,7 @@ Think back to our module on wholesaling. Your job is to find a great deal, get i
         directions: `Camera on presenter, medium shot. Energetic and encouraging tone. Use hand gestures to emphasize "catapult" and "stacking."`,
       },
       {
-        title: 'The \'BRRRR & Flip\' Power Combo',
+        title: `The 'BRRRR & Flip' Power Combo`,
         type: 'whiteboard',
         duration: '2 min',
         script: `Okay, so you've used a wholesale fee to fund your first flip. That's fantastic for generating active income. But what about building long-term, passive wealth? This is where we stack our second power combo: the 'BRRRR and Flip.' Imagine you have two deals. Deal A is a cosmetic flip that you can turn around in 90 days for a $40,000 profit. Deal B is a solid house in a great rental area that you can buy using the BRRRR method—Buy, Rehab, Rent, Refinance, Repeat. You can run these simultaneously. The profit from your flip (Deal A) provides the cash to live on, pay your bills, and fund your next deal's down payment. It's your 'now' money.

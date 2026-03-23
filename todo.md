@@ -697,7 +697,7 @@
 - [ ] Ensure natural flow between lessons within each module
 - [ ] Update videoScripts.ts in the app with rewritten scripts
 - [ ] Update Colossyan script files with rewritten versions
-- [ ] Save checkpoint and deliver
+- [x] Save checkpoint and deliver
 
 ## Colossyan Video Upload (March 23, 2026)
 - [x] Log into Colossyan account
@@ -710,3 +710,14 @@
 - [x] Integrate real Colossyan video URLs into the course page
 - [x] Verify video playback works in the browser
 - [x] Save checkpoint with video integration
+
+## Video Progress Tracking & Quality Review (March 23, 2026)
+- [x] Add video progress tracking to database schema (lesson ID, timestamp/position, completed flag)
+- [x] Create tRPC procedures for saving/loading video progress
+- [x] Implement auto-mark-complete when user watches video to end
+- [x] Implement resume-from-where-you-left-off on video player
+- [x] Add progress indicator (watched percentage) to lesson sidebar
+- [x] Review video quality across multiple modules
+- [x] Write vitest tests for video progress features (18 tests, all passing)
+- [x] Fix videoScripts.ts parse errors (escaped quotes in single-quoted strings)
+- [ ] Save checkpoint and deliver
