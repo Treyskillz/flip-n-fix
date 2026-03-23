@@ -540,11 +540,20 @@ B-roll of a mentor having a coffee meeting with a mentee, looking at a laptop.`,
     lessonId: 'l-2-8',
     estimatedRuntime: '6:00',
     equipment: 'Camera (talking head), slide deck',
-    openingHook: ``,
+    openingHook: `**Type:** talking-head | **Duration:** 0:30 min
+**Script:**
+Here's a truth that took me way too long to learn: you will never scale a real estate investing business by yourself. I tried. I was the deal finder, the negotiator, the project manager, the bookkeeper, and the marketing department all rolled into one. And you know what happened? I burned out, made expensive mistakes, and left money on the table. Today, I'm going to show you exactly who you need on your team, where to find them, and how to vet them so you don't end up with a contractor who ghosts you mid-rehab.
+**Directions:**
+[Medium shot of presenter in a professional setting. Energetic, relatable opening -- speak directly to the camera as if sharing hard-won advice with a friend.]`,
     segments: [
     ],
-    closingCTA: ``,
+    closingCTA: `Now you know who you need, where to find them, and how to make sure they're the real deal. In the next module, we're going to shift gears and dive into the most exciting part of this business -- finding deals. I'm going to show you exactly how to find deeply discounted properties using multiple acquisition strategies. But before you move on, take five minutes right now and write down who you already know that could fill one of these eight roles. You might be surprised -- your team might already be closer than you think. I'll see you in Module 3.`,
     bRollSuggestions: [
+      `A group of professionals gathered around a conference table reviewing blueprints.`,
+      `A contractor measuring and inspecting a property under renovation.`,
+      `Someone scrolling through the Freedom One Lender Directory on a laptop.`,
+      `A handshake between two people at a networking event.`,
+      `A real estate agent showing an investor a property.`,
     ],
   },
   // ───────────────────────────────────────────────────────
@@ -730,13 +739,22 @@ B-roll footage of someone filming a property walkthrough with their smartphone.`
   },
   'l-3-5': {
     lessonId: 'l-3-5',
-    estimatedRuntime: '6:00',
+    estimatedRuntime: '7:00',
     equipment: 'Camera (talking head), slide deck',
-    openingHook: ``,
+    openingHook: `**Type:** talking-head | **Duration:** 0:30 min
+**Script:**
+If there's one formula that separates profitable flippers from the investors who lose their shirts, it's the 70% Rule. I've used this single calculation to evaluate thousands of deals, and it's saved me from more bad purchases than I can count. Today, I'm going to break down exactly how to calculate your After Repair Value, apply the 70% Rule, and know within 60 seconds whether a deal is worth pursuing. This is the math that makes or breaks your fix-and-flip business.
+**Directions:**
+[Medium shot of presenter at a desk or whiteboard. Confident, authoritative tone -- this is a critical lesson. Have a calculator or the Freedom One platform visible on screen.]`,
     segments: [
     ],
-    closingCTA: ``,
+    closingCTA: `The 70% Rule is your first line of defense against bad deals. Memorize it, practice it, and never deviate from it -- especially on your first few flips. In the next lesson, we're going to talk about how to actually make your offer and negotiate with sellers to get your price accepted. Before you move on, open the Freedom One deal analyzer and practice running the 70% Rule on three properties in your target market. Get comfortable with the math -- it should become second nature. I'll see you in the next lesson.`,
     bRollSuggestions: [
+      `A calculator or spreadsheet showing the 70% Rule calculation.`,
+      `The Freedom One deal analyzer interface with a sample deal loaded.`,
+      `A before-and-after comparison of a renovated property.`,
+      `Someone walking through a distressed property taking notes.`,
+      `A "SOLD" sign in front of a beautifully renovated home.`,
     ],
   },
   'l-3-6': {
@@ -1502,13 +1520,22 @@ Display on-screen text: "The Lease = Your Golden Ticket for the Bank."`,
   // ───────────────────────────────────────────────────────
   'l-7-1': {
     lessonId: 'l-7-1',
-    estimatedRuntime: '6:00',
+    estimatedRuntime: '7:00',
     equipment: 'Camera (talking head), slide deck',
-    openingHook: ``,
+    openingHook: `**Type:** talking-head | **Duration:** 0:30 min
+**Script:**
+What if I told you there's a way to acquire investment properties without qualifying for a loan, without a big down payment, and often with a below-market interest rate already locked in? It sounds too good to be true, but it's one of the most powerful strategies in real estate investing, and it's been used by sophisticated investors for decades. It's called "Subject-To" financing, and by the end of this lesson, you're going to understand exactly how it works, why sellers agree to it, and how it can completely change your investing business.
+**Directions:**
+[Medium shot of presenter in a professional setting. Build intrigue and excitement -- this is a strategy that feels like a secret weapon. Lean in slightly to create intimacy.]`,
     segments: [
     ],
-    closingCTA: ``,
+    closingCTA: `Subject-to is one of the most powerful tools in your investing toolkit. It lets you acquire properties with little or no money down, inherit favorable loan terms, and build a portfolio faster than almost any other strategy. In the next lesson, we're going to dive into how to actually find subject-to deals and have that initial conversation with sellers. Before you move on, take a minute to think about your market -- are there pre-foreclosure properties, tired landlords, or relocating homeowners who might be perfect candidates for a subject-to deal? Start looking at your market through this new lens. I'll see you in the next lesson.`,
     bRollSuggestions: [
+      `A homeowner looking stressed while reviewing mortgage statements.`,
+      `A "Notice of Default" or pre-foreclosure letter (staged, not real).`,
+      `Someone shaking hands with a relieved-looking homeowner at a kitchen table.`,
+      `A rental property with a "For Rent" sign and happy tenants moving in.`,
+      `The Freedom One platform showing a subject-to deal analysis.`,
     ],
   },
   'l-7-2': {
@@ -2582,16 +2609,43 @@ Tone should be encouraging and forward-looking.`,
   'l-11-4': {
     lessonId: 'l-11-4',
     estimatedRuntime: '7:00',
-    equipment: 'Camera (talking head), slide deck',
-    openingHook: ``,
+    equipment: 'Camera (talking head), screen recording software, whiteboard',
+    openingHook: `What if you could own investment properties without your name appearing on a single public document? We're going to talk about a powerful tool that lets you do just that, keeping your real estate business private and adding a crucial layer of protection.`,
     segments: [
+      {
+        title: 'The Power of Privacy',
+        type: 'talking-head',
+        duration: '2 min',
+        script: `In our last lesson, we covered the importance of choosing the right business entity, like an LLC, to protect your personal assets. That’s your first and most critical line of defense. Now, we’re going to add a specialized tool to your asset protection toolkit that takes things a step further: the land trust. So, what exactly is it? A land trust is a simple, private legal agreement where one party, the trustee, agrees to hold title to a property for the benefit of another party, the beneficiary. You, the investor, create the trust and your LLC is the beneficiary. The magic of a land trust is that the trustee's name appears on the public records, not yours. In today's world, where a quick internet search can reveal almost anything, this privacy is golden. It prevents nosy neighbors, potential creditors, or aggressive attorneys from easily connecting you to your assets. Think of it this way: your LLC separates your business assets from your personal life, and the land trust separates one business asset from another, cloaking each property in anonymity. Instead of 'Smith Flips LLC' owning 123 Main Street, the public record just shows a generic name like 'The 123 Main Street Trust' as the owner. It’s a simple, legal, and ethical strategy that savvy investors have used for decades to be discreet and strategic. It’s not about hiding from responsibility, but about controlling your public footprint and protecting your hard-earned portfolio from frivolous claims.`,
+        directions: `Medium shot of the presenter at a desk, speaking directly to the camera in a friendly, mentoring tone.
+Use simple on-screen text to define 'Trustee' and 'Beneficiary'.`,
+      },
+      {
+        title: 'A Real-World Fix-and-Flip Scenario',
+        type: 'whiteboard',
+        duration: '2.5 min',
+        script: `Let's make this real with a fix-and-flip scenario. Imagine you find a fantastic deal: a 3-bedroom ranch listed for $150,000 with a solid After Repair Value (ARV) of $250,000. You calculate you'll need about $40,000 for the renovation. Instead of buying it in your personal name or even directly in your LLC's name, you use a land trust. First, you have your attorney draft a trust agreement for the "123 Maple Street Trust." You name your LLC, "Next Level Flips, LLC," as the beneficiary, and you appoint a trusted, neutral third-party, like your attorney or a corporate trustee service, as the trustee. At closing, the deed is recorded in the name of the trust. Now, fast forward. The renovation is underway, and unfortunately, a delivery truck driver slips and falls on the property, injuring their back. They decide to sue the property owner. Their lawyer runs a title search and finds the owner is the "123 Maple Street Trust." They can sue the trust, but that’s where their easy path ends. To find out who is actually behind the trust—the beneficiary—they have to file a lawsuit and engage in expensive legal discovery. This extra step, this "legal hurdle," is often enough to deter frivolous or exaggerated claims. The plaintiff’s attorney knows they can’t easily go after the owner’s other assets because they can’t see them. The potential payout is limited to the equity in that one property, making a quick, low settlement much more attractive. This is how the land trust compartmentalizes your risk.`,
+        directions: `Presenter at a whiteboard, drawing a simple diagram showing the flow: You -> Your LLC (Beneficiary) -> Land Trust (Owner of Record) -> Property.
+Write out the key dollar amounts ($150k, $250k ARV, $40k rehab) to make the scenario clear.`,
+      },
+      {
+        title: 'Setting Up Your Land Trust Correctly',
+        type: 'screen-recording',
+        duration: '2 min',
+        script: `Setting up a land trust might sound intimidating, but it’s a surprisingly straightforward process that’s all about the paperwork. The best part is that it’s a private agreement, so you don’t have to file it with any state agency. The core of the whole thing is the Trust Agreement. This is a document you absolutely must create with an experienced real estate attorney. Please, do not try to save a few bucks by downloading a generic form online; state laws vary, and a poorly drafted agreement can be worthless. This document will name the trustee, the beneficiary (your LLC), and successor beneficiaries. It also clearly outlines the trustee’s duties—which is basically to do nothing unless you, the beneficiary, give them written instructions. You retain 100% control. You can direct the trustee to sign closing documents to sell the property, sign loan documents to refinance it, or anything else. The cost for an attorney to set this up is typically between $400 and $800. When you compare that to the tens of thousands of dollars a lawsuit could cost, it’s an incredible value. Once the trust agreement is signed by you and the trustee, your attorney will prepare a "Deed to Trustee." This is the document that officially transfers the property title from the seller directly into your newly created trust. This deed is what gets recorded in the public records, officially cloaking your ownership.`,
+        directions: `Show a screen recording of a sample (redacted) Land Trust Agreement, scrolling through the key sections (Trustee, Beneficiary, Powers of Trustee).
+Highlight the key clauses being discussed in the script.`,
+      },
+      {
+        title: 'When to Use a Land Trust for Your Strategy',
+        type: 'talking-head',
+        duration: '1.5 min',
+        script: `So, when should you use a land trust? Many seven- and eight-figure investors make it a standard practice for every single property they acquire. It’s just part of their buying checklist. For a fix-and-flipper, it’s a no-brainer. It prevents contractors, sellers, or anyone else involved in the transaction from seeing the full scope of your business and assets. If you’re a wholesaler, it adds a layer of privacy and professionalism. You can put the property under contract with the trust as the buyer, which can make your assignment of contract cleaner. For the long-term exit strategies like BRRRR or short-term rentals, a land trust is even more critical. When you’re a landlord, you want to minimize direct contact from tenants about non-emergency issues. When they can’t look you up personally, they are forced to go through the proper channels, like your property manager. It creates a professional distance and reduces personal risk and liability. The bottom line is this: a land trust is an inexpensive, powerful, and flexible tool. It adds a crucial layer of privacy and protection that strengthens your business foundation, no matter which of the five exit strategies you’re pursuing.`,
+        directions: `Return to a medium shot of the presenter. Speak with conviction and clarity.
+Use on-screen text to list the exit strategies: Fix & Flip, Wholesaling, BRRRR, Subject-To, Short-Term Rentals.`,
+      },
     ],
-    closingCTA: `> Using a land trust is a smart, proactive step to protect the business you're working so hard to build. In our next lesson, we'll continue this discussion on asset protection by diving into the world of insurance and how to make sure you have the right coverage for your investment properties.
-> 
-> ## B-Roll Suggestions
-> - A person signing a legal document in an attorney's office.
-> - Close-up shot of a property deed with the owner's name redacted and a 'TRUST' stamp over it.
-> - A diagram illustrating the privacy shield a land trust provides.`,
+    closingCTA: `Using a land trust is a smart, proactive step to protect the business you're working so hard to build. In our next lesson, we'll continue this discussion on asset protection by diving into the world of insurance and how to make sure you have the right coverage for your investment properties.`,
     bRollSuggestions: [
       `A person signing a legal document in an attorney's office.`,
       `Close-up shot of a property deed with the owner's name redacted and a 'TRUST' stamp over it.`,
