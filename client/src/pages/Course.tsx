@@ -7,6 +7,7 @@ import { COURSE_MODULES } from '@/lib/course';
 import type { CourseModule, CourseLesson, CourseTier } from '@/lib/course';
 import { VIDEO_SCRIPTS } from '@/lib/videoScripts';
 import type { VideoScript, VideoSegment } from '@/lib/videoScripts';
+import { COURSE_VIDEOS } from '@/lib/courseVideos';
 import { MODULE_QUIZZES } from '@/lib/quizData';
 import type { ModuleQuiz } from '@/lib/quizData';
 import { QuizModal } from '@/components/QuizModal';
@@ -149,51 +150,57 @@ function VideoScriptViewer({ script }: { script: VideoScript }) {
   );
 }
 
-function VideoPlaceholder({ lessonId, script }: { lessonId: string; script?: VideoScript }) {
+function VideoPlayer({ lessonId, script }: { lessonId: string; script?: VideoScript }) {
+  const videoInfo = COURSE_VIDEOS[lessonId];
   const duration = script?.estimatedRuntime || '—';
-  const segmentCount = script?.segments.length || 0;
+
+  if (!videoInfo?.publicUrl) {
+    // Fallback placeholder for any lesson without a video
+    return (
+      <div className="mb-6">
+        <div className="relative bg-[oklch(0.15_0.01_25)] overflow-hidden" style={{ aspectRatio: '16/9' }}>
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+            <div className="w-20 h-20 flex items-center justify-center bg-[oklch(0.50_0.18_25)]">
+              <PlayCircle className="w-10 h-10 text-white" />
+            </div>
+            <p className="text-white/60 text-sm">Video coming soon</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const formatDuration = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  };
 
   return (
     <div className="mb-6">
-      <div className="relative bg-[oklch(0.15_0.01_25)] overflow-hidden" style={{ aspectRatio: '16/9' }}>
-        <div className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-            backgroundSize: '40px 40px'
-          }}
-        />
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-          <div className="w-20 h-20 flex items-center justify-center bg-[oklch(0.50_0.18_25)] transition-transform hover:scale-105">
-            <PlayCircle className="w-10 h-10 text-white" />
-          </div>
-          <div className="text-center">
-            <p className="text-white/60 text-sm mt-1">
-              <span className="inline-flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" /> {duration}
-              </span>
-              {segmentCount > 0 && (
-                <span className="ml-3 inline-flex items-center gap-1">
-                  <FileText className="w-3.5 h-3.5" /> {segmentCount} segments
-                </span>
-              )}
-            </p>
-          </div>
-        </div>
-
-        <div className="absolute top-4 right-4">
-          <Badge className="bg-[oklch(0.50_0.18_25)] text-white border-none text-xs flex items-center gap-1.5 px-3 py-1">
-            <Video className="w-3.5 h-3.5" />
-            Video Coming Soon
-          </Badge>
-        </div>
-
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-[oklch(0.25_0.01_25)]">
-          <div className="h-full w-0 bg-[oklch(0.50_0.18_25)]" />
-        </div>
+      <div className="relative bg-black overflow-hidden" style={{ aspectRatio: '16/9' }}>
+        <video
+          key={videoInfo.publicUrl}
+          controls
+          preload="metadata"
+          poster={videoInfo.thumbnailUrl}
+          className="w-full h-full object-contain"
+          controlsList="nodownload"
+        >
+          <source src={videoInfo.publicUrl} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
       </div>
-      <p className="text-xs text-muted-foreground mt-2 text-center italic">
-        Video lesson will be available here. {script ? 'Toggle the script below to view the production script.' : 'Follow along with the written content below.'}
-      </p>
+      <div className="flex items-center justify-between mt-2 px-1">
+        <p className="text-xs text-muted-foreground flex items-center gap-1">
+          <Clock className="w-3 h-3" />
+          {videoInfo.durationSeconds ? formatDuration(videoInfo.durationSeconds) : duration}
+        </p>
+        <p className="text-xs text-muted-foreground flex items-center gap-1">
+          <Video className="w-3 h-3" />
+          AI Instructor: Jason
+        </p>
+      </div>
     </div>
   );
 }
@@ -745,8 +752,8 @@ export default function Course() {
                   <CardTitle className="text-2xl">{currentLesson.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {/* Video Placeholder */}
-                  <VideoPlaceholder lessonId={currentLesson.id} script={currentScript} />
+                  {/* Video Player */}
+                  <VideoPlayer lessonId={currentLesson.id} script={currentScript} />
 
                   {/* Video Script Viewer (toggled) */}
                   {showScript && currentScript && (

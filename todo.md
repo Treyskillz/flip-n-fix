@@ -698,3 +698,15 @@
 - [ ] Update videoScripts.ts in the app with rewritten scripts
 - [ ] Update Colossyan script files with rewritten versions
 - [ ] Save checkpoint and deliver
+
+## Colossyan Video Upload (March 23, 2026)
+- [x] Log into Colossyan account
+- [x] Select Jason avatar for all videos
+- [x] Upload and generate all 65 course video scripts via REST API
+- [x] Verify video generation status - all 65 videos rendered successfully
+- [x] Collect all 65 video public URLs from Colossyan CDN
+- [x] Create courseVideos.ts data file with all video URLs, thumbnails, and durations
+- [x] Replace VideoPlaceholder component with VideoPlayer component in Course.tsx
+- [x] Integrate real Colossyan video URLs into the course page
+- [x] Verify video playback works in the browser
+- [x] Save checkpoint with video integration
