@@ -43,6 +43,8 @@ export interface SOWProperty {
   tier: 'rental' | 'standard' | 'luxury';
   style: string;
   heroPhoto: string;
+  beforePhoto: string;
+  afterPhoto: string;
   rooms: SOWRoomTemplate[];
 }
 
@@ -181,6 +183,32 @@ const IMG = {
   copperGarage: `${CDN}/copper-canyon-garage-bUbmFxFkt93an8nrvU2qAC.webp`,
   copperLandscaping: `${CDN}/copper-canyon-landscaping-EdRgmVMz3eYXsgoSf95LZV.webp`,
   copperRoof: `${CDN}/copper-canyon-roof-WKL9AoGPNUjh37UebHLSRv.webp`,
+
+  // Before/After Exterior Photos
+  castleBefore: `${CDN}/castle-ave-before-vy3MWDJyxjSzJxBDKFZSKC.webp`,
+  castleAfter: `${CDN}/castle-ave-after-2LzedQErYXmJKMfyJiGgW4.webp`,
+  magnoliaBefore: `${CDN}/magnolia-dr-before-5TFCVTxGPSN3mxHYQjqjGU.webp`,
+  magnoliaAfter: `${CDN}/magnolia-dr-after-CAWoRU8S2P8quYibACp42S.webp`,
+  riversideBefore: `${CDN}/riverside-blvd-before-5WLqKwMJEjqfJVPYgqxJXM.webp`,
+  riversideAfter: `${CDN}/riverside-blvd-after-3JMLZza5RKEtYy9gazRq2j.webp`,
+  oakwoodBefore: `${CDN}/oakwood-ct-before-gqJPGqiDMjZPpCcqAWqHnN.webp`,
+  oakwoodAfter: `${CDN}/oakwood-ct-after-Rz6eRcYMzQxCeqtpxf6c33.webp`,
+  peachtreeBefore: `${CDN}/peachtree-way-before-JhJcfCnVqCKQjxPWLYRfhP.webp`,
+  peachtreeAfter: `${CDN}/peachtree-way-after-KWwd7UnBJhBVUSrYcYorDk.webp`,
+  harborBefore: `${CDN}/harbor-view-before-5zmoq72WYWCcqdw5aRXpgA.webp`,
+  harborAfter: `${CDN}/harbor-view-after-jbAuVgCUhCDEuRt2eUW9Rd.webp`,
+  elmBefore: `${CDN}/elm-st-before-KPcEJvgnfA7G9ZtZM8NnZS.webp`,
+  elmAfter: `${CDN}/elm-st-after-YfHdTbCA2De95qkCjKVXCz.webp`,
+  summitBefore: `${CDN}/summit-ridge-before-mnfXmykgJJsrMFYv6DMkMM.webp`,
+  summitAfter: `${CDN}/summit-ridge-after-6j9YEQeBED5ct72do2za7c.webp`,
+  birchBefore: `${CDN}/birch-ln-before-JGaViC6dksZGhPYV29BrKC.webp`,
+  birchAfter: `${CDN}/birch-ln-after-XnMJr3G3rey3vyrhb3GWDu.webp`,
+  willowBefore: `${CDN}/willow-creek-before-2AxmyVDtRwQ6yMoX9tYZqs.webp`,
+  willowAfter: `${CDN}/willow-creek-after-TNdjex66f3hch8i7ARnB2N.webp`,
+  pineBefore: `${CDN}/pine-hollow-before-Ffzew5QSapt23w4tkCTACQ.webp`,
+  pineAfter: `${CDN}/pine-hollow-after-WC5BoBEFJ3SitrZAcyJG6m.webp`,
+  copperBefore: `${CDN}/copper-canyon-before-75JVgeKdJH92FCzA5Y3aiW.webp`,
+  copperAfter: `${CDN}/copper-canyon-after-C8nugmfRdtYuGrL3sUXGSa.webp`,
 };
 
 // ─── HELPER: Build room template ─────────────────────────────
@@ -1497,6 +1525,8 @@ export const SOW_PROPERTIES: SOWProperty[] = [
     tier: 'luxury',
     style: 'Victorian',
     heroPhoto: IMG.castleKitchen,
+    beforePhoto: IMG.castleBefore,
+    afterPhoto: IMG.castleAfter,
     rooms: castleAveRooms,
   },
   {
@@ -1516,6 +1546,8 @@ export const SOW_PROPERTIES: SOWProperty[] = [
     tier: 'standard',
     style: 'Colonial',
     heroPhoto: IMG.magnoliaKitchen,
+    beforePhoto: IMG.magnoliaBefore,
+    afterPhoto: IMG.magnoliaAfter,
     rooms: magnoliaDrRooms,
   },
   {
@@ -1535,6 +1567,8 @@ export const SOW_PROPERTIES: SOWProperty[] = [
     tier: 'luxury',
     style: 'Modern',
     heroPhoto: IMG.riversideKitchen,
+    beforePhoto: IMG.riversideBefore,
+    afterPhoto: IMG.riversideAfter,
     rooms: riversideBlvdRooms,
   },
   {
@@ -1554,6 +1588,8 @@ export const SOW_PROPERTIES: SOWProperty[] = [
     tier: 'rental',
     style: 'Bungalow',
     heroPhoto: IMG.oakwoodKitchen,
+    beforePhoto: IMG.oakwoodBefore,
+    afterPhoto: IMG.oakwoodAfter,
     rooms: oakwoodCtRooms,
   },
   {
@@ -1573,6 +1609,8 @@ export const SOW_PROPERTIES: SOWProperty[] = [
     tier: 'standard',
     style: 'Craftsman',
     heroPhoto: IMG.peachtreeKitchen,
+    beforePhoto: IMG.peachtreeBefore,
+    afterPhoto: IMG.peachtreeAfter,
     rooms: peachtreeWayRooms,
   },
   {
@@ -1592,6 +1630,8 @@ export const SOW_PROPERTIES: SOWProperty[] = [
     tier: 'luxury',
     style: 'Coastal',
     heroPhoto: IMG.harborKitchen,
+    beforePhoto: IMG.harborBefore,
+    afterPhoto: IMG.harborAfter,
     rooms: harborViewRooms,
   },
   {
@@ -1611,6 +1651,8 @@ export const SOW_PROPERTIES: SOWProperty[] = [
     tier: 'rental',
     style: 'Duplex',
     heroPhoto: IMG.elmKitchen,
+    beforePhoto: IMG.elmBefore,
+    afterPhoto: IMG.elmAfter,
     rooms: elmStRooms,
   },
   {
@@ -1630,6 +1672,8 @@ export const SOW_PROPERTIES: SOWProperty[] = [
     tier: 'luxury',
     style: 'Mediterranean',
     heroPhoto: IMG.summitKitchen,
+    beforePhoto: IMG.summitBefore,
+    afterPhoto: IMG.summitAfter,
     rooms: summitRidgeRooms,
   },
   {
@@ -1649,6 +1693,8 @@ export const SOW_PROPERTIES: SOWProperty[] = [
     tier: 'standard',
     style: 'Cape Cod',
     heroPhoto: IMG.birchKitchen,
+    beforePhoto: IMG.birchBefore,
+    afterPhoto: IMG.birchAfter,
     rooms: birchLnRooms,
   },
   {
@@ -1668,6 +1714,8 @@ export const SOW_PROPERTIES: SOWProperty[] = [
     tier: 'luxury',
     style: 'Modern Farmhouse',
     heroPhoto: IMG.willowKitchen,
+    beforePhoto: IMG.willowBefore,
+    afterPhoto: IMG.willowAfter,
     rooms: willowCreekRooms,
   },
   {
@@ -1687,6 +1735,8 @@ export const SOW_PROPERTIES: SOWProperty[] = [
     tier: 'rental',
     style: 'Ranch',
     heroPhoto: IMG.pineKitchen,
+    beforePhoto: IMG.pineBefore,
+    afterPhoto: IMG.pineAfter,
     rooms: pineHollowRooms,
   },
   {
@@ -1706,6 +1756,8 @@ export const SOW_PROPERTIES: SOWProperty[] = [
     tier: 'standard',
     style: 'Contemporary',
     heroPhoto: IMG.copperKitchen,
+    beforePhoto: IMG.copperBefore,
+    afterPhoto: IMG.copperAfter,
     rooms: copperCanyonRooms,
   },
 ];

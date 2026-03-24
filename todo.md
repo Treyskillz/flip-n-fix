@@ -760,3 +760,9 @@
 - [x] Ensure no Fortune Builders logos or company names appear anywhere
 - [x] Fix failing courseVideos.test.ts
 - [x] Build, test, and save checkpoint (283 tests passing)
+
+## SOW Follow-Up Features (March 24, 2026)
+- [x] Add Excel/PDF export for full property SOWs — downloadable spreadsheets with all room costs, materials, and labor for contractor bidding
+- [x] Connect SOW properties to Deal Analyzer — import property SOW directly into deal analysis with pre-filled rehab costs
+- [x] Add before/after photo comparison — generate "before" condition photos alongside renovation photos to show transformation scope
+- [x] Run tests, save checkpoint, and push to GitHub (283 tests passing)

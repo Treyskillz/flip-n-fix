@@ -29,10 +29,12 @@ import {
   Printer, DollarSign, Wrench, ShoppingCart, X, Home as HomeIcon,
   BedDouble, Bath, Ruler, Grid3X3, List, Search, Filter,
   MapPin, TrendingUp, TrendingDown, Minus, Globe, Building2,
-  ArrowLeft, Calendar, Tag, ChevronRight, Eye
+  ArrowLeft, Calendar, Tag, ChevronRight, Eye, Calculator
 } from 'lucide-react';
 import { useBranding, type BrandingConfig } from '@/lib/branding';
 import { ProductStatusBadge } from '@/components/ProductStatusBadge';
+import { generateSOWExcel } from '@/lib/generateSOWExcel';
+import { BeforeAfterSlider } from '@/components/BeforeAfterSlider';
 import { useProductCatalog } from '@/hooks/useProductCatalog';
 
 // ─── EXISTING CONSTANTS ──────────────────────────────────────
@@ -170,6 +172,43 @@ function PropertyDetail({ property, market, onBack, branding }: {
   const [selectedRoomIdx, setSelectedRoomIdx] = useState(0);
   const [expandedRoom, setExpandedRoom] = useState<string | null>(null);
   const isAdjusted = market.key !== 'national';
+
+  const handleAnalyzeDeal = () => {
+    // Map SOW room types to analyzer room IDs and conditions
+    const roomConditionMap: Record<string, string> = {};
+    const roomTypeToId: Record<string, string> = {
+      kitchen: 'kitchen', master_bath: 'master_bath', full_bath: 'full_bath',
+      half_bath: 'half_bath', living_room: 'living_room', bedroom: 'bedroom',
+      landscaping: 'landscaping', roof_gutter: 'roof_gutter', garage: 'garage',
+    };
+    for (const room of property.rooms) {
+      const id = roomTypeToId[room.roomType];
+      if (id) {
+        const condMap: Record<string, string> = { cosmetic: 'light', moderate: 'moderate', full: 'full' };
+        roomConditionMap[id] = condMap[room.condition] || 'moderate';
+      }
+    }
+    localStorage.setItem('sow-to-analyzer', JSON.stringify({
+      timestamp: Date.now(),
+      property: {
+        address: property.address,
+        city: property.city,
+        state: property.state,
+        zip: property.zip,
+        beds: property.beds,
+        baths: property.baths,
+        sqft: property.sqft,
+        yearBuilt: property.yearBuilt,
+        propertyType: property.propertyType,
+        purchasePrice: property.purchasePrice,
+      },
+      arv: property.arv,
+      tier: property.tier,
+      roomConditions: roomConditionMap,
+      roomCount: property.rooms.length,
+    }));
+    window.location.href = '/analyzer';
+  };
 
   const handlePrintFullSOW = () => {
     const regionNote = isAdjusted ? `<p style="color: #C41E3A; font-size: 12px;">Adjusted for ${market.label} (Materials ${getAdjustmentPercent(market.materialsFactor) >= 0 ? '+' : ''}${getAdjustmentPercent(market.materialsFactor)}%, Labor ${getAdjustmentPercent(market.laborFactor) >= 0 ? '+' : ''}${getAdjustmentPercent(market.laborFactor)}%)</p>` : '';
@@ -327,12 +366,18 @@ function PropertyDetail({ property, market, onBack, branding }: {
                 </div>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <Button size="sm" className="gap-1.5 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white" onClick={handlePrintFullSOW}>
-                  <Download className="w-3.5 h-3.5" /> Download Full SOW
+                  <Download className="w-3.5 h-3.5" /> Download PDF
+                </Button>
+                <Button size="sm" className="gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => generateSOWExcel({ property: adjusted, branding, marketLabel: isAdjusted ? market.label : undefined, materialsFactor: market.materialsFactor, laborFactor: market.laborFactor })}>
+                  <Grid3X3 className="w-3.5 h-3.5" /> Download Excel
                 </Button>
                 <Button size="sm" variant="outline" className="gap-1.5 border-white/20 text-white hover:bg-white/10" onClick={handlePrintFullSOW}>
                   <Printer className="w-3.5 h-3.5" /> Print
+                </Button>
+                <Button size="sm" className="gap-1.5 bg-amber-600 hover:bg-amber-700 text-white" onClick={handleAnalyzeDeal}>
+                  <Calculator className="w-3.5 h-3.5" /> Analyze This Deal
                 </Button>
               </div>
             </div>
@@ -502,6 +547,42 @@ function PropertyDetail({ property, market, onBack, branding }: {
                 </tr>
               </tfoot>
             </table>
+          </div>
+        </div>
+      </section>
+
+      {/* Before/After Comparison */}
+      <section className="border-t border-border/50">
+        <div className="container py-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-lg font-bold">Before & After Transformation</h3>
+              <p className="text-sm text-muted-foreground">Drag the slider to compare the property before and after renovation</p>
+            </div>
+            <Badge className={`text-xs ${property.tier === 'luxury' ? 'bg-amber-500/20 text-amber-600' : property.tier === 'standard' ? 'bg-blue-500/20 text-blue-600' : 'bg-emerald-500/20 text-emerald-600'}`}>
+              {PROP_TIER_LABELS[property.tier]} Renovation
+            </Badge>
+          </div>
+          <BeforeAfterSlider
+            beforeImage={property.beforePhoto}
+            afterImage={property.afterPhoto}
+            beforeLabel="Before"
+            afterLabel="After"
+            className="h-64 sm:h-80 lg:h-96"
+          />
+          <div className="grid grid-cols-3 gap-3 mt-4">
+            <div className="text-center">
+              <p className="text-xs text-muted-foreground uppercase">Purchase Price</p>
+              <p className="text-sm font-bold">${adjusted.purchasePrice.toLocaleString()}</p>
+            </div>
+            <div className="text-center">
+              <p className="text-xs text-[oklch(0.48_0.20_18)] uppercase">Rehab Investment</p>
+              <p className="text-sm font-bold text-[oklch(0.48_0.20_18)]">${totalRehab.toLocaleString()}</p>
+            </div>
+            <div className="text-center">
+              <p className="text-xs text-emerald-600 uppercase">After Repair Value</p>
+              <p className="text-sm font-bold text-emerald-600">${adjusted.arv.toLocaleString()}</p>
+            </div>
           </div>
         </div>
       </section>

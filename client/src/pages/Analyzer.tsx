@@ -78,6 +78,66 @@ export default function Analyzer() {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Receive SOW property data from Scope of Work page
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('sow-to-analyzer');
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (Date.now() - data.timestamp > 30000) {
+        localStorage.removeItem('sow-to-analyzer');
+        return;
+      }
+      // Pre-fill property details
+      if (data.property) {
+        analyzer.setProperty((prev: any) => ({
+          ...prev,
+          address: data.property.address || prev.address,
+          city: data.property.city || prev.city,
+          state: data.property.state || prev.state,
+          zip: data.property.zip || prev.zip,
+          beds: data.property.beds || prev.beds,
+          baths: data.property.baths || prev.baths,
+          sqft: data.property.sqft || prev.sqft,
+          yearBuilt: data.property.yearBuilt || prev.yearBuilt,
+          propertyType: data.property.propertyType || prev.propertyType,
+          purchasePrice: data.property.purchasePrice || prev.purchasePrice,
+        }));
+      }
+      // Set ARV override
+      if (data.arv) {
+        analyzer.setArvOverride(data.arv);
+      }
+      // Set material tier based on SOW tier
+      if (data.tier) {
+        const tierMap: Record<string, 'rental' | 'standard' | 'luxury'> = {
+          rental: 'rental', standard: 'standard', luxury: 'luxury'
+        };
+        if (tierMap[data.tier]) {
+          analyzer.setMaterialTier(tierMap[data.tier]);
+        }
+      }
+      // Enable all rooms and set conditions to match SOW
+      if (data.roomConditions) {
+        for (const [roomId, condition] of Object.entries(data.roomConditions)) {
+          analyzer.setRoomCondition(roomId, condition as any);
+        }
+      }
+      // Switch to scope mode
+      analyzer.setRehabMode('scope');
+      // Clean up
+      localStorage.removeItem('sow-to-analyzer');
+      toast.success(`SOW property loaded: ${data.property?.address || 'Property'} — ${data.roomCount || 9} rooms pre-filled with rehab costs.`, {
+        action: {
+          label: 'View SOW',
+          onClick: () => window.location.href = '/scope-of-work',
+        },
+      });
+    } catch {
+      // Silently ignore parse errors
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleSaveDeal = () => {
     const { property, profit, effectiveArv, rehabTotals, targetROI } = analyzer;
     if (!property.address || !property.purchasePrice) {
