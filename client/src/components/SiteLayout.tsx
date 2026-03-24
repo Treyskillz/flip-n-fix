@@ -380,7 +380,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
                 </Link>
               </div>
               <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[oklch(0.55_0_0)]">
-                <a href="mailto:trey@freedomoneproperties.com" className="hover:text-[oklch(0.65_0.18_18)] transition-colors">trey@freedomoneproperties.com</a>
+                <a href="mailto:contact@freedomoneproperties.com" className="hover:text-[oklch(0.65_0.18_18)] transition-colors">contact@freedomoneproperties.com</a>
                 <a href="tel:831-498-6237" className="hover:text-[oklch(0.65_0.18_18)] transition-colors">831-498-6237</a>
               </div>
             </div>

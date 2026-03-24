@@ -23,7 +23,7 @@ export const ADMIN_BRANDING = {
   logoUrlAlt: LOGO_UPLOADED,
   brandColor: '#c53030',
   phone: '831-498-6237',
-  email: 'trey@freedomoneproperties.com',
+  email: 'contact@freedomoneproperties.com',
   website: 'freedomoneproperties.com',
   footerText: 'Freedom One Real Estate Investment System',
   disclaimerText: 'This document was prepared using the Freedom One Real Estate Investment System. All information should be verified independently. This is not legal, financial, or investment advice.',

@@ -7,7 +7,7 @@ import { COURSE_MODULES } from '@/lib/course';
 import type { CourseModule, CourseLesson, CourseTier } from '@/lib/course';
 import { VIDEO_SCRIPTS } from '@/lib/videoScripts';
 import type { VideoScript, VideoSegment } from '@/lib/videoScripts';
-import { COURSE_VIDEOS } from '@/lib/courseVideos';
+import { courseVideos } from '@/lib/courseVideos';
 import { MODULE_QUIZZES } from '@/lib/quizData';
 import type { ModuleQuiz } from '@/lib/quizData';
 import { QuizModal } from '@/components/QuizModal';
@@ -156,7 +156,7 @@ function VideoPlayer({ lessonId, script, isAuthenticated, onVideoComplete }: {
   isAuthenticated: boolean;
   onVideoComplete?: (lessonId: string) => void;
 }) {
-  const videoInfo = COURSE_VIDEOS[lessonId];
+  const videoInfo = courseVideos[lessonId];
   const duration = script?.estimatedRuntime || '—';
   const videoRef = useRef<HTMLVideoElement>(null);
   const saveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -165,7 +165,7 @@ function VideoPlayer({ lessonId, script, isAuthenticated, onVideoComplete }: {
   // Fetch saved progress for this lesson
   const progressQuery = trpc.videoProgress.get.useQuery(
     { lessonId },
-    { enabled: isAuthenticated && !!videoInfo?.publicUrl, retry: false }
+    { enabled: isAuthenticated && !!videoInfo?.videoUrl, retry: false }
   );
 
   const saveMutation = trpc.videoProgress.save.useMutation();
@@ -251,7 +251,7 @@ function VideoPlayer({ lessonId, script, isAuthenticated, onVideoComplete }: {
     };
   }, [lessonId, isAuthenticated, saveMutation, onVideoComplete]);
 
-  if (!videoInfo?.publicUrl) {
+  if (!videoInfo?.videoUrl) {
     return (
       <div className="mb-6">
         <div className="relative bg-[oklch(0.15_0.01_25)] overflow-hidden" style={{ aspectRatio: '16/9' }}>
@@ -279,21 +279,21 @@ function VideoPlayer({ lessonId, script, isAuthenticated, onVideoComplete }: {
       <div className="relative bg-black overflow-hidden" style={{ aspectRatio: '16/9' }}>
         <video
           ref={videoRef}
-          key={videoInfo.publicUrl}
+          key={videoInfo.videoUrl}
           controls
           preload="metadata"
           poster={videoInfo.thumbnailUrl}
           className="w-full h-full object-contain"
           controlsList="nodownload"
         >
-          <source src={videoInfo.publicUrl} type="video/mp4" />
+          <source src={videoInfo.videoUrl} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </div>
       <div className="flex items-center justify-between mt-2 px-1">
         <p className="text-xs text-muted-foreground flex items-center gap-1">
           <Clock className="w-3 h-3" />
-          {videoInfo.durationSeconds ? formatDuration(videoInfo.durationSeconds) : duration}
+          {videoInfo.duration ? formatDuration(videoInfo.duration) : duration}
         </p>
         <div className="flex items-center gap-3">
           {isAuthenticated && savedPercent > 0 && savedPercent < 100 && (
@@ -418,8 +418,10 @@ export default function Course() {
 
   const canAccessModule = useCallback((mod: CourseModule): boolean => {
     if (!isAuthenticated) return mod.requiredTier === 'free';
+    // Admin users get full access to all modules
+    if (user?.role === 'admin') return true;
     return (tierRank[userPlan] || 0) >= (tierRank[mod.requiredTier] || 0);
-  }, [isAuthenticated, userPlan]);
+  }, [isAuthenticated, userPlan, user?.role]);
 
   const getTierLabel = (tier: CourseTier): string => {
     if (tier === 'free') return 'Free';

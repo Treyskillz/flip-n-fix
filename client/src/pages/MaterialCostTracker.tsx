@@ -383,7 +383,7 @@ export default function MaterialCostTracker() {
 
   // Check subscription
   const { data: subStatus } = trpc.subscription.status.useQuery(undefined, { enabled: isAuthenticated });
-  const isPro = subStatus?.plan === 'pro' || subStatus?.plan === 'elite' || subStatus?.plan === 'team';
+  const isPro = user?.role === 'admin' || subStatus?.plan === 'pro' || subStatus?.plan === 'elite' || subStatus?.plan === 'team';
 
   // Fetch data
   const { data: categorySummary, isLoading: catLoading } = trpc.productCatalog.categorySummary.useQuery();

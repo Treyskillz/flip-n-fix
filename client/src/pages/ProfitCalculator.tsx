@@ -351,17 +351,17 @@ function ProfitCalculatorOverview() {
 }
 
 export default function ProfitCalculator() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { data: subStatus, isLoading: subLoading } = trpc.subscription.status.useQuery(undefined, {
     enabled: isAuthenticated,
   });
 
-  // Check if user has elite, team, or gifted access
-  const hasAccess = subStatus && (
+  // Check if user has elite, team, or gifted access (admins always have access)
+  const hasAccess = user?.role === 'admin' || (subStatus && (
     subStatus.plan === 'elite' || 
     subStatus.plan === 'team' || 
     subStatus.isGifted
-  );
+  ));
 
   // Show loading while checking subscription
   if (isAuthenticated && subLoading) {

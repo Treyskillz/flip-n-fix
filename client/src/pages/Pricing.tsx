@@ -322,7 +322,7 @@ export default function Pricing() {
             <h3 className="font-bold text-sm mb-2 text-white">Cancellation Policy</h3>
             <p className="text-sm text-[oklch(0.6_0_0)]">
               Your subscription renews automatically each billing period until you cancel. To cancel your subscription, 
-              email us at <a href="mailto:trey@freedomoneproperties.com" className="text-[oklch(0.65_0.18_18)] hover:underline font-medium">trey@freedomoneproperties.com</a> with 
+              email us at <a href="mailto:contact@freedomoneproperties.com" className="text-[oklch(0.65_0.18_18)] hover:underline font-medium">contact@freedomoneproperties.com</a> with 
               your account email and we'll process your cancellation within 24 hours. You'll retain access through the end of your current billing period.
             </p>
           </div>

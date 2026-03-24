@@ -721,3 +721,42 @@
 - [x] Write vitest tests for video progress features (18 tests, all passing)
 - [x] Fix videoScripts.ts parse errors (escaped quotes in single-quoted strings)
 - [ ] Save checkpoint and deliver
+
+## SOW Issues Fix (March 23, 2026)
+- [ ] Fix admin tier access — admins should have access to all tier items
+- [x] Replace generic SOW room images with detailed renovation photos showing line items (Fortune Builders style)
+- [ ] Fix Home Depot product links — handle discontinued products with fallback/alternative products
+- [ ] Write tests for admin access and product link validation
+- [ ] Save checkpoint and deliver
+- [ ] Fix video scripts — spell out all dollar amounts and numbers for TTS (e.g., "$120,000" → "one hundred twenty thousand dollars")
+- [ ] Re-generate affected Colossyan videos with fixed scripts
+- [ ] Verify re-generated videos pronounce numbers correctly
+- [ ] Fix video scripts — avatar says "my name is..." but never says "Jason"
+- [ ] Fix contact email on all materials to contact@freedomoneproperties.com
+
+## SOW Comprehensive Renovation Images (March 24, 2026)
+- [x] Audit all SOW room types and material tiers
+- [x] Generate detailed renovation photos for every room type with varied materials
+- [x] Show specific materials (cabinets, countertops, flooring, fixtures, tile, etc.) in each photo
+- [x] Create variety across renovations — different styles, materials, color schemes
+- [x] Integrate tier-specific images (Rental, Standard, Luxury) into SOW page
+- [x] Fix failing courseVideos.test.ts (property names changed from publicUrl to videoUrl)
+- [x] Save checkpoint and deliver
+
+## Duplicate Fortune Builders SOW Templates (March 24, 2026)
+- [x] Log into Fortune Builders and navigate to Resources tab
+- [x] Document all FB SOW templates — structure, rooms, line items, photos, materials
+- [x] Generate matching renovation images for each SOW room and material tier
+- [x] Rebuild Freedom One SOW page to match Fortune Builders format exactly
+- [x] Ensure admin version has Freedom One branding, other tiers have user's logo
+- [x] Fix failing courseVideos.test.ts (property names changed)
+- [x] Build, test, and save checkpoint
+
+## 10-Property SOW Template Library (March 24, 2026)
+- [x] Create 12 property-based SOW templates with all 9 room types (108 room SOWs total)
+- [x] Generate detailed renovation photos for all 90+ room templates
+- [x] Rebuild SOW page UI to match Fortune Builders format (property cards, room navigation, cost breakdowns)
+- [x] Implement downloadable SOW generation (Download Full SOW + Print buttons)
+- [x] Ensure no Fortune Builders logos or company names appear anywhere
+- [x] Fix failing courseVideos.test.ts
+- [x] Build, test, and save checkpoint (283 tests passing)

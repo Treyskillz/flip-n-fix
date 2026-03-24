@@ -1732,10 +1732,23 @@ Provide 3-5 comparable RENOVATED properties that meet ALL of these criteria:
         .select({
           subscriptionPlan: users.subscriptionPlan,
           stripeCustomerId: users.stripeCustomerId,
+          role: users.role,
         })
         .from(users)
         .where(eq(users.id, ctx.user.id))
         .limit(1);
+
+      // Admin users get full access to all tiers
+      if (result[0]?.role === 'admin') {
+        return {
+          plan: 'team' as PlanKey,
+          stripeCustomerId: result[0]?.stripeCustomerId || null,
+          isGifted: false,
+          giftedPlan: null,
+          giftExpiresAt: null,
+          isAdmin: true,
+        };
+      }
 
       const stripePlan = (result[0]?.subscriptionPlan || "free") as PlanKey;
 

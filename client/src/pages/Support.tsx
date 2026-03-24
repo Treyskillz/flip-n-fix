@@ -81,8 +81,8 @@ export default function Support() {
               </div>
               <h3 className="font-bold mb-1">Email Support</h3>
               <p className="text-sm text-muted-foreground mb-3">For general questions and technical issues</p>
-              <a href="mailto:support@freedomoneproperties.com" className="text-sm font-medium text-[oklch(0.48_0.20_18)] hover:underline">
-                support@freedomoneproperties.com
+              <a href="mailto:contact@freedomoneproperties.com" className="text-sm font-medium text-[oklch(0.48_0.20_18)] hover:underline">
+                contact@freedomoneproperties.com
               </a>
             </CardContent>
           </Card>

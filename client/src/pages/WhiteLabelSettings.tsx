@@ -103,7 +103,7 @@ export default function WhiteLabelSettings() {
     reader.readAsDataURL(file);
   }, [uploadLogoMutation]);
 
-  const isTeam = subStatus?.plan === "team";
+  const isTeam = user?.role === 'admin' || subStatus?.plan === "team";
 
   if (authLoading || subLoading) {
     return (
