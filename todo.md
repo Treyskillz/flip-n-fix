@@ -854,3 +854,13 @@
 - [ ] Download Freedom One Complete Platform Demo (full-length)
 - [ ] Download Freedom One Condensed Demo
 - [ ] Download Business-in-a-Box marketing video
+
+- [x] Remove BIB pages/routes from the main app (make standalone, not part of subscription platform) — VERIFIED: Already standalone, outside SiteLayout
+- [x] Download all 66 course videos + 3 marketing videos to ZIP (68 total, 3.5GB)
+- [x] Create PDF with links to all videos (15-page PDF with clickable links)
+- [x] Full head-to-toe diagnostic of all pages, routes, checkout flows
+- [ ] Fix any issues found during diagnostic
+- [x] Package all deliverables into organized ZIP files
+- [ ] Push everything to GitHub
+- [x] Create Stripe Go-Live Checklist PDF (test to production steps)
+- [x] Create Social Media Marketing Scheduling Guide PDF (Facebook + Instagram)
