@@ -861,6 +861,7 @@
 - [x] Full head-to-toe diagnostic of all pages, routes, checkout flows
 - [ ] Fix any issues found during diagnostic
 - [x] Package all deliverables into organized ZIP files
-- [ ] Push everything to GitHub
+- [x] Push everything to GitHub (Treyskillz/flip-n-fix)
 - [x] Create Stripe Go-Live Checklist PDF (test to production steps)
 - [x] Create Social Media Marketing Scheduling Guide PDF (Facebook + Instagram)
+- [x] Add FAQ section to OTO1 page

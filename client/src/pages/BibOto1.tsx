@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { useLocation } from 'wouter';
 import {
   Calculator, Wrench, MapPin, BarChart3, TrendingUp, ArrowRight, Check, Zap,
-  Layers, Building2, PieChart, Clock, Shield, Infinity
+  Layers, Building2, PieChart, Clock, Shield, Infinity, ChevronDown
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -162,6 +162,58 @@ export default function BibOto1() {
               No thanks, I will pass on this offer
             </button>
           </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="max-w-5xl mx-auto px-4 py-12 lg:py-16">
+        <h2 className="text-2xl lg:text-3xl font-bold text-center mb-3">Frequently Asked Questions</h2>
+        <p className="text-white/50 text-center mb-10 max-w-xl mx-auto">Common questions about lifetime app access</p>
+        <div className="space-y-3 max-w-3xl mx-auto">
+          {[
+            {
+              q: 'What is the difference between the Business-in-a-Box and the app?',
+              a: 'The Business-in-a-Box gives you the education — the complete investing course (65+ video lessons), downloadable templates, contracts, checklists, and reference guides. The Freedom One app is the live software platform with interactive tools like the Deal Analyzer, Rehab Estimator, Pipeline CRM, Renovation Designer, and Portfolio Dashboard. Think of it this way: the BIB teaches you what to do, the app does the heavy lifting for you.'
+            },
+            {
+              q: 'What does "lifetime access" actually mean?',
+              a: 'It means exactly what it says — you pay once and you have access to the Freedom One app forever. No monthly fees, no annual renewals, no surprise charges. You also get every future update, new feature, and improvement at no additional cost. Your account never expires.'
+            },
+            {
+              q: 'How much would I spend on a monthly subscription instead?',
+              a: 'Monthly subscriptions range from $99/month (Starter) to $349/month (Elite). That is $1,188 to $4,188 per year. Lifetime access at $2,997 pays for itself in as little as 8 months on the Pro plan — and then you never pay again. Over 3 years, you save between $567 and $9,567 compared to monthly billing.'
+            },
+            {
+              q: 'Can I use the Business-in-a-Box without the app?',
+              a: 'Absolutely. The Business-in-a-Box is a complete, standalone product. You get the full course, all templates, contracts, and resources as downloadable files. The app is an optional upgrade that adds interactive digital tools to make your investing workflow faster and more efficient.'
+            },
+            {
+              q: 'What tools are included in the app?',
+              a: 'The app includes the Deal Analyzer (real-time profitability calculations with deal scoring and 70% rule analysis), Rehab Estimator (room-by-room assessment with 3 material tiers and Home Depot pricing), Pipeline CRM (track deals from lead to close), Renovation Designer (AI-powered before/after visualizations), Portfolio Dashboard, SOW Generator, Profit Calculator (6 investment scenarios), Contractor Management, Property Listings, and more. All tools work across 50+ metro markets with regional pricing adjustments.'
+            },
+            {
+              q: 'What if I decide I want the app later?',
+              a: 'This lifetime pricing is only available right now as a one-time offer immediately after your Business-in-a-Box purchase. If you pass on this offer, you can still subscribe to the app later — but you will pay the standard monthly rate of $99 to $349 per month with no lifetime option available. This is the only opportunity to lock in lifetime access at a one-time price.'
+            },
+            {
+              q: 'Do I get all subscription tiers with lifetime access?',
+              a: 'Yes. Lifetime access includes every feature across all subscription tiers — Starter, Pro, and Elite. You get the complete platform with no restrictions. That includes white-label reports, AI deal summaries, CSV import/export, deal comparison tools, analytics dashboard, and everything else.'
+            },
+            {
+              q: 'Is there a refund policy?',
+              a: 'We stand behind our product. If you are not satisfied with the app within 30 days of purchase, contact us at contact@freedomoneproperties.com and we will work with you to make it right. We want every investor to succeed with our tools.'
+            },
+          ].map((faq, i) => (
+            <details key={i} className="group rounded-lg bg-[oklch(0.12_0_0)] border border-white/8 overflow-hidden">
+              <summary className="flex items-center justify-between cursor-pointer p-5 text-left font-semibold text-sm lg:text-base hover:bg-white/[0.02] transition-colors list-none">
+                {faq.q}
+                <ChevronDown className="w-4 h-4 text-white/40 shrink-0 ml-4 transition-transform group-open:rotate-180" />
+              </summary>
+              <div className="px-5 pb-5 text-sm text-white/60 leading-relaxed">
+                {faq.a}
+              </div>
+            </details>
+          ))}
         </div>
       </section>
 
