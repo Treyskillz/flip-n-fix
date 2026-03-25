@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { useLocation } from 'wouter';
 import {
   Calculator, Wrench, MapPin, BarChart3, TrendingUp, ArrowRight, Check, Zap,
-  Layers, Building2, PieChart, Clock, Shield, Infinity, ChevronDown
+  Layers, Building2, PieChart, Clock, Shield, Infinity, ChevronDown, Megaphone
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -141,25 +141,30 @@ export default function BibOto1() {
           </div>
         </div>
 
-        {/* CTA */}
-        <div className="text-center p-8 rounded-xl bg-[oklch(0.12_0_0)] border border-[oklch(0.48_0.20_18)]/30">
+        {/* Prominent CTA */}
+        <div className="text-center p-10 rounded-xl bg-[oklch(0.12_0_0)] border-2 border-[oklch(0.48_0.20_18)]/40">
           <h3 className="text-2xl font-bold mb-2">Add Lifetime App Access</h3>
-          <p className="text-white/50 mb-6">One payment. No monthly fees. All future updates included.</p>
+          <p className="text-white/50 mb-8">One payment. No monthly fees. All future updates included.</p>
           <Button
             size="lg"
             onClick={handleAccept}
             disabled={isLoading}
-            className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white font-bold px-10 py-6 text-lg mb-4"
+            className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white font-bold px-12 py-7 text-xl shadow-lg shadow-[oklch(0.48_0.20_18)]/20 w-full sm:w-auto mb-4"
           >
+            <Zap className="w-5 h-5" />
             {isLoading ? 'Processing...' : 'Yes! Add Lifetime Access — $2,997'}
             <ArrowRight className="w-5 h-5" />
           </Button>
+          <div className="flex items-center justify-center gap-4 text-xs text-white/40 mb-4">
+            <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> Secure Checkout</span>
+            <span className="flex items-center gap-1"><Check className="w-3 h-3" /> 30-Day Guarantee</span>
+          </div>
           <div>
             <button
               onClick={handleDecline}
               className="text-sm text-white/30 hover:text-white/50 underline transition-colors"
             >
-              No thanks, I will pass on this offer
+              No thanks, show me the next offer
             </button>
           </div>
         </div>
@@ -217,8 +222,32 @@ export default function BibOto1() {
         </div>
       </section>
 
+      {/* Bottom CTA */}
+      <section className="max-w-3xl mx-auto px-4 py-12 text-center">
+        <h3 className="text-xl font-bold mb-3">Lock In Lifetime Access Now</h3>
+        <p className="text-white/50 text-sm mb-6">This offer is only available right now, immediately after your BIB purchase.</p>
+        <Button
+          size="lg"
+          onClick={handleAccept}
+          disabled={isLoading}
+          className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white font-bold px-12 py-7 text-xl shadow-lg shadow-[oklch(0.48_0.20_18)]/20 mb-4"
+        >
+          <Zap className="w-5 h-5" />
+          {isLoading ? 'Processing...' : 'Add Lifetime Access — $2,997'}
+          <ArrowRight className="w-5 h-5" />
+        </Button>
+        <div>
+          <button
+            onClick={handleDecline}
+            className="text-sm text-white/30 hover:text-white/50 underline transition-colors"
+          >
+            No thanks, show me the next offer
+          </button>
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="border-t border-white/10 bg-[oklch(0.06_0_0)] mt-12">
+      <footer className="border-t border-white/10 bg-[oklch(0.06_0_0)]">
         <div className="max-w-5xl mx-auto px-4 py-6 text-center text-xs text-white/30">
           <p>This is a one-time exclusive offer available only after your Business-in-a-Box purchase.</p>
           <p className="mt-1">&copy; {new Date().getFullYear()} Freedom One Properties. All rights reserved.</p>

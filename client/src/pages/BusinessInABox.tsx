@@ -129,8 +129,9 @@ export default function BusinessInABox() {
                 size="lg"
                 onClick={handleBuyNow}
                 disabled={isLoading}
-                className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white font-bold px-8 py-6 text-lg"
+                className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white font-bold px-12 py-7 text-xl shadow-lg shadow-[oklch(0.48_0.20_18)]/20"
               >
+                <Zap className="w-5 h-5" />
                 {isLoading ? 'Processing...' : 'Get the Business-in-a-Box — $1,997'}
                 <ArrowRight className="w-5 h-5" />
               </Button>
@@ -366,11 +367,17 @@ export default function BusinessInABox() {
             size="lg"
             onClick={handleBuyNow}
             disabled={isLoading}
-            className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white font-bold px-10 py-6 text-lg"
+            className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white font-bold px-12 py-7 text-xl shadow-lg shadow-[oklch(0.48_0.20_18)]/20 w-full sm:w-auto"
           >
+            <Zap className="w-5 h-5" />
             {isLoading ? 'Processing...' : 'Get Instant Access — $1,997'}
             <ArrowRight className="w-5 h-5" />
           </Button>
+          <div className="flex items-center justify-center gap-4 text-xs text-white/40 mt-4">
+            <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> Secure Checkout</span>
+            <span className="flex items-center gap-1"><Check className="w-3 h-3" /> Instant Access</span>
+            <span className="flex items-center gap-1"><Check className="w-3 h-3" /> Lifetime Updates</span>
+          </div>
         </div>
       </section>
 
@@ -414,12 +421,17 @@ export default function BusinessInABox() {
           size="lg"
           onClick={handleBuyNow}
           disabled={isLoading}
-          className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white font-bold px-10 py-6 text-lg"
+          className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white font-bold px-12 py-7 text-xl shadow-lg shadow-[oklch(0.48_0.20_18)]/20"
         >
+          <Zap className="w-5 h-5" />
           {isLoading ? 'Processing...' : 'Get the Business-in-a-Box — $1,997'}
           <ArrowRight className="w-5 h-5" />
         </Button>
-        <p className="text-xs text-white/30 mt-4">Secure checkout powered by Stripe. One-time payment.</p>
+        <div className="flex items-center justify-center gap-4 text-xs text-white/40 mt-4">
+          <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> Secure Checkout</span>
+          <span className="flex items-center gap-1"><Check className="w-3 h-3" /> One-Time Payment</span>
+          <span className="flex items-center gap-1"><Check className="w-3 h-3" /> Lifetime Access</span>
+        </div>
       </section>
 
       {/* Footer */}

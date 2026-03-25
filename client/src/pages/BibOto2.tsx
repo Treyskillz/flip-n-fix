@@ -5,19 +5,46 @@ import { toast } from 'sonner';
 import { useLocation } from 'wouter';
 import {
   ArrowRight, Check, Zap, Megaphone, Mail, Phone, Calendar,
-  Facebook, FileText, Palette, Target, Users
+  Facebook, FileText, Palette, Target, Users, ChevronDown, Shield
 } from 'lucide-react';
 import { useState } from 'react';
 
 const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/MgvhsGurcOgbPgCR.png";
 
 const KIT_ITEMS = [
-  { icon: Facebook, title: 'Facebook Ad Campaigns', desc: '5 complete ad campaigns with copy, targeting, budgets, and creative briefs for motivated sellers, cash buyers, and private lenders' },
+  { icon: Facebook, title: 'Facebook Ad Campaigns', desc: '6 complete ad campaigns with copy, targeting, budgets, and creative briefs for motivated sellers, cash buyers, and private lenders' },
   { icon: Mail, title: 'Direct Mail Pieces', desc: 'Pre-written yellow letters, postcards, and professional letters ready to print and send to absentee owners and distressed properties' },
-  { icon: FileText, title: 'Email Sequences', desc: '3 complete email sequences — 7-day nurture, 5-email onboarding, and 10-email sales sequence with subject lines and CTAs' },
+  { icon: FileText, title: 'Email Sequences', desc: '3 complete email sequences — 7-day nurture, 5-email onboarding, and 10-email re-engagement sequence with subject lines and CTAs' },
   { icon: Calendar, title: '6-Month Social Media Calendar', desc: '130+ posts with captions, hashtags, and post types for Instagram, Facebook, LinkedIn, and TikTok — 26 weeks of daily content' },
   { icon: Phone, title: 'Cold Call Scripts', desc: 'Proven scripts for calling absentee owners, expired listings, FSBO sellers, and pre-foreclosure leads' },
   { icon: Target, title: 'Lead Generation Playbook', desc: 'Step-by-step guide to generating motivated seller leads through online and offline channels' },
+];
+
+const FAQ = [
+  {
+    q: 'What exactly is in the Done-For-You Marketing Kit?',
+    a: 'You get 6 complete Facebook ad campaigns with targeting and copy, 6 direct mail templates (yellow letters, postcards, professional letters), 22 pre-written emails across 3 sequences, a 6-month social media calendar with 130+ posts, cold call scripts for 4 lead types, and a complete lead generation playbook. Everything is ready to customize with your name and deploy immediately.'
+  },
+  {
+    q: 'Do I need marketing experience to use these?',
+    a: 'Not at all. Every piece is written and ready to go. The Facebook ads include exact targeting settings, budgets, and ad copy. The emails have subject lines and CTAs pre-written. The social media calendar tells you exactly what to post each day. Just add your name, phone number, and market area — then launch.'
+  },
+  {
+    q: 'How long would it take to create all this myself?',
+    a: 'Most investors spend 3-6 months and $2,000-$5,000 hiring copywriters, marketing consultants, and social media managers to create this volume of content. With this kit, you have 6 months of professional marketing materials ready in minutes.'
+  },
+  {
+    q: 'Can I customize the templates for my market?',
+    a: 'Absolutely. Every template is designed to be easily customized. Replace the placeholder name, phone number, email, and market area with your own. The Facebook ads include notes on how to adjust targeting for your specific metro area. The direct mail templates work in any market.'
+  },
+  {
+    q: 'Is this the same as the marketing templates in the Business-in-a-Box?',
+    a: 'No. The Business-in-a-Box includes basic marketing template outlines and examples. This Done-For-You Marketing Kit is a fully built-out, ready-to-deploy system — 6 complete ad campaigns (not just templates), 22 fully written emails (not just outlines), and 130+ social media posts with captions and hashtags. It is the difference between a recipe and a fully cooked meal.'
+  },
+  {
+    q: 'What if I already have a marketing strategy?',
+    a: 'This kit complements any existing strategy. Use the pieces that fill gaps in your current marketing. Many investors use the social media calendar alongside their own direct mail campaigns, or add the email sequences to their existing CRM. You can mix and match as needed.'
+  },
 ];
 
 export default function BibOto2() {
@@ -97,7 +124,7 @@ export default function BibOto2() {
         <div className="max-w-2xl mx-auto mb-12">
           <div className="space-y-2 mb-6">
             {[
-              { item: '5 Facebook Ad Campaigns with Targeting & Copy', value: '$297' },
+              { item: '6 Facebook Ad Campaigns with Targeting & Copy', value: '$397' },
               { item: 'Direct Mail Templates (Letters, Postcards, Yellow Letters)', value: '$147' },
               { item: '3 Complete Email Sequences (22 Emails)', value: '$197' },
               { item: '6-Month Social Media Calendar (130+ Posts)', value: '$297' },
@@ -115,21 +142,26 @@ export default function BibOto2() {
           </div>
         </div>
 
-        {/* CTA */}
-        <div className="text-center p-8 rounded-xl bg-[oklch(0.12_0_0)] border border-[oklch(0.48_0.20_18)]/30 max-w-2xl mx-auto">
-          <Palette className="w-10 h-10 mx-auto mb-4 text-[oklch(0.65_0.18_18)]" />
-          <p className="text-white/40 text-sm mb-1">Total Value: <span className="line-through">$1,182</span></p>
-          <p className="text-4xl font-bold text-[oklch(0.70_0.18_18)] mb-2">$497</p>
-          <p className="text-sm text-white/50 mb-6">One-time payment. 6 months of marketing content.</p>
+        {/* Prominent CTA */}
+        <div className="text-center p-10 rounded-xl bg-[oklch(0.12_0_0)] border-2 border-[oklch(0.48_0.20_18)]/40 max-w-2xl mx-auto mb-12">
+          <Palette className="w-12 h-12 mx-auto mb-4 text-[oklch(0.65_0.18_18)]" />
+          <p className="text-white/40 text-sm mb-1">Total Value: <span className="line-through">$1,282</span></p>
+          <p className="text-5xl font-bold text-[oklch(0.70_0.18_18)] mb-2">$497</p>
+          <p className="text-sm text-white/50 mb-8">One-time payment. 6 months of done-for-you marketing content.</p>
           <Button
             size="lg"
             onClick={handleAccept}
             disabled={isLoading}
-            className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white font-bold px-10 py-6 text-lg mb-4"
+            className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white font-bold px-12 py-7 text-xl shadow-lg shadow-[oklch(0.48_0.20_18)]/20 w-full sm:w-auto mb-4"
           >
+            <Zap className="w-5 h-5" />
             {isLoading ? 'Processing...' : 'Yes! Add the Marketing Kit — $497'}
             <ArrowRight className="w-5 h-5" />
           </Button>
+          <div className="flex items-center justify-center gap-4 text-xs text-white/40 mb-4">
+            <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> Secure Checkout</span>
+            <span className="flex items-center gap-1"><Check className="w-3 h-3" /> Instant Access</span>
+          </div>
           <div>
             <button
               onClick={handleDecline}
@@ -141,10 +173,56 @@ export default function BibOto2() {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section className="bg-[oklch(0.10_0_0)]">
+        <div className="max-w-3xl mx-auto px-4 py-12 lg:py-16">
+          <h2 className="text-2xl lg:text-3xl font-bold text-center mb-3">Frequently Asked Questions</h2>
+          <p className="text-white/50 text-center mb-10 max-w-xl mx-auto">Common questions about the Done-For-You Marketing Kit</p>
+          <div className="space-y-3">
+            {FAQ.map((faq, i) => (
+              <details key={i} className="group rounded-lg bg-[oklch(0.14_0_0)] border border-white/8 overflow-hidden">
+                <summary className="flex items-center justify-between cursor-pointer p-5 text-left font-semibold text-sm lg:text-base hover:bg-white/[0.02] transition-colors list-none">
+                  {faq.q}
+                  <ChevronDown className="w-4 h-4 text-white/40 shrink-0 ml-4 transition-transform group-open:rotate-180" />
+                </summary>
+                <div className="px-5 pb-5 text-sm text-white/60 leading-relaxed">
+                  {faq.a}
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Bottom CTA */}
+      <section className="max-w-3xl mx-auto px-4 py-12 text-center">
+        <h3 className="text-xl font-bold mb-3">Start Marketing Today</h3>
+        <p className="text-white/50 text-sm mb-6">6 months of professional marketing content. Ready to deploy in minutes.</p>
+        <Button
+          size="lg"
+          onClick={handleAccept}
+          disabled={isLoading}
+          className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white font-bold px-12 py-7 text-xl shadow-lg shadow-[oklch(0.48_0.20_18)]/20 mb-4"
+        >
+          <Zap className="w-5 h-5" />
+          {isLoading ? 'Processing...' : 'Add the Marketing Kit — $497'}
+          <ArrowRight className="w-5 h-5" />
+        </Button>
+        <div>
+          <button
+            onClick={handleDecline}
+            className="text-sm text-white/30 hover:text-white/50 underline transition-colors"
+          >
+            No thanks, I will handle marketing myself
+          </button>
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="border-t border-white/10 bg-[oklch(0.06_0_0)] mt-12">
+      <footer className="border-t border-white/10 bg-[oklch(0.06_0_0)]">
         <div className="max-w-5xl mx-auto px-4 py-6 text-center text-xs text-white/30">
-          <p>&copy; {new Date().getFullYear()} Freedom One Properties. All rights reserved.</p>
+          <p>This is a one-time offer available only during the Business-in-a-Box checkout process.</p>
+          <p className="mt-1">&copy; {new Date().getFullYear()} Freedom One Properties. All rights reserved.</p>
         </div>
       </footer>
     </div>

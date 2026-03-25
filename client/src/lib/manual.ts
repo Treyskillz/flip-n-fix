@@ -1702,6 +1702,94 @@ The product catalog is automatically verified on the 1st of every month at 3:00 
 - The tracker updates automatically each month, but admins can trigger manual verification at any time from the Admin Product Catalog page`,
   },
   {
+    id: 'business-in-a-box',
+    title: 'Business-in-a-Box',
+    icon: '📦',
+    content: `## Business-in-a-Box (BIB)
+
+The Business-in-a-Box is a **standalone, one-time purchase product** separate from the Freedom One subscription app. It is a complete real estate investing education and resource package designed for investors who want everything they need to start or scale their business in one package.
+
+### What Is the Business-in-a-Box?
+
+The BIB is a **$1,997 one-time payment** product that includes:
+- **Complete Investing Course** — 12 Modules, 65+ Micro-Lessons covering Fix & Flip, Wholesale, BRRRR, Subject-To, and Short-Term Rentals
+- **Marketing Templates** — Direct mail letters, postcards, email sequences, and cold call scripts
+- **Contract Templates** — Assignable purchase agreements, wholesale contracts, and assignment contracts
+- **SOW Templates** — Professional scope of work templates for all 14 room categories
+- **Lender Directory** — Curated hard money and private lender contacts
+- **Investor Checklists** — Due diligence, closing, rehab, and property inspection checklists
+- **Credibility Packet Builder** — Track record templates and project summary formats
+- **Profit Calculator Spreadsheet** — Excel-based calculator covering 6 investment scenarios
+- **Private Money Prospectus** — Template to attract private money lenders
+- **3-Option Seller Brochure** — Present sellers with cash, terms, and creative financing options
+- **Rehab Budget Worksheet** — Detailed budget tracking template
+- **State Reference Guide** — State-by-state investing regulations
+- **Lead Magnet PDF** — Ready-to-use lead capture document
+- **Course Completion Certificate** — Professional certificate template
+- **Lifetime Access** — All future course updates included at no extra cost
+
+### BIB vs. App Subscription
+
+The BIB and the app subscription are **different products** that serve different purposes:
+
+| Feature | Business-in-a-Box ($1,997) | App Subscription ($99\u2013$349/mo) |
+|---------|---------------------------|-----------------------------------|
+| Course Videos | \u2713 All 65+ lessons | \u2713 Based on tier |
+| Templates (Download) | \u2713 All included | \u2713 Based on tier |
+| Deal Analyzer Tool | \u2717 | \u2713 Interactive tool |
+| Rehab Estimator Tool | \u2717 | \u2713 With Home Depot pricing |
+| Pipeline CRM | \u2717 | \u2713 Deal tracking |
+| Renovation Designer | \u2717 | \u2713 AI-powered |
+| Portfolio Dashboard | \u2717 | \u2713 With PDF export |
+| White-Label Reports | \u2717 | \u2713 Team tier |
+| Payment Type | One-time $1,997 | Monthly or annual |
+| Access Duration | Lifetime | Active subscription |
+
+**In simple terms:** The BIB gives you the **education and static resources** (course + templates as downloadable files). The app gives you the **live digital tools** (Deal Analyzer, Rehab Estimator, Pipeline CRM, etc.).
+
+### BIB Sales Funnel
+
+The BIB is sold through a **sequential sales funnel** with two optional upsells:
+
+1. **BIB Landing Page** (\`/business-in-a-box\`) — Main sales page for the core BIB product at $1,997
+2. **OTO1: Lifetime App Access** (\`/bib/oto1\`) — After purchasing the BIB, buyers are offered lifetime access to the Freedom One app for $2,997 (one-time, replaces monthly subscription forever). A downsell of 1-year access at $997 is offered if they decline.
+3. **OTO2: Done-For-You Marketing Kit** (\`/bib/oto2\`) — 6 Facebook ad campaigns, 22 pre-written emails, 6-month social media calendar, direct mail templates, and cold call scripts for $497. A downsell Marketing Starter Pack at $197 is offered if they decline.
+4. **Thank You Page** (\`/bib/thank-you\`) — Order confirmation with next steps and access instructions.
+
+### BIB Pricing Summary
+
+| Product | Price | Type |
+|---------|-------|------|
+| Core Business-in-a-Box | $1,997 | One-time |
+| OTO1: Lifetime App Access | $2,997 | One-time |
+| OTO1 Downsell: 1-Year App Access | $997 | One-time |
+| OTO2: Done-For-You Marketing Kit | $497 | One-time |
+| OTO2 Downsell: Marketing Starter Pack | $197 | One-time |
+
+### How the BIB Is Accessed
+
+The BIB landing page is **not linked from the main app navigation**. It is a standalone sales funnel accessed via direct URL. Customers arrive through:
+- Facebook and Instagram ad campaigns
+- Email marketing sequences
+- Direct mail campaigns
+- Social media posts
+- Personal outreach and networking
+
+This separation is intentional — the BIB is a one-time purchase product and should not compete with the recurring subscription model in the main app.
+
+### Stripe Checkout Integration
+
+All BIB payments are processed through Stripe. After purchase:
+1. The buyer is redirected to the OTO1 upsell page
+2. Each Accept/Decline choice moves them through the funnel sequentially
+3. After the final offer, they land on the Thank You page with access instructions
+4. Confirmation emails are sent with download links and login credentials
+
+### Contact
+
+For BIB-related questions: **contact@freedomoneproperties.com**`,
+  },
+  {
     id: 'support',
     title: 'Support & Help',
     icon: '🆘',

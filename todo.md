@@ -865,3 +865,16 @@
 - [x] Create Stripe Go-Live Checklist PDF (test to production steps)
 - [x] Create Social Media Marketing Scheduling Guide PDF (Facebook + Instagram)
 - [x] Add FAQ section to OTO1 page
+- [ ] Add FAQ + prominent CTA to BIB landing page
+- [ ] Add FAQ + prominent CTA to OTO1 downsell page
+- [ ] Add FAQ + prominent CTA to OTO2 page
+- [ ] Add FAQ + prominent CTA to OTO2 downsell page
+- [ ] Add FAQ + prominent CTA to BIB thank you page
+- [x] Update OTO2 page with FAQ + prominent CTA
+- [x] Update OTO2 Downsell page with FAQ + prominent CTA
+- [x] Update Thank You page with FAQ + prominent CTAs
+- [x] Enhance OTO1 page CTA prominence
+- [x] Enhance BIB Landing page CTA prominence
+- [x] Update manual with BIB funnel info and current product details
+- [ ] Push all updates to GitHub
+- [ ] Deliver updated deliverables
