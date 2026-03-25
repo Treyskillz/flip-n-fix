@@ -16,7 +16,7 @@ import {
 } from '@/lib/sowTemplates';
 import {
   SOW_PROPERTIES, ROOM_TYPE_LABELS, ROOM_TYPE_ICONS, TIER_LABELS as PROP_TIER_LABELS, TIER_COLORS as PROP_TIER_COLORS,
-  applyRegionalToProperty,
+  applyRegionalToProperty, getBeforePhoto,
   type SOWProperty, type SOWRoomTemplate,
 } from '@/lib/sowProperties';
 import {
@@ -29,12 +29,18 @@ import {
   Printer, DollarSign, Wrench, ShoppingCart, X, Home as HomeIcon,
   BedDouble, Bath, Ruler, Grid3X3, List, Search, Filter,
   MapPin, TrendingUp, TrendingDown, Minus, Globe, Building2,
-  ArrowLeft, Calendar, Tag, ChevronRight, Eye, Calculator
+  ArrowLeft, Calendar, Tag, ChevronRight, Eye, Calculator, Mail, Copy, Check, Send, Users
 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
 import { useBranding, type BrandingConfig } from '@/lib/branding';
 import { ProductStatusBadge } from '@/components/ProductStatusBadge';
 import { generateSOWExcel } from '@/lib/generateSOWExcel';
 import { BeforeAfterSlider } from '@/components/BeforeAfterSlider';
+import { CustomSOWBuilder } from '@/components/CustomSOWBuilder';
 import { useProductCatalog } from '@/hooks/useProductCatalog';
 
 // ─── EXISTING CONSTANTS ──────────────────────────────────────
@@ -171,7 +177,39 @@ function PropertyDetail({ property, market, onBack, branding }: {
   const totalLabor = adjusted.rooms.reduce((sum, r) => sum + r.laborCost, 0);
   const [selectedRoomIdx, setSelectedRoomIdx] = useState(0);
   const [expandedRoom, setExpandedRoom] = useState<string | null>(null);
+  const [showBidModal, setShowBidModal] = useState(false);
+  const [bidEmails, setBidEmails] = useState('');
+  const [bidNote, setBidNote] = useState('');
+  const [copied, setCopied] = useState(false);
   const isAdjusted = market.key !== 'national';
+
+  const generateBidText = () => {
+    const companyName = branding?.companyName || 'Freedom One Properties';
+    const contactEmail = branding?.email || 'contact@freedomoneproperties.com';
+    const contactPhone = branding?.phone || '';
+    return `CONTRACTOR BID REQUEST\n${'='.repeat(50)}\n\nFrom: ${companyName}\nDate: ${new Date().toLocaleDateString()}\n${contactEmail ? `Email: ${contactEmail}` : ''}\n${contactPhone ? `Phone: ${contactPhone}` : ''}\n\nPROPERTY DETAILS\n${'-'.repeat(30)}\nAddress: ${adjusted.address}\nCity/State: ${adjusted.city}, ${adjusted.state} ${adjusted.zip}\nProperty Type: ${adjusted.propertyType} (${adjusted.style})\nBeds: ${adjusted.beds} | Baths: ${adjusted.baths} | Sq Ft: ${adjusted.sqft.toLocaleString()} | Year Built: ${adjusted.yearBuilt}\nRehab Tier: ${PROP_TIER_LABELS[property.tier]}\n${isAdjusted ? `Market Adjustment: ${market.label}\n` : ''}\nBUDGET SUMMARY\n${'-'.repeat(30)}\nTotal Materials Budget: $${totalMaterials.toLocaleString()}\nTotal Labor Budget: $${totalLabor.toLocaleString()}\nTotal Rehab Budget: $${totalRehab.toLocaleString()}\n\nROOM-BY-ROOM SCOPE OF WORK\n${'-'.repeat(30)}\n${adjusted.rooms.map(room => {
+      return `\n${room.roomLabel} (${room.condition === 'full' ? 'Full Renovation' : room.condition === 'moderate' ? 'Moderate Renovation' : 'Cosmetic Update'})\nMaterials: $${room.materialCost.toLocaleString()} | Labor: $${room.laborCost.toLocaleString()} | Total: $${room.totalCost.toLocaleString()}\n${room.workDescription}\n\nLine Items:\n${room.lineItems.map(li => `  - ${li.item}: ${li.material} (${li.quantity} ${li.unit}) — $${li.totalCost.toLocaleString()}`).join('\n')}`;
+    }).join('\n\n')}\n\n${'-'.repeat(50)}\nBID INSTRUCTIONS\n${'-'.repeat(50)}\n1. Please provide itemized bids for each room listed above\n2. Include timeline estimates for each phase of work\n3. Provide proof of insurance and licensing\n4. Include warranty information for materials and labor\n5. Bids should be valid for 30 days from submission\n\n${bidNote ? `ADDITIONAL NOTES:\n${bidNote}\n\n` : ''}Please submit your bid to: ${contactEmail}\n\nThank you for your time and consideration.\n${companyName}`;
+  };
+
+  const handleCopyBid = () => {
+    navigator.clipboard.writeText(generateBidText());
+    setCopied(true);
+    toast.success('Bid request copied to clipboard');
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleEmailBid = () => {
+    const emails = bidEmails.split(',').map(e => e.trim()).filter(Boolean);
+    const subject = encodeURIComponent(`Bid Request: ${adjusted.address} — ${PROP_TIER_LABELS[property.tier]} Renovation`);
+    const body = encodeURIComponent(generateBidText());
+    const mailto = `mailto:${emails.join(',')}?subject=${subject}&body=${body}`;
+    window.open(mailto, '_blank');
+    toast.success('Opening email client with bid request');
+    // Also download Excel SOW
+    generateSOWExcel({ property: adjusted, branding, marketLabel: isAdjusted ? market.label : undefined, materialsFactor: market.materialsFactor, laborFactor: market.laborFactor });
+    toast.info('Excel SOW downloaded — attach it to your email');
+  };
 
   const handleAnalyzeDeal = () => {
     // Map SOW room types to analyzer room IDs and conditions
@@ -379,6 +417,9 @@ function PropertyDetail({ property, market, onBack, branding }: {
                 <Button size="sm" className="gap-1.5 bg-amber-600 hover:bg-amber-700 text-white" onClick={handleAnalyzeDeal}>
                   <Calculator className="w-3.5 h-3.5" /> Analyze This Deal
                 </Button>
+                <Button size="sm" className="gap-1.5 bg-violet-600 hover:bg-violet-700 text-white" onClick={() => setShowBidModal(true)}>
+                  <Send className="w-3.5 h-3.5" /> Send to Contractor
+                </Button>
               </div>
             </div>
           </div>
@@ -418,13 +459,26 @@ function PropertyDetail({ property, market, onBack, branding }: {
       {/* Selected Room Detail */}
       <section className="container py-6">
         <div className="grid lg:grid-cols-5 gap-6">
-          {/* Room Photo & Description */}
+          {/* Room Photo & Before/After */}
           <div className="lg:col-span-2">
-            <img
-              src={selectedRoom.photo}
-              alt={selectedRoom.roomLabel}
-              className="w-full h-56 lg:h-64 object-cover rounded-xl mb-4"
-            />
+            {getBeforePhoto(property.tier, selectedRoom.roomType) ? (
+              <div className="mb-4">
+                <BeforeAfterSlider
+                  beforeImage={getBeforePhoto(property.tier, selectedRoom.roomType)}
+                  afterImage={selectedRoom.photo}
+                  beforeLabel="Before"
+                  afterLabel="After"
+                  className="h-56 lg:h-64"
+                />
+                <p className="text-[10px] text-center text-muted-foreground mt-1">Drag slider to compare before &amp; after</p>
+              </div>
+            ) : (
+              <img
+                src={selectedRoom.photo}
+                alt={selectedRoom.roomLabel}
+                className="w-full h-56 lg:h-64 object-cover rounded-xl mb-4"
+              />
+            )}
             <h2 className="text-xl font-bold mb-2">{selectedRoom.roomLabel}</h2>
             <Badge variant="outline" className="text-xs mb-3">
               {selectedRoom.condition === 'full' ? 'Full Renovation' : selectedRoom.condition === 'moderate' ? 'Moderate Renovation' : 'Cosmetic Update'}
@@ -600,6 +654,110 @@ function PropertyDetail({ property, market, onBack, branding }: {
           </p>
         </div>
       </section>
+
+      {/* Contractor Bid Request Modal */}
+      <Dialog open={showBidModal} onOpenChange={setShowBidModal}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Send className="w-5 h-5 text-violet-500" />
+              Send Bid Request to Contractors
+            </DialogTitle>
+            <DialogDescription>
+              Send the complete scope of work for {adjusted.address} to contractors for bidding.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 pt-2">
+            {/* Property Summary */}
+            <div className="bg-secondary/50 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-semibold text-sm">{adjusted.address}</h4>
+                <Badge className={`text-xs ${property.tier === 'luxury' ? 'bg-amber-500/20 text-amber-600' : property.tier === 'standard' ? 'bg-blue-500/20 text-blue-600' : 'bg-emerald-500/20 text-emerald-600'}`}>
+                  {PROP_TIER_LABELS[property.tier]}
+                </Badge>
+              </div>
+              <p className="text-xs text-muted-foreground mb-2">{adjusted.city}, {adjusted.state} {adjusted.zip} | {adjusted.beds}bd/{adjusted.baths}ba | {adjusted.sqft.toLocaleString()} sqft</p>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="text-center bg-background rounded p-2">
+                  <p className="text-[10px] text-muted-foreground uppercase">Materials</p>
+                  <p className="text-sm font-bold">${totalMaterials.toLocaleString()}</p>
+                </div>
+                <div className="text-center bg-background rounded p-2">
+                  <p className="text-[10px] text-muted-foreground uppercase">Labor</p>
+                  <p className="text-sm font-bold">${totalLabor.toLocaleString()}</p>
+                </div>
+                <div className="text-center bg-background rounded p-2">
+                  <p className="text-[10px] text-muted-foreground uppercase">Total Rehab</p>
+                  <p className="text-sm font-bold text-[oklch(0.48_0.20_18)]">${totalRehab.toLocaleString()}</p>
+                </div>
+              </div>
+              <p className="text-[10px] text-muted-foreground mt-2">{adjusted.rooms.length} rooms included in scope</p>
+            </div>
+
+            {/* Contractor Email(s) */}
+            <div>
+              <Label htmlFor="bid-emails" className="text-sm font-medium">Contractor Email(s)</Label>
+              <Input
+                id="bid-emails"
+                placeholder="contractor@email.com, another@email.com"
+                value={bidEmails}
+                onChange={(e) => setBidEmails(e.target.value)}
+                className="mt-1"
+              />
+              <p className="text-[10px] text-muted-foreground mt-1">Separate multiple emails with commas</p>
+            </div>
+
+            {/* Additional Notes */}
+            <div>
+              <Label htmlFor="bid-note" className="text-sm font-medium">Additional Notes (Optional)</Label>
+              <Textarea
+                id="bid-note"
+                placeholder="Timeline requirements, special instructions, access details..."
+                value={bidNote}
+                onChange={(e) => setBidNote(e.target.value)}
+                rows={3}
+                className="mt-1"
+              />
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row gap-2 pt-2">
+              <Button
+                className="flex-1 gap-2 bg-violet-600 hover:bg-violet-700 text-white"
+                onClick={handleEmailBid}
+                disabled={!bidEmails.trim()}
+              >
+                <Mail className="w-4 h-4" /> Open Email Client
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1 gap-2"
+                onClick={handleCopyBid}
+              >
+                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                {copied ? 'Copied!' : 'Copy Bid Text'}
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1 gap-2"
+                onClick={() => {
+                  generateSOWExcel({ property: adjusted, branding, marketLabel: isAdjusted ? market.label : undefined, materialsFactor: market.materialsFactor, laborFactor: market.laborFactor });
+                  toast.success('Excel SOW downloaded');
+                }}
+              >
+                <Grid3X3 className="w-4 h-4" /> Download Excel SOW
+              </Button>
+            </div>
+
+            <p className="text-[10px] text-muted-foreground leading-relaxed">
+              <strong>Tip:</strong> Click "Open Email Client" to compose an email with the full bid request text pre-filled.
+              The Excel SOW will also download automatically — attach it to your email for a professional bid package.
+              Alternatively, use "Copy Bid Text" to paste the request into any messaging platform.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -964,7 +1122,7 @@ export default function ScopeOfWork() {
   const { branding } = useBranding();
   const { catalogMap } = useProductCatalog();
   const [tier, setTier] = useState<MaterialTier>('standard');
-  const [activeTab, setActiveTab] = useState<'properties' | 'library' | 'estimator'>('properties');
+  const [activeTab, setActiveTab] = useState<'properties' | 'library' | 'estimator' | 'builder'>('properties');
   const [selectedRoom, setSelectedRoom] = useState<string>('all');
   const [selectedCostLevel, setSelectedCostLevel] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState('');
@@ -1128,6 +1286,17 @@ export default function ScopeOfWork() {
               <List className="w-4 h-4 inline-block mr-1.5 -mt-0.5" />
               Line-Item Estimator
             </button>
+            <button
+              onClick={() => setActiveTab('builder')}
+              className={`px-5 py-3.5 text-sm font-medium border-b-2 transition-colors ${
+                activeTab === 'builder'
+                  ? 'border-[oklch(0.48_0.20_18)] text-[oklch(0.48_0.20_18)]'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <Wrench className="w-4 h-4 inline-block mr-1.5 -mt-0.5" />
+              Custom Builder
+            </button>
           </div>
         </div>
       </section>
@@ -1262,6 +1431,11 @@ export default function ScopeOfWork() {
             </div>
           </section>
         </>
+      )}
+
+      {/* ─── CUSTOM BUILDER TAB ──────────────────────────────── */}
+      {activeTab === 'builder' && (
+        <CustomSOWBuilder market={market} branding={branding} />
       )}
 
       {/* Disclaimer */}

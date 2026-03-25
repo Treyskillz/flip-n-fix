@@ -8,6 +8,7 @@ export interface SOWRoomTemplate {
   roomType: string;
   roomLabel: string;
   photo: string;
+  beforePhoto: string;
   condition: 'cosmetic' | 'moderate' | 'full';
   materialCost: number;
   laborCost: number;
@@ -184,6 +185,37 @@ const IMG = {
   copperLandscaping: `${CDN}/copper-canyon-landscaping-EdRgmVMz3eYXsgoSf95LZV.webp`,
   copperRoof: `${CDN}/copper-canyon-roof-WKL9AoGPNUjh37UebHLSRv.webp`,
 
+  // Room-Level Before Photos (by tier)
+  beforeKitchenRental: `${CDN}/before-kitchen-rental-9NNEQy2BfPQ295SUbMKNkL.webp`,
+  beforeMasterBathRental: `${CDN}/before-master-bath-rental-FcMh9ZMxxPJpPSvGDpzb2V.webp`,
+  beforeFullBathRental: `${CDN}/before-full-bath-rental-XAbzKecdP4EZ8UtYoGxj3z.webp`,
+  beforeHalfBathRental: `${CDN}/before-half-bath-rental-EzWtLCQevrRgMqHWFy37hd.webp`,
+  beforeLivingRoomRental: `${CDN}/before-living-room-rental-dTp4YsJDSAoD7c24mtTYBa.webp`,
+  beforeBedroomRental: `${CDN}/before-bedroom-rental-9NNEQy2BfPQ295SUbMKNkL.webp`,
+  beforeGarageRental: `${CDN}/before-garage-rental-3p3NHNLZULZ5XiiiaPBYnn.webp`,
+  beforeLandscapingRental: `${CDN}/before-landscaping-rental-7yHwtRrh4sgTF8Rdntg6GX.webp`,
+  beforeRoofRental: `${CDN}/before-roof-rental-RAqGMDGYPmP9zQdgcE4Q59.webp`,
+
+  beforeKitchenStandard: `${CDN}/before-kitchen-standard-kazyzcpq6BaLTqEkvNbriD.webp`,
+  beforeMasterBathStandard: `${CDN}/before-master-bath-standard-FcMh9ZMxxPJpPSvGDpzb2V.webp`,
+  beforeFullBathStandard: `${CDN}/before-full-bath-standard-XAbzKecdP4EZ8UtYoGxj3z.webp`,
+  beforeHalfBathStandard: `${CDN}/before-half-bath-standard-EzWtLCQevrRgMqHWFy37hd.webp`,
+  beforeLivingRoomStandard: `${CDN}/before-living-room-standard-dTp4YsJDSAoD7c24mtTYBa.webp`,
+  beforeBedroomStandard: `${CDN}/before-bedroom-standard-NvyaJBEY8Wba2KDiEAbkGv.webp`,
+  beforeGarageStandard: `${CDN}/before-garage-standard-h5V8jECMVUtrngsimuYqKB.webp`,
+  beforeLandscapingStandard: `${CDN}/before-landscaping-standard-RKsY74uXvAwoBkyPamgcFb.webp`,
+  beforeRoofStandard: `${CDN}/before-roof-standard-6RECGv2jcdwMpcdbEwsZ6s.webp`,
+
+  beforeKitchenLuxury: `${CDN}/before-kitchen-luxury-R7we4crJuvxbZKm6QKGzjw.webp`,
+  beforeMasterBathLuxury: `${CDN}/before-master-bath-luxury-QPMy2CfwJdjZHUZf3tLJDK.webp`,
+  beforeFullBathLuxury: `${CDN}/before-full-bath-luxury-Ws7uZ4YmJfnnukexfj8LdA.webp`,
+  beforeHalfBathLuxury: `${CDN}/before-half-bath-luxury-MpEQEKLBtWW8xUfkesvoS9.webp`,
+  beforeLivingRoomLuxury: `${CDN}/before-living-room-luxury-DstheP7z4emVEtAqEsvJmU.webp`,
+  beforeBedroomLuxury: `${CDN}/before-bedroom-luxury-PE9Qg65dV4prUPieWrbTHs.webp`,
+  beforeGarageLuxury: `${CDN}/before-garage-luxury-QVkBHfaURbpSrH7Ec9f98o.webp`,
+  beforeLandscapingLuxury: `${CDN}/before-landscaping-luxury-QEJPAHBaogmBNbDqiVJGUr.webp`,
+  beforeRoofLuxury: `${CDN}/before-roof-luxury-HWZrmFUVQteTzdWEdDr3oN.webp`,
+
   // Before/After Exterior Photos
   castleBefore: `${CDN}/castle-ave-before-vy3MWDJyxjSzJxBDKFZSKC.webp`,
   castleAfter: `${CDN}/castle-ave-after-2LzedQErYXmJKMfyJiGgW4.webp`,
@@ -211,6 +243,47 @@ const IMG = {
   copperAfter: `${CDN}/copper-canyon-after-C8nugmfRdtYuGrL3sUXGSa.webp`,
 };
 
+// ─── TIER-BASED BEFORE PHOTO LOOKUP ──────────────────────────
+const BEFORE_PHOTOS: Record<string, Record<string, string>> = {
+  rental: {
+    kitchen: IMG.beforeKitchenRental,
+    'master-bath': IMG.beforeMasterBathRental,
+    'full-bath': IMG.beforeFullBathRental,
+    'half-bath': IMG.beforeHalfBathRental,
+    'living-room': IMG.beforeLivingRoomRental,
+    bedroom: IMG.beforeBedroomRental,
+    garage: IMG.beforeGarageRental,
+    landscaping: IMG.beforeLandscapingRental,
+    roof: IMG.beforeRoofRental,
+  },
+  standard: {
+    kitchen: IMG.beforeKitchenStandard,
+    'master-bath': IMG.beforeMasterBathStandard,
+    'full-bath': IMG.beforeFullBathStandard,
+    'half-bath': IMG.beforeHalfBathStandard,
+    'living-room': IMG.beforeLivingRoomStandard,
+    bedroom: IMG.beforeBedroomStandard,
+    garage: IMG.beforeGarageStandard,
+    landscaping: IMG.beforeLandscapingStandard,
+    roof: IMG.beforeRoofStandard,
+  },
+  luxury: {
+    kitchen: IMG.beforeKitchenLuxury,
+    'master-bath': IMG.beforeMasterBathLuxury,
+    'full-bath': IMG.beforeFullBathLuxury,
+    'half-bath': IMG.beforeHalfBathLuxury,
+    'living-room': IMG.beforeLivingRoomLuxury,
+    bedroom: IMG.beforeBedroomLuxury,
+    garage: IMG.beforeGarageLuxury,
+    landscaping: IMG.beforeLandscapingLuxury,
+    roof: IMG.beforeRoofLuxury,
+  },
+};
+
+export function getBeforePhoto(tier: string, roomType: string): string {
+  return BEFORE_PHOTOS[tier]?.[roomType] || '';
+}
+
 // ─── HELPER: Build room template ─────────────────────────────
 function room(
   roomType: string,
@@ -223,7 +296,8 @@ function room(
   lineItems: SOWLineItem[]
 ): SOWRoomTemplate {
   return {
-    roomType, roomLabel, photo, condition,
+    roomType, roomLabel, photo, beforePhoto: '',
+    condition,
     materialCost, laborCost,
     totalCost: materialCost + laborCost,
     workDescription, lineItems,

@@ -766,3 +766,30 @@
 - [x] Connect SOW properties to Deal Analyzer — import property SOW directly into deal analysis with pre-filled rehab costs
 - [x] Add before/after photo comparison — generate "before" condition photos alongside renovation photos to show transformation scope
 - [x] Run tests, save checkpoint, and push to GitHub (283 tests passing)
+
+## SOW Next Steps Features (March 24, 2026)
+
+### Feature 1: Room-Level Before/After Photos
+- [x] Generate "before" condition photos for all 9 room types across 3 tiers (27 photos)
+- [x] Add before photo URLs to sowProperties.ts room data with tier-based lookup
+- [x] Build room-level before/after comparison slider in property detail view
+- [x] Show before/after toggle per room tab with drag slider
+
+### Feature 2: Contractor Bid Request Form
+- [x] Build contractor bid request modal with property summary and cost breakdown
+- [x] Add email via mailto: with pre-filled bid request text
+- [x] Pre-fill form with property details and room specifications from SOW
+- [x] Include Excel SOW download button in bid modal
+- [x] Add Copy Bid Text button for clipboard sharing
+
+### Feature 3: Custom Property SOW Builder
+- [x] Build custom SOW builder as 4th tab (Custom Builder)
+- [x] Room selection with add/remove rooms (9 room types)
+- [x] Adjustable line items per room (add, edit, delete items)
+- [x] Material tier selection per room with condition toggle
+- [x] Budget target setting with progress tracking
+- [x] Auto-populated default line items per room type
+- [x] Export custom SOW to Excel/PDF + Send to Contractor + Analyze This Deal
+- [x] Integrated as tab in existing SOW page
+
+- [x] Run all tests (283 passing), save checkpoint, push to GitHub
