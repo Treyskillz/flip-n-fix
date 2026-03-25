@@ -48,6 +48,12 @@ const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard"));
 const DealComparison = lazy(() => import("./pages/DealComparison"));
 const AdminProductCatalog = lazy(() => import("./pages/AdminProductCatalog"));
 const MaterialCostTracker = lazy(() => import("./pages/MaterialCostTracker"));
+const BusinessInABox = lazy(() => import("./pages/BusinessInABox"));
+const BibOto1 = lazy(() => import("./pages/BibOto1"));
+const BibOto1Down = lazy(() => import("./pages/BibOto1Down"));
+const BibOto2 = lazy(() => import("./pages/BibOto2"));
+const BibOto2Down = lazy(() => import("./pages/BibOto2Down"));
+const BibThankYou = lazy(() => import("./pages/BibThankYou"));
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -57,6 +63,38 @@ function Router() {
       <Route path="/shared/:shareId">
         <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}>
           <SharedDealView />
+        </Suspense>
+      </Route>
+
+      {/* Business-in-a-Box sales funnel - standalone pages without site layout */}
+      <Route path="/business-in-a-box">
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}>
+          <BusinessInABox />
+        </Suspense>
+      </Route>
+      <Route path="/bib/oto1">
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}>
+          <BibOto1 />
+        </Suspense>
+      </Route>
+      <Route path="/bib/oto1-down">
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}>
+          <BibOto1Down />
+        </Suspense>
+      </Route>
+      <Route path="/bib/oto2">
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}>
+          <BibOto2 />
+        </Suspense>
+      </Route>
+      <Route path="/bib/oto2-down">
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}>
+          <BibOto2Down />
+        </Suspense>
+      </Route>
+      <Route path="/bib/thank-you">
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}>
+          <BibThankYou />
         </Suspense>
       </Route>
 

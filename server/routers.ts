@@ -5,6 +5,8 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
 import { PLANS, PlanKey } from "./stripe/products";
 import { createCheckoutSession, createPortalSession } from "./stripe/checkout";
+import { BIB_PRODUCTS, BibProductKey } from "./stripe/bib-products";
+import { createBibCheckoutSession } from "./stripe/bib-checkout";
 import { getDb } from "./db";
 import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments, pipelineDeals, pipelineContacts, pipelineActivities, giftedSubscriptions, emailLeads, blogPosts, whiteLabelSettings, productCatalog, priceHistory, verificationLog, videoProgress, customSows, contractors, sowContractorAssignments } from "../drizzle/schema";
 import { eq, sql, desc, and, ne, inArray, asc, isNull } from "drizzle-orm";
@@ -3847,6 +3849,35 @@ Market: ${input.market || 'Not specified'}`,
       await db.delete(sowContractorAssignments).where(and(eq(sowContractorAssignments.id, input.id), eq(sowContractorAssignments.userId, ctx.user.id)));
       return { success: true };
     }),
+  }),
+
+  // ─── Business-in-a-Box Checkout ──────────────────────────────
+  bib: router({
+    /** Get BIB product details */
+    products: publicProcedure.query(() => {
+      return BIB_PRODUCTS;
+    }),
+
+    /** Create a BIB checkout session (one-time payment) */
+    createCheckout: publicProcedure
+      .input(
+        z.object({
+          productKey: z.enum(["main", "oto1", "oto1Down", "oto2", "oto2Down"]),
+          origin: z.string(),
+          email: z.string().email().optional(),
+          name: z.string().optional(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const result = await createBibCheckoutSession({
+          userId: ctx.user?.id,
+          userEmail: input.email || ctx.user?.email || "",
+          userName: input.name || ctx.user?.name || "",
+          productKey: input.productKey,
+          origin: input.origin,
+        });
+        return result;
+      }),
   }),
 });
 export type AppRouter = typeof appRouter;

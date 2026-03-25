@@ -822,3 +822,35 @@
 - [x] Run full test suite and fix any failures (306 tests passing across 24 files)
 - [x] Update instruction manual with database-backed contractor management
 - [x] Push to GitHub and deliver
+
+## Business-in-a-Box Sales Funnel (March 25, 2026)
+
+### Standalone Sales Funnel Website
+- [x] Design Business-in-a-Box product offer with OTO structure and pricing
+- [x] Build main sales/landing page with hero, benefits, features, testimonials, CTA (/business-in-a-box)
+- [x] Build Stripe checkout integration for main offer ($1,997)
+- [x] Build OTO 1 page: Freedom One Pro App Lifetime Access ($2,997) (/bib/oto1)
+- [x] Build OTO 1 Downsell page: 1-Year App Access ($997) (/bib/oto1-down)
+- [x] Build OTO 2 page: Done-For-You Marketing Kit ($497) (/bib/oto2)
+- [x] Build OTO 2 Downsell page: Marketing Starter Pack ($197) (/bib/oto2-down)
+- [x] Build Thank You / Order Confirmation page (/bib/thank-you)
+- [x] Implement Stripe checkout sessions for each offer (bib-checkout.ts)
+- [x] Build BIB product configuration (bib-products.ts)
+- [x] Build tRPC router for BIB checkout
+- [x] Write vitest tests for BIB products (9 tests passing)
+
+### Done-For-You Marketing Kit Deliverables
+- [x] Create Facebook ad campaigns (6 campaigns with targeting, copy, headlines, budgets, creative briefs)
+- [x] Create direct mail templates (yellow letters, postcards, professional letters, handwritten, follow-up)
+- [x] Create email sequences (7-day nurture, 5-email onboarding, 10-email sales funnel — 22 emails total)
+- [x] Create 6-month social media content calendar (130+ posts with captions & hashtags)
+- [ ] Package all marketing kit materials as downloadable PDFs
+
+### Colossyan Business-in-a-Box Marketing Video
+- [x] Create Business-in-a-Box sales video in Colossyan (6 scenes with Riley + stock backgrounds)
+- [ ] Download BIB marketing video when generation completes
+
+### Video Downloads
+- [ ] Download Freedom One Complete Platform Demo (full-length)
+- [ ] Download Freedom One Condensed Demo
+- [ ] Download Business-in-a-Box marketing video

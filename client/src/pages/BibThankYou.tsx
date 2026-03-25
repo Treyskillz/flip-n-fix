@@ -1,0 +1,121 @@
+import { Button } from '@/components/ui/button';
+import { Link } from 'wouter';
+import {
+  CheckCircle, Download, GraduationCap, BookOpen, ArrowRight,
+  Mail, Headphones
+} from 'lucide-react';
+
+const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/MgvhsGurcOgbPgCR.png";
+
+export default function BibThankYou() {
+  return (
+    <div className="min-h-screen bg-[oklch(0.08_0_0)] text-white flex flex-col">
+      {/* Header */}
+      <header className="border-b border-white/10 bg-[oklch(0.06_0_0)]">
+        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-center">
+          <img src={LOGO_URL} alt="Freedom One" className="h-10 object-contain" />
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <section className="flex-1 max-w-3xl mx-auto px-4 py-16 lg:py-20 text-center">
+        <CheckCircle className="w-16 h-16 mx-auto mb-6 text-green-400" />
+        <h1 className="text-3xl lg:text-4xl font-bold mb-4">
+          Welcome to Freedom One!
+        </h1>
+        <p className="text-lg text-white/65 max-w-xl mx-auto leading-relaxed mb-10">
+          Your purchase is confirmed. You now have access to the complete Business-in-a-Box system. 
+          Here is how to get started right away.
+        </p>
+
+        {/* Next Steps */}
+        <div className="grid sm:grid-cols-2 gap-5 mb-12 text-left">
+          <div className="p-6 rounded-xl bg-[oklch(0.12_0_0)] border border-white/8">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 rounded-lg bg-green-500/15">
+                <Download className="w-5 h-5 text-green-400" />
+              </div>
+              <h3 className="font-bold">Step 1: Download Templates</h3>
+            </div>
+            <p className="text-sm text-white/55 leading-relaxed">
+              Check your email for download links to all contract templates, SOW templates, 
+              marketing materials, and resource documents.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-xl bg-[oklch(0.12_0_0)] border border-white/8">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 rounded-lg bg-[oklch(0.48_0.20_18)]/15">
+                <GraduationCap className="w-5 h-5 text-[oklch(0.65_0.18_18)]" />
+              </div>
+              <h3 className="font-bold">Step 2: Start the Course</h3>
+            </div>
+            <p className="text-sm text-white/55 leading-relaxed">
+              Begin with Module 1 — Investor Mindset and Goals. Each module builds on the previous one 
+              and includes practical exercises.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-xl bg-[oklch(0.12_0_0)] border border-white/8">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 rounded-lg bg-blue-500/15">
+                <BookOpen className="w-5 h-5 text-blue-400" />
+              </div>
+              <h3 className="font-bold">Step 3: Review Checklists</h3>
+            </div>
+            <p className="text-sm text-white/55 leading-relaxed">
+              Print the due diligence and deal analysis checklists. Keep them handy as you 
+              start evaluating your first properties.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-xl bg-[oklch(0.12_0_0)] border border-white/8">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 rounded-lg bg-purple-500/15">
+                <Mail className="w-5 h-5 text-purple-400" />
+              </div>
+              <h3 className="font-bold">Step 4: Launch Marketing</h3>
+            </div>
+            <p className="text-sm text-white/55 leading-relaxed">
+              Use the marketing templates to start generating leads. Begin with direct mail 
+              to absentee owners in your target market.
+            </p>
+          </div>
+        </div>
+
+        {/* CTA to App */}
+        <div className="p-8 rounded-xl bg-[oklch(0.12_0_0)] border border-[oklch(0.48_0.20_18)]/30 mb-10">
+          <h3 className="text-xl font-bold mb-3">Ready to Analyze Your First Deal?</h3>
+          <p className="text-white/55 text-sm mb-6 max-w-md mx-auto">
+            Use the Freedom One platform to analyze deals, estimate rehab costs, and track your pipeline.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link href="/course">
+              <Button size="lg" className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white font-semibold px-6">
+                <GraduationCap className="w-4.5 h-4.5" /> Start the Course
+              </Button>
+            </Link>
+            <Link href="/analyzer">
+              <Button size="lg" variant="outline" className="gap-2 border-white/25 text-white hover:bg-white/10 font-semibold px-6">
+                Open Deal Analyzer <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Support */}
+        <div className="flex items-center justify-center gap-2 text-sm text-white/40">
+          <Headphones className="w-4 h-4" />
+          <span>Need help? Contact us at <a href="mailto:contact@freedomoneproperties.com" className="text-[oklch(0.65_0.18_18)] hover:underline">contact@freedomoneproperties.com</a></span>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-white/10 bg-[oklch(0.06_0_0)]">
+        <div className="max-w-5xl mx-auto px-4 py-6 text-center text-xs text-white/30">
+          <p>&copy; {new Date().getFullYear()} Freedom One Properties. All rights reserved.</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
