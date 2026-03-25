@@ -6,7 +6,7 @@ import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_
 import { PLANS, PlanKey } from "./stripe/products";
 import { createCheckoutSession, createPortalSession } from "./stripe/checkout";
 import { getDb } from "./db";
-import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments, pipelineDeals, pipelineContacts, pipelineActivities, giftedSubscriptions, emailLeads, blogPosts, whiteLabelSettings, productCatalog, priceHistory, verificationLog, videoProgress } from "../drizzle/schema";
+import { users, sharedDeals, savedDeals, dealPhotos, courseProgress, quizResults, userProfiles, credibilityProjects, credibilityAttachments, pipelineDeals, pipelineContacts, pipelineActivities, giftedSubscriptions, emailLeads, blogPosts, whiteLabelSettings, productCatalog, priceHistory, verificationLog, videoProgress, customSows, contractors, sowContractorAssignments } from "../drizzle/schema";
 import { eq, sql, desc, and, ne, inArray, asc, isNull } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
@@ -3610,6 +3610,243 @@ Market: ${input.market || 'Not specified'}`,
         }
         return query.orderBy(asc(productCatalog.name));
       }),
+  }),
+
+  // ─── Custom SOWs ──────────────────────────────────────────
+  customSows: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      const db = (await getDb())!;
+      return db.select().from(customSows).where(eq(customSows.userId, ctx.user.id)).orderBy(desc(customSows.updatedAt));
+    }),
+    get: protectedProcedure.input(z.object({ id: z.number() })).query(async ({ ctx, input }) => {
+      const db = (await getDb())!;
+      const rows = await db.select().from(customSows).where(and(eq(customSows.id, input.id), eq(customSows.userId, ctx.user.id))).limit(1);
+      return rows[0] || null;
+    }),
+    save: protectedProcedure.input(z.object({
+      id: z.number().optional(),
+      name: z.string().min(1),
+      propertyAddress: z.string().optional(),
+      propertyCity: z.string().optional(),
+      propertyState: z.string().optional(),
+      propertyZip: z.string().optional(),
+      sqft: z.number().optional(),
+      beds: z.number().optional(),
+      baths: z.string().optional(),
+      yearBuilt: z.number().optional(),
+      purchasePrice: z.number().optional(),
+      arv: z.number().optional(),
+      budgetTarget: z.number().optional(),
+      totalMaterials: z.number(),
+      totalLabor: z.number(),
+      totalCost: z.number(),
+      roomsData: z.string(),
+      notes: z.string().optional(),
+      status: z.enum(["draft", "sent", "in_progress", "completed"]).optional(),
+    })).mutation(async ({ ctx, input }) => {
+      const db = (await getDb())!;
+      if (input.id) {
+        await db.update(customSows).set({
+          name: input.name,
+          propertyAddress: input.propertyAddress || null,
+          propertyCity: input.propertyCity || null,
+          propertyState: input.propertyState || null,
+          propertyZip: input.propertyZip || null,
+          sqft: input.sqft || null,
+          beds: input.beds || null,
+          baths: input.baths || null,
+          yearBuilt: input.yearBuilt || null,
+          purchasePrice: input.purchasePrice || null,
+          arv: input.arv || null,
+          budgetTarget: input.budgetTarget || null,
+          totalMaterials: input.totalMaterials,
+          totalLabor: input.totalLabor,
+          totalCost: input.totalCost,
+          roomsData: input.roomsData,
+          notes: input.notes || null,
+          status: input.status || "draft",
+        }).where(and(eq(customSows.id, input.id), eq(customSows.userId, ctx.user.id)));
+        return { id: input.id };
+      } else {
+        const result = await db.insert(customSows).values({
+          userId: ctx.user.id,
+          name: input.name,
+          propertyAddress: input.propertyAddress || null,
+          propertyCity: input.propertyCity || null,
+          propertyState: input.propertyState || null,
+          propertyZip: input.propertyZip || null,
+          sqft: input.sqft || null,
+          beds: input.beds || null,
+          baths: input.baths || null,
+          yearBuilt: input.yearBuilt || null,
+          purchasePrice: input.purchasePrice || null,
+          arv: input.arv || null,
+          budgetTarget: input.budgetTarget || null,
+          totalMaterials: input.totalMaterials,
+          totalLabor: input.totalLabor,
+          totalCost: input.totalCost,
+          roomsData: input.roomsData,
+          notes: input.notes || null,
+          status: input.status || "draft",
+        });
+        return { id: result[0].insertId };
+      }
+    }),
+    delete: protectedProcedure.input(z.object({ id: z.number() })).mutation(async ({ ctx, input }) => {
+      const db = (await getDb())!;
+      await db.delete(customSows).where(and(eq(customSows.id, input.id), eq(customSows.userId, ctx.user.id)));
+      return { success: true };
+    }),
+    duplicate: protectedProcedure.input(z.object({ id: z.number() })).mutation(async ({ ctx, input }) => {
+      const db = (await getDb())!;
+      const rows = await db.select().from(customSows).where(and(eq(customSows.id, input.id), eq(customSows.userId, ctx.user.id))).limit(1);
+      if (!rows[0]) return { id: 0 };
+      const orig = rows[0];
+      const result = await db.insert(customSows).values({
+        userId: ctx.user.id,
+        name: orig.name + " (Copy)",
+        propertyAddress: orig.propertyAddress,
+        propertyCity: orig.propertyCity,
+        propertyState: orig.propertyState,
+        propertyZip: orig.propertyZip,
+        sqft: orig.sqft,
+        beds: orig.beds,
+        baths: orig.baths,
+        yearBuilt: orig.yearBuilt,
+        purchasePrice: orig.purchasePrice,
+        arv: orig.arv,
+        budgetTarget: orig.budgetTarget,
+        totalMaterials: orig.totalMaterials,
+        totalLabor: orig.totalLabor,
+        totalCost: orig.totalCost,
+        roomsData: orig.roomsData,
+        notes: orig.notes,
+        status: "draft",
+      });
+      return { id: result[0].insertId };
+    }),
+  }),
+
+  // ─── Contractors CRM ─────────────────────────────────────
+  contractors: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      const db = (await getDb())!;
+      return db.select().from(contractors).where(eq(contractors.userId, ctx.user.id)).orderBy(desc(contractors.updatedAt));
+    }),
+    save: protectedProcedure.input(z.object({
+      id: z.number().optional(),
+      name: z.string().min(1),
+      company: z.string().optional(),
+      email: z.string().optional(),
+      phone: z.string().optional(),
+      specialty: z.enum(["general", "kitchen", "bathroom", "flooring", "roofing", "electrical", "plumbing", "hvac", "painting", "landscaping", "demolition", "framing", "drywall", "windows_doors", "other"]),
+      rating: z.number().min(0).max(5),
+      hourlyRate: z.number().optional(),
+      licenseNumber: z.string().optional(),
+      insured: z.number().optional(),
+      marketArea: z.string().optional(),
+      notes: z.string().optional(),
+      status: z.enum(["active", "inactive", "blacklisted"]).optional(),
+    })).mutation(async ({ ctx, input }) => {
+      const db = (await getDb())!;
+      if (input.id) {
+        await db.update(contractors).set({
+          name: input.name,
+          company: input.company || null,
+          email: input.email || null,
+          phone: input.phone || null,
+          specialty: input.specialty,
+          rating: input.rating,
+          hourlyRate: input.hourlyRate || null,
+          licenseNumber: input.licenseNumber || null,
+          insured: input.insured ?? 0,
+          marketArea: input.marketArea || null,
+          notes: input.notes || null,
+          status: input.status || "active",
+        }).where(and(eq(contractors.id, input.id), eq(contractors.userId, ctx.user.id)));
+        return { id: input.id };
+      } else {
+        const result = await db.insert(contractors).values({
+          userId: ctx.user.id,
+          name: input.name,
+          company: input.company || null,
+          email: input.email || null,
+          phone: input.phone || null,
+          specialty: input.specialty,
+          rating: input.rating,
+          hourlyRate: input.hourlyRate || null,
+          licenseNumber: input.licenseNumber || null,
+          insured: input.insured ?? 0,
+          marketArea: input.marketArea || null,
+          notes: input.notes || null,
+          status: input.status || "active",
+        });
+        return { id: result[0].insertId };
+      }
+    }),
+    delete: protectedProcedure.input(z.object({ id: z.number() })).mutation(async ({ ctx, input }) => {
+      const db = (await getDb())!;
+      await db.delete(contractors).where(and(eq(contractors.id, input.id), eq(contractors.userId, ctx.user.id)));
+      return { success: true };
+    }),
+    // Get assignments for a contractor
+    getAssignments: protectedProcedure.input(z.object({ contractorId: z.number() })).query(async ({ ctx, input }) => {
+      const db = (await getDb())!;
+      return db.select().from(sowContractorAssignments).where(and(eq(sowContractorAssignments.contractorId, input.contractorId), eq(sowContractorAssignments.userId, ctx.user.id))).orderBy(desc(sowContractorAssignments.sentAt));
+    }),
+  }),
+
+  // ─── SOW-Contractor Assignments ──────────────────────────
+  sowAssignments: router({
+    create: protectedProcedure.input(z.object({
+      customSowId: z.number().optional(),
+      templatePropertyId: z.string().optional(),
+      contractorId: z.number(),
+      notes: z.string().optional(),
+    })).mutation(async ({ ctx, input }) => {
+      const db = (await getDb())!;
+      const result = await db.insert(sowContractorAssignments).values({
+        userId: ctx.user.id,
+        customSowId: input.customSowId || null,
+        templatePropertyId: input.templatePropertyId || null,
+        contractorId: input.contractorId,
+        notes: input.notes || null,
+      });
+      return { id: result[0].insertId };
+    }),
+    listBySow: protectedProcedure.input(z.object({
+      customSowId: z.number().optional(),
+      templatePropertyId: z.string().optional(),
+    })).query(async ({ ctx, input }) => {
+      const db = (await getDb())!;
+      if (input.customSowId) {
+        return db.select().from(sowContractorAssignments).where(and(eq(sowContractorAssignments.customSowId, input.customSowId), eq(sowContractorAssignments.userId, ctx.user.id))).orderBy(desc(sowContractorAssignments.sentAt));
+      }
+      if (input.templatePropertyId) {
+        return db.select().from(sowContractorAssignments).where(and(eq(sowContractorAssignments.templatePropertyId, input.templatePropertyId), eq(sowContractorAssignments.userId, ctx.user.id))).orderBy(desc(sowContractorAssignments.sentAt));
+      }
+      return [];
+    }),
+    updateStatus: protectedProcedure.input(z.object({
+      id: z.number(),
+      bidStatus: z.enum(["sent", "viewed", "bid_received", "accepted", "rejected", "expired"]),
+      bidAmount: z.number().optional(),
+      notes: z.string().optional(),
+    })).mutation(async ({ ctx, input }) => {
+      const db = (await getDb())!;
+      await db.update(sowContractorAssignments).set({
+        bidStatus: input.bidStatus,
+        bidAmount: input.bidAmount || null,
+        respondedAt: input.bidStatus !== "sent" ? new Date() : null,
+        notes: input.notes || null,
+      }).where(and(eq(sowContractorAssignments.id, input.id), eq(sowContractorAssignments.userId, ctx.user.id)));
+      return { success: true };
+    }),
+    delete: protectedProcedure.input(z.object({ id: z.number() })).mutation(async ({ ctx, input }) => {
+      const db = (await getDb())!;
+      await db.delete(sowContractorAssignments).where(and(eq(sowContractorAssignments.id, input.id), eq(sowContractorAssignments.userId, ctx.user.id)));
+      return { success: true };
+    }),
   }),
 });
 export type AppRouter = typeof appRouter;

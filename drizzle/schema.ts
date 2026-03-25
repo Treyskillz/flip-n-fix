@@ -397,3 +397,78 @@ export const videoProgress = mysqlTable("video_progress", {
 
 export type VideoProgressRow = typeof videoProgress.$inferSelect;
 export type InsertVideoProgress = typeof videoProgress.$inferInsert;
+
+// ─── Custom SOWs (User-Created Scope of Work) ──────────────
+export const customSows = mysqlTable("custom_sows", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(), // e.g. "123 Main St Kitchen Remodel"
+  propertyAddress: varchar("propertyAddress", { length: 512 }),
+  propertyCity: varchar("propertyCity", { length: 128 }),
+  propertyState: varchar("propertyState", { length: 64 }),
+  propertyZip: varchar("propertyZip", { length: 16 }),
+  sqft: int("sqft"),
+  beds: int("beds"),
+  baths: varchar("baths", { length: 16 }),
+  yearBuilt: int("yearBuilt"),
+  purchasePrice: int("purchasePrice"),
+  arv: int("arv"),
+  budgetTarget: int("budgetTarget"),
+  totalMaterials: int("totalMaterials").default(0).notNull(),
+  totalLabor: int("totalLabor").default(0).notNull(),
+  totalCost: int("totalCost").default(0).notNull(),
+  roomsData: text("roomsData").notNull(), // JSON array of rooms with line items
+  notes: text("notes"),
+  status: mysqlEnum("status", ["draft", "sent", "in_progress", "completed"]).default("draft").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CustomSow = typeof customSows.$inferSelect;
+export type InsertCustomSow = typeof customSows.$inferInsert;
+
+// ─── Contractors (CRM) ──────────────────────────────────────
+export const contractors = mysqlTable("contractors", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  company: varchar("company", { length: 255 }),
+  email: varchar("email", { length: 320 }),
+  phone: varchar("phone", { length: 64 }),
+  specialty: mysqlEnum("specialty", [
+    "general", "kitchen", "bathroom", "flooring", "roofing",
+    "electrical", "plumbing", "hvac", "painting", "landscaping",
+    "demolition", "framing", "drywall", "windows_doors", "other"
+  ]).default("general").notNull(),
+  rating: int("rating").default(0).notNull(), // 0-5 stars
+  hourlyRate: int("hourlyRate"), // in cents
+  licenseNumber: varchar("licenseNumber", { length: 128 }),
+  insured: int("insured").default(0).notNull(), // 0=unknown, 1=yes
+  marketArea: varchar("marketArea", { length: 255 }),
+  notes: text("notes"),
+  status: mysqlEnum("status", ["active", "inactive", "blacklisted"]).default("active").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Contractor = typeof contractors.$inferSelect;
+export type InsertContractor = typeof contractors.$inferInsert;
+
+// ─── SOW-Contractor Assignments (Bid Tracking) ──────────────
+export const sowContractorAssignments = mysqlTable("sow_contractor_assignments", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  customSowId: int("customSowId"), // references custom_sows.id (null if template SOW)
+  templatePropertyId: varchar("templatePropertyId", { length: 128 }), // for template-based SOWs
+  contractorId: int("contractorId").notNull(), // references contractors.id
+  bidAmount: int("bidAmount"), // contractor's bid in dollars
+  bidStatus: mysqlEnum("bidStatus", ["sent", "viewed", "bid_received", "accepted", "rejected", "expired"]).default("sent").notNull(),
+  sentAt: timestamp("sentAt").defaultNow().notNull(),
+  respondedAt: timestamp("respondedAt"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SowContractorAssignment = typeof sowContractorAssignments.$inferSelect;
+export type InsertSowContractorAssignment = typeof sowContractorAssignments.$inferInsert;

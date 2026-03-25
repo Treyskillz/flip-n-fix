@@ -37,7 +37,11 @@ The Fix & Flip Analyzer is a comprehensive real estate investment analysis syste
 - **Deal Comparison** — Side-by-side comparison of 2–6 deals (Team tier)
 - **Analytics Dashboard** — Advanced portfolio performance metrics (Team tier)
 - **Profit Calculator** — Six exit strategy scenarios (Elite & Team tiers)
-- **SOW Templates** — 104 professional renovation templates with photos and cost breakdowns
+- **SOW System** — 12 complete property SOWs, 104 room templates, line-item estimator, and custom SOW builder with database persistence
+- **Before/After Comparisons** — Interactive drag sliders showing property and room-level renovation transformations
+- **Excel SOW Export** — Multi-sheet workbooks with property summary, room costs, and material specs for contractor bidding
+- **Contractor Bid Requests** — Pre-filled bid request forms with email, clipboard, and Excel download options
+- **Custom SOW Builder** — Build, save, edit, and duplicate your own property SOWs with full database persistence
 - **Lender Directory** — Curated hard money and private lender contacts
 - **Marketing Templates** — Direct mail, postcards, email sequences, and cold call scripts
 - **Contract Templates** — Assignable purchase agreements and wholesale contracts
@@ -46,7 +50,7 @@ The Fix & Flip Analyzer is a comprehensive real estate investment analysis syste
 - **Checklists** — Due diligence, closing, and rehab checklists
 - **Credibility Packets** — Professional investor credibility materials
 - **State Guide** — State-by-state real estate investing regulations
-- **Contractor Management** — Track and manage your contractor relationships
+- **Contractor Management** — Trade categories, vetting checklists, payment schedules, 6 critical documents, and contractor rolodex
 - **Renovation Designer** — Visualize room designs and material choices
 - **Product Verification** — Verified Home Depot product links with price tracking and discontinued product alerts
 - **Alternative Product Suggestions** — Automatic replacement recommendations for discontinued materials
@@ -242,11 +246,42 @@ The timeline visualization shows:
     id: 'sow-templates',
     title: 'SOW Templates',
     icon: '📋',
-    content: `## SOW Templates Library
+    content: `## Scope of Work (SOW) System
 
-The SOW Templates page provides **104 professional renovation templates** organized across 10 room categories with photos, cost breakdowns, and downloadable scope of work documents.
+The SOW page is a comprehensive renovation planning system with **four tabs**: Property SOWs, Template Library, Line-Item Estimator, and Custom Builder. Together they provide everything you need to plan, estimate, and communicate renovation work to contractors.
 
-### Template Library Tab
+### Tab 1: Property SOWs (12 Properties)
+
+This tab features **12 complete property renovation packages** across 3 material tiers, each with 9 rooms fully scoped out with photos, line items, and cost breakdowns.
+
+#### Property Grid
+- **12 properties** across 10 U.S. metro markets (Phoenix, Atlanta, Dallas, Portland, Nashville, San Diego, Memphis, Denver, Charlotte, Austin)
+- Each property card shows: address, tier badge, beds/baths/sqft, purchase price, rehab budget, ARV, and room count
+- **Tier filter** — Filter by Rental Grade (4 properties), Standard (4 properties), or Luxury (4 properties)
+
+#### Property Detail View
+Click any property card to see the full renovation scope:
+- **Property header** with address, tier, beds/baths/sqft, and style description
+- **Room navigation tabs** — Click through all 9 rooms: Kitchen, Master Bath, Full Bath, Half Bath, Living Room, Bedroom, Garage, Landscaping, Roof
+- **Room-level before/after slider** — Interactive drag slider comparing the distressed "before" condition photo with the renovated "after" photo for each room
+- **Line-item cost table** — Every room shows individual line items with material costs, labor costs, and totals
+- **Budget summary table** — Complete breakdown of all 9 rooms with materials, labor, and grand total
+
+#### Property Actions
+Each property detail view has 5 action buttons:
+1. **Download Full SOW** — Opens a print-ready scope of work document with all rooms and costs
+2. **Export to Excel** — Downloads a multi-sheet Excel workbook with property summary, room-by-room costs, material specs, and labor breakdowns — perfect for contractor bidding
+3. **Print SOW** — Sends the scope of work directly to your printer
+4. **Analyze This Deal** — Pre-fills the Deal Analyzer with the property's purchase price, ARV, address, and total rehab costs so you can instantly evaluate profitability
+5. **Send to Contractor** — Opens a bid request form with pre-filled property summary, cost breakdown, and room count. You can enter a contractor's email, add notes, then:
+   - **Open Email Client** — Opens your default email app with the bid request pre-filled
+   - **Copy Bid Text** — Copies the formatted bid request to your clipboard
+   - **Download Excel SOW** — Downloads the Excel workbook to attach to your email
+
+#### Before/After Comparison
+At the bottom of each property detail, an **exterior before/after comparison** shows the full property transformation with a drag slider. The comparison includes purchase price, total rehab cost, and ARV below the photos.
+
+### Tab 2: Template Library (104 Templates)
 
 #### Browsing Templates
 - **104 templates** across 10 categories: Kitchen (20), Master Bath (12), Full Bath (10), Half Bath (8), Living Room (10), Bedroom (10), Garage (8), Landscaping (10), Roof & Gutter (8), Exterior (8)
@@ -271,14 +306,49 @@ Click any template card to open the detail view showing:
 #### Regional Pricing
 The market selector at the top of the page syncs with the Deal Analyzer. All template costs automatically adjust based on your selected metro market. An "Adjusted" badge appears on each card when a non-national market is selected.
 
-### Line-Item Estimator Tab
+### Tab 3: Line-Item Estimator
 
-The second tab provides the detailed room-by-room line-item estimator with:
+The detailed room-by-room line-item estimator with:
 - **14 room categories** with expandable line-item breakdowns
 - **Home Depot SKU links** — Every material links directly to the Home Depot product page
 - **Condition selectors** — Set each room's condition level (Cosmetic, Moderate, Full)
 - **Material tier toggle** — Switch between Rental, Standard, and Luxury grades
-- **Printable SOW** — Generate a professional scope of work document for contractors`,
+- **Printable SOW** — Generate a professional scope of work document for contractors
+
+### Tab 4: Custom Builder
+
+Build your own property SOW from scratch with full database persistence:
+
+#### My Saved SOWs
+- View all your saved custom SOWs in a grid with property name, address, room count, total cost, and last updated date
+- **Edit** — Re-open any saved SOW to modify rooms, line items, or costs
+- **Duplicate** — Clone an existing SOW as a starting point for a similar property
+- **Delete** — Remove SOWs you no longer need
+- **Create New SOW** — Start a fresh custom scope of work
+
+#### Building a Custom SOW
+1. **Property Details** — Enter property name, address, beds, baths, square footage, and notes
+2. **Add Rooms** — Click room type buttons (Kitchen, Master Bath, Full Bath, Half Bath, Living Room, Bedroom, Garage, Landscaping, Roof) to add them to your scope
+3. **Room Condition** — Toggle each room between Good, Fair, and Poor condition (affects default costs)
+4. **Edit Line Items** — Each room comes with pre-populated line items. You can:
+   - Edit item names, material costs, and labor costs
+   - Delete items you don't need
+   - Add custom line items with the "+ Add Item" button
+5. **Budget Target** — Set a target budget and track your progress with a visual progress bar
+6. **Running Totals** — See materials, labor, and grand total update in real-time as you make changes
+
+#### Custom SOW Actions
+- **Save SOW** — Persists your custom SOW to the database so you can access it from any device
+- **Export to Excel** — Download a professional Excel workbook with all your custom rooms and line items
+- **Send to Contractor** — Open the bid request form with your custom property details pre-filled
+- **Analyze This Deal** — Send your custom SOW data directly to the Deal Analyzer
+
+### Tips for Using SOW Effectively
+- Start with a **Property SOW** that matches your deal's tier and style, then use it as a reference
+- Use the **Custom Builder** to create a tailored SOW for your specific property
+- Export to Excel and share with **3+ contractors** to get competitive bids
+- Use the **Analyze This Deal** button to instantly see if the rehab costs make the deal profitable
+- The **before/after photos** help contractors understand the scope of transformation expected`,
   },
   {
     id: 'financing',
@@ -838,23 +908,67 @@ The State Guide provides state-specific information for real estate investors, i
     icon: '👷',
     content: `## Contractor Management
 
-The Contractors page helps you organize and manage your contractor relationships for rehab projects.
+The Contractors page is a comprehensive contractor management system with trade categories, vetting checklists, payment schedules, critical documents, and a contractor rolodex.
 
-### Adding Contractors
-Track key information for each contractor:
-- **Company name** and contact person
-- **Phone, email, website**
-- **Specialty** — General, electrical, plumbing, HVAC, roofing, etc.
-- **License number** and insurance status
-- **Service area** — Cities/counties they cover
-- **Rating** — Your personal rating based on experience
-- **Notes** — Project history, pricing notes, reliability
+### Trade Categories
+Browse contractors organized by trade specialty:
+- **General Contractors** — Full project management and coordination
+- **Electricians** — Wiring, panels, fixtures, code compliance
+- **Plumbers** — Pipes, fixtures, water heaters, sewer lines
+- **HVAC Technicians** — Heating, cooling, ductwork, ventilation
+- **Roofers** — Shingles, flashing, gutters, repairs
+- **Painters** — Interior/exterior painting, staining, texturing
+- **Flooring Specialists** — Tile, hardwood, LVP, carpet installation
+- **Landscapers** — Grading, sod, irrigation, hardscaping
 
-### Managing Your Contractor List
-- **Filter by specialty** — Find the right contractor for each job
-- **Sort by rating** — Prioritize your best contractors
-- **Track availability** — Note when contractors are booked
-- **Compare bids** — Store multiple bids for the same scope
+Each trade category includes typical hourly rates, common project costs, and what to look for when hiring.
+
+### Contractor Vetting Checklist
+A step-by-step checklist for evaluating new contractors:
+- License verification and status
+- Insurance certificates (general liability + workers' comp)
+- References from recent projects
+- Better Business Bureau rating
+- Online reviews and portfolio
+- Written estimate with detailed line items
+- Timeline commitment and availability
+
+### Payment Schedule Guide
+Recommended draw schedule for rehab projects:
+- **10% deposit** — Upon signing contract
+- **25% first draw** — After demolition and rough-in complete
+- **25% second draw** — After mechanical inspections pass
+- **25% third draw** — After finish work complete
+- **15% final payment** — After punch list and final walkthrough
+
+### 6 Critical Contractor Documents
+Downloadable templates for professional contractor relationships:
+1. **Independent Contractor Agreement** — Scope, timeline, payment terms, and liability
+2. **Change Order Form** — Document scope changes with cost and timeline impact
+3. **Lien Waiver** — Protect your property from mechanic's liens
+4. **Certificate of Insurance Request** — Verify contractor insurance coverage
+5. **Punch List Template** — Track deficiencies and completion items
+6. **Final Completion Certificate** — Document project completion and warranty start
+
+### Contractor Rolodex (Database-Backed)
+Your personal contractor database is stored securely in the cloud — accessible from any device, never lost:
+- **Add contractors** with name, company, phone, email, trade specialty, city/state, and notes
+- **Edit contractors** — Click the edit icon on any contractor card to update their information
+- **Rate contractors** on a 5-star scale based on your experience
+- **Filter by specialty** — Use the trade filter dropdown to find the right contractor for each job (shows count per trade)
+- **Quick contact** — Click to call or email directly from the rolodex
+- **Delete contractors** — Remove contractors you no longer work with
+- **18 trade categories** — General Contractor, Plumber, Electrician, HVAC, Roofer, Painter, Flooring, Drywall, Framing/Carpentry, Landscaping, Concrete/Masonry, Windows/Doors, Kitchen/Bath, Demolition, Pest Control, Foundation, Handyman, and Other
+- **Cloud persistence** — All contractor data is saved to the database (not localStorage) and syncs across devices. Requires login.
+
+### SOW Integration
+The SOW system connects directly to your contractor workflow:
+- From any **Property SOW** or **Custom SOW**, click "Send to Contractor" to generate a professional bid request
+- The bid request includes property details, room count, cost breakdown, and your notes
+- **Open Email Client** pre-fills an email with the bid request text
+- **Copy Bid Text** copies the formatted request to your clipboard
+- **Download Excel SOW** generates a professional spreadsheet to attach to your bid request
+- Always send SOWs to **3+ contractors** to get competitive bids
 
 ### Tips for Working with Contractors
 - Always get at least 3 bids for major work
@@ -863,7 +977,9 @@ Track key information for each contractor:
 - Set up a draw schedule tied to milestones
 - Inspect work at each phase before releasing payment
 - Build relationships with reliable contractors — they are your most valuable asset
-- Pay on time to maintain priority scheduling`,
+- Pay on time to maintain priority scheduling
+- Document everything in writing — use the Change Order Form for any scope changes
+- Never pay the full amount upfront — follow the draw schedule`,
   },
   {
     id: 'blog',

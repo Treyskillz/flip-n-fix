@@ -10,6 +10,8 @@ import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import { printDocument } from '@/lib/printDocument';
 import { useBranding } from '@/lib/branding';
+import { trpc } from '@/lib/trpc';
+import { useAuth } from '@/_core/hooks/useAuth';
 
 /* ─── Types ─── */
 interface Contractor {
@@ -1179,26 +1181,96 @@ function VettingSection() {
   );
 }
 
+// Map UI trade categories to DB specialty enum
+const TRADE_TO_SPECIALTY: Record<string, string> = {
+  'General Contractor': 'general', 'Plumber': 'plumbing', 'Electrician': 'electrical',
+  'HVAC': 'hvac', 'Roofer': 'roofing', 'Painter': 'painting', 'Flooring': 'flooring',
+  'Drywall': 'drywall', 'Framing / Carpentry': 'framing', 'Landscaping': 'landscaping',
+  'Concrete / Masonry': 'other', 'Windows / Doors': 'windows_doors',
+  'Kitchen / Bath': 'kitchen', 'Demolition': 'demolition',
+  'Pest Control': 'other', 'Foundation': 'other', 'Handyman': 'general', 'Other': 'other',
+};
+const SPECIALTY_TO_TRADE: Record<string, string> = Object.fromEntries(
+  Object.entries(TRADE_TO_SPECIALTY).map(([k, v]) => [v, k])
+);
+// Override for specialties that map to multiple trades
+SPECIALTY_TO_TRADE['general'] = 'General Contractor';
+SPECIALTY_TO_TRADE['kitchen'] = 'Kitchen / Bath';
+SPECIALTY_TO_TRADE['bathroom'] = 'Kitchen / Bath';
+
 function ContractorRolodex() {
-  const [contractors, setContractors] = useState<Contractor[]>([]);
+  const { isAuthenticated } = useAuth();
+  const utils = trpc.useUtils();
+  const { data: dbContractors, isLoading } = trpc.contractors.list.useQuery(undefined, { enabled: isAuthenticated });
+  const saveMutation = trpc.contractors.save.useMutation({
+    onSuccess: () => { utils.contractors.list.invalidate(); },
+  });
+  const deleteMutation = trpc.contractors.delete.useMutation({
+    onSuccess: () => { utils.contractors.list.invalidate(); },
+  });
+
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [filterTrade, setFilterTrade] = useState('');
   const [form, setForm] = useState({ name: '', company: '', trade: 'General Contractor', phone: '', email: '', city: '', state: '', rating: 3, notes: '' });
+
+  // Convert DB records to UI format
+  const contractors: Contractor[] = useMemo(() => {
+    if (!dbContractors) return [];
+    return dbContractors.map(c => ({
+      id: String(c.id),
+      name: c.name,
+      company: c.company || '',
+      trade: SPECIALTY_TO_TRADE[c.specialty] || c.specialty,
+      phone: c.phone || '',
+      email: c.email || '',
+      city: c.marketArea?.split(',')[0]?.trim() || '',
+      state: c.marketArea?.split(',')[1]?.trim() || '',
+      rating: c.rating,
+      notes: c.notes || '',
+    }));
+  }, [dbContractors]);
 
   const filtered = useMemo(() => {
     if (!filterTrade) return contractors;
     return contractors.filter(c => c.trade === filterTrade);
   }, [contractors, filterTrade]);
 
-  const addContractor = () => {
+  const addContractor = async () => {
     if (!form.name || !form.phone) { toast.error('Name and phone are required'); return; }
-    setContractors(prev => [...prev, { ...form, id: Date.now().toString() }]);
-    setForm({ name: '', company: '', trade: 'General Contractor', phone: '', email: '', city: '', state: '', rating: 3, notes: '' });
-    setShowForm(false);
-    toast.success('Contractor added to your rolodex');
+    const specialty = (TRADE_TO_SPECIALTY[form.trade] || 'other') as any;
+    const marketArea = [form.city, form.state].filter(Boolean).join(', ') || undefined;
+    try {
+      await saveMutation.mutateAsync({
+        id: editingId || undefined,
+        name: form.name,
+        company: form.company || undefined,
+        phone: form.phone || undefined,
+        email: form.email || undefined,
+        specialty,
+        rating: form.rating,
+        marketArea,
+        notes: form.notes || undefined,
+      });
+      setForm({ name: '', company: '', trade: 'General Contractor', phone: '', email: '', city: '', state: '', rating: 3, notes: '' });
+      setShowForm(false);
+      setEditingId(null);
+      toast.success(editingId ? 'Contractor updated' : 'Contractor added to your rolodex');
+    } catch { toast.error('Failed to save contractor'); }
   };
 
-  const removeContractor = (id: string) => { setContractors(prev => prev.filter(c => c.id !== id)); toast.success('Contractor removed'); };
+  const editContractor = (c: Contractor) => {
+    setForm({ name: c.name, company: c.company, trade: c.trade, phone: c.phone, email: c.email, city: c.city, state: c.state, rating: c.rating, notes: c.notes });
+    setEditingId(Number(c.id));
+    setShowForm(true);
+  };
+
+  const removeContractor = async (id: string) => {
+    try {
+      await deleteMutation.mutateAsync({ id: Number(id) });
+      toast.success('Contractor removed');
+    } catch { toast.error('Failed to remove contractor'); }
+  };
 
   return (
     <Card>
@@ -1208,7 +1280,7 @@ function ContractorRolodex() {
             <h3 className="font-bold text-base">Contractor Rolodex</h3>
             <p className="text-xs text-muted-foreground">Track and organize your contractor contacts</p>
           </div>
-          <Button size="sm" onClick={() => setShowForm(!showForm)} className="gap-1 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white">
+          <Button size="sm" onClick={() => { setShowForm(!showForm); setEditingId(null); setForm({ name: '', company: '', trade: 'General Contractor', phone: '', email: '', city: '', state: '', rating: 3, notes: '' }); }} className="gap-1 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white">
             <Plus className="w-3.5 h-3.5" /> Add
           </Button>
         </div>
@@ -1234,8 +1306,8 @@ function ContractorRolodex() {
             </div>
             <textarea placeholder="Notes (specialties, pricing, reliability...)" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} className="w-full px-3 py-2 rounded-md border border-border bg-background text-sm" rows={2} />
             <div className="flex gap-2">
-              <Button size="sm" onClick={addContractor} className="bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white">Save Contractor</Button>
-              <Button size="sm" variant="outline" onClick={() => setShowForm(false)}>Cancel</Button>
+              <Button size="sm" onClick={addContractor} disabled={saveMutation.isPending} className="bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white">{saveMutation.isPending ? 'Saving...' : editingId ? 'Update Contractor' : 'Save Contractor'}</Button>
+              <Button size="sm" variant="outline" onClick={() => { setShowForm(false); setEditingId(null); setForm({ name: '', company: '', trade: 'General Contractor', phone: '', email: '', city: '', state: '', rating: 3, notes: '' }); }}>Cancel</Button>
             </div>
           </div>
         )}
@@ -1280,17 +1352,20 @@ function ContractorRolodex() {
                   <StarRating rating={c.rating} />
                   {c.notes && <p className="text-xs text-muted-foreground mt-1">{c.notes}</p>}
                 </div>
-                <button onClick={() => removeContractor(c.id)} className="text-muted-foreground/40 hover:text-destructive transition-colors shrink-0">
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                <div className="flex flex-col gap-1 shrink-0">
+                  <button onClick={() => editContractor(c)} className="text-muted-foreground/40 hover:text-[oklch(0.48_0.20_18)] transition-colors" title="Edit">
+                    <FileText className="w-4 h-4" />
+                  </button>
+                  <button onClick={() => removeContractor(c.id)} className="text-muted-foreground/40 hover:text-destructive transition-colors" title="Remove">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         )}
 
-        <p className="text-xs text-muted-foreground mt-4">
-          Note: Contractor data is stored locally in your browser. For persistent storage, upgrade to a paid plan.
-        </p>
+        {isLoading && <div className="text-center py-4 text-muted-foreground text-sm">Loading contractors...</div>}
       </CardContent>
     </Card>
   );

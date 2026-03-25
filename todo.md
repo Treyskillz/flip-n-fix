@@ -793,3 +793,32 @@
 - [x] Integrated as tab in existing SOW page
 
 - [x] Run all tests (283 passing), save checkpoint, push to GitHub
+
+## Custom SOW Persistence & Contractor CRM (March 25, 2026)
+
+### Feature 1: Save Custom SOWs to Database
+- [x] Create database schema for custom SOWs (customSows table with rooms, line items as JSON)
+- [x] Create tRPC procedures for CRUD operations (create, list, get, update, delete)
+- [x] Update Custom SOW Builder UI to save/load/edit from database
+- [x] Add "My SOWs" list view showing all saved custom SOWs
+- [x] Add edit/delete/duplicate functionality for saved SOWs
+- [x] Add share functionality for saved SOWs
+
+### Feature 2: Contractor CRM (Database-Backed)
+- [x] Create database schema for contractors (name, email, phone, specialty, rating, notes)
+- [x] Create database schema for SOW-contractor assignments (which SOWs sent to which contractors)
+- [x] Create tRPC procedures for contractor CRUD and SOW assignment tracking
+- [x] Migrate Contractor Rolodex from localStorage to database persistence via tRPC
+- [x] Add edit/update functionality for saved contractors
+- [x] Map 18 UI trade categories to DB specialty enum with round-trip mapping
+- [x] Add contractor rating and notes functionality
+- [x] 23 new contractor tests passing (306 total tests across 24 files)
+
+### Full App Audit
+- [x] Test every page and feature for operability
+- [x] Fix any broken links, missing images, or UI issues
+- [x] Ensure all subscription tiers and feature gating work correctly
+- [x] Verify all exports (Excel, PDF) work properly
+- [x] Run full test suite and fix any failures (306 tests passing across 24 files)
+- [x] Update instruction manual with database-backed contractor management
+- [x] Push to GitHub and deliver

@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,9 +9,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import {
   Plus, Minus, Trash2, Download, Grid3X3, Save, ChevronDown, ChevronUp,
   DollarSign, Wrench, ShoppingCart, Home, Send, Copy, Check, Mail,
-  Calculator, MapPin, BedDouble, Bath, Ruler, Calendar, Building2
+  Calculator, MapPin, BedDouble, Bath, Ruler, Calendar, Building2,
+  FolderOpen, FileText, Edit, ArrowLeft, Loader2, Clock, CheckCircle2
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { trpc } from '@/lib/trpc';
+import { useAuth } from '@/_core/hooks/useAuth';
+import { getLoginUrl } from '@/const';
 import {
   ROOM_TYPE_LABELS, ROOM_TYPE_ICONS, TIER_LABELS,
   type SOWProperty, type SOWRoomTemplate, type SOWLineItem,
@@ -57,6 +61,7 @@ interface CustomSOWData {
   tier: 'rental' | 'standard' | 'luxury';
   rooms: CustomRoom[];
   budgetTarget: number;
+  notes: string;
 }
 
 // ─── DEFAULT LINE ITEMS PER ROOM ────────────────────────────
@@ -133,17 +138,31 @@ const ROOM_TYPES = [
   { id: 'roof', label: 'Roof & Gutters' },
 ];
 
+const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
+  draft: { label: 'Draft', color: 'text-muted-foreground', icon: Edit },
+  sent: { label: 'Sent to Contractor', color: 'text-blue-500', icon: Send },
+  in_progress: { label: 'In Progress', color: 'text-amber-500', icon: Clock },
+  completed: { label: 'Completed', color: 'text-emerald-500', icon: CheckCircle2 },
+};
+
 let nextId = 1;
 function uid() { return `item-${nextId++}-${Date.now()}`; }
 
 // ─── COMPONENT ──────────────────────────────────────────────
 export function CustomSOWBuilder({ market, branding }: { market: MarketSelection; branding?: BrandingConfig }) {
+  const { isAuthenticated } = useAuth();
   const isAdjusted = market.key !== 'national';
 
+  // ─── VIEW STATE ─────────────────────────────────────────────
+  const [view, setView] = useState<'list' | 'editor'>('list');
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  // ─── FORM STATE ─────────────────────────────────────────────
   const [data, setData] = useState<CustomSOWData>({
     address: '', city: '', state: '', zip: '',
     propertyType: 'Single Family', beds: 3, baths: 2, sqft: 1500, yearBuilt: 1990,
-    purchasePrice: 0, arv: 0, tier: 'standard', rooms: [], budgetTarget: 0,
+    purchasePrice: 0, arv: 0, tier: 'standard', rooms: [], budgetTarget: 0, notes: '',
   });
 
   const [expandedRooms, setExpandedRooms] = useState<Set<string>>(new Set());
@@ -151,6 +170,19 @@ export function CustomSOWBuilder({ market, branding }: { market: MarketSelection
   const [bidEmails, setBidEmails] = useState('');
   const [bidNote, setBidNote] = useState('');
   const [copied, setCopied] = useState(false);
+
+  // ─── tRPC QUERIES ───────────────────────────────────────────
+  const savedSows = trpc.customSows.list.useQuery(undefined, { enabled: isAuthenticated });
+  const saveMutation = trpc.customSows.save.useMutation({
+    onSuccess: () => { savedSows.refetch(); toast.success(editingId ? 'SOW updated' : 'SOW saved'); setSaving(false); },
+    onError: (e) => { toast.error(`Save failed: ${e.message}`); setSaving(false); },
+  });
+  const deleteMutation = trpc.customSows.delete.useMutation({
+    onSuccess: () => { savedSows.refetch(); toast.success('SOW deleted'); },
+  });
+  const duplicateMutation = trpc.customSows.duplicate.useMutation({
+    onSuccess: () => { savedSows.refetch(); toast.success('SOW duplicated'); },
+  });
 
   // Apply regional adjustments
   const matFactor = market.materialsFactor;
@@ -233,6 +265,75 @@ export function CustomSOWBuilder({ market, branding }: { market: MarketSelection
       next.has(roomId) ? next.delete(roomId) : next.add(roomId);
       return next;
     });
+  };
+
+  // ─── SAVE / LOAD ───────────────────────────────────────────
+  const handleSave = () => {
+    if (!isAuthenticated) { window.location.href = getLoginUrl(); return; }
+    if (!data.address.trim() && data.rooms.length === 0) { toast.error('Add an address or rooms first'); return; }
+    setSaving(true);
+    const name = data.address || `Custom SOW ${new Date().toLocaleDateString()}`;
+    saveMutation.mutate({
+      id: editingId || undefined,
+      name,
+      propertyAddress: data.address || undefined,
+      propertyCity: data.city || undefined,
+      propertyState: data.state || undefined,
+      propertyZip: data.zip || undefined,
+      sqft: data.sqft || undefined,
+      beds: data.beds || undefined,
+      baths: String(data.baths) || undefined,
+      yearBuilt: data.yearBuilt || undefined,
+      purchasePrice: data.purchasePrice || undefined,
+      arv: data.arv || undefined,
+      budgetTarget: data.budgetTarget || undefined,
+      totalMaterials: totals.materials,
+      totalLabor: totals.labor,
+      totalCost: totals.total,
+      roomsData: JSON.stringify(data.rooms),
+      notes: data.notes || undefined,
+      status: 'draft',
+    });
+  };
+
+  const handleLoadSow = (sow: any) => {
+    setEditingId(sow.id);
+    let rooms: CustomRoom[] = [];
+    try { rooms = JSON.parse(sow.roomsData || '[]'); } catch {}
+    setData({
+      address: sow.propertyAddress || sow.name || '',
+      city: sow.propertyCity || '',
+      state: sow.propertyState || '',
+      zip: sow.propertyZip || '',
+      propertyType: 'Single Family',
+      beds: sow.beds || 3,
+      baths: Number(sow.baths) || 2,
+      sqft: sow.sqft || 1500,
+      yearBuilt: sow.yearBuilt || 1990,
+      purchasePrice: sow.purchasePrice || 0,
+      arv: sow.arv || 0,
+      tier: 'standard',
+      rooms,
+      budgetTarget: sow.budgetTarget || 0,
+      notes: sow.notes || '',
+    });
+    setView('editor');
+  };
+
+  const handleNewSow = () => {
+    setEditingId(null);
+    setData({
+      address: '', city: '', state: '', zip: '',
+      propertyType: 'Single Family', beds: 3, baths: 2, sqft: 1500, yearBuilt: 1990,
+      purchasePrice: 0, arv: 0, tier: 'standard', rooms: [], budgetTarget: 0, notes: '',
+    });
+    setExpandedRooms(new Set());
+    setView('editor');
+  };
+
+  const handleDeleteSow = (id: number) => {
+    if (!confirm('Delete this SOW? This cannot be undone.')) return;
+    deleteMutation.mutate({ id });
   };
 
   // ─── EXPORT HELPERS ─────────────────────────────────────────
@@ -347,7 +448,7 @@ export function CustomSOWBuilder({ market, branding }: { market: MarketSelection
       <div class="footer">
         ${branding?.logoUrl ? `<img src="${branding.logoUrl}" style="height:30px;object-fit:contain;margin-bottom:4px" onerror="this.style.display='none'" />` : ''}
         <p><strong>${branding?.companyName || 'Freedom One Real Estate Investment System'}</strong></p>
-        <p>This scope of work is for estimation purposes only.</p>
+        <p>This scope of work is for estimation purposes only. Contact: ${branding?.email || 'contact@freedomoneproperties.com'}</p>
       </div>
       </body></html>
     `;
@@ -394,14 +495,131 @@ export function CustomSOWBuilder({ market, branding }: { market: MarketSelection
     window.location.href = '/analyzer';
   };
 
-  // ─── RENDER ─────────────────────────────────────────────────
+  // ─── LIST VIEW ─────────────────────────────────────────────
+  if (view === 'list') {
+    const sows = savedSows.data || [];
+    return (
+      <div className="space-y-6">
+        <section className="container pt-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <FolderOpen className="w-5 h-5 text-[oklch(0.48_0.20_18)]" />
+              <h2 className="text-lg font-bold">My Custom SOWs</h2>
+              {sows.length > 0 && <Badge variant="outline" className="text-xs">{sows.length}</Badge>}
+            </div>
+            <Button className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white" onClick={handleNewSow}>
+              <Plus className="w-4 h-4" /> New SOW
+            </Button>
+          </div>
+
+          {!isAuthenticated && (
+            <div className="text-center py-12 bg-secondary/20 rounded-xl border border-dashed border-border">
+              <FileText className="w-12 h-12 mx-auto mb-3 text-muted-foreground/40" />
+              <h3 className="text-lg font-semibold mb-1">Sign In to Save SOWs</h3>
+              <p className="text-sm text-muted-foreground mb-4">Create an account to save, edit, and manage your custom scopes of work</p>
+              <Button onClick={() => window.location.href = getLoginUrl()} className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white">
+                Sign In
+              </Button>
+            </div>
+          )}
+
+          {isAuthenticated && savedSows.isLoading && (
+            <div className="text-center py-12">
+              <Loader2 className="w-8 h-8 mx-auto animate-spin text-muted-foreground" />
+              <p className="text-sm text-muted-foreground mt-2">Loading your SOWs...</p>
+            </div>
+          )}
+
+          {isAuthenticated && !savedSows.isLoading && sows.length === 0 && (
+            <div className="text-center py-12 bg-secondary/20 rounded-xl border border-dashed border-border">
+              <Home className="w-12 h-12 mx-auto mb-3 text-muted-foreground/40" />
+              <h3 className="text-lg font-semibold mb-1">No Custom SOWs Yet</h3>
+              <p className="text-sm text-muted-foreground mb-4">Create your first custom scope of work for a property</p>
+              <Button onClick={handleNewSow} className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white">
+                <Plus className="w-4 h-4" /> Create First SOW
+              </Button>
+            </div>
+          )}
+
+          {isAuthenticated && sows.length > 0 && (
+            <div className="grid gap-3">
+              {sows.map((sow: any) => {
+                const statusCfg = STATUS_CONFIG[sow.status] || STATUS_CONFIG.draft;
+                const StatusIcon = statusCfg.icon;
+                return (
+                  <Card key={sow.id} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => handleLoadSow(sow)}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="p-2 rounded-lg bg-[oklch(0.48_0.20_18)]/10 shrink-0">
+                            <FileText className="w-5 h-5 text-[oklch(0.48_0.20_18)]" />
+                          </div>
+                          <div className="min-w-0">
+                            <h3 className="font-semibold text-sm truncate">{sow.name}</h3>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                              {sow.propertyCity && <span>{sow.propertyCity}, {sow.propertyState}</span>}
+                              <span className={`flex items-center gap-1 ${statusCfg.color}`}>
+                                <StatusIcon className="w-3 h-3" /> {statusCfg.label}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 shrink-0">
+                          <div className="text-right">
+                            <p className="text-sm font-bold">${(sow.totalCost || 0).toLocaleString()}</p>
+                            <p className="text-[10px] text-muted-foreground">
+                              {JSON.parse(sow.roomsData || '[]').length} rooms
+                            </p>
+                          </div>
+                          <div className="flex gap-1">
+                            <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={(e) => { e.stopPropagation(); duplicateMutation.mutate({ id: sow.id }); }}>
+                              <Copy className="w-3.5 h-3.5" />
+                            </Button>
+                            <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-red-500" onClick={(e) => { e.stopPropagation(); handleDeleteSow(sow.id); }}>
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      </div>
+    );
+  }
+
+  // ─── EDITOR VIEW ───────────────────────────────────────────
   return (
     <div className="space-y-6">
-      {/* Property Details Form */}
+      {/* Header with Back + Save */}
       <section className="container pt-6">
+        <div className="flex items-center justify-between">
+          <Button variant="ghost" className="gap-2 text-sm" onClick={() => setView('list')}>
+            <ArrowLeft className="w-4 h-4" /> Back to My SOWs
+          </Button>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              className="gap-2 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white"
+              onClick={handleSave}
+              disabled={saving}
+            >
+              {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+              {editingId ? 'Update SOW' : 'Save SOW'}
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Property Details Form */}
+      <section className="container">
         <div className="flex items-center gap-2 mb-4">
           <Building2 className="w-5 h-5 text-[oklch(0.48_0.20_18)]" />
-          <h2 className="text-lg font-bold">Property Details</h2>
+          <h2 className="text-lg font-bold">{editingId ? 'Edit Property Details' : 'Property Details'}</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
           <div className="lg:col-span-2">
@@ -599,51 +817,22 @@ export function CustomSOWBuilder({ market, branding }: { market: MarketSelection
                           {room.lineItems.map(li => (
                             <tr key={li.id} className="border-t border-border/30">
                               <td className="p-2">
-                                <Input
-                                  value={li.item}
-                                  onChange={e => updateLineItem(room.id, li.id, { item: e.target.value })}
-                                  className="h-7 text-xs"
-                                  placeholder="Item name"
-                                />
+                                <Input value={li.item} onChange={e => updateLineItem(room.id, li.id, { item: e.target.value })} className="h-7 text-xs" placeholder="Item name" />
                               </td>
                               <td className="p-2">
-                                <Input
-                                  value={li.material}
-                                  onChange={e => updateLineItem(room.id, li.id, { material: e.target.value })}
-                                  className="h-7 text-xs"
-                                  placeholder="Material description"
-                                />
+                                <Input value={li.material} onChange={e => updateLineItem(room.id, li.id, { material: e.target.value })} className="h-7 text-xs" placeholder="Material description" />
                               </td>
                               <td className="p-2">
-                                <Input
-                                  type="number"
-                                  value={li.quantity}
-                                  onChange={e => updateLineItem(room.id, li.id, { quantity: +e.target.value })}
-                                  className="h-7 text-xs text-right"
-                                />
+                                <Input type="number" value={li.quantity} onChange={e => updateLineItem(room.id, li.id, { quantity: +e.target.value })} className="h-7 text-xs text-right" />
                               </td>
                               <td className="p-2">
-                                <Input
-                                  value={li.unit}
-                                  onChange={e => updateLineItem(room.id, li.id, { unit: e.target.value })}
-                                  className="h-7 text-xs"
-                                />
+                                <Input value={li.unit} onChange={e => updateLineItem(room.id, li.id, { unit: e.target.value })} className="h-7 text-xs" />
                               </td>
                               <td className="p-2">
-                                <Input
-                                  type="number"
-                                  value={li.materialCost}
-                                  onChange={e => updateLineItem(room.id, li.id, { materialCost: +e.target.value })}
-                                  className="h-7 text-xs text-right"
-                                />
+                                <Input type="number" value={li.materialCost} onChange={e => updateLineItem(room.id, li.id, { materialCost: +e.target.value })} className="h-7 text-xs text-right" />
                               </td>
                               <td className="p-2">
-                                <Input
-                                  type="number"
-                                  value={li.laborCost}
-                                  onChange={e => updateLineItem(room.id, li.id, { laborCost: +e.target.value })}
-                                  className="h-7 text-xs text-right"
-                                />
+                                <Input type="number" value={li.laborCost} onChange={e => updateLineItem(room.id, li.id, { laborCost: +e.target.value })} className="h-7 text-xs text-right" />
                               </td>
                               <td className="p-2 text-right font-medium tabular-nums">
                                 ${(adjustCost(li.materialCost, 'material') + adjustCost(li.laborCost, 'labor')).toLocaleString()}
@@ -701,7 +890,11 @@ export function CustomSOWBuilder({ market, branding }: { market: MarketSelection
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button size="sm" className="gap-1.5 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white" onClick={handlePrintSOW}>
+              <Button size="sm" className="gap-1.5 bg-[oklch(0.48_0.20_18)] hover:bg-[oklch(0.42_0.20_18)] text-white" onClick={handleSave} disabled={saving}>
+                {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                {editingId ? 'Update' : 'Save'}
+              </Button>
+              <Button size="sm" className="gap-1.5 bg-white/10 hover:bg-white/20 text-white" onClick={handlePrintSOW}>
                 <Download className="w-3.5 h-3.5" /> Download PDF
               </Button>
               <Button size="sm" className="gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white" onClick={handleDownloadExcel}>

@@ -1,0 +1,61 @@
+CREATE TABLE `contractors` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`userId` int NOT NULL,
+	`name` varchar(255) NOT NULL,
+	`company` varchar(255),
+	`email` varchar(320),
+	`phone` varchar(64),
+	`specialty` enum('general','kitchen','bathroom','flooring','roofing','electrical','plumbing','hvac','painting','landscaping','demolition','framing','drywall','windows_doors','other') NOT NULL DEFAULT 'general',
+	`rating` int NOT NULL DEFAULT 0,
+	`hourlyRate` int,
+	`licenseNumber` varchar(128),
+	`insured` int NOT NULL DEFAULT 0,
+	`marketArea` varchar(255),
+	`notes` text,
+	`status` enum('active','inactive','blacklisted') NOT NULL DEFAULT 'active',
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `contractors_id` PRIMARY KEY(`id`)
+);
+--> statement-breakpoint
+CREATE TABLE `custom_sows` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`userId` int NOT NULL,
+	`name` varchar(255) NOT NULL,
+	`propertyAddress` varchar(512),
+	`propertyCity` varchar(128),
+	`propertyState` varchar(64),
+	`propertyZip` varchar(16),
+	`sqft` int,
+	`beds` int,
+	`baths` varchar(16),
+	`yearBuilt` int,
+	`purchasePrice` int,
+	`arv` int,
+	`budgetTarget` int,
+	`totalMaterials` int NOT NULL DEFAULT 0,
+	`totalLabor` int NOT NULL DEFAULT 0,
+	`totalCost` int NOT NULL DEFAULT 0,
+	`roomsData` text NOT NULL,
+	`notes` text,
+	`status` enum('draft','sent','in_progress','completed') NOT NULL DEFAULT 'draft',
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `custom_sows_id` PRIMARY KEY(`id`)
+);
+--> statement-breakpoint
+CREATE TABLE `sow_contractor_assignments` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`userId` int NOT NULL,
+	`customSowId` int,
+	`templatePropertyId` varchar(128),
+	`contractorId` int NOT NULL,
+	`bidAmount` int,
+	`bidStatus` enum('sent','viewed','bid_received','accepted','rejected','expired') NOT NULL DEFAULT 'sent',
+	`sentAt` timestamp NOT NULL DEFAULT (now()),
+	`respondedAt` timestamp,
+	`notes` text,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `sow_contractor_assignments_id` PRIMARY KEY(`id`)
+);
