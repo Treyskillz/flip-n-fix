@@ -4,6 +4,8 @@ import {
   CheckCircle, Download, GraduationCap, BookOpen, ArrowRight,
   Mail, Headphones, Calculator, ChevronDown, Wrench, BarChart3
 } from 'lucide-react';
+import { useEffect } from 'react';
+import { trackFunnelEvent } from '@/components/TrackingPixels';
 
 const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/MgvhsGurcOgbPgCR.png";
 
@@ -39,6 +41,10 @@ const FAQ = [
 ];
 
 export default function BibThankYou() {
+  useEffect(() => {
+    trackFunnelEvent('Purchase', { value: 1997, content_name: 'Business-in-a-Box', content_category: 'BIB' });
+  }, []);
+
   return (
     <div className="min-h-screen bg-[oklch(0.08_0_0)] text-white flex flex-col">
       {/* Header */}

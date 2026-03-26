@@ -878,3 +878,16 @@
 - [x] Update manual with BIB funnel info and current product details
 - [ ] Push all updates to GitHub
 - [ ] Deliver updated deliverables
+
+- [ ] Email automation: Send BIB materials after Stripe purchase via webhook
+- [ ] Email automation: Send course access instructions after purchase
+- [ ] Email automation: Send welcome email with download links
+- [x] Add Facebook Pixel tracking to all BIB funnel pages
+- [x] Add Google Analytics (placeholder ready) tracking to all BIB funnel pages
+- [ ] Admin settings page for Pixel ID and GA ID configuration
+- [ ] Test email automation and tracking integration
+
+- [ ] BIB email drip: Day 0 welcome, Day 2 getting started, Day 5 tips, Day 14 check-in
+- [ ] App marketing drip: New subscriber welcome, feature highlights, engagement, upgrade nudges
+- [ ] Email drip scheduler (cron-based or delayed sends)
+- [ ] Admin UI for email drip management and tracking pixel configuration

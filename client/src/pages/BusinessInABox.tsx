@@ -7,7 +7,8 @@ import {
   GraduationCap, CheckSquare, Award, DollarSign, BookOpen, Shield, TrendingUp,
   ArrowRight, Star, Check, Zap, ChevronDown, Package, Users, BarChart3, Play
 } from 'lucide-react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { trackFunnelEvent } from '@/components/TrackingPixels';
 
 const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/MgvhsGurcOgbPgCR.png";
 
@@ -74,8 +75,14 @@ export default function BusinessInABox() {
 
   const createCheckout = trpc.bib.createCheckout.useMutation();
 
+  // Track ViewContent on page load
+  useEffect(() => {
+    trackFunnelEvent('ViewContent', { value: 1997, content_name: 'Business-in-a-Box', content_category: 'BIB' });
+  }, []);
+
   const handleBuyNow = async () => {
     setIsLoading(true);
+    trackFunnelEvent('InitiateCheckout', { value: 1997, content_name: 'Business-in-a-Box Core', content_category: 'BIB' });
     try {
       const result = await createCheckout.mutateAsync({
         productKey: 'main',

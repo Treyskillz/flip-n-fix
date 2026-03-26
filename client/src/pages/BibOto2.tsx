@@ -7,7 +7,8 @@ import {
   ArrowRight, Check, Zap, Megaphone, Mail, Phone, Calendar,
   Facebook, FileText, Palette, Target, Users, ChevronDown, Shield
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { trackFunnelEvent } from '@/components/TrackingPixels';
 
 const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/MgvhsGurcOgbPgCR.png";
 
@@ -54,8 +55,13 @@ export default function BibOto2() {
 
   const createCheckout = trpc.bib.createCheckout.useMutation();
 
+  useEffect(() => {
+    trackFunnelEvent('ViewContent', { value: 497, content_name: 'OTO2 Marketing Kit', content_category: 'BIB' });
+  }, []);
+
   const handleAccept = async () => {
     setIsLoading(true);
+    trackFunnelEvent('InitiateCheckout', { value: 497, content_name: 'OTO2 Marketing Kit', content_category: 'BIB' });
     try {
       const result = await createCheckout.mutateAsync({
         productKey: 'oto2',

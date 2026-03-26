@@ -472,3 +472,35 @@ export const sowContractorAssignments = mysqlTable("sow_contractor_assignments",
 
 export type SowContractorAssignment = typeof sowContractorAssignments.$inferSelect;
 export type InsertSowContractorAssignment = typeof sowContractorAssignments.$inferInsert;
+
+// ─── Email Drip Sequences ───────────────────────────────────
+export const emailDripQueue = mysqlTable("email_drip_queue", {
+  id: int("id").autoincrement().primaryKey(),
+  recipientEmail: varchar("recipientEmail", { length: 320 }).notNull(),
+  recipientName: varchar("recipientName", { length: 255 }),
+  sequenceKey: varchar("sequenceKey", { length: 128 }).notNull(), // e.g. "bib_purchase", "app_welcome", "app_engagement"
+  stepIndex: int("stepIndex").notNull(), // 0, 1, 2, 3...
+  stepName: varchar("stepName", { length: 255 }).notNull(), // human-readable step name
+  scheduledAt: timestamp("scheduledAt").notNull(), // when to send
+  sentAt: timestamp("sentAt"), // null = not yet sent
+  status: mysqlEnum("status", ["pending", "sent", "failed", "cancelled"]).default("pending").notNull(),
+  errorMessage: text("errorMessage"), // if failed
+  metadata: text("metadata"), // JSON string with extra context (appUrl, productKey, etc.)
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type EmailDripQueue = typeof emailDripQueue.$inferSelect;
+export type InsertEmailDripQueue = typeof emailDripQueue.$inferInsert;
+
+// ─── Email Drip Log (sent email history) ────────────────────
+export const emailDripLog = mysqlTable("email_drip_log", {
+  id: int("id").autoincrement().primaryKey(),
+  recipientEmail: varchar("recipientEmail", { length: 320 }).notNull(),
+  subject: varchar("subject", { length: 500 }).notNull(),
+  sequenceKey: varchar("sequenceKey", { length: 128 }).notNull(),
+  stepIndex: int("stepIndex").notNull(),
+  resendId: varchar("resendId", { length: 128 }), // Resend email ID
+  status: mysqlEnum("status", ["sent", "failed"]).default("sent").notNull(),
+  sentAt: timestamp("sentAt").defaultNow().notNull(),
+});
+export type EmailDripLog = typeof emailDripLog.$inferSelect;
+export type InsertEmailDripLog = typeof emailDripLog.$inferInsert;

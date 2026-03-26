@@ -16,6 +16,7 @@ import Manual from "./pages/Manual";
 import Listings from './pages/Listings';
 import Pricing from './pages/Pricing';
 import { lazy, Suspense } from "react";
+import TrackingPixels from "./components/TrackingPixels";
 
 const ScopeOfWork = lazy(() => import("./pages/ScopeOfWork"));
 const SavedDeals = lazy(() => import("./pages/SavedDeals"));
@@ -159,6 +160,7 @@ function App() {
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
+          <TrackingPixels />
           <Router />
         </TooltipProvider>
       </ThemeProvider>

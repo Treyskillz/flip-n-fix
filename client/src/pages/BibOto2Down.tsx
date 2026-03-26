@@ -4,7 +4,8 @@ import { useAuth } from '@/_core/hooks/useAuth';
 import { toast } from 'sonner';
 import { useLocation } from 'wouter';
 import { ArrowRight, Check, AlertTriangle, Megaphone, ChevronDown, Shield, Zap } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { trackFunnelEvent } from '@/components/TrackingPixels';
 
 const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/MgvhsGurcOgbPgCR.png";
 
@@ -38,8 +39,13 @@ export default function BibOto2Down() {
 
   const createCheckout = trpc.bib.createCheckout.useMutation();
 
+  useEffect(() => {
+    trackFunnelEvent('ViewContent', { value: 197, content_name: 'OTO2 Downsell Marketing Starter', content_category: 'BIB' });
+  }, []);
+
   const handleAccept = async () => {
     setIsLoading(true);
+    trackFunnelEvent('InitiateCheckout', { value: 197, content_name: 'OTO2 Downsell Marketing Starter', content_category: 'BIB' });
     try {
       const result = await createCheckout.mutateAsync({
         productKey: 'oto2Down',

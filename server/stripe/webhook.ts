@@ -4,12 +4,16 @@ import { ENV } from "../_core/env";
 import { getDb } from "../db";
 import { users } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
+import { handleBibPurchaseEmail, handleAppSubscriptionEmail } from "../email/bib-email-automation";
+import { startDripProcessor } from "../email/drip-scheduler";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2025-03-31.basil" as any,
 });
 
 export function registerStripeWebhook(app: express.Express) {
+  // Start the email drip queue processor
+  startDripProcessor();
   // MUST be registered BEFORE express.json() middleware
   app.post(
     "/api/stripe/webhook",
@@ -41,8 +45,23 @@ export function registerStripeWebhook(app: express.Express) {
             const session = event.data.object as Stripe.Checkout.Session;
             const userId = session.metadata?.user_id;
             const customerId = session.customer as string;
+            const bibProduct = session.metadata?.bib_product;
 
-            if (userId) {
+            // Handle BIB purchases — send automated emails
+            if (bibProduct) {
+              console.log(`[Webhook] BIB purchase detected: ${bibProduct}`);
+              // Fire-and-forget email automation (don't block webhook response)
+              handleBibPurchaseEmail(session).catch((err) =>
+                console.error("[Webhook] BIB email automation error:", err)
+              );
+            }
+
+            // Handle subscription purchases — update user plan + send welcome drip
+            if (userId && !bibProduct) {
+              // Enqueue app welcome email drip
+              handleAppSubscriptionEmail(session).catch((err) =>
+                console.error("[Webhook] App subscription email error:", err)
+              );
               const db = await getDb();
               if (db) {
                 await db

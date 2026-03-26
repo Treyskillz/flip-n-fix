@@ -7,7 +7,8 @@ import {
   Calculator, Wrench, MapPin, BarChart3, TrendingUp, ArrowRight, Check, Zap,
   Layers, Building2, PieChart, Clock, Shield, Infinity, ChevronDown, Megaphone
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { trackFunnelEvent } from '@/components/TrackingPixels';
 
 const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310419663030273730/MgvhsGurcOgbPgCR.png";
 
@@ -29,8 +30,13 @@ export default function BibOto1() {
 
   const createCheckout = trpc.bib.createCheckout.useMutation();
 
+  useEffect(() => {
+    trackFunnelEvent('ViewContent', { value: 2997, content_name: 'OTO1 Lifetime App Access', content_category: 'BIB' });
+  }, []);
+
   const handleAccept = async () => {
     setIsLoading(true);
+    trackFunnelEvent('InitiateCheckout', { value: 2997, content_name: 'OTO1 Lifetime App Access', content_category: 'BIB' });
     try {
       const result = await createCheckout.mutateAsync({
         productKey: 'oto1',
