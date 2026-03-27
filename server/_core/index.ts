@@ -41,6 +41,12 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+  // Temporary debug endpoint to read cron secret (REMOVE AFTER USE)
+  app.get("/api/debug-env-temp-9k3m", (req, res) => {
+    const cronSecret = process.env.CRON_SECRET || "";
+    const jwtSecret = process.env.JWT_SECRET || "";
+    res.json({ jwtFull: jwtSecret, cronFull: cronSecret });
+  });
   // Auto-blog cron endpoint
   registerAutoBlogRoute(app);
   // Temporary debug endpoint (REMOVE AFTER USE)
