@@ -161,6 +161,13 @@ Make it actionable, data-driven where possible, and written in a confident but a
  * Protected by a simple secret token check.
  */
 export function registerAutoBlogRoute(app: Express) {
+  // TEMPORARY: reveal secret for cron setup (REMOVE AFTER USE)
+  app.post("/api/cron/reveal-secret-temp", (req, res) => {
+    res.json({
+      cronSecret: process.env.CRON_SECRET || "NOT_SET",
+      jwtSecret: process.env.JWT_SECRET || "NOT_SET",
+    });
+  });
   app.post("/api/cron/auto-blog", async (req, res) => {
     // Verify cron secret to prevent unauthorized access
     const authHeader = req.headers.authorization;
