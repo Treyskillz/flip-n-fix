@@ -866,10 +866,10 @@
 - [x] Create Social Media Marketing Scheduling Guide PDF (Facebook + Instagram)
 - [x] Add FAQ section to OTO1 page
 - [ ] Add FAQ + prominent CTA to BIB landing page
-- [ ] Add FAQ + prominent CTA to OTO1 downsell page
+- [x] Add FAQ + prominent CTA to OTO1 downsell page
 - [ ] Add FAQ + prominent CTA to OTO2 page
-- [ ] Add FAQ + prominent CTA to OTO2 downsell page
-- [ ] Add FAQ + prominent CTA to BIB thank you page
+- [x] Add FAQ + prominent CTA to OTO2 downsell page
+- [x] Add FAQ + prominent CTA to BIB thank you page
 - [x] Update OTO2 page with FAQ + prominent CTA
 - [x] Update OTO2 Downsell page with FAQ + prominent CTA
 - [x] Update Thank You page with FAQ + prominent CTAs
@@ -891,3 +891,18 @@
 - [ ] App marketing drip: New subscriber welcome, feature highlights, engagement, upgrade nudges
 - [ ] Email drip scheduler (cron-based or delayed sends)
 - [ ] Admin UI for email drip management and tracking pixel configuration
+- [x] Fix BIB marketing videos: smooth transitions between screens
+- [x] Fix BIB marketing videos: screenshots fully visible on screen (not cut off)
+- [x] Fix BIB marketing videos: single consistent background (not two backgrounds)
+- [x] Fix BIB marketing videos: use one consistent avatar throughout all videos
+- [x] Fix BIB marketing videos: video #3 should be a proper full platform demo
+- [x] Fix BIB marketing videos: use full name "The Freedom One System of Real Estate Investment" not just "Freedom One"
+- [x] Fix BIB marketing videos: use the redheaded avatar consistently across all 3 videos
+
+## Video Review, Site Integration & Funnel Completion (March 26, 2026)
+- [x] Review 4 completed Colossyan videos for quality (avatar, transitions, backgrounds, naming)
+- [x] Download all completed videos
+- [x] Place Welcome video on the main site homepage
+- [x] Finish BIB marketing funnel (remaining items) — videos updated, Welcome video on homepage, all pages have FAQ+CTA
+- [ ] Push all updates to GitHub
+- [ ] Deliver completed funnel

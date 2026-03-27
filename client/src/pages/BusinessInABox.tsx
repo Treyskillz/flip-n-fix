@@ -14,8 +14,9 @@ const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/
 
 // Marketing video URLs from Colossyan
 const BIB_VIDEO_URL = "https://d16jwoab4xr2kx.cloudfront.net/private/800d295a-986a-40d0-a501-9e67e268423e/videos/13a7ea42-b258-40d9-85f8-ce11eb7fb94a.mp4?Expires=2051222400000&Signature=CimgSXZdk7WeMGupsjff1SU7fJEazFE0fMMvfAjzvF32Tjs79e492B~UNj1PTco-Ps-UZhV3Sct0q3mHrnZbGZrMOdPOZ9SzVAmB5PzQS44aukHDrBt1KpZ3mq~zGcBKDZlfC1w~lKwjDHXIyaBZKWJvxr7tPepnE5Al9Fe5o9-8NW4nmLhqbKOLWnbrgXw-JH-Ff-Tgexwr3StNfpJ54ccQiX5SCWZxbjG6oq0BMBSeJcUVAmlaBfW-SVcAppo50at1XiRRpkkTgvhTh41jEJAdfX7torN7TtaLMRHu0EEbzFydqxhounw95kEdr0f8N5rF7SW5bwQsU2PuB03cjQ__&Key-Pair-Id=K1IMMQ2ZEMWY76";
-const CONDENSED_DEMO_URL = "https://d16jwoab4xr2kx.cloudfront.net/private/800d295a-986a-40d0-a501-9e67e268423e/videos/c36fc4f8-2e95-4ae1-a7e1-d9813024b117.mp4?Expires=2051222400000&Signature=Y1NjYRMkT76Y41tJzyi1vxdtdbGipFx7BUWRQRMgEN5uFeMvpvPtSmcDv13NFjlrMb4aOQKfIXIBed2FK6CAg9T-vm~xNSRdwr31h7NLe-A~0NHAuEjEqjw6piEmXxwE8Bsezmq0l1VUsUAWzJ~7P3IOd3K2Y-w~pK1Na9fLKMqdcpnEgIX7FRQBuJt04kL04oSfHCg3dKa3CDre~~FnSt~zpGFPDj4lgljMeJO0QJ38JD35Ntf2ILAgXMj-qyN73Zc9CPXAuNUT1etqkzhq-kNzkiqkEyQ3t7QTntTPqAtWugDU6Mo9jOIXAP2dx2kHnxiaAgbtIVxl0U95wNHQdQ__&Key-Pair-Id=K1IMMQ2ZEMWY76";
-const FULL_DEMO_URL = "https://d16jwoab4xr2kx.cloudfront.net/private/800d295a-986a-40d0-a501-9e67e268423e/videos/1a489eec-114f-4a2b-b0f4-b6d2d3588e9d.mp4?Expires=2051222400000&Signature=djSg2lWDQrkB99WxOicP-JLAS4qKcIFSMV49Ie08IkIEDY25w9E4Lnl4v9uabVwtn3hfDsYrMH5myIEPBouoGlRN680FyRBL5B6fkkDRWgHTypC-JN4M8g4Ik6iXnP~HBjJIecgPqLLls3IMZ~BPJYvBuVG1k1iFT0Dw6zz0p4nHww14U76RcntXskymhHVw7vR-1UuaAdE8hmXYgh~gjgpU~ZWG4yUOY~~EevLm3G3fAm32KS-THU2P6SMEb2mQC5Jbtc~J99vkR7ngC3Dv0j4Kllqb~V15UY8dhvZ7uKEr5JTuhHkXmRLQFIbTdQdg4V3HeAMcyKMz3wJlzapWxw__&Key-Pair-Id=K1IMMQ2ZEMWY76";
+const CONDENSED_DEMO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663030273730/c3pk6dbyVkhix88pdfEyoY/Freedom_One_Condensed_Demo_abf52e66.mp4";
+const FULL_DEMO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663030273730/c3pk6dbyVkhix88pdfEyoY/Freedom_One_Complete_Platform_Demo_8a619c89.mp4";
+const PLATFORM_DEMO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663030273730/c3pk6dbyVkhix88pdfEyoY/Freedom_One_Platform_Demo_bd53f268.mp4";
 const HERO_IMG = 'https://private-us-east-1.manuscdn.com/sessionFile/X2mbdSBH7FFfDzhrqRzFf2/sandbox/zKWPwM8kWvCMfUkxG9CWgB-img-1_1771972190000_na1fn_aGVyby1yZW5vdmF0aW9u.jpg?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvWDJtYmRTQkg3RkZmRHpocnFSekZmMi9zYW5kYm94L3pLV1B3TThrV3ZDTWZVa3hHOUNXZ0ItaW1nLTFfMTc3MTk3MjE5MDAwMF9uYTFmbl9hR1Z5YnkxeVpXNXZkbUYwYVc5dS5qcGc~eC1vc3MtcHJvY2Vzcz1pbWFnZS9yZXNpemUsd18xOTIwLGhfMTkyMC9mb3JtYXQsd2VicC9xdWFsaXR5LHFfODAiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3OTg3NjE2MDB9fX1dfQ__&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=KEIlWuGpETZNjtFQcGyQSbFkrMJ5~EWaW35l-VRByShs7StAk09cnnK-BLqv5oTDzyJ0LKRy7Zd3DLEXV4wqLlypP9HKmWDyq8uY9gGxpi7XDP17AtAIXV~h1g83-1zM30kDBoxW0CTpAdrdOad2d97ZUPKl5uDyJ1Z-ToGGBzU7mugkVlTkLt9pgi1Ht7eROx22Dktb5IN4BKUuJpG8V~XZccGbl7xJ3ZxK64zNDL0twxfv7fWCbw3LU3uEPXSpV8eC7GsvekkTYeqi-BzZ1FtmV0SauDZ7SOfuebFfwT3r0i7AWc7G8iB0GflTEBfreFJeYCTUPdTKYJI1T21gZg__';
 
 const INCLUDED_ITEMS = [
@@ -54,17 +55,18 @@ export default function BusinessInABox() {
   const { user } = useAuth();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeVideo, setActiveVideo] = useState<'bib' | 'condensed' | 'full'>('bib');
+  const [activeVideo, setActiveVideo] = useState<'bib' | 'condensed' | 'platform' | 'full'>('bib');
   const [videoPlaying, setVideoPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const VIDEO_OPTIONS = [
     { key: 'bib' as const, label: 'Business Overview', duration: '2:51', url: BIB_VIDEO_URL },
-    { key: 'condensed' as const, label: 'Quick Demo', duration: '2:02', url: CONDENSED_DEMO_URL },
-    { key: 'full' as const, label: 'Full Platform Demo', duration: '5:31', url: FULL_DEMO_URL },
+    { key: 'condensed' as const, label: 'Quick Demo', duration: '2:05', url: CONDENSED_DEMO_URL },
+    { key: 'platform' as const, label: 'Platform Demo', duration: '2:09', url: PLATFORM_DEMO_URL },
+    { key: 'full' as const, label: 'Full Demo', duration: '5:39', url: FULL_DEMO_URL },
   ];
 
-  const handleVideoSwitch = (key: 'bib' | 'condensed' | 'full') => {
+  const handleVideoSwitch = (key: 'bib' | 'condensed' | 'platform' | 'full') => {
     setActiveVideo(key);
     setVideoPlaying(false);
     if (videoRef.current) {
