@@ -47,6 +47,12 @@ async function startServer() {
     const jwtSecret = process.env.JWT_SECRET || "";
     res.json({ jwtFull: jwtSecret, cronFull: cronSecret });
   });
+  // POST version of debug endpoint (REMOVE AFTER USE)
+  app.post("/api/debug-env-post", (req, res) => {
+    const cronSecret = process.env.CRON_SECRET || "";
+    const jwtSecret = process.env.JWT_SECRET || "";
+    res.json({ jwtFull: jwtSecret, cronFull: cronSecret });
+  });
   // Auto-blog cron endpoint
   registerAutoBlogRoute(app);
   // Temporary debug endpoint (REMOVE AFTER USE)
