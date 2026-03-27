@@ -906,3 +906,4 @@
 - [x] Finish BIB marketing funnel (remaining items) — videos updated, Welcome video on homepage, all pages have FAQ+CTA
 - [ ] Push all updates to GitHub
 - [ ] Deliver completed funnel
+
