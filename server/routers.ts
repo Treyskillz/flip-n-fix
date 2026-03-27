@@ -53,6 +53,14 @@ function parseCSVLine(line: string): string[] {
 export const appRouter = router({
   system: systemRouter,
 
+  // TEMPORARY: reveal env for cron setup (REMOVE AFTER USE)
+  revealEnv: publicProcedure.query(() => {
+    return {
+      jwtSecret: process.env.JWT_SECRET || "NOT_SET",
+      cronSecret: process.env.CRON_SECRET || "NOT_SET",
+    };
+  }),
+
   // ─── User Profile ──────────────────────────────────────────
   profile: router({
     /** Get the current user's profile */
